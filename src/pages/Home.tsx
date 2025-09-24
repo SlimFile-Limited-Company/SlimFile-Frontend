@@ -601,7 +601,7 @@ const Home = () => {
             className="grid grid-cols-1 md:grid-cols-4 gap-8"
           >
             {[
-              { value: 12K, suffix: "+", label: "Files Compressed", icon: FileImage, color: "red" },
+              { value: 12, suffix: "K+", label: "Files Compressed", icon: FileImage, color: "red" },
               { value: 95, suffix: "%", label: "Average Size Reduction", icon: Zap, color: "green" },
               { value: 100, suffix: "%", label: "Secure Processing", icon: Shield, color: "blue" },
               { value: 24, suffix: "/7", label: "Always Available", icon: Globe, color: "purple" }
