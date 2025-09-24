@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SlimFile - File Compressor</title>
+    <meta name="description" content="Reduce file sizes instantly without compromising quality. Fast, secure, and completely free compression for images, PDFs, and PPTX." />
+    <meta name="author" content="SlimFile" />
+    <meta name="theme-color" content="#ef4444" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="application-name" content="SlimFile" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="SlimFile" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <meta name="msapplication-TileColor" content="#ef4444" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/lovable-uploads/logo.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <meta property="og:title" content="SlimFile - File Compressor" />
+    <meta property="og:description" content="Reduce file sizes instantly without compromising quality. Fast, secure, and completely free compression for images, PDFs, and PPTX." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/lovable-uploads/logo.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@slimfile" />
+    <meta name="twitter:image" content="/lovable-uploads/logo.png" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WN94LHP6');</script>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWYM1ML0X8"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-QWYM1ML0X8');
+    </script>
+
+   <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "SlimFile",
+  "url": "https://slim-file.com",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://www.slim-file.com/favicon.png",
+    "width": 200,
+    "height": 50
+  },
+  "sameAs": [
+    "https://www.linkedin.com/company/slimfile-inc",
+    "https://www.instagram.com/slimfile_inc",
+    "https://x.com/slimfile_inc?s=11",
+    "https://www.trustpilot.com/review/slim-file.com",
+    "https://www.tiktok.com/@slimfile_inc?_t=ZM-8yF3RexQsLg&_r=1"
+  ]
+}
+</script>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/",
+  "name": "SlimFile Home",
+  "description": "SlimFile: Efficient file compression and management solutions.",
+  "dateModified": "2024-12-19",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/compress",
+  "name": "File Compression",
+  "description": "Compress files effortlessly with SlimFile's advanced tools.",
+  "dateModified": "2024-12-19",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/about",
+  "name": "About SlimFile",
+  "description": "Discover SlimFile's mission to streamline file management.",
+  "dateModified": "2024-12-19",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/features",
+  "name": "SlimFile Features",
+  "description": "Explore powerful features for file compression and management.",
+  "dateModified": "2024-12-19",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/teams",
+  "name": "SlimFile - Our Team",
+  "description": "Meet the SlimFile Team.",
+  "dateModified": "2024-12-19",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/api",
+  "name": "SlimFile API",
+  "description": "Access our API for integration.",
+  "dateModified": "2024-12-19",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/file-compression-education",
+  "name": "SlimFile - Our Team",
+  "description": "Meet the SlimFile Team.",
+  "dateModified": "2024-12-19",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+
+    
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/contact",
+  "name": "Contact SlimFile",
+  "description": "Reach out to SlimFile for support or inquiries.",
+  "dateModified": "2024-12-19",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<!-- SEO Landing Pages Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/compress-pdf-online",
+  "name": "Compress PDF Online",
+  "description": "Shrink your PDF files instantly without losing clarity. Fast, secure, and free PDF compression.",
+  "dateModified": "2025-09-02",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/compress-pptx-online",
+  "name": "Compress PPTX Online",
+  "description": "Make your PowerPoint decks lighter and easier to share without losing visual fidelity.",
+  "dateModified": "2025-09-02",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/compress-images-online",
+  "name": "Compress Images Online",
+  "description": "Optimize JPEG, PNG, and WebP for fast sharing and publishing.",
+  "dateModified": "2025-09-02",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/compress-pdf-for-email",
+  "name": "Compress PDF for Email",
+  "description": "Keep attachments under size limits and deliver faster with optimized PDFs.",
+  "dateModified": "2025-09-02",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/compress-pdf-on-iphone",
+  "name": "Compress PDF on iPhone",
+  "description": "Use SlimFile in Safari to shrink PDFs instantly—no app installs required.",
+  "dateModified": "2025-09-02",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/compress-pdf-without-losing-quality",
+  "name": "Compress PDF Without Losing Quality",
+  "description": "Smart optimization preserves text and vector sharpness while reducing size.",
+  "dateModified": "2025-09-02",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/compress-pptx-for-presentation",
+  "name": "Compress PPTX for Presentation",
+  "description": "Present confidently with smaller decks that load quickly on any device.",
+  "dateModified": "2025-09-02",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "url": "https://slim-file.com/compress-images-for-website",
+  "name": "Compress Images for Website",
+  "description": "Make pages load faster and boost Core Web Vitals with optimized images.",
+  "dateModified": "2025-09-02",
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<!-- Blog Articles Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "url": "https://slim-file.com/blog/how-to-compress-pdf-for-email",
+  "headline": "How to Compress PDF for Email",
+  "description": "Keep attachments under provider limits and deliver reliably.",
+  "datePublished": "2025-09-02",
+  "dateModified": "2025-09-02",
+  "author": {
+    "@type": "Organization",
+    "name": "SlimFile"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "SlimFile",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://slim-file.com/favicon.png"
+    }
+  },
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "url": "https://slim-file.com/blog/best-tools-to-compress-images-online",
+  "headline": "Best Tools to Compress Images Online",
+  "description": "Compare features to choose the right image compressor.",
+  "datePublished": "2025-09-02",
+  "dateModified": "2025-09-02",
+  "author": {
+    "@type": "Organization",
+    "name": "SlimFile"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "SlimFile",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://slim-file.com/favicon.png"
+    }
+  },
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "url": "https://slim-file.com/blog/compress-pptx-presentations-without-losing-quality",
+  "headline": "Compress PPTX Presentations Without Losing Quality",
+  "description": "Keep slides sharp while reducing file size.",
+  "datePublished": "2025-09-02",
+  "dateModified": "2025-09-02",
+  "author": {
+    "@type": "Organization",
+    "name": "SlimFile"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "SlimFile",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://slim-file.com/favicon.png"
+    }
+  },
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "url": "https://slim-file.com/blog/reduce-pdf-file-size-on-mobile",
+  "headline": "Reduce PDF File Size on Mobile",
+  "description": "Compress PDFs on iOS and Android right in the browser.",
+  "datePublished": "2025-09-02",
+  "dateModified": "2025-09-02",
+  "author": {
+    "@type": "Organization",
+    "name": "SlimFile"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "SlimFile",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://slim-file.com/favicon.png"
+    }
+  },
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "url": "https://slim-file.com/blog/how-to-compress-files-for-faster-website-loading",
+  "headline": "How to Compress Files for Faster Website Loading",
+  "description": "Improve performance with image and document optimization.",
+  "datePublished": "2025-09-02",
+  "dateModified": "2025-09-02",
+  "author": {
+    "@type": "Organization",
+    "name": "SlimFile"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "SlimFile",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://slim-file.com/favicon.png"
+    }
+  },
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "url": "https://slim-file.com/blog/why-file-compression-is-essential-for-remote-work",
+  "headline": "Why File Compression is Essential for Remote Work",
+  "description": "Speed up collaboration with smaller, shareable files.",
+  "datePublished": "2025-09-02",
+  "dateModified": "2025-09-02",
+  "author": {
+    "@type": "Organization",
+    "name": "SlimFile"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "SlimFile",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://slim-file.com/favicon.png"
+    }
+  },
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "url": "https://slim-file.com/blog/compressing-pdf-for-printing-vs-emailing",
+  "headline": "Compressing PDF for Printing vs Emailing",
+  "description": "Different targets require different optimization strategies.",
+  "datePublished": "2025-09-02",
+  "dateModified": "2025-09-02",
+  "author": {
+    "@type": "Organization",
+    "name": "SlimFile"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "SlimFile",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://slim-file.com/favicon.png"
+    }
+  },
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "url": "https://slim-file.com/blog/how-to-compress-large-videos-before-uploading",
+  "headline": "How to Compress Large Videos Before Uploading",
+  "description": "Reduce upload time and avoid platform size limits.",
+  "datePublished": "2025-09-02",
+  "dateModified": "2025-09-02",
+  "author": {
+    "@type": "Organization",
+    "name": "SlimFile"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "SlimFile",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://slim-file.com/favicon.png"
+    }
+  },
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://slim-file.com"
+  }
+}
+</script>
+
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

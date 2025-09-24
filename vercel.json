@@ -1,0 +1,1 @@
+{ "redirects": [ { "source": "/index.html", "destination": "/", "permanent": true }, { "source": "/compressor.html", "destination": "/compress", "permanent": true }, { "source": "/multi-index.html", "destination": "/compress", "permanent": true } ], "rewrites": [ { "source": "/:path*", "destination": "/index.html" } ] }
