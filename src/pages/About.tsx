@@ -15,7 +15,7 @@ const About: React.FC<AboutProps> = () => {
               About <span className="text-primary">SlimFile</span>
             </h1>
             <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-              The modern way to compress files. Fast, secure, and works everywhere.
+              The modern way to compress files. Fast, secure and works everywhere.
             </p>
           </div>
         </div>
