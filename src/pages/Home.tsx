@@ -61,7 +61,12 @@ const Home: FC = () => {
           animate={{ x: [0, -40, 25, 0], y: [0, 25, -15, 0], rotate: [0, -180, -360] }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
         />
-        <div className="absolute inset-0 flex items-center justify-between px-8 lg:px-16">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="absolute inset-0 flex items-center justify-between px-8 lg:px-16"
+        >
           <motion.div
             initial={{ opacity: 0, x: -100, rotateY: -15 }}
             animate={{ opacity: 1, x: 0, rotateY: 0 }}
@@ -275,7 +280,7 @@ const Home: FC = () => {
                 </div>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         <div className="container mx-auto text-center relative z-10">
           <div className="max-w-5xl mx-auto">
             <motion.div
@@ -737,7 +742,7 @@ const Home: FC = () => {
                           <motion.div
                             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
                             initial={{ x: "-100%" }}
-                            whileHover={{ x: "100ಮ 100%" }}
+                            whileHover={{ x: "100%" }}
                             transition={{ duration: 0.6, ease: "easeInOut" }}
                           />
                         </Button>
