@@ -61,12 +61,7 @@ const Home: FC = () => {
           animate={{ x: [0, -40, 25, 0], y: [0, 25, -15, 0], rotate: [0, -180, -360] }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
         />
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="absolute inset-0 flex items-center justify-between px-8 lg:px-16"
-        >
+        <div className="absolute inset-0 flex items-center justify-between px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, x: -100, rotateY: -15 }}
             animate={{ opacity: 1, x: 0, rotateY: 0 }}
@@ -171,116 +166,117 @@ const Home: FC = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 100, rotateY: 15 }}
-              animate={{ opacity: 1, x: 0, rotateY: 0 }}
-              transition={{ duration: 1, delay: 0.7, ease: "easeOut" }}
-              className="hidden lg:block relative"
-            >
-              <div className="w-64 h-[500px] bg-gray-900 rounded-[3rem] p-2 shadow-2xl">
-                <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
-                  <div className="h-8 bg-gray-50 flex items-center justify-between px-6 text-xs font-medium text-gray-900">
-                    <span>9:41</span>
-                    <div className="flex items-center space-x-1">
-                      <div className="w-4 h-2 bg-gray-900 rounded-sm"></div>
-                      <div className="w-6 h-3 border border-gray-900 rounded-sm"></div>
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 100, rotateY: 15 }}
+            animate={{ opacity: 1, x: 0, rotateY: 0 }}
+            transition={{ duration: 1, delay: 0.7, ease: "easeOut" }}
+            className="hidden lg:block relative"
+          >
+            <div className="w-64 h-[500px] bg-gray-900 rounded-[3rem] p-2 shadow-2xl">
+              <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
+                <div className="h-8 bg-gray-50 flex items-center justify-between px-6 text-xs font-medium text-gray-900">
+                  <span>9:41</span>
+                  <div className="flex items-center space-x-1">
+                    <div className="w-4 h-2 bg-gray-900 rounded-sm"></div>
+                    <div className="w-6 h-3 border border-gray-900 rounded-sm"></div>
+                  </div>
+                </div>
+                <div className="p-4 h-full bg-gradient-to-b from-green-50 to-white">
+                  <div className="text-center mb-6">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">Batch Compress</h3>
+                    <p className="text-sm text-gray-600">Multiple files at once</p>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      {[1, 2, 3, 4].map((i) => (
+                        <motion.div
+                          key={i}
+                          className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.2 }}
+                        >
+                          <div className="flex items-center space-x-2">
+                            <div className={`w-6 h-6 rounded flex items-center justify-center ${
+                              i === 1 ? 'bg-blue-100' : i === 2 ? 'bg-green-100' : i === 3 ? 'bg-purple-100' : 'bg-orange-100'
+                            }`}>
+                              {i === 1 ? <FileText className="w-3 h-3 text-blue-600" /> :
+                               i === 2 ? <Image className="w-3 h-3 text-green-600" /> :
+                               i === 3 ? <File className="w-3 h-3 text-purple-600" /> :
+                               <FileText className="w-3 h-3 text-orange-600" />}
+                            </div>
+                            <span className="text-xs text-gray-700">file_{i}.pdf</span>
+                          </div>
+                          <motion.div
+                            className="w-4 h-4 bg-red-100 rounded-full flex items-center justify-center"
+                            animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
+                          >
+                            <Zap className="w-2 h-2 text-red-600" />
+                          </motion.div>
+                        </motion.div>
+                      ))}
+                    </div>
+                    <div className="mt-6">
+                      <div className="flex justify-between text-xs text-gray-500 mb-2">
+                        <span>Progress</span>
+                        <motion.span
+                          animate={{ opacity: [1, 0.5, 1] }}
+                          transition={{ duration: 1, repeat: Infinity }}
+                        >
+                          4/4 files
+                        </motion.span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <motion.div
+                          className="bg-red-600 h-2 rounded-full"
+                          initial={{ width: "0%" }}
+                          animate={{ width: "100%" }}
+                          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-4 space-y-2">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-500">Total saved:</span>
+                        <motion.span
+                          className="text-green-600 font-bold"
+                          animate={{ scale: [1, 1.1, 1] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                          100.5 MB
+                        </motion.span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-500">Time saved:</span>
+                        <span className="text-green-600 font-bold">95%</span>
+                      </div>
                     </div>
                   </div>
-                  <div className="p-4 h-full bg-gradient-to-b from-green-50 to-white">
-                    <div className="text-center mb-6">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">Batch Compress</h3>
-                      <p className="text-sm text-gray-600">Multiple files at once</p>
-                    </div>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        {[1, 2, 3, 4].map((i) => (
-                          <motion.div
-                            key={i}
-                            className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.2 }}
-                          >
-                            <div className="flex items-center space-x-2">
-                              <div className={`w-6 h-6 rounded flex items-center justify-center ${
-                                i === 1 ? 'bg-blue-100' : i === 2 ? 'bg-green-100' : i === 3 ? 'bg-purple-100' : 'bg-orange-100'
-                              }`}>
-                                {i === 1 ? <FileText className="w-3 h-3 text-blue-600" /> :
-                                 i === 2 ? <Image className="w-3 h-3 text-green-600" /> :
-                                 i === 3 ? <File className="w-3 h-3 text-purple-600" /> :
-                                 <FileText className="w-3 h-3 text-orange-600" />}
-                              </div>
-                              <span className="text-xs text-gray-700">file_{i}.pdf</span>
-                            </div>
-                            <motion.div
-                              className="w-4 h-4 bg-red-100 rounded-full flex items-center justify-center"
-                              animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-                              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
-                            >
-                              <Zap className="w-2 h-2 text-red-600" />
-                            </motion.div>
-                          </motion.div>
-                        ))}
-                      </div>
-                      <div className="mt-6">
-                        <div className="flex justify-between text-xs text-gray-500 mb-2">
-                          <span>Progress</span>
-                          <motion.span
-                            animate={{ opacity: [1, 0.5, 1] }}
-                            transition={{ duration: 1, repeat: Infinity }}
-                          >
-                            4/4 files
-                          </motion.span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <motion.div
-                            className="bg-red-600 h-2 rounded-full"
-                            initial={{ width: "0%" }}
-                            animate={{ width: "100%" }}
-                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                          />
-                        </div>
-                      </div>
-                      <div className="mt-4 space-y-2">
-                        <div className="flex justify-between text-xs">
-                          <span className="text-gray-500">Total saved:</span>
-                          <motion.span
-                            className="text-green-600 font-bold"
-                            animate={{ scale: [1, 1.1, 1] }}
-                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                          >
-                            100.5 MB
-                          </motion.span>
-                        </div>
-                        <div className="flex justify-between text-xs">
-                          <span className="text-gray-500">Time saved:</span>
-                          <span className="text-green-600 font-bold">95%</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="absolute bottom-4 left-4 right-4 space-y-2">
-                      <motion.div
-                        className="w-full h-10 bg-red-600 rounded-lg flex items-center justify-center"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Download className="w-4 h-4 text-white mr-2" />
-                        <span className="text-sm font-medium text-white">Download All</span>
-                      </motion.div>
-                      <motion.div
-                        className="w-full h-8 bg-gray-100 rounded-lg flex items-center justify-center"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <span className="text-xs font-medium text-gray-600">Share</span>
-                      </motion.div>
-                    </div>
+                  <div className="absolute bottom-4 left-4 right-4 space-y-2">
+                    <motion.div
+                      className="w-full h-10 bg-red-600 rounded-lg flex items-center justify-center"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Download className="w-4 h-4 text-white mr-2" />
+                      <span className="text-sm font-medium text-white">Download All</span>
+                    </motion.div>
+                    <motion.div
+                      className="w-full h-8 bg-gray-100 rounded-lg flex items-center justify-center"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <span className="text-xs font-medium text-gray-600">Share</span>
+                    </motion.div>
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
+        </div>
         <div className="container mx-auto text-center relative z-10">
           <div className="max-w-5xl mx-auto">
             <motion.div
