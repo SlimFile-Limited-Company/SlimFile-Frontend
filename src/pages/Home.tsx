@@ -860,7 +860,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-    </div> {/* Closing the root div */}
+    </div> 
   );
 };
 
