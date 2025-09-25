@@ -492,7 +492,7 @@ const Home = () => {
               <video
                 className="w-full h-auto rounded-2xl"
                 controls
-                poster="/lovable-Uploads/thumbnail.jpg"
+                poster="/lovable-uploads/thumbnail.jpg"
               >
                 <source src="/lovable-uploads/Short.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -860,7 +860,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-    </div>
+    </div> {/* Closing the root div */}
   );
 };
 
