@@ -5,7 +5,7 @@ const teamMembers = [
   {
     name: 'Isaac Abakah',
     role: 'CEO and Founder',
-    bio: 'Drives the vision and strategic direction of SlimFile, ensuring we stay ahead in innovation and deliver value to users.',
+    bio: 'Technical CEO who drives the vision and strategic direction of SlimFile, ensuring we stay ahead in innovation and deliver value to users.',
     image: '/lovable-uploads/Isaac.jpg',
     linkedin: 'http://linkedin.com/in/isaac-abakah',
   },
