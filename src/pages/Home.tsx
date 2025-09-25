@@ -1,17 +1,17 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, File, Image, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isAuthenticated } from '@/lib/auth';
 import { useEffect, useState } from 'react';
 import io from "socket.io-client";
-import { motion } from "framer-motion";
+import { motion, MotionProps } from "framer-motion";
 
-const getApiBase = () => {
+const getApiBase = (): string => {
   return import.meta.env.VITE_API_URL || "https://slimfile-backend.onrender.com";
 };
 
-const Home = () => {
+const Home: FC = () => {
   const navigate = useNavigate();
   const [compressedCount, setCompressedCount] = useState<number>(0);
 
@@ -275,6 +275,7 @@ const Home = () => {
                 </div>
               </div>
             </motion.div>
+          </div>
         </div>
         <div className="container mx-auto text-center relative z-10">
           <div className="max-w-5xl mx-auto">
@@ -304,7 +305,7 @@ const Home = () => {
               >
                 <a 
                   target="_blank" 
-                  href="https://betalist.com/startups/slimfile-inc?utm_campaign=badge-slimfile-inc&amp;utm_medium=badge&amp;utm_source=badge-featured"
+                  href="https://betalist.com/startups/slimfile-inc?utm_campaign=badge-slimfile-inc&utm_medium=badge&utm_source=badge-featured"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-gray-50 text-gray-700 px-4 py-2 rounded-full text-sm font-medium border border-gray-200 hover:bg-gray-100 hover:border-gray-300 transition-all duration-300 transform hover:scale-105 relative overflow-hidden group"
                 >
@@ -620,7 +621,7 @@ const Home = () => {
                 </motion.div>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -860,7 +861,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-    </div> 
+    </div>
   );
 };
 
