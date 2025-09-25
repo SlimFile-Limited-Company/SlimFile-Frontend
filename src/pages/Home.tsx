@@ -276,7 +276,6 @@ const Home: FC = () => {
               </div>
             </motion.div>
           </div>
-        </div>
         <div className="container mx-auto text-center relative z-10">
           <div className="max-w-5xl mx-auto">
             <motion.div
@@ -621,7 +620,7 @@ const Home: FC = () => {
                 </motion.div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -738,7 +737,7 @@ const Home: FC = () => {
                           <motion.div
                             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
                             initial={{ x: "-100%" }}
-                            whileHover={{ x: "100%" }}
+                            whileHover={{ x: "100ಮ 100%" }}
                             transition={{ duration: 0.6, ease: "easeInOut" }}
                           />
                         </Button>
