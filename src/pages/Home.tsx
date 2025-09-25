@@ -493,7 +493,7 @@ const Home: FC = () => {
               <video
                 className="w-full h-auto rounded-2xl"
                 controls
-                poster="/lovable-uploads/thumbnail.jpg"
+                poster="/lovable-uploads/thumbnail.png"
               >
                 <source src="/lovable-uploads/Short.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
