@@ -340,7 +340,7 @@ const Home: FC = () => {
                     visible: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] } }
                   }}
                 >
-                  AI Powered
+                  File Compression
                 </motion.span>
                 <motion.span 
                   className="text-red-600 block bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent"
@@ -349,7 +349,7 @@ const Home: FC = () => {
                     visible: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 } }
                   }}
                 >
-                  File Compression
+                  Made Simple
                 </motion.span>
               </motion.h1>
               <motion.p 
@@ -358,7 +358,7 @@ const Home: FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
               >
-                SlimFile uses AI to compress your files by up to 99.8%
+                Reduce file sizes instantly without compromising quality
                 <br/>Fast and secure compression for images, PDFs, and PPTX.
               </motion.p>
             </motion.div>
