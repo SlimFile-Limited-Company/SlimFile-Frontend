@@ -296,7 +296,7 @@ const Home: FC = () => {
                 >
                   <Sparkles className="w-4 h-4" />
                 </motion.div>
-                Trusted by 7K+ users worldwide
+                Trusted by 10K+ users worldwide
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
