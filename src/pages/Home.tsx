@@ -358,7 +358,7 @@ const Home: FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
               >
-                Reduce file sizes instantly without compromising quality
+                Reduce file sizes instantly without losing quality
                 <br/>Fast and secure compression for images, PDFs, and PPTX.
               </motion.p>
             </motion.div>
