@@ -74,18 +74,18 @@ const playBeepSound = () => {
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
-    // Configure beep sound (440Hz for 200ms - A4 note)
+    // Configure beep sound (440Hz for 400ms - A4 note)
     oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
     oscillator.type = 'sine';
 
-    // Volume envelope for smooth fade in/out
+    // Volume envelope for smooth fade in/out (increased volume)
     gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05); // Quick fade in
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2); // Fade out
+    gainNode.gain.linearRampToValueAtTime(0.6, audioContext.currentTime + 0.05); // Increased volume (was 0.3)
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4); // Longer duration (was 0.2)
 
-    // Play beep
+    // Play beep (longer duration)
     oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.2);
+    oscillator.stop(audioContext.currentTime + 0.4); // Increased duration (was 0.2)
 
     console.log('✅ Beep sound should be playing now');
 
