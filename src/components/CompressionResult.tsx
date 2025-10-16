@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { isAuthenticated } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { playSuccessSound } from "@/utils/sound";
+import { playSuccessSound, testSoundLoading } from "@/utils/sound";
 
 interface CompressionResultProps {
   originalFiles: File[];
@@ -39,6 +39,8 @@ export const CompressionResult = ({
                              !hasPlayedSound;
 
     if (allFilesCompressed && compressedFiles.length === originalFiles.length) {
+      console.log('🎯 Compression completed! Testing sound loading...');
+      testSoundLoading(); // Debug MP3 loading
       playSuccessSound();
       setHasPlayedSound(true);
     }
