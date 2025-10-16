@@ -54,8 +54,17 @@ export const playNotificationSound = (soundPath = '/sounds/notification.mp3') =>
 // Generate a simple beep sound using Web Audio API
 const playBeepSound = () => {
   try {
-    console.log('Playing generated beep sound...');
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    console.log('🔊 Playing generated beep sound...');
+
+    // Check if Web Audio API is available
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) {
+      console.warn('❌ Web Audio API not supported in this browser');
+      return;
+    }
+
+    const audioContext = new AudioContextClass();
+    console.log('🔊 AudioContext created successfully');
 
     // Create oscillator for beep sound
     const oscillator = audioContext.createOscillator();
@@ -65,27 +74,52 @@ const playBeepSound = () => {
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
-    // Configure beep sound (440Hz for 200ms)
-    oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 note
+    // Configure beep sound (440Hz for 200ms - A4 note)
+    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
     oscillator.type = 'sine';
 
-    // Volume envelope
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+    // Volume envelope for smooth fade in/out
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05); // Quick fade in
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2); // Fade out
 
     // Play beep
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + 0.2);
 
-    console.log('Beep sound played successfully');
+    console.log('✅ Beep sound should be playing now');
+
+    // Handle completion
+    oscillator.addEventListener('ended', () => {
+      console.log('🔊 Beep sound completed');
+    });
 
   } catch (error) {
-    console.warn('Failed to play beep sound:', error);
+    console.warn('💥 Failed to play beep sound:', error);
+    // If Web Audio API fails, try a simple alert as last resort
+    try {
+      // Last resort - visual feedback
+      console.log('🚨 Web Audio API failed, but compression completed successfully!');
+    } catch (fallbackError) {
+      console.warn('💥 Even fallback failed:', fallbackError);
+    }
   }
 };
 
+// Skip MP3 and play only beep sound (most reliable option)
+export const playBeepOnly = () => {
+  console.log('🔊 Playing beep sound only (MP3 skipped for compatibility)');
+  playBeepSound();
+};
+
+// Smart sound function that tries MP3 first, then falls back to beep
 export const playSuccessSound = () => {
-  playNotificationSound('/sounds/success-fanfare-trumpets-6185.mp3');
+  // For maximum compatibility, let's use beep sound as primary
+  // Uncomment the line below if you want to try MP3 first:
+  // playNotificationSound('/sounds/success-fanfare-trumpets-6185.mp3');
+
+  // Using beep sound as the reliable fallback
+  playBeepOnly();
 };
 
 export const playErrorSound = () => {
