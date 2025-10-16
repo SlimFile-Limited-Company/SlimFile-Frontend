@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import { Download, FileText, Image as ImageIcon, RotateCcw, CheckCircle, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { isAuthenticated } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { playSuccessSound } from "@/utils/sound";
 
 interface CompressionResultProps {
   originalFiles: File[];
@@ -27,7 +28,21 @@ export const CompressionResult = ({
 }: CompressionResultProps) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
+  const [hasPlayedSound, setHasPlayedSound] = useState(false);
   const navigate = useNavigate();
+
+  // Play sound when compression is complete
+  useEffect(() => {
+    const allFilesCompressed = compressedFiles.length > 0 &&
+                             compressedFiles.every(file => file !== null) &&
+                             !isCompressing &&
+                             !hasPlayedSound;
+
+    if (allFilesCompressed && compressedFiles.length === originalFiles.length) {
+      playSuccessSound();
+      setHasPlayedSound(true);
+    }
+  }, [isCompressing, compressedFiles, originalFiles.length, hasPlayedSound]);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -409,7 +424,10 @@ export const CompressionResult = ({
       >
         <Button 
           variant="outline" 
-          onClick={onReset}
+          onClick={() => {
+            onReset();
+            setHasPlayedSound(false); // Reset sound state for next compression
+          }}
           className="bg-white hover:bg-gray-50"
         >
           <RotateCcw className="h-4 w-4 mr-2" />
