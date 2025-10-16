@@ -1,8 +1,6 @@
 // Sound utility functions for playing notification sounds
 export const playNotificationSound = (soundPath = '/sounds/notification.mp3') => {
   try {
-    console.log('Attempting to play sound from path:', soundPath);
-
     // Create audio element
     const audio = new Audio(soundPath);
 
@@ -11,26 +9,65 @@ export const playNotificationSound = (soundPath = '/sounds/notification.mp3') =>
     if (playPromise !== undefined) {
       playPromise
         .then(() => {
-          console.log('Sound played successfully');
+          // Sound played successfully
         })
         .catch(error => {
-          console.warn('Could not play notification sound:', error);
+          // Fallback to generated beep sound if MP3 fails
+          if (error.name === 'NotSupportedError') {
+            playBeepSound();
+          }
         });
     }
 
     // Clean up after playing
     audio.addEventListener('ended', () => {
-      console.log('Sound playback ended');
       audio.remove();
     });
 
     // Handle errors
     audio.addEventListener('error', (error) => {
-      console.warn('Notification sound failed to load:', error);
+      // Fallback to generated beep sound if MP3 fails to load
+      if (error.target && (error.target as HTMLAudioElement).error && (error.target as HTMLAudioElement).error!.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+        playBeepSound();
+      }
     });
 
   } catch (error) {
-    console.warn('Failed to play notification sound:', error);
+    // Ultimate fallback - try to play a beep sound
+    playBeepSound();
+  }
+};
+
+// Generate a simple beep sound using Web Audio API
+const playBeepSound = () => {
+  try {
+    console.log('Playing generated beep sound...');
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+    // Create oscillator for beep sound
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    // Connect nodes
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Configure beep sound (440Hz for 200ms)
+    oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 note
+    oscillator.type = 'sine';
+
+    // Volume envelope
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+    // Play beep
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.2);
+
+    console.log('Beep sound played successfully');
+
+  } catch (error) {
+    console.warn('Failed to play beep sound:', error);
   }
 };
 
