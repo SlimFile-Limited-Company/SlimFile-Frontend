@@ -38,7 +38,17 @@ export const CompressionResult = ({
                              !isCompressing &&
                              !hasPlayedSound;
 
+    console.log('Compression status check:', {
+      compressedFilesLength: compressedFiles.length,
+      originalFilesLength: originalFiles.length,
+      isCompressing,
+      hasPlayedSound,
+      allFilesCompressed,
+      allFilesNotNull: compressedFiles.every(file => file !== null)
+    });
+
     if (allFilesCompressed && compressedFiles.length === originalFiles.length) {
+      console.log('Playing success sound...');
       playSuccessSound();
       setHasPlayedSound(true);
     }

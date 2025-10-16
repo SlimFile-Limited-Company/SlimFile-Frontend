@@ -1,16 +1,26 @@
 // Sound utility functions for playing notification sounds
 export const playNotificationSound = (soundPath = '/sounds/notification.mp3') => {
   try {
+    console.log('Attempting to play sound from path:', soundPath);
+
     // Create audio element
     const audio = new Audio(soundPath);
 
     // Play the sound
-    audio.play().catch(error => {
-      console.warn('Could not play notification sound:', error);
-    });
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          console.log('Sound played successfully');
+        })
+        .catch(error => {
+          console.warn('Could not play notification sound:', error);
+        });
+    }
 
     // Clean up after playing
     audio.addEventListener('ended', () => {
+      console.log('Sound playback ended');
       audio.remove();
     });
 
@@ -25,7 +35,7 @@ export const playNotificationSound = (soundPath = '/sounds/notification.mp3') =>
 };
 
 export const playSuccessSound = () => {
-  playNotificationSound('/sounds/success.mp3');
+  playNotificationSound('/sounds/success-fanfare-trumpets-6185.mp3');
 };
 
 export const playErrorSound = () => {
