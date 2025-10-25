@@ -34,10 +34,11 @@ import BlogBestToolsToCompressImagesOnline from './pages/blog/BestToolsToCompres
 import BlogCompressPptxPresentationsWithoutLosingQuality from './pages/blog/CompressPptxPresentationsWithoutLosingQuality';
 import BlogReducePdfFileSizeOnMobile from './pages/blog/ReducePdfFileSizeOnMobile';
 import BlogHowToCompressFilesForFasterWebsiteLoading from './pages/blog/HowToCompressFilesForFasterWebsiteLoading';
+import ScrollToTop from './components/ScrollToTop';
 import BlogWhyFileCompressionIsEssentialForRemoteWork from './pages/blog/WhyFileCompressionIsEssentialForRemoteWork';
 import BlogCompressingPdfForPrintingVsEmailing from './pages/blog/CompressingPdfForPrintingVsEmailing';
 import BlogHowToCompressLargeVideosBeforeUploading from './pages/blog/HowToCompressLargeVideosBeforeUploading';
-import ScrollToTop from './components/ScrollToTop';
+import OurBlogs from './pages/OurBlogs';
 
 // Register service worker for PWA functionality
 if ('serviceWorker' in navigator) {
@@ -89,6 +90,7 @@ ReactDOM.createRoot(root).render(
           <Route path="blog/why-file-compression-is-essential-for-remote-work" element={<BlogWhyFileCompressionIsEssentialForRemoteWork />} />
           <Route path="blog/compressing-pdf-for-printing-vs-emailing" element={<BlogCompressingPdfForPrintingVsEmailing />} />
           <Route path="blog/how-to-compress-large-videos-before-uploading" element={<BlogHowToCompressLargeVideosBeforeUploading />} />
+          <Route path="blog" element={<OurBlogs />} />
           <Route path="terms" element={<TermsOfService />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
           <Route path="sdgs" element={<SlimFileSDGs />} />
