@@ -49,7 +49,7 @@ export default function BlogCompressPptxPresentationsWithoutLosingQuality() {
               </div>
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-gray-900">
-              Compress PPTX Presentations Without Losing Quality: Complete Guide 2024
+              Compress PPTX Presentations Without Losing Quality: Complete Guide 2025
             </h1>
             <p className="text-xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto">
               Master the art of PowerPoint compression while maintaining professional presentation quality.

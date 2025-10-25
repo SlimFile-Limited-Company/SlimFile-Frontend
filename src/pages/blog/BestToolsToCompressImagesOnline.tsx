@@ -46,7 +46,7 @@ export default function BlogBestToolsToCompressImagesOnline() {
               </div>
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-gray-900">
-              Best Tools to Compress Images Online: Complete Guide 2024
+              Best Tools to Compress Images Online: Complete Guide 2025
             </h1>
             <p className="text-xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto">
               Compare the top image compression tools and find the perfect solution for your needs.
@@ -68,7 +68,7 @@ export default function BlogBestToolsToCompressImagesOnline() {
             </div>
             <div className="flex items-center justify-center text-green-600 font-medium">
               <CheckCircle className="w-5 h-5 mr-2" />
-              Updated for 2024 • Tested & Reviewed • Professional Recommendations
+              Updated for 2025 • Tested & Reviewed • Professional Recommendations
             </div>
           </div>
         </div>

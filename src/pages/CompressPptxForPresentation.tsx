@@ -30,7 +30,8 @@ import {
   Info,
   Wifi,
   Target,
-  FileText
+  FileText,
+  Image
 } from "lucide-react";
 
 export default function CompressPptxForPresentation() {
@@ -606,7 +607,7 @@ export default function CompressPptxForPresentation() {
             </Link>
 
             <Link to="/compress-images-online" className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow group">
-              <FileImage className="w-10 h-10 text-purple-500 mb-4 group-hover:text-purple-600" />
+              <Image className="w-10 h-10 text-purple-500 mb-4 group-hover:text-purple-600" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-purple-600">
                 Image Optimization
               </h3>

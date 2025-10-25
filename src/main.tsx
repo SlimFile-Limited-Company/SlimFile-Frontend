@@ -71,6 +71,7 @@ ReactDOM.createRoot(root).render(
           <Route path="features" element={<Features />} />
           <Route path="contact" element={<Contact />} />
           <Route path="api" element={<Api />} />
+          <Route path="file-compression-education" element={<FileCompressionEducation />} />
           {/* SEO Landing Pages */}
           <Route path="compress-pdf-online" element={<CompressPdfOnline />} />
           <Route path="compress-pptx-online" element={<CompressPptxOnline />} />

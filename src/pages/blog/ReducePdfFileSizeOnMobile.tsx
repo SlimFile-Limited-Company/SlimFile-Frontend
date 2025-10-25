@@ -52,7 +52,7 @@ export default function BlogReducePdfFileSizeOnMobile() {
               </div>
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-gray-900">
-              Reduce PDF File Size on Mobile: Complete Guide 2024
+              Reduce PDF File Size on Mobile: Complete Guide 2025
             </h1>
             <p className="text-xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto">
               Master mobile PDF compression with browser-based tools that work on iOS and Android.

@@ -56,7 +56,7 @@ export default function BlogHowToCompressLargeVideosBeforeUploading() {
               </div>
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-gray-900">
-              How to Compress Large Videos Before Uploading: Complete Guide 2024
+              How to Compress Large Videos Before Uploading: Complete Guide 2025
             </h1>
             <p className="text-xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto">
               Master video compression techniques to dramatically reduce file sizes while maintaining quality.

@@ -70,7 +70,7 @@ export default function BlogHowToCompressPdfForEmail() {
             </div>
             <div className="flex items-center justify-center text-green-600 font-medium">
               <CheckCircle className="w-5 h-5 mr-2" />
-              Updated for 2024 • Professional Guide • Email Best Practices
+              Updated for 2025 • Professional Guide • Email Best Practices
             </div>
           </div>
         </div>
@@ -390,7 +390,9 @@ export default function BlogHowToCompressPdfForEmail() {
                   <CheckCircle className="w-5 h-5 text-green-500 mt-1 mr-3 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Use Descriptive Names</h4>
-                    <p className="text-gray-600 text-sm">Name your PDF file clearly (e.g., "Project-Proposal-2024.pdf") rather than generic names like "document.pdf".</p>
+                    <p className="text-gray-600 text-sm">
+                      Name your PDF file clearly (e.g., "Project-Proposal-2025.pdf") rather than generic names like "document.pdf".
+                    </p>
                   </div>
                 </div>
               </div>

@@ -109,6 +109,24 @@ export const Header = () => {
                 />
               )}
             </Link>
+
+            <Link
+              to="/sdgs"
+              className={cn(
+                "text-sm font-medium transition-all duration-300 hover:text-red-600 relative",
+                location.pathname === "/sdgs" ? "text-red-600" : "text-gray-600"
+              )}
+            >
+              SDGs
+              {location.pathname === "/sdgs" && (
+                <motion.div
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full"
+                  layoutId="activeTab"
+                  initial={false}
+                  transition={{ duration: 0.3 }}
+                />
+              )}
+            </Link>
             <div
               className="relative"
               onMouseEnter={() => handleDropdownHover('product')}
@@ -265,6 +283,19 @@ export const Header = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Our Blogs
+              </Link>
+
+              <Link
+                to="/sdgs"
+                className={cn(
+                  "px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-red-600 rounded-lg",
+                  location.pathname === "/sdgs"
+                    ? "text-red-600 bg-red-50"
+                    : "text-gray-600 hover:bg-gray-50"
+                )}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                SDGs
               </Link>
               <div className="px-4 py-2">
                 <div className="text-sm font-semibold text-gray-900 mb-2">Product</div>

@@ -57,7 +57,7 @@ export default function BlogHowToCompressFilesForFasterWebsiteLoading() {
               </div>
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-gray-900">
-              How to Compress Files for Faster Website Loading: Complete Guide 2024
+              How to Compress Files for Faster Website Loading: Complete Guide 2025
             </h1>
             <p className="text-xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto">
               Master website performance optimization through strategic file compression. Learn professional techniques

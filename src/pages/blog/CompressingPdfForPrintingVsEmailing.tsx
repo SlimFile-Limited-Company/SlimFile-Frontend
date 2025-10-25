@@ -52,7 +52,7 @@ export default function BlogCompressingPdfForPrintingVsEmailing() {
               </div>
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-gray-900">
-              Compressing PDF for Printing vs Emailing: Complete Strategy Guide 2024
+              Compressing PDF for Printing vs Emailing: Complete Strategy Guide 2025
             </h1>
             <p className="text-xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto">
               Master the art of PDF compression for different delivery methods. Learn when to prioritize print quality
