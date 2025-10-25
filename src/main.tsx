@@ -1,4 +1,5 @@
-import React from 'react';
+import './index.css';
+import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
@@ -15,7 +16,7 @@ import NotFound from './pages/NotFound';
 import Api from './pages/Api';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
-import './index.css';
+import SlimFileSDGs from './pages/SlimFileSDGs';
 import ProtectedRoute from './components/ProtectedRoute';
 import FileCompressionEducation from './pages/FileCompressionEducation';
 import CompressPdfOnline from './pages/CompressPdfOnline';
@@ -26,6 +27,8 @@ import CompressPdfOnIphone from './pages/CompressPdfOnIphone';
 import CompressPdfWithoutLosingQuality from './pages/CompressPdfWithoutLosingQuality';
 import CompressPptxForPresentation from './pages/CompressPptxForPresentation';
 import CompressImagesForWebsite from './pages/CompressImagesForWebsite';
+
+// Blog Pages
 import BlogHowToCompressPdfForEmail from './pages/blog/HowToCompressPdfForEmail';
 import BlogBestToolsToCompressImagesOnline from './pages/blog/BestToolsToCompressImagesOnline';
 import BlogCompressPptxPresentationsWithoutLosingQuality from './pages/blog/CompressPptxPresentationsWithoutLosingQuality';
@@ -52,7 +55,7 @@ if ('serviceWorker' in navigator) {
 const root = document.getElementById('root');
 
 ReactDOM.createRoot(root).render(
-  <React.StrictMode>
+  <StrictMode>
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
@@ -88,12 +91,11 @@ ReactDOM.createRoot(root).render(
           <Route path="blog/how-to-compress-large-videos-before-uploading" element={<BlogHowToCompressLargeVideosBeforeUploading />} />
           <Route path="terms" element={<TermsOfService />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
-          <Route path="file-compression-education" element={<FileCompressionEducation />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="sdgs" element={<SlimFileSDGs />} />
         </Route>
       </Routes>
     </BrowserRouter>
-  </React.StrictMode>
+  </StrictMode>
 );
 
 // Add Google Identity Services script
