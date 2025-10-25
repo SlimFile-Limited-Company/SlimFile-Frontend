@@ -18,20 +18,22 @@ import {
 
 const SDGSection = ({ icon: Icon, title, objective, children, bgColor = "bg-white" }) => (
   <section className={`rounded-2xl p-8 mb-8 shadow-lg border-l-4 ${bgColor} border-primary`}>
-    <div className="flex items-center mb-6">
-      <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mr-4">
-        <Icon className="w-8 h-8 text-primary" />
-      </div>
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
-        <p className="text-sm text-primary font-medium mb-2">{objective}</p>
-        <div className="flex items-center text-gray-600">
-          <Target className="w-4 h-4 mr-1" />
-          <span className="text-sm">UN Sustainable Development Goal</span>
+    <div className="flex flex-col sm:flex-row sm:items-center mb-6">
+      <div className="flex items-center justify-center sm:justify-start w-full sm:w-auto mb-4 sm:mb-0">
+        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mr-4">
+          <Icon className="w-8 h-8 text-primary" />
+        </div>
+        <div className="text-left sm:text-left">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
+          <p className="text-sm text-primary font-medium mb-2">{objective}</p>
+          <div className="flex items-center text-gray-600">
+            <Target className="w-4 h-4 mr-1" />
+            <span className="text-sm">UN Sustainable Development Goal</span>
+          </div>
         </div>
       </div>
     </div>
-    <div className="text-gray-700 text-lg leading-relaxed pl-20">
+    <div className="text-gray-700 text-lg leading-relaxed">
       {children}
     </div>
   </section>
@@ -42,8 +44,8 @@ const SlimFileSDGs = () => {
     <div className="min-h-screen pt-16 bg-gray-50">
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-primary/10 via-white to-green-50 py-20 px-4 sm:px-6 lg:px-8 mb-12">
-        <div className="container mx-auto max-w-4xl text-center">
-          <div className="flex items-center justify-center mb-6">
+        <div className="container mx-auto max-w-4xl text-left sm:text-center">
+          <div className="flex items-center justify-start sm:justify-center mb-6">
             <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mr-4">
               <Globe className="w-10 h-10 text-primary" />
             </div>
@@ -51,14 +53,14 @@ const SlimFileSDGs = () => {
               <Leaf className="w-10 h-10 text-green-600" />
             </div>
           </div>
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-5xl font-bold text-gray-900 mb-6 text-left sm:text-center">
             SlimFile and the UN Sustainable Development Goals
           </h1>
-          <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto text-left sm:text-center">
             SlimFile's advanced file compression services promote <strong className="text-primary">digital sustainability</strong> by shrinking data,
             thereby saving energy and resources. By reducing file sizes and bandwidth needs, SlimFile directly lowers energy consumption in servers and networks.
           </p>
-          <div className="flex items-center justify-center text-green-600">
+          <div className="flex items-center justify-start sm:justify-center text-green-600">
             <span className="text-lg font-medium">Data centers and digital infrastructure account for roughly 2% (1 gigaton) of global CO₂ emissions</span>
           </div>
         </div>
@@ -67,10 +69,10 @@ const SlimFileSDGs = () => {
       <div className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         {/* Introduction */}
         <div className="bg-white rounded-2xl p-8 mb-12 shadow-lg">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-left sm:text-center">
             Supporting Global Sustainability Through Digital Efficiency
           </h2>
-          <p className="text-lg text-gray-700 leading-relaxed text-center">
+          <p className="text-lg text-gray-700 leading-relaxed text-left sm:text-center">
             In today's world, data centers and digital infrastructure account for roughly 2% of global CO₂ emissions – a carbon footprint
             comparable to the airline industry. By reducing file sizes and bandwidth needs, SlimFile directly lowers energy consumption in
             servers and networks. This approach – akin to eliminating unnecessary "digital waste" – supports sustainable energy use and cost
@@ -265,7 +267,7 @@ const SlimFileSDGs = () => {
 
         {/* Supporting SDGs */}
         <div className="bg-white rounded-2xl p-8 mb-12 shadow-lg">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Supporting Sustainable Development Goals</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-left sm:text-center">Supporting Sustainable Development Goals</h2>
 
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-purple-50 rounded-xl p-6 border-l-4 border-purple-500">
@@ -298,8 +300,8 @@ const SlimFileSDGs = () => {
 
         {/* Sources and Citations */}
         <div className="bg-gray-100 rounded-2xl p-8 mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Sources and Citations</h2>
-          <p className="text-gray-700 mb-6 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-left sm:text-center">Sources and Citations</h2>
+          <p className="text-gray-700 mb-6 text-left sm:text-center">
             United Nations SDG materials and sustainability research have been cited to highlight SlimFile's alignment with each goal.
             These include official SDG descriptions and studies on data compression's energy and environmental benefits.
           </p>
@@ -360,7 +362,7 @@ const SlimFileSDGs = () => {
           <p className="text-xl mb-6 opacity-90">
             By choosing SlimFile, you're not just compressing files – you're contributing to a more sustainable digital future.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-start sm:justify-center">
             <a href="/compress"
                className="bg-white text-primary px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center">
               Start Compressing <ChevronRight className="w-5 h-5 ml-2" />
