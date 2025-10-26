@@ -34,40 +34,40 @@ export default function BlogBestToolsToCompressImagesOnline() {
   return (
     <div className="min-h-screen pt-16">
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 via-white to-blue-50">
         <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center mb-6">
-              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-purple-100 mr-4">
-                <Image className="w-10 h-10 text-purple-600" />
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row items-center justify-center mb-6">
+              <div className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-purple-100 mb-4 sm:mb-0 sm:mr-4">
+                <Image className="w-8 h-8 sm:w-10 sm:h-10 text-purple-600" />
               </div>
-              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-blue-100">
-                <Award className="w-10 h-10 text-blue-600" />
+              <div className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-blue-100">
+                <Award className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" />
               </div>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-gray-900">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-gray-900 leading-tight">
               Best Tools to Compress Images Online: Complete Guide 2025
             </h1>
-            <p className="text-xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-700 mb-6 sm:mb-8 leading-relaxed max-w-3xl mx-auto px-4 sm:px-0">
               Compare the top image compression tools and find the perfect solution for your needs.
               From basic compression to advanced optimization, we've tested and reviewed the best options available.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-6 sm:mb-8">
               <Link to="/compress-images-online">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg font-semibold">
-                  <Upload className="w-5 h-5 mr-2" />
+                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
+                  <Upload className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Try SlimFile Now
                 </Button>
               </Link>
               <Link to="/compress">
-                <Button size="lg" variant="outline" className="px-8 py-3 rounded-lg font-semibold">
-                  <Image className="w-5 h-5 mr-2" />
+                <Button size="lg" variant="outline" className="px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
+                  <Image className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   All Image Tools
                 </Button>
               </Link>
             </div>
-            <div className="flex items-center justify-center text-green-600 font-medium">
-              <CheckCircle className="w-5 h-5 mr-2" />
+            <div className="flex items-center justify-center text-green-600 font-medium text-sm sm:text-base">
+              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Updated for 2025 • Tested & Reviewed • Professional Recommendations
             </div>
           </div>
@@ -75,36 +75,36 @@ export default function BlogBestToolsToCompressImagesOnline() {
       </section>
 
       {/* Quick Overview */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-10 sm:py-12 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Top Recommendations</h2>
-            <p className="text-lg text-gray-600">Based on comprehensive testing of features, performance, and user experience</p>
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">Our Top Recommendations</h2>
+            <p className="text-base sm:text-lg text-gray-600">Based on comprehensive testing of features, performance, and user experience</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-6 text-center border-2 border-yellow-200">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-yellow-500 text-white mx-auto mb-4">
-                <Award className="w-8 h-8" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-4 sm:p-6 text-center border-2 border-yellow-200">
+              <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-yellow-500 text-white mx-auto mb-3 sm:mb-4">
+                <Award className="w-6 h-6 sm:w-8 sm:h-8" />
               </div>
-              <h3 className="text-xl font-bold text-yellow-900 mb-2">Best Overall</h3>
-              <p className="font-semibold text-yellow-800 mb-2">SlimFile</p>
-              <p className="text-sm text-yellow-700">Client-side processing, multiple formats, batch compression</p>
+              <h3 className="text-lg sm:text-xl font-bold text-yellow-900 mb-2">Best Overall</h3>
+              <p className="font-semibold text-yellow-800 mb-2 text-sm sm:text-base">SlimFile</p>
+              <p className="text-xs sm:text-sm text-yellow-700">Client-side processing, multiple formats, batch compression</p>
             </div>
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 text-center border-2 border-blue-200">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-500 text-white mx-auto mb-4">
-                <Zap className="w-8 h-8" />
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 sm:p-6 text-center border-2 border-blue-200">
+              <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-blue-500 text-white mx-auto mb-3 sm:mb-4">
+                <Zap className="w-6 h-6 sm:w-8 sm:h-8" />
               </div>
-              <h3 className="text-xl font-bold text-blue-900 mb-2">Best Speed</h3>
-              <p className="font-semibold text-blue-800 mb-2">TinyPNG</p>
-              <p className="text-sm text-blue-700">Lightning fast, excellent for PNG optimization</p>
+              <h3 className="text-lg sm:text-xl font-bold text-blue-900 mb-2">Best Speed</h3>
+              <p className="font-semibold text-blue-800 mb-2 text-sm sm:text-base">TinyPNG</p>
+              <p className="text-xs sm:text-sm text-blue-700">Lightning fast, excellent for PNG optimization</p>
             </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 text-center border-2 border-green-200">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-green-500 text-white mx-auto mb-4">
-                <Target className="w-8 h-8" />
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 sm:p-6 text-center border-2 border-green-200">
+              <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-green-500 text-white mx-auto mb-3 sm:mb-4">
+                <Target className="w-6 h-6 sm:w-8 sm:h-8" />
               </div>
-              <h3 className="text-xl font-bold text-green-900 mb-2">Best Quality</h3>
-              <p className="font-semibold text-green-800 mb-2">ImageOptim</p>
-              <p className="text-sm text-green-700">Maximum quality retention, professional results</p>
+              <h3 className="text-lg sm:text-xl font-bold text-green-900 mb-2">Best Quality</h3>
+              <p className="font-semibold text-green-800 mb-2 text-sm sm:text-base">ImageOptim</p>
+              <p className="text-xs sm:text-sm text-green-700">Maximum quality retention, professional results</p>
             </div>
           </div>
         </div>
@@ -161,52 +161,52 @@ export default function BlogBestToolsToCompressImagesOnline() {
               and additional features. Here's our comprehensive breakdown:
             </p>
 
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
 
               {/* SlimFile */}
-              <div className="border border-primary rounded-xl p-6 bg-primary/5">
-                <div className="flex items-start">
-                  <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mr-6">
-                    <Image className="w-8 h-8 text-primary" />
+              <div className="border border-primary rounded-xl p-4 sm:p-6 bg-primary/5">
+                <div className="flex flex-col sm:flex-row items-start">
+                  <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 mb-4 sm:mb-0 sm:mr-6">
+                    <Image className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center mb-3">
-                      <h3 className="text-2xl font-bold text-gray-900 mr-3">1. SlimFile</h3>
+                  <div className="flex-1 w-full">
+                    <div className="flex flex-col sm:flex-row sm:items-center mb-3">
+                      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-0 sm:mr-3">1. SlimFile</h3>
                       <div className="flex items-center">
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <span className="ml-2 text-sm font-medium text-gray-600">5.0/5.0</span>
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <span className="ml-2 text-xs sm:text-sm font-medium text-gray-600">5.0/5.0</span>
                       </div>
                     </div>
-                    <p className="text-gray-700 mb-4">
+                    <p className="text-gray-700 mb-4 text-sm sm:text-base leading-relaxed">
                       <strong>Best Overall Choice.</strong> SlimFile stands out with client-side processing, comprehensive format support,
                       and professional-grade compression algorithms. Perfect for businesses and individuals who value privacy and quality.
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                       <div className="bg-green-100 rounded-lg p-3 text-center">
-                        <CheckCircle className="w-5 h-5 text-green-600 mx-auto mb-1" />
-                        <span className="text-sm font-medium text-green-800">Client-side processing</span>
+                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mx-auto mb-1" />
+                        <span className="text-xs sm:text-sm font-medium text-green-800">Client-side processing</span>
                       </div>
                       <div className="bg-green-100 rounded-lg p-3 text-center">
-                        <CheckCircle className="w-5 h-5 text-green-600 mx-auto mb-1" />
-                        <span className="text-sm font-medium text-green-800">Batch compression</span>
+                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mx-auto mb-1" />
+                        <span className="text-xs sm:text-sm font-medium text-green-800">Batch compression</span>
                       </div>
                       <div className="bg-green-100 rounded-lg p-3 text-center">
-                        <CheckCircle className="w-5 h-5 text-green-600 mx-auto mb-1" />
-                        <span className="text-sm font-medium text-green-800">Multiple formats</span>
+                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mx-auto mb-1" />
+                        <span className="text-xs sm:text-sm font-medium text-green-800">Multiple formats</span>
                       </div>
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <Link to="/compress-images-online" className="bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:bg-primary/90 transition-colors text-center">
+                      <Link to="/compress-images-online" className="bg-primary text-white px-4 sm:px-6 py-2 rounded-lg font-semibold hover:bg-primary/90 transition-colors text-center text-sm sm:text-base">
                         Try SlimFile Free
                       </Link>
-                      <div className="text-sm text-gray-600 flex items-center">
-                        <span className="font-semibold">Free:</span> Unlimited usage • <span className="font-semibold">Pro:</span> $9.99/month
+                      <div className="text-xs sm:text-sm text-gray-600 flex items-center justify-center sm:justify-start">
+                        <span className="font-semibold">Free:</span> Unlimited usage
                       </div>
                     </div>
                   </div>
@@ -214,44 +214,44 @@ export default function BlogBestToolsToCompressImagesOnline() {
               </div>
 
               {/* TinyPNG */}
-              <div className="border border-blue-200 rounded-xl p-6 bg-blue-50/50">
-                <div className="flex items-start">
-                  <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mr-6">
-                    <Zap className="w-8 h-8 text-blue-600" />
+              <div className="border border-blue-200 rounded-xl p-4 sm:p-6 bg-blue-50/50">
+                <div className="flex flex-col sm:flex-row items-start">
+                  <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-blue-100 mb-4 sm:mb-0 sm:mr-6">
+                    <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center mb-3">
-                      <h3 className="text-2xl font-bold text-gray-900 mr-3">2. TinyPNG</h3>
+                  <div className="flex-1 w-full">
+                    <div className="flex flex-col sm:flex-row sm:items-center mb-3">
+                      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-0 sm:mr-3">2. TinyPNG</h3>
                       <div className="flex items-center">
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <Star className="w-5 h-5 text-gray-300" />
-                        <span className="ml-2 text-sm font-medium text-gray-600">4.8/5.0</span>
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300" />
+                        <span className="ml-2 text-xs sm:text-sm font-medium text-gray-600">4.8/5.0</span>
                       </div>
                     </div>
-                    <p className="text-gray-700 mb-4">
+                    <p className="text-gray-700 mb-4 text-sm sm:text-base leading-relaxed">
                       <strong>Best for Speed.</strong> TinyPNG excels at PNG and JPEG compression with incredibly fast processing times.
                       Excellent for developers and designers who need quick results without compromising quality.
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                       <div className="bg-blue-100 rounded-lg p-3 text-center">
-                        <Clock className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-                        <span className="text-sm font-medium text-blue-800">Ultra fast</span>
+                        <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mx-auto mb-1" />
+                        <span className="text-xs sm:text-sm font-medium text-blue-800">Ultra fast</span>
                       </div>
                       <div className="bg-blue-100 rounded-lg p-3 text-center">
-                        <Target className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-                        <span className="text-sm font-medium text-blue-800">PNG specialist</span>
+                        <Target className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mx-auto mb-1" />
+                        <span className="text-xs sm:text-sm font-medium text-blue-800">PNG specialist</span>
                       </div>
                       <div className="bg-blue-100 rounded-lg p-3 text-center">
-                        <Settings className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-                        <span className="text-sm font-medium text-blue-800">API available</span>
+                        <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mx-auto mb-1" />
+                        <span className="text-xs sm:text-sm font-medium text-blue-800">API available</span>
                       </div>
                     </div>
 
-                    <div className="text-sm text-gray-600">
+                    <div className="text-xs sm:text-sm text-gray-600">
                       <span className="font-semibold">Free:</span> 500 images/month • <span className="font-semibold">Pro:</span> $25/year for 10,000 images
                     </div>
                   </div>
@@ -259,44 +259,44 @@ export default function BlogBestToolsToCompressImagesOnline() {
               </div>
 
               {/* ImageOptim */}
-              <div className="border border-green-200 rounded-xl p-6 bg-green-50/50">
-                <div className="flex items-start">
-                  <div className="flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mr-6">
-                    <Target className="w-8 h-8 text-green-600" />
+              <div className="border border-green-200 rounded-xl p-4 sm:p-6 bg-green-50/50">
+                <div className="flex flex-col sm:flex-row items-start">
+                  <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-green-100 mb-4 sm:mb-0 sm:mr-6">
+                    <Target className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center mb-3">
-                      <h3 className="text-2xl font-bold text-gray-900 mr-3">3. ImageOptim</h3>
+                  <div className="flex-1 w-full">
+                    <div className="flex flex-col sm:flex-row sm:items-center mb-3">
+                      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-0 sm:mr-3">3. ImageOptim</h3>
                       <div className="flex items-center">
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                        <Star className="w-5 h-5 text-gray-300" />
-                        <span className="ml-2 text-sm font-medium text-gray-600">4.7/5.0</span>
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300" />
+                        <span className="ml-2 text-xs sm:text-sm font-medium text-gray-600">4.7/5.0</span>
                       </div>
                     </div>
-                    <p className="text-gray-700 mb-4">
+                    <p className="text-gray-700 mb-4 text-sm sm:text-base leading-relaxed">
                       <strong>Best for Quality.</strong> ImageOptim prioritizes quality retention while achieving excellent compression ratios.
                       Popular among professional photographers and designers who demand the best results.
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                       <div className="bg-green-100 rounded-lg p-3 text-center">
-                        <Target className="w-5 h-5 text-green-600 mx-auto mb-1" />
-                        <span className="text-sm font-medium text-green-800">Quality focused</span>
+                        <Target className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mx-auto mb-1" />
+                        <span className="text-xs sm:text-sm font-medium text-green-800">Quality focused</span>
                       </div>
                       <div className="bg-green-100 rounded-lg p-3 text-center">
-                        <Shield className="w-5 h-5 text-green-600 mx-auto mb-1" />
-                        <span className="text-sm font-medium text-green-800">Mac optimized</span>
+                        <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mx-auto mb-1" />
+                        <span className="text-xs sm:text-sm font-medium text-green-800">Mac optimized</span>
                       </div>
                       <div className="bg-green-100 rounded-lg p-3 text-center">
-                        <HardDrive className="w-5 h-5 text-green-600 mx-auto mb-1" />
-                        <span className="text-sm font-medium text-green-800">Batch processing</span>
+                        <HardDrive className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mx-auto mb-1" />
+                        <span className="text-xs sm:text-sm font-medium text-green-800">Batch processing</span>
                       </div>
                     </div>
 
-                    <div className="text-sm text-gray-600">
+                    <div className="text-xs sm:text-sm text-gray-600">
                       <span className="font-semibold">Free:</span> Desktop app • <span className="font-semibold">Online:</span> Limited free trial
                     </div>
                   </div>
@@ -369,54 +369,54 @@ export default function BlogBestToolsToCompressImagesOnline() {
               Feature Comparison Matrix
             </h2>
 
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse border border-gray-300 rounded-lg">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <table className="w-full min-w-[600px] border-collapse border border-gray-300 rounded-lg">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="border border-gray-300 px-4 py-3 text-left font-semibold">Tool</th>
-                    <th className="border border-gray-300 px-4 py-3 text-center font-semibold">Free Usage</th>
-                    <th className="border border-gray-300 px-4 py-3 text-center font-semibold">Batch Processing</th>
-                    <th className="border border-gray-300 px-4 py-3 text-center font-semibold">Format Support</th>
-                    <th className="border border-gray-300 px-4 py-3 text-center font-semibold">Max Quality</th>
-                    <th className="border border-gray-300 px-4 py-3 text-center font-semibold">Processing Speed</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold text-sm">Tool</th>
+                    <th className="border border-gray-300 px-3 py-3 text-center font-semibold text-sm">Free Usage</th>
+                    <th className="border border-gray-300 px-3 py-3 text-center font-semibold text-sm">Batch Processing</th>
+                    <th className="border border-gray-300 px-3 py-3 text-center font-semibold text-sm">Format Support</th>
+                    <th className="border border-gray-300 px-3 py-3 text-center font-semibold text-sm">Max Quality</th>
+                    <th className="border border-gray-300 px-3 py-3 text-center font-semibold text-sm">Processing Speed</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="hover:bg-blue-50">
-                    <td className="border border-gray-300 px-4 py-3 font-medium bg-blue-100">SlimFile</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">
-                      <CheckCircle className="w-5 h-5 text-green-500 mx-auto" />
+                    <td className="border border-gray-300 px-3 py-3 font-medium bg-blue-100 text-sm">SlimFile</td>
+                    <td className="border border-gray-300 px-3 py-3 text-center">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                     </td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">
-                      <CheckCircle className="w-5 h-5 text-green-500 mx-auto" />
+                    <td className="border border-gray-300 px-3 py-3 text-center">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                     </td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">All Formats</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">⭐⭐⭐⭐⭐</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">⭐⭐⭐⭐⭐</td>
+                    <td className="border border-gray-300 px-3 py-3 text-center text-sm">All Formats</td>
+                    <td className="border border-gray-300 px-3 py-3 text-center text-sm">⭐⭐⭐⭐⭐</td>
+                    <td className="border border-gray-300 px-3 py-3 text-center text-sm">⭐⭐⭐⭐⭐</td>
                   </tr>
                   <tr className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-3 font-medium">TinyPNG</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">
-                      <CheckCircle className="w-5 h-5 text-green-500 mx-auto" />
+                    <td className="border border-gray-300 px-3 py-3 font-medium text-sm">TinyPNG</td>
+                    <td className="border border-gray-300 px-3 py-3 text-center">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                     </td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">
-                      <X className="w-5 h-5 text-red-500 mx-auto" />
+                    <td className="border border-gray-300 px-3 py-3 text-center">
+                      <X className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 mx-auto" />
                     </td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">JPEG, PNG, WebP</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">⭐⭐⭐⭐⭐</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">⭐⭐⭐⭐⭐</td>
+                    <td className="border border-gray-300 px-3 py-3 text-center text-sm">JPEG, PNG, WebP</td>
+                    <td className="border border-gray-300 px-3 py-3 text-center text-sm">⭐⭐⭐⭐⭐</td>
+                    <td className="border border-gray-300 px-3 py-3 text-center text-sm">⭐⭐⭐⭐⭐</td>
                   </tr>
                   <tr className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-3 font-medium">ImageOptim</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">
-                      <CheckCircle className="w-5 h-5 text-green-500 mx-auto" />
+                    <td className="border border-gray-300 px-3 py-3 font-medium text-sm">ImageOptim</td>
+                    <td className="border border-gray-300 px-3 py-3 text-center">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                     </td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">
-                      <CheckCircle className="w-5 h-5 text-green-500 mx-auto" />
+                    <td className="border border-gray-300 px-3 py-3 text-center">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mx-auto" />
                     </td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">All Formats</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">⭐⭐⭐⭐⭐</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">⭐⭐⭐⭐</td>
+                    <td className="border border-gray-300 px-3 py-3 text-center text-sm">All Formats</td>
+                    <td className="border border-gray-300 px-3 py-3 text-center text-sm">⭐⭐⭐⭐⭐</td>
+                    <td className="border border-gray-300 px-3 py-3 text-center text-sm">⭐⭐⭐⭐</td>
                   </tr>
                 </tbody>
               </table>
@@ -482,7 +482,7 @@ export default function BlogBestToolsToCompressImagesOnline() {
               <div className="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
                 <h4 className="font-semibold text-green-900 mb-2">Free Options</h4>
                 <ul className="text-green-800 space-y-1">
-                  <li><strong>SlimFile:</strong> Unlimited free usage with premium features</li>
+                  <li><strong>SlimFile:</strong> Unlimited free usage</li>
                   <li><strong>Squoosh:</strong> Completely free, open-source</li>
                   <li><strong>TinyPNG:</strong> 500 images per month free</li>
                   <li><strong>ImageOptim:</strong> Free desktop application</li>
@@ -492,7 +492,6 @@ export default function BlogBestToolsToCompressImagesOnline() {
               <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
                 <h4 className="font-semibold text-blue-900 mb-2">Premium Plans</h4>
                 <ul className="text-blue-800 space-y-1">
-                  <li><strong>SlimFile Pro:</strong> $9.99/month - Advanced features, priority support</li>
                   <li><strong>TinyPNG:</strong> $25/year - 10,000 images, API access</li>
                   <li><strong>Kraken.io:</strong> From $5/month - Enterprise features, API</li>
                   <li><strong>ImageOptim Online:</strong> $10/month - Web interface, cloud processing</li>

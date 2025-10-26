@@ -36,40 +36,40 @@ export default function BlogHowToCompressPdfForEmail() {
   return (
     <div className="min-h-screen pt-16">
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-green-50">
+      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-green-50">
         <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center mb-6">
-              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-blue-100 mr-4">
-                <Mail className="w-10 h-10 text-blue-600" />
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row items-center justify-center mb-6">
+              <div className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-blue-100 mb-4 sm:mb-0 sm:mr-4">
+                <Mail className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" />
               </div>
-              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-green-100">
-                <FileText className="w-10 h-10 text-green-600" />
+              <div className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-green-100">
+                <FileText className="w-8 h-8 sm:w-10 sm:h-10 text-green-600" />
               </div>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-gray-900">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-gray-900 leading-tight">
               How to Compress PDF for Email: Complete Guide 2025
             </h1>
-            <p className="text-xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-700 mb-6 sm:mb-8 leading-relaxed max-w-3xl mx-auto px-4 sm:px-0">
               Master PDF compression for email attachments. Avoid bounced emails, ensure reliable delivery,
               and maintain professional document quality with our step-by-step guide.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-6 sm:mb-8">
               <Link to="/compress-pdf-for-email">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg font-semibold">
-                  <Upload className="w-5 h-5 mr-2" />
+                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
+                  <Upload className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Compress PDF Now
                 </Button>
               </Link>
               <Link to="/compress">
-                <Button size="lg" variant="outline" className="px-8 py-3 rounded-lg font-semibold">
-                  <FileText className="w-5 h-5 mr-2" />
+                <Button size="lg" variant="outline" className="px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   All PDF Tools
                 </Button>
               </Link>
             </div>
-            <div className="flex items-center justify-center text-green-600 font-medium">
-              <CheckCircle className="w-5 h-5 mr-2" />
+            <div className="flex items-center justify-center text-green-600 font-medium text-sm sm:text-base">
+              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Updated for 2025 • Professional Guide • Email Best Practices
             </div>
           </div>
@@ -77,24 +77,24 @@ export default function BlogHowToCompressPdfForEmail() {
       </section>
 
       {/* Quick Stats */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-10 sm:py-12 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="container mx-auto max-w-4xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 mb-2">25MB</div>
-              <div className="text-sm text-gray-600">Typical Email Limit</div>
+              <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1 sm:mb-2">25MB</div>
+              <div className="text-xs sm:text-sm text-gray-600">Typical Email Limit</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 mb-2">90%</div>
-              <div className="text-sm text-gray-600">Average Size Reduction</div>
+              <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-1 sm:mb-2">90%</div>
+              <div className="text-xs sm:text-sm text-gray-600">Average Size Reduction</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 mb-2">2M+</div>
-              <div className="text-sm text-gray-600">Successful Deliveries</div>
+              <div className="text-2xl sm:text-3xl font-bold text-purple-600 mb-1 sm:mb-2">2M+</div>
+              <div className="text-xs sm:text-sm text-gray-600">Successful Deliveries</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-orange-600 mb-2">99.9%</div>
-              <div className="text-sm text-gray-600">Delivery Success Rate</div>
+              <div className="text-2xl sm:text-3xl font-bold text-orange-600 mb-1 sm:mb-2">99.9%</div>
+              <div className="text-xs sm:text-sm text-gray-600">Delivery Success Rate</div>
             </div>
           </div>
         </div>
@@ -140,23 +140,23 @@ export default function BlogHowToCompressPdfForEmail() {
         <div className="container mx-auto max-w-4xl">
           <div className="prose prose-lg max-w-none">
 
-            <h2 id="why-compress" className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
-              <Info className="w-8 h-8 text-blue-500 mr-3" />
+            <h2 id="why-compress" className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center">
+              <Info className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 mr-3" />
               Why Compress PDFs for Email?
             </h2>
 
-            <p className="text-lg text-gray-700 leading-relaxed mb-6">
+            <p className="text-base sm:text-lg text-gray-700 leading-relaxed mb-6">
               Email providers impose strict attachment size limits to maintain system performance and prevent abuse.
               Most email services cap attachments between 20-25MB, with some limiting to as low as 10MB.
               Large PDF attachments often result in bounced emails, failed deliveries, or frustrated recipients.
             </p>
 
-            <div className="bg-blue-50 rounded-lg p-6 mb-8">
+            <div className="bg-blue-50 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8">
               <div className="flex items-start">
-                <AlertCircle className="w-6 h-6 text-blue-600 mt-1 mr-3 flex-shrink-0" />
+                <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 mt-1 mr-3 flex-shrink-0" />
                 <div>
-                  <h3 className="text-lg font-semibold text-blue-900 mb-2">Email Provider Limits</h3>
-                  <ul className="text-blue-800 space-y-2">
+                  <h3 className="text-base sm:text-lg font-semibold text-blue-900 mb-2">Email Provider Limits</h3>
+                  <ul className="text-blue-800 space-y-1 sm:space-y-2 text-sm sm:text-base">
                     <li><strong>Gmail:</strong> 25MB per email (including attachments)</li>
                     <li><strong>Outlook:</strong> 20MB per attachment</li>
                     <li><strong>Yahoo Mail:</strong> 25MB total per email</li>
@@ -167,145 +167,145 @@ export default function BlogHowToCompressPdfForEmail() {
               </div>
             </div>
 
-            <h3 className="text-2xl font-semibold text-gray-900 mb-4">Key Benefits of PDF Compression</h3>
+            <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">Key Benefits of PDF Compression</h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
               <div className="border border-green-200 rounded-lg p-4 bg-green-50">
-                <CheckCircle className="w-6 h-6 text-green-600 mb-2" />
-                <h4 className="font-semibold text-green-900 mb-2">Reliable Delivery</h4>
-                <p className="text-green-800 text-sm">
+                <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 mb-2" />
+                <h4 className="font-semibold text-green-900 mb-2 text-sm sm:text-base">Reliable Delivery</h4>
+                <p className="text-green-800 text-xs sm:text-sm">
                   Ensure your emails reach recipients without bouncing or requiring alternative delivery methods.
                 </p>
               </div>
 
               <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
-                <Clock className="w-6 h-6 text-blue-600 mb-2" />
-                <h4 className="font-semibold text-blue-900 mb-2">Faster Sending</h4>
-                <p className="text-blue-800 text-sm">
+                <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 mb-2" />
+                <h4 className="font-semibold text-blue-900 mb-2 text-sm sm:text-base">Faster Sending</h4>
+                <p className="text-blue-800 text-xs sm:text-sm">
                   Smaller files upload and send faster, especially on slower internet connections.
                 </p>
               </div>
 
               <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
-                <Users className="w-6 h-6 text-purple-600 mb-2" />
-                <h4 className="font-semibold text-purple-900 mb-2">Better UX</h4>
-                <p className="text-purple-800 text-sm">
+                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 mb-2" />
+                <h4 className="font-semibold text-purple-900 mb-2 text-sm sm:text-base">Better UX</h4>
+                <p className="text-purple-800 text-xs sm:text-sm">
                   Recipients can download and view attachments quickly without frustration.
                 </p>
               </div>
 
               <div className="border border-orange-200 rounded-lg p-4 bg-orange-50">
-                <ThumbsUp className="w-6 h-6 text-orange-600 mb-2" />
-                <h4 className="font-semibold text-orange-900 mb-2">Professional Image</h4>
-                <p className="text-orange-800 text-sm">
+                <ThumbsUp className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600 mb-2" />
+                <h4 className="font-semibold text-orange-900 mb-2 text-sm sm:text-base">Professional Image</h4>
+                <p className="text-orange-800 text-xs sm:text-sm">
                   Demonstrate technical savvy and consideration for recipients' time and bandwidth.
                 </p>
               </div>
             </div>
 
-            <h2 id="step-by-step" className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
-              <Target className="w-8 h-8 text-green-500 mr-3" />
+            <h2 id="step-by-step" className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center">
+              <Target className="w-6 h-6 sm:w-8 sm:h-8 text-green-500 mr-3" />
               Step-by-Step Guide to Compress PDFs for Email
             </h2>
 
-            <div className="space-y-8">
-              <div className="flex flex-col md:flex-row items-start bg-gray-50 rounded-xl p-6">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-white font-bold text-xl mb-4 md:mb-0 md:mr-6">
+            <div className="space-y-6 sm:space-y-8">
+              <div className="flex flex-col md:flex-row items-start bg-gray-50 rounded-xl p-4 sm:p-6">
+                <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary text-white font-bold text-lg sm:text-xl mb-4 md:mb-0 md:mr-6">
                   1
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Check Your PDF Size</h3>
-                  <p className="text-gray-700 mb-3">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">Check Your PDF Size</h3>
+                  <p className="text-gray-700 mb-3 text-sm sm:text-base leading-relaxed">
                     Before compression, determine your PDF's current size. Right-click the file and select "Properties"
                     or use SlimFile's analyzer to see the current file size and estimated compression potential.
                   </p>
                   <div className="bg-white rounded-lg p-3 border-l-4 border-blue-500">
-                    <p className="text-sm text-blue-800">
+                    <p className="text-xs sm:text-sm text-blue-800">
                       <strong>Pro Tip:</strong> PDFs over 10MB should always be compressed before emailing
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row items-start bg-gray-50 rounded-xl p-6">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-white font-bold text-xl mb-4 md:mb-0 md:mr-6">
+              <div className="flex flex-col md:flex-row items-start bg-gray-50 rounded-xl p-4 sm:p-6">
+                <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary text-white font-bold text-lg sm:text-xl mb-4 md:mb-0 md:mr-6">
                   2
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Choose the Right Compression Tool</h3>
-                  <p className="text-gray-700 mb-3">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">Choose the Right Compression Tool</h3>
+                  <p className="text-gray-700 mb-3 text-sm sm:text-base leading-relaxed">
                     Select a reliable PDF compression tool that maintains quality. SlimFile offers client-side processing,
                     ensuring your documents never leave your device while providing professional-grade compression.
                   </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="bg-green-100 rounded-lg p-3">
-                      <Check className="w-5 h-5 text-green-600 mb-1" />
-                      <span className="text-sm font-medium text-green-800">Client-side processing</span>
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mb-1" />
+                      <span className="text-xs sm:text-sm font-medium text-green-800">Client-side processing</span>
                     </div>
                     <div className="bg-green-100 rounded-lg p-3">
-                      <Check className="w-5 h-5 text-green-600 mb-1" />
-                      <span className="text-sm font-medium text-green-800">Quality preservation</span>
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mb-1" />
+                      <span className="text-xs sm:text-sm font-medium text-green-800">Quality preservation</span>
                     </div>
                     <div className="bg-green-100 rounded-lg p-3">
-                      <Check className="w-5 h-5 text-green-600 mb-1" />
-                      <span className="text-sm font-medium text-green-800">Batch processing</span>
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mb-1" />
+                      <span className="text-xs sm:text-sm font-medium text-green-800">Batch processing</span>
                     </div>
                     <div className="bg-green-100 rounded-lg p-3">
-                      <Check className="w-5 h-5 text-green-600 mb-1" />
-                      <span className="text-sm font-medium text-green-800">Multiple formats</span>
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mb-1" />
+                      <span className="text-xs sm:text-sm font-medium text-green-800">Multiple formats</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row items-start bg-gray-50 rounded-xl p-6">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-white font-bold text-xl mb-4 md:mb-0 md:mr-6">
+              <div className="flex flex-col md:flex-row items-start bg-gray-50 rounded-xl p-4 sm:p-6">
+                <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary text-white font-bold text-lg sm:text-xl mb-4 md:mb-0 md:mr-6">
                   3
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Upload and Compress</h3>
-                  <p className="text-gray-700 mb-3">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">Upload and Compress</h3>
+                  <p className="text-gray-700 mb-3 text-sm sm:text-base leading-relaxed">
                     Upload your PDF to the compression tool. Most tools offer automatic optimization, but you can
                     adjust compression levels based on your needs. For email, medium to high compression usually works best.
                   </p>
                   <div className="bg-amber-50 rounded-lg p-3 border-l-4 border-amber-500">
-                    <p className="text-sm text-amber-800">
+                    <p className="text-xs sm:text-sm text-amber-800">
                       <strong>Email Recommendation:</strong> Use "High Quality" or "Email Optimized" settings for best results
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row items-start bg-gray-50 rounded-xl p-6">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-white font-bold text-xl mb-4 md:mb-0 md:mr-6">
+              <div className="flex flex-col md:flex-row items-start bg-gray-50 rounded-xl p-4 sm:p-6">
+                <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary text-white font-bold text-lg sm:text-xl mb-4 md:mb-0 md:mr-6">
                   4
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Verify Quality</h3>
-                  <p className="text-gray-700 mb-3">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">Verify Quality</h3>
+                  <p className="text-gray-700 mb-3 text-sm sm:text-base leading-relaxed">
                     Always preview the compressed PDF before sending. Check that text is readable, images are clear,
                     and all important details are preserved. Use zoom functions to verify quality at different levels.
                   </p>
                   <div className="bg-purple-50 rounded-lg p-3 border-l-4 border-purple-500">
-                    <p className="text-sm text-purple-800">
+                    <p className="text-xs sm:text-sm text-purple-800">
                       <strong>Quality Check:</strong> Zoom to 100-200% to verify text sharpness and image clarity
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row items-start bg-gray-50 rounded-xl p-6">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-white font-bold text-xl mb-4 md:mb-0 md:mr-6">
+              <div className="flex flex-col md:flex-row items-start bg-gray-50 rounded-xl p-4 sm:p-6">
+                <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary text-white font-bold text-lg sm:text-xl mb-4 md:mb-0 md:mr-6">
                   5
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Attach and Send</h3>
-                  <p className="text-gray-700 mb-3">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">Attach and Send</h3>
+                  <p className="text-gray-700 mb-3 text-sm sm:text-base leading-relaxed">
                     Attach the compressed PDF to your email. Double-check the file size in your email client
                     and send a test email to yourself first to ensure everything works correctly.
                   </p>
                   <div className="bg-blue-50 rounded-lg p-3 border-l-4 border-blue-500">
-                    <p className="text-sm text-blue-800">
+                    <p className="text-xs sm:text-sm text-blue-800">
                       <strong>Best Practice:</strong> Send test emails to verify delivery and quality on different devices
                     </p>
                   </div>
@@ -318,46 +318,46 @@ export default function BlogHowToCompressPdfForEmail() {
               Email Provider Size Limits & Requirements
             </h2>
 
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse border border-gray-300 rounded-lg">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <table className="w-full min-w-[600px] border-collapse border border-gray-300 rounded-lg">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="border border-gray-300 px-4 py-3 text-left font-semibold">Email Provider</th>
-                    <th className="border border-gray-300 px-4 py-3 text-left font-semibold">Attachment Limit</th>
-                    <th className="border border-gray-300 px-4 py-3 text-left font-semibold">Total Email Limit</th>
-                    <th className="border border-gray-300 px-4 py-3 text-left font-semibold">Compression Needed</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold text-sm">Email Provider</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold text-sm">Attachment Limit</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold text-sm">Total Email Limit</th>
+                    <th className="border border-gray-300 px-3 py-3 text-left font-semibold text-sm">Compression Needed</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-3 font-medium">Gmail</td>
-                    <td className="border border-gray-300 px-4 py-3">25MB per file</td>
-                    <td className="border border-gray-300 px-4 py-3">25MB total</td>
-                    <td className="border border-gray-300 px-4 py-3">&gt;25MB files</td>
+                    <td className="border border-gray-300 px-3 py-3 font-medium text-sm">Gmail</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">25MB per file</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">25MB total</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">&gt;25MB files</td>
                   </tr>
                   <tr className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-3 font-medium">Outlook.com</td>
-                    <td className="border border-gray-300 px-4 py-3">20MB per file</td>
-                    <td className="border border-gray-300 px-4 py-3">No strict limit</td>
-                    <td className="border border-gray-300 px-4 py-3">&gt;20MB files</td>
+                    <td className="border border-gray-300 px-3 py-3 font-medium text-sm">Outlook.com</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">20MB per file</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">No strict limit</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">&gt;20MB files</td>
                   </tr>
                   <tr className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-3 font-medium">Yahoo Mail</td>
-                    <td className="border border-gray-300 px-4 py-3">25MB per file</td>
-                    <td className="border border-gray-300 px-4 py-3">25MB total</td>
-                    <td className="border border-gray-300 px-4 py-3">&gt;25MB files</td>
+                    <td className="border border-gray-300 px-3 py-3 font-medium text-sm">Yahoo Mail</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">25MB per file</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">25MB total</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">&gt;25MB files</td>
                   </tr>
                   <tr className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-3 font-medium">iCloud Mail</td>
-                    <td className="border border-gray-300 px-4 py-3">20MB per file</td>
-                    <td className="border border-gray-300 px-4 py-3">No strict limit</td>
-                    <td className="border border-gray-300 px-4 py-3">&gt;20MB files</td>
+                    <td className="border border-gray-300 px-3 py-3 font-medium text-sm">iCloud Mail</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">20MB per file</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">No strict limit</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">&gt;20MB files</td>
                   </tr>
                   <tr className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-3 font-medium">Corporate Email</td>
-                    <td className="border border-gray-300 px-4 py-3">10-15MB typically</td>
-                    <td className="border border-gray-300 px-4 py-3">Varies</td>
-                    <td className="border border-gray-300 px-4 py-3">&gt;10-15MB files</td>
+                    <td className="border border-gray-300 px-3 py-3 font-medium text-sm">Corporate Email</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">10-15MB typically</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">Varies</td>
+                    <td className="border border-gray-300 px-3 py-3 text-sm">&gt;10-15MB files</td>
                   </tr>
                 </tbody>
               </table>
