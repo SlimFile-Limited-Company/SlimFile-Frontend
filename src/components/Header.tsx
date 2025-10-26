@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isAuthenticated, logout } from "@/lib/auth";
-import { motion } from "framer-motion";
 
 export const Header = () => {
   const location = useLocation();
@@ -62,12 +61,10 @@ export const Header = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-4 hover:opacity-80 transition-opacity">
-            <motion.img
+            <img
               src="/logo.gif"
               alt="SlimFile Logo"
               className="h-10 w-10 object-contain rounded-lg"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
             />
             <span className="text-2xl font-bold text-gray-900">SlimFile</span>
           </Link>
@@ -83,12 +80,7 @@ export const Header = () => {
             >
               Home
               {location.pathname === "/" && (
-                <motion.div
-                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full"
-                  layoutId="activeTab"
-                  initial={false}
-                  transition={{ duration: 0.3 }}
-                />
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
               )}
             </Link>
 
@@ -101,12 +93,7 @@ export const Header = () => {
             >
               Our Blogs
               {location.pathname === "/blog" && (
-                <motion.div
-                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full"
-                  layoutId="activeTab"
-                  initial={false}
-                  transition={{ duration: 0.3 }}
-                />
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
               )}
             </Link>
 
@@ -119,12 +106,7 @@ export const Header = () => {
             >
               SDGs
               {location.pathname === "/sdgs" && (
-                <motion.div
-                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full"
-                  layoutId="activeTab"
-                  initial={false}
-                  transition={{ duration: 0.3 }}
-                />
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
               )}
             </Link>
             <div
@@ -136,24 +118,11 @@ export const Header = () => {
                 <span>Product</span>
                 <ChevronDown className="w-4 h-4" />
                 {productNavigation.some(item => isActiveRoute(item.href)) && (
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full"
-                    layoutId="activeTab"
-                    initial={false}
-                    transition={{ duration: 0.3 }}
-                  />
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
                 )}
               </button>
               {hoveredDropdown === 'product' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
-                  onMouseEnter={() => handleDropdownHover('product')}
-                  onMouseLeave={() => handleDropdownHover(null)}
-                >
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                   {productNavigation.map((item, index) => (
                     <Link
                       key={item.name}
@@ -166,7 +135,7 @@ export const Header = () => {
                       {item.name}
                     </Link>
                   ))}
-                </motion.div>
+                </div>
               )}
             </div>
 
@@ -180,24 +149,11 @@ export const Header = () => {
                 <span>Company</span>
                 <ChevronDown className="w-4 h-4" />
                 {companyNavigation.some(item => isActiveRoute(item.href)) && (
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full"
-                    layoutId="activeTab"
-                    initial={false}
-                    transition={{ duration: 0.3 }}
-                  />
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
                 )}
               </button>
               {hoveredDropdown === 'company' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
-                  onMouseEnter={() => handleDropdownHover('company')}
-                  onMouseLeave={() => handleDropdownHover(null)}
-                >
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                   {companyNavigation.map((item, index) => (
                     <Link
                       key={item.name}
@@ -210,24 +166,18 @@ export const Header = () => {
                       {item.name}
                     </Link>
                   ))}
-                </motion.div>
+                </div>
               )}
             </div>
 
             {isAuthenticated() && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
+              <Button
+                variant="outline"
+                className="ml-4"
+                onClick={logout}
               >
-                <Button
-                  variant="outline"
-                  className="ml-4"
-                  onClick={logout}
-                >
-                  Logout
-                </Button>
-              </motion.div>
+                Logout
+              </Button>
             )}
           </nav>
 
@@ -239,25 +189,16 @@ export const Header = () => {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="hover:bg-red-50"
             >
-              <motion.div
-                animate={{ rotate: mobileMenuOpen ? 90 : 0 }}
-                transition={{ duration: 0.2 }}
-              >
+              <div className="transition-transform duration-200" style={{ transform: mobileMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}>
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </motion.div>
+              </div>
             </Button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <motion.nav
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden py-4 border-t border-gray-100 bg-white/95 backdrop-blur-xl"
-          >
+          <nav className="md:hidden py-4 border-t border-gray-100 bg-white/95 backdrop-blur-xl transition-all duration-300">
             <div className="flex flex-col space-y-2">
               <Link
                 to="/"
@@ -341,12 +282,7 @@ export const Header = () => {
               </div>
 
               {isAuthenticated() && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.1 }}
-                  className="mt-2"
-                >
+                <div className="mt-2">
                   <Button
                     variant="outline"
                     className="w-full mx-4"
@@ -357,10 +293,10 @@ export const Header = () => {
                   >
                     Logout
                   </Button>
-                </motion.div>
+                </div>
               )}
             </div>
-          </motion.nav>
+          </nav>
         )}
       </div>
     </header>
