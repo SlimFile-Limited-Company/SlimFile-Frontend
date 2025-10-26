@@ -82,7 +82,7 @@ export default function Login() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'transparent',
+        backgroundColor: '#f3f4f6', // Fallback gray background
         backgroundImage: 'url("/lovable-uploads/login_image.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
