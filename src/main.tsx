@@ -17,6 +17,7 @@ import Api from './pages/Api';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import SlimFileSDGs from './pages/SlimFileSDGs';
+import Partnerships from './pages/Partnerships';
 import ProtectedRoute from './components/ProtectedRoute';
 import FileCompressionEducation from './pages/FileCompressionEducation';
 import CompressPdfOnline from './pages/CompressPdfOnline';
@@ -95,6 +96,7 @@ ReactDOM.createRoot(root).render(
           <Route path="terms" element={<TermsOfService />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
           <Route path="sdgs" element={<SlimFileSDGs />} />
+          <Route path="partnerships" element={<Partnerships />} />
         </Route>
       </Routes>
     </BrowserRouter>
