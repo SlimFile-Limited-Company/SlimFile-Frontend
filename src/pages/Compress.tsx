@@ -174,13 +174,13 @@ const Compress = () => {
       {/* Main Content */}
       <main className="relative pt-16 z-10">
         {/* Enhanced Hero Section */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8">
-          <div className="container mx-auto text-center">
+        <section className="py-20 px-0 sm:px-6 lg:px-8">
+          <div className="container mx-auto text-center px-4 sm:px-6 lg:px-8">
             <div
               className="max-w-6xl mx-auto"
             >
               {/* Enhanced Glass Card for Hero Content */}
-              <div className="relative bg-white/30 rounded-3xl border border-white/50 shadow-2xl p-8 sm:p-12 lg:p-16 mx-0 sm:mx-6 lg:mx-8 backdrop-blur-sm">
+              <div className="relative bg-white/30 rounded-3xl border border-white/50 shadow-2xl p-6 sm:p-12 lg:p-16 mx-0 sm:mx-6 lg:mx-8 backdrop-blur-sm">
 
                 {/* Content */}
                 <div className="relative z-10">
@@ -262,8 +262,8 @@ const Compress = () => {
         </section>
 
         {/* Enhanced File Upload/Result Section */}
-        <section id="upload-section" className="pb-20 px-4 sm:px-6 lg:px-8">
-          <div className="container mx-auto">
+        <section id="upload-section" className="pb-20 px-0 sm:px-6 lg:px-8">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-white/30 rounded-3xl border border-white/50 shadow-2xl p-4 sm:p-8 max-w-4xl mx-0 sm:mx-auto backdrop-blur-sm">
               {!selectedFiles.length ? (
                 <FileUpload
