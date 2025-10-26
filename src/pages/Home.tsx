@@ -39,428 +39,370 @@ const Home: FC = () => {
   return (
     <div className="min-h-screen pt-5">
       {/* Hero Section */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-red-50/30 via-white to-red-50/20"></div>
-        <motion.div 
-          className="absolute top-0 right-0 w-96 h-96 bg-red-100/20 rounded-full blur-3xl"
-          animate={{ x: [0, 30, -20, 0], y: [0, -20, 10, 0], scale: [1, 1.1, 0.9, 1] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div 
-          className="absolute bottom-0 left-0 w-80 h-80 bg-red-200/20 rounded-full blur-3xl"
-          animate={{ x: [0, -25, 15, 0], y: [0, 15, -10, 0], scale: [1, 0.9, 1.1, 1] }}
+      <section className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-white to-red-50/30 overflow-hidden">
+        {/* Enhanced Glassmorphism Background Elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-red-50/40 via-white/70 to-red-50/20 backdrop-blur-3xl"></div>
+
+        {/* Animated Glass Orbs - Enhanced Glass Feel */}
+        <motion.div
+          className="absolute top-0 right-0 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 bg-gradient-to-br from-red-200/25 via-red-100/35 to-red-50/45 rounded-full blur-3xl backdrop-blur-2xl border-2 border-white/40 shadow-2xl"
+          animate={{
+            x: [0, 40, -30, 0],
+            y: [0, -30, 20, 0],
+            scale: [1, 1.1, 0.9, 1],
+            rotate: [0, 90, 180, 360]
+          }}
           transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+          style={{ backdropFilter: 'blur(15px)' }}
         />
-        <motion.div 
-          className="absolute top-1/4 left-1/4 w-32 h-32 bg-red-300/10 rounded-full blur-2xl"
-          animate={{ x: [0, 50, -30, 0], y: [0, -30, 20, 0], rotate: [0, 180, 360] }}
+        <motion.div
+          className="absolute bottom-0 left-0 w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 bg-gradient-to-tr from-red-300/20 via-red-200/30 to-red-100/40 rounded-full blur-3xl backdrop-blur-2xl border-2 border-white/50 shadow-2xl"
+          animate={{
+            x: [0, -35, 25, 0],
+            y: [0, 25, -20, 0],
+            scale: [1, 0.8, 1.2, 1],
+            rotate: [0, -90, -180, -360]
+          }}
+          transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
+          style={{ backdropFilter: 'blur(15px)' }}
+        />
+        <motion.div
+          className="absolute top-1/3 left-1/3 w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64 bg-gradient-to-br from-red-400/15 via-red-300/25 to-red-200/35 rounded-full blur-2xl backdrop-blur-2xl border-2 border-white/60 shadow-2xl"
+          animate={{
+            x: [0, 60, -40, 0],
+            y: [0, -40, 30, 0],
+            scale: [1, 1.3, 0.7, 1],
+            rotate: [0, 180, 360, 0]
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          style={{ backdropFilter: 'blur(15px)' }}
+        />
+
+        {/* Enhanced Floating Glass Particles - More Glass-like */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-3 h-3 sm:w-4 sm:h-4 bg-red-400/50 rounded-full backdrop-blur-lg border-2 border-white/70 shadow-lg"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              backdropFilter: 'blur(5px)',
+            }}
+            animate={{
+              y: [0, -120, 0],
+              x: [0, Math.random() * 60 - 30, 0],
+              opacity: [0.5, 0.9, 0.5],
+              scale: [0.7, 1.3, 0.7],
+            }}
+            transition={{
+              duration: 8 + Math.random() * 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: Math.random() * 5,
+            }}
+          />
+        ))}
+
+        {/* Additional Mobile Glass Elements - Enhanced */}
+        <motion.div
+          className="absolute top-1/4 right-1/4 w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br from-red-300/25 via-red-200/35 to-red-100/45 rounded-full blur-xl backdrop-blur-2xl border-2 border-white/60 shadow-xl hidden sm:block"
+          animate={{
+            scale: [1, 1.2, 0.8, 1],
+            opacity: [0.4, 0.7, 0.4],
+            rotate: [0, 180, 360, 0]
+          }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          style={{ backdropFilter: 'blur(12px)' }}
         />
-        <motion.div 
-          className="absolute bottom-1/3 right-1/3 w-24 h-24 bg-red-400/15 rounded-full blur-xl"
-          animate={{ x: [0, -40, 25, 0], y: [0, 25, -15, 0], rotate: [0, -180, -360] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <div className="absolute inset-0 flex items-center justify-between px-8 lg:px-16">
-          <motion.div
-            initial={{ opacity: 0, x: -100, rotateY: -15 }}
-            animate={{ opacity: 1, x: 0, rotateY: 0 }}
-            transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-            className="hidden lg:block relative"
-          >
-            <div className="w-64 h-[500px] bg-gray-900 rounded-[3rem] p-2 shadow-2xl">
-              <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
-                <div className="h-8 bg-gray-50 flex items-center justify-between px-6 text-xs font-medium text-gray-900">
-                  <span>9:41</span>
-                  <div className="flex items-center space-x-1">
-                    <div className="w-4 h-2 bg-gray-900 rounded-sm"></div>
-                    <div className="w-6 h-3 border border-gray-900 rounded-sm"></div>
-                  </div>
-                </div>
-                <div className="p-4 h-full bg-gradient-to-b from-red-50 to-white">
-                  <div className="text-center mb-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">Compress Files</h3>
-                    <p className="text-sm text-gray-600">Reduce size by 95%</p>
-                  </div>
-                  <div className="space-y-6">
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500 mb-3">Original</p>
-                      <div className="flex justify-center space-x-2">
-                        <motion.div
-                          className="w-8 h-10 bg-blue-100 rounded flex items-center justify-center"
-                          animate={{ y: [0, -3, 0], rotate: [0, 2, -2, 0] }}
-                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                        >
-                          <FileText className="w-4 h-4 text-blue-600" />
-                        </motion.div>
-                        <motion.div
-                          className="w-8 h-10 bg-green-100 rounded flex items-center justify-center"
-                          animate={{ y: [0, -3, 0], rotate: [0, -2, 2, 0] }}
-                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
-                        >
-                          <Image className="w-4 h-4 text-green-600" />
-                        </motion.div>
-                        <motion.div
-                          className="w-8 h-10 bg-purple-100 rounded flex items-center justify-center"
-                          animate={{ y: [0, -3, 0], rotate: [0, 2, -2, 0] }}
-                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
-                        >
-                          <File className="w-4 h-4 text-purple-600" />
-                        </motion.div>
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <motion.div
-                        className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2"
-                        animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                      >
-                        <Zap className="w-6 h-6 text-red-600" />
-                      </motion.div>
-                      <p className="text-xs text-gray-500">Compressing...</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500 mb-3">Compressed</p>
-                      <div className="flex justify-center space-x-2">
-                        <motion.div
-                          className="w-6 h-8 bg-blue-50 rounded flex items-center justify-center border border-blue-200"
-                          animate={{ y: [0, -2, 0], scale: [1, 0.9, 1] }}
-                          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                        >
-                          <FileText className="w-3 h-3 text-blue-500" />
-                        </motion.div>
-                        <motion.div
-                          className="w-6 h-8 bg-green-50 rounded flex items-center justify-center border border-green-200"
-                          animate={{ y: [0, -2, 0], scale: [1, 0.9, 1] }}
-                          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-                        >
-                          <Image className="w-3 h-3 text-green-500" />
-                        </motion.div>
-                        <motion.div
-                          className="w-6 h-8 bg-purple-50 rounded flex items-center justify-center border border-purple-200"
-                          animate={{ y: [0, -2, 0], scale: [1, 0.9, 1] }}
-                          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
-                        >
-                          <File className="w-3 h-3 text-purple-500" />
-                        </motion.div>
-                      </div>
-                      <motion.div
-                        className="flex items-center justify-center space-x-1 mt-2"
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                      >
-                        <FileDown className="w-3 h-3 text-red-600" />
-                        <span className="text-xs font-bold text-red-600">95%</span>
-                      </motion.div>
-                    </div>
-                  </div>
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <motion.div
-                      className="w-full h-10 bg-red-600 rounded-lg flex items-center justify-center"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <Download className="w-4 h-4 text-white mr-2" />
-                      <span className="text-sm font-medium text-white">Download</span>
-                    </motion.div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 100, rotateY: 15 }}
-            animate={{ opacity: 1, x: 0, rotateY: 0 }}
-            transition={{ duration: 1, delay: 0.7, ease: "easeOut" }}
-            className="hidden lg:block relative"
-          >
-            <div className="w-64 h-[500px] bg-gray-900 rounded-[3rem] p-2 shadow-2xl">
-              <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
-                <div className="h-8 bg-gray-50 flex items-center justify-between px-6 text-xs font-medium text-gray-900">
-                  <span>9:41</span>
-                  <div className="flex items-center space-x-1">
-                    <div className="w-4 h-2 bg-gray-900 rounded-sm"></div>
-                    <div className="w-6 h-3 border border-gray-900 rounded-sm"></div>
-                  </div>
-                </div>
-                <div className="p-4 h-full bg-gradient-to-b from-green-50 to-white">
-                  <div className="text-center mb-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">Batch Compress</h3>
-                    <p className="text-sm text-gray-600">Multiple files at once</p>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      {[1, 2, 3, 4].map((i) => (
-                        <motion.div
-                          key={i}
-                          className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.2 }}
-                        >
-                          <div className="flex items-center space-x-2">
-                            <div className={`w-6 h-6 rounded flex items-center justify-center ${
-                              i === 1 ? 'bg-blue-100' : i === 2 ? 'bg-green-100' : i === 3 ? 'bg-purple-100' : 'bg-orange-100'
-                            }`}>
-                              {i === 1 ? <FileText className="w-3 h-3 text-blue-600" /> :
-                               i === 2 ? <Image className="w-3 h-3 text-green-600" /> :
-                               i === 3 ? <File className="w-3 h-3 text-purple-600" /> :
-                               <FileText className="w-3 h-3 text-orange-600" />}
-                            </div>
-                            <span className="text-xs text-gray-700">file_{i}.pdf</span>
-                          </div>
-                          <motion.div
-                            className="w-4 h-4 bg-red-100 rounded-full flex items-center justify-center"
-                            animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
-                          >
-                            <Zap className="w-2 h-2 text-red-600" />
-                          </motion.div>
-                        </motion.div>
-                      ))}
-                    </div>
-                    <div className="mt-6">
-                      <div className="flex justify-between text-xs text-gray-500 mb-2">
-                        <span>Progress</span>
-                        <motion.span
-                          animate={{ opacity: [1, 0.5, 1] }}
-                          transition={{ duration: 1, repeat: Infinity }}
-                        >
-                          4/4 files
-                        </motion.span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <motion.div
-                          className="bg-red-600 h-2 rounded-full"
-                          initial={{ width: "0%" }}
-                          animate={{ width: "100%" }}
-                          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                        />
-                      </div>
-                    </div>
-                    <div className="mt-4 space-y-2">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Total saved:</span>
-                        <motion.span
-                          className="text-green-600 font-bold"
-                          animate={{ scale: [1, 1.1, 1] }}
-                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                        >
-                          100.5 MB
-                        </motion.span>
-                      </div>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Time saved:</span>
-                        <span className="text-green-600 font-bold">95%</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="absolute bottom-4 left-4 right-4 space-y-2">
-                    <motion.div
-                      className="w-full h-10 bg-red-600 rounded-lg flex items-center justify-center"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <Download className="w-4 h-4 text-white mr-2" />
-                      <span className="text-sm font-medium text-white">Download All</span>
-                    </motion.div>
-                    <motion.div
-                      className="w-full h-8 bg-gray-100 rounded-lg flex items-center justify-center"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <span className="text-xs font-medium text-gray-600">Share</span>
-                    </motion.div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-        <div className="container mx-auto text-center relative z-10">
-          <div className="max-w-5xl mx-auto">
+
+        <div className="container mx-auto text-center relative z-10 px-2 sm:px-4">
+          <div className="max-w-7xl mx-auto">
+            {/* Glassmorphism Content Container */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.1 }}
-              className="mb-8 flex flex-col items-center gap-4"
+              transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="relative"
             >
-              <motion.div 
-                className="inline-flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-full text-sm font-medium"
-                whileHover={{ scale: 1.05, backgroundColor: "rgba(254, 242, 242, 0.8)", transition: { duration: 0.3, ease: "easeOut" } }}
-                whileTap={{ scale: 0.95 }}
-              >
+              {/* Main Glass Card - Enhanced Glass Feel */}
+              <div className="relative backdrop-blur-2xl bg-white/5 rounded-3xl border border-white/30 shadow-2xl p-8 sm:p-12 lg:p-16 mx-1 sm:mx-4 lg:mx-6" style={{ backdropFilter: 'blur(20px)' }}>
+                {/* Enhanced Inner Glass Glow */}
                 <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <Sparkles className="w-4 h-4" />
-                </motion.div>
-                Trusted by 10K+ users worldwide
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <a 
-                  target="_blank" 
-                  href="https://betalist.com/startups/slimfile-inc?utm_campaign=badge-slimfile-inc&utm_medium=badge&utm_source=badge-featured"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-gray-50 text-gray-700 px-4 py-2 rounded-full text-sm font-medium border border-gray-200 hover:bg-gray-100 hover:border-gray-300 transition-all duration-300 transform hover:scale-105 relative overflow-hidden group"
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100"
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: "100%" }}
-                    transition={{ duration: 0.6, ease: "easeInOut" }}
-                  />
-                  <motion.div
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    className="relative z-10"
-                  >
-                    <Sparkles className="w-4 h-4 relative z-10" />
-                  </motion.div>
-                  <span className="relative z-10">Featured on BetaList</span>
-                </a>
-              </motion.div>
-              <motion.h1 
-                className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-8 leading-tight"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.3 } }
-                }}
-              >
-                <motion.span
-                  variants={{
-                    hidden: { opacity: 0, y: 30, rotateX: -90 },
-                    visible: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] } }
+                  className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/20 to-red-50/30 rounded-3xl border-2 border-white/50 shadow-inner"
+                  animate={{
+                    opacity: [0.7, 0.9, 0.7],
+                    scale: [1, 1.02, 1],
                   }}
-                >
-                  File Compression
-                </motion.span>
-                <motion.span 
-                  className="text-red-600 block bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent"
-                  variants={{
-                    hidden: { opacity: 0, y: 30, rotateX: -90 },
-                    visible: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 } }
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  style={{ backdropFilter: 'blur(10px)' }}
+                />
+
+                {/* Mobile Glass Accent - Enhanced Glass Feel */}
+                <motion.div
+                  className="absolute top-6 right-6 w-20 h-20 sm:w-20 sm:h-20 bg-gradient-to-br from-red-200/40 via-red-100/50 to-red-50/60 rounded-full blur-lg backdrop-blur-2xl border-2 border-white/70 shadow-xl sm:hidden"
+                  animate={{
+                    scale: [1, 1.2, 0.9, 1],
+                    opacity: [0.5, 0.8, 0.5],
+                    rotate: [0, 90, 180, 270, 360]
                   }}
-                >
-                  Made Simple
-                </motion.span>
-              </motion.h1>
-              <motion.p 
-                className="text-lg sm:text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-              >
-                Reduce file sizes instantly without losing quality
-                <br/>Fast and secure compression for images, PDFs, and PPTX.
-              </motion.p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              >
-                <Link to="/compress">
-                  <Button 
-                    size="lg" 
-                    className="text-lg px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden group"
+                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                  style={{ backdropFilter: 'blur(8px)' }}
+                />
+
+                {/* Content */}
+                <div className="relative z-10">
+                  <motion.div
+                    className="mb-8 sm:mb-10 flex flex-col items-center gap-6 sm:gap-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
                   >
-                    <motion.span
-                      className="relative z-10 flex items-center"
-                      initial={{ x: 0 }}
-                      whileHover={{ x: -5 }}
-                      transition={{ duration: 0.3 }}
+                    {/* Trust Badges with Enhanced Glass Effect - Stronger Glass Feel */}
+                    <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-4 w-full max-w-2xl">
+                      <motion.div
+                        className="inline-flex items-center gap-3 backdrop-blur-2xl bg-white/30 text-red-600 px-8 py-4 rounded-full text-sm sm:text-sm font-medium border-2 border-white/50 shadow-2xl w-full sm:w-auto justify-center"
+                        style={{ backdropFilter: 'blur(12px)' }}
+                        whileHover={{
+                          scale: 1.05,
+                          backgroundColor: "rgba(255, 255, 255, 0.45)",
+                          boxShadow: "0 25px 50px rgba(0, 0, 0, 0.2)"
+                        }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                      >
+                        <motion.div
+                          animate={{ rotate: [0, 10, -10, 0] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                          className="flex-shrink-0"
+                        >
+                          <Sparkles className="w-5 h-5" />
+                        </motion.div>
+                        <span className="text-center">Trusted by 10K+ users worldwide</span>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="w-full sm:w-auto"
+                      >
+                        <a
+                          target="_blank"
+                          href="https://betalist.com/startups/slimfile-inc?utm_campaign=badge-slimfile-inc&utm_medium=badge&utm_source=badge-featured"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-3 backdrop-blur-2xl bg-white/25 text-gray-700 px-8 py-4 rounded-full text-sm font-medium border-2 border-white/50 shadow-2xl hover:bg-white/35 hover:border-white/60 transition-all duration-300 transform hover:scale-105 relative overflow-hidden group w-full sm:w-auto justify-center"
+                          style={{ backdropFilter: 'blur(12px)' }}
+                        >
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100"
+                            initial={{ x: "-100%" }}
+                            whileHover={{ x: "100%" }}
+                            transition={{ duration: 0.6, ease: "easeInOut" }}
+                          />
+                          <motion.div
+                            animate={{ rotate: [0, 10, -10, 0] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                            className="relative z-10 flex-shrink-0"
+                          >
+                            <Sparkles className="w-5 h-5" />
+                          </motion.div>
+                          <span className="relative z-10 text-center">Featured on BetaList</span>
+                        </a>
+                      </motion.div>
+                    </div>
+
+                    {/* Enhanced Main Title with Better Mobile Scaling */}
+                    <motion.h1
+                      className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-4 sm:mb-10 leading-tight px-1 sm:px-2"
+                      initial="hidden"
+                      animate="visible"
+                      variants={{
+                        hidden: { opacity: 0 },
+                        visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.3 } }
+                      }}
                     >
-                      Start Compressing
-                    </motion.span>
+                      <motion.span
+                        variants={{
+                          hidden: { opacity: 0, y: 30, rotateX: -90 },
+                          visible: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] } }
+                        }}
+                        className="block backdrop-blur-2xl bg-white/15 rounded-2xl px-6 py-3 sm:px-8 sm:py-4 border-2 border-white/40 shadow-2xl mb-2"
+                        style={{ backdropFilter: 'blur(10px)' }}
+                      >
+                        File Compression
+                      </motion.span>
+                      <motion.span
+                        className="text-red-600 block bg-gradient-to-r from-red-600 via-red-500 to-red-400 bg-clip-text text-transparent drop-shadow-lg"
+                        variants={{
+                          hidden: { opacity: 0, y: 30, rotateX: -90 },
+                          visible: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 } }
+                        }}
+                      >
+                        Made Simple
+                      </motion.span>
+                    </motion.h1>
+
+                    {/* Enhanced Description with Better Mobile Layout */}
                     <motion.div
-                      className="ml-2 relative z-10"
-                      initial={{ x: 0 }}
-                      whileHover={{ x: 5 }}
-                      transition={{ duration: 0.3 }}
+                      className="backdrop-blur-2xl bg-white/20 rounded-2xl px-6 sm:px-8 py-5 sm:py-6 border-2 border-white/40 shadow-2xl max-w-4xl mx-1 sm:mx-2"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      style={{ backdropFilter: 'blur(12px)' }}
                     >
-                      <ArrowRight className="w-5 h-5" />
+                      <motion.p className="text-lg sm:text-xl lg:text-2xl text-gray-700 leading-relaxed text-center" style={{ wordSpacing: '0.1em' }}>
+                        Reduce file sizes instantly without losing quality&nbsp;
+                        <br className="hidden sm:block" />
+                        <span className="text-red-600 font-semibold text-xl sm:text-2xl">Fast and secure</span> compression for images, PDFs, and PPTX.
+                      </motion.p>
                     </motion.div>
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                      initial={{ x: "-100%" }}
-                      whileHover={{ x: "100%" }}
-                      transition={{ duration: 0.6, ease: "easeInOut" }}
-                    />
-                  </Button>
-                </Link>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              >
-                <Link to="/api">
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="text-lg px-8 py-4 rounded-2xl border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 transition-all duration-300 relative overflow-hidden group"
+                  </motion.div>
+
+                  {/* Enhanced Action Buttons with Better Mobile Spacing */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center px-2 sm:px-4"
                   >
-                    <motion.span
-                      className="relative z-10"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      SlimFile API
-                    </motion.span>
                     <motion.div
-                      className="absolute inset-0 bg-red-100 rounded-2xl"
-                      initial={{ scale: 0, opacity: 0 }}
-                      whileHover={{ scale: 1, opacity: 0.1 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </Button>
-                </Link>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              >
-                <a
-                  href="https://gofund.me/dcf07947"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="text-lg px-8 py-4 rounded-2xl border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 relative overflow-hidden group"
+                      whileHover={{ scale: 1.05, y: -3 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    >
+                      <Link to="/compress">
+                        <Button
+                          size="lg"
+                          className="text-lg sm:text-xl px-8 sm:px-10 py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white shadow-2xl hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] transition-all duration-300 transform hover:scale-105 relative overflow-hidden group backdrop-blur-lg border-2 border-white/30 w-full sm:w-auto"
+                          style={{ backdropFilter: 'blur(8px)' }}
+                        >
+                          <motion.span
+                            className="relative z-10 flex items-center justify-center"
+                            initial={{ x: 0 }}
+                            whileHover={{ x: -5 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            Start Compressing
+                          </motion.span>
+                          <motion.div
+                            className="ml-3 relative z-10"
+                            initial={{ x: 0 }}
+                            whileHover={{ x: 5 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                          </motion.div>
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                            initial={{ x: "-100%" }}
+                            whileHover={{ x: "100%" }}
+                            transition={{ duration: 0.6, ease: "easeInOut" }}
+                          />
+                        </Button>
+                      </Link>
+                    </motion.div>
+
+                    <motion.div
+                      whileHover={{ scale: 1.05, y: -3 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    >
+                      <Link to="/api">
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          className="text-lg sm:text-xl px-8 sm:px-10 py-4 sm:py-5 rounded-2xl backdrop-blur-2xl bg-white/20 border-2 border-red-200/70 text-red-600 hover:bg-red-50/90 hover:border-red-300/90 transition-all duration-300 relative overflow-hidden group shadow-2xl hover:shadow-[0_0_25px_rgba(239,68,68,0.3)] w-full sm:w-auto"
+                          style={{ backdropFilter: 'blur(12px)' }}
+                        >
+                          <motion.span
+                            className="relative z-10"
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            SlimFile API
+                          </motion.span>
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-red-50/60 to-red-100/60 rounded-2xl"
+                            initial={{ scale: 0, opacity: 0 }}
+                            whileHover={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        </Button>
+                      </Link>
+                    </motion.div>
+
+                    <motion.div
+                      whileHover={{ scale: 1.05, y: -3 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    >
+                      <a
+                        href="https://gofund.me/dcf07947"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          className="text-lg sm:text-xl px-8 sm:px-10 py-4 sm:py-5 rounded-2xl backdrop-blur-2xl bg-white/20 border-2 border-gray-200/70 text-gray-600 hover:bg-gray-50/90 hover:border-gray-300/90 transition-all duration-300 relative overflow-hidden group shadow-2xl hover:shadow-[0_0_25px_rgba(0,0,0,0.2)] w-full sm:w-auto"
+                          style={{ backdropFilter: 'blur(12px)' }}
+                        >
+                          <motion.span
+                            className="relative z-10"
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            Support Us
+                          </motion.span>
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-gray-50/60 to-gray-100/60 rounded-2xl"
+                            initial={{ scale: 0, opacity: 0 }}
+                            whileHover={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        </Button>
+                      </a>
+                    </motion.div>
+                  </motion.div>
+
+                  {/* Enhanced Stats Counter with Better Mobile Layout */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 1.1 }}
+                    className="mt-10 sm:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-3xl mx-auto px-1 sm:px-2"
                   >
-                    <motion.span
-                      className="relative z-10"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      Support Us
-                    </motion.span>
-                    <motion.div
-                      className="absolute inset-0 bg-gray-100 rounded-2xl"
-                      initial={{ scale: 0, opacity: 0 }}
-                      whileHover={{ scale: 1, opacity: 0.1 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </Button>
-                </a>
-              </motion.div>
+                    {[
+                      { value: "12K+", label: "Files Compressed", icon: FileImage },
+                      { value: "95%", label: "Avg Size Reduction", icon: Zap },
+                      { value: "24/7", label: "Always Available", icon: Globe }
+                    ].map((stat, index) => (
+                      <motion.div
+                        key={stat.label}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 1.2 + index * 0.1 }}
+                        className="backdrop-blur-2xl bg-white/25 rounded-2xl p-5 sm:p-4 border-2 border-white/40 shadow-2xl hover:bg-white/30 transition-all duration-300"
+                        style={{ backdropFilter: 'blur(10px)' }}
+                      >
+                        <motion.div
+                          className="w-14 h-14 sm:w-12 sm:h-12 bg-red-100/70 rounded-xl flex items-center justify-center mx-auto mb-3 border-2 border-white/50"
+                          whileHover={{ rotate: 360, scale: 1.1 }}
+                          transition={{ duration: 0.6 }}
+                          style={{ backdropFilter: 'blur(5px)' }}
+                        >
+                          <stat.icon className="w-7 h-7 sm:w-6 sm:h-6 text-red-600" />
+                        </motion.div>
+                        <div className="text-2xl sm:text-xl font-bold text-gray-900 mb-1 text-center">
+                          {stat.value}
+                        </div>
+                        <div className="text-sm sm:text-xs text-gray-600 font-medium text-center leading-tight">
+                          {stat.label}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </div>
