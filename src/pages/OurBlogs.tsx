@@ -185,7 +185,7 @@ export default function OurBlogs() {
             <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-gray-900">
               Our Blogs
             </h1>
-            <p className="text-xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto text-left sm:text-center">
               Expert insights, tutorials, and guides on file compression, optimization, and digital workflow efficiency.
               Stay updated with the latest techniques and best practices.
             </p>

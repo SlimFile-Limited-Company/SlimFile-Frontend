@@ -264,7 +264,7 @@ const Compress = () => {
         {/* Enhanced File Upload/Result Section */}
         <section id="upload-section" className="pb-20 px-0 sm:px-6 lg:px-8">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white/30 rounded-3xl border border-white/50 shadow-2xl p-4 sm:p-8 max-w-4xl mx-0 sm:mx-auto backdrop-blur-sm">
+            <div className="bg-white/30 rounded-3xl border-2 border-red-400 border-dashed shadow-2xl p-4 sm:p-8 max-w-4xl mx-0 sm:mx-auto backdrop-blur-sm hover:border-red-500 hover:shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-300">
               {!selectedFiles.length ? (
                 <FileUpload
                   onFileSelect={handleFilesSelect}
