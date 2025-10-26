@@ -76,12 +76,17 @@ export default function Login() {
 
   return (
     <div
+      className="login-background"
       style={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(90deg, #ffffff 50%, #ef4444 50%)', // Vertical split: white left, red right
+        backgroundColor: 'transparent',
+        backgroundImage: 'url("/lovable-uploads/login_image.jpg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -93,6 +98,13 @@ export default function Login() {
             transform: scale(1.05);
             transition: transform 0.2s ease-in-out;
           }
+          .login-background {
+            background: transparent;
+            background-image: url('/lovable-uploads/login_image.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+          }
         `}
       </style>
 
@@ -102,7 +114,7 @@ export default function Login() {
           background: 'rgba(255, 255, 255, 0.7)',
           backdropFilter: 'blur(10px)',
           borderRadius: 16,
-          boxShadow: '0 8px 32px rgba(239, 68, 68, 0.15)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
           padding: 40,
           maxWidth: 400,
           width: '100%',
@@ -111,7 +123,7 @@ export default function Login() {
           alignItems: 'center',
           position: 'relative',
           zIndex: 1,
-          border: '1px solid rgba(239, 68, 68, 0.1)',
+          border: '1px solid rgba(0, 0, 0, 0.1)',
         }}
       >
         <img
@@ -122,7 +134,7 @@ export default function Login() {
             height: 100,
             marginBottom: 24,
             borderRadius: 12,
-            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.15)',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
             transform: loaded ? 'scale(1)' : 'scale(0.8)',
             opacity: loaded ? 1 : 0,
             transition: 'transform 0.5s ease-out, opacity 0.5s ease-out',
@@ -130,7 +142,7 @@ export default function Login() {
         />
         <h2
           style={{
-            color: '#ef4444',
+            color: '#1f2937',
             fontWeight: 700,
             fontSize: 30,
             marginBottom: 12,
