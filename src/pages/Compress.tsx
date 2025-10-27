@@ -185,8 +185,8 @@ const Compress = () => {
                 {/* Content */}
                 <div className="relative z-10">
                   {/* Enhanced Title */}
-                  <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-8 sm:mb-10 leading-tight">
-                    <span className="block bg-white/40 rounded-2xl px-4 py-3 sm:px-8 sm:py-4 border border-white/60 mb-2">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-6 sm:mb-8 leading-tight">
+                    <span className="block bg-white/40 rounded-2xl px-4 py-2 sm:px-6 sm:py-3 border border-white/60 mb-2">
                       Compress Files
                     </span>
                     <span className="text-red-600 block bg-gradient-to-r from-red-600 via-red-500 to-red-400 bg-clip-text text-transparent drop-shadow-lg">
@@ -198,7 +198,7 @@ const Compress = () => {
                   <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
                     <div>
                       <div
-                        className="text-base sm:text-lg px-4 sm:px-8 py-3 sm:py-4 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white shadow-2xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden group border-2 border-white/30 cursor-pointer"
+                        className="text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white shadow-2xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden group border-2 border-white/30 cursor-pointer"
                         onClick={() => {
                           const uploadSection = document.getElementById('upload-section');
                           if (uploadSection) {
@@ -214,12 +214,10 @@ const Compress = () => {
                   </div>
 
                   {/* Enhanced Description */}
-                  <div className="bg-white/35 rounded-2xl px-4 sm:px-8 py-5 sm:py-6 border-2 border-white/50 shadow-2xl max-w-4xl mx-auto mb-8 backdrop-blur-sm">
-                    <p className="text-lg sm:text-xl lg:text-2xl text-gray-700 leading-relaxed text-center" style={{ wordSpacing: '0.1em' }}>
+                  <div className="bg-white/35 rounded-2xl px-4 sm:px-6 py-4 sm:py-5 border-2 border-white/50 shadow-2xl max-w-3xl mx-auto mb-8 backdrop-blur-sm">
+                    <p className="text-base sm:text-lg text-gray-700 leading-relaxed text-center" style={{ wordSpacing: '0.1em' }}>
                       Reduce file sizes without compromising quality. Support for PDF, PPTX and image files with
                       <span className="text-red-600 font-semibold"> lightning-fast processing</span>.
-                      <br className="hidden sm:block" />
-                     
                     </p>
                   </div>
 
