@@ -117,7 +117,9 @@ const Home: FC = () => {
                       <p className="text-base sm:text-lg text-gray-700 leading-relaxed text-center">
                         Reduce file sizes instantly without losing quality
                         <br className="hidden sm:block" />
-                        <span className="text-red-600 font-semibold">Fast and secure</span> compression for images, PDFs, and PPTX.
+                        <span className="text-red-600 font-semibold">
+                          <span className="sm:hidden">&nbsp;</span>Fast and secure
+                        </span> compression for images, PDFs, and PPTX.
                       </p>
                     </div>
                   </div>
