@@ -1,6 +1,27 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, File, Image, FileDown } from "lucide-react";
+
+// Add keyframes for blob animation
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes blob {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+  }
+  .animate-blob {
+    animation: blob 15s infinite;
+  }
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+`;
+document.head.appendChild(style);
 import { Button } from "@/components/ui/button";
 import { isAuthenticated } from '@/lib/auth';
 import { useEffect, useState } from 'react';
@@ -36,56 +57,67 @@ const Home: FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen pt-5">
+    <div className="min-h-screen pt-5 bg-gradient-to-br from-slate-50 via-slate-50/95 to-red-50/80">
       {/* Hero Section */}
-      <section className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-100 via-slate-50 to-red-100/50">
+      <section className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-50/50 via-transparent to-red-50/50 opacity-70"></div>
+          <div className="absolute -top-1/2 -left-1/4 w-[800px] h-[800px] bg-blue-100/30 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob"></div>
+          <div className="absolute -bottom-1/4 -right-1/4 w-[800px] h-[800px] bg-red-100/30 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-100/30 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-4000"></div>
+        </div>
 
         <div className="container mx-auto text-center relative z-10 px-2 sm:px-4">
           <div className="max-w-7xl mx-auto">
             {/* Glassmorphism Content Container */}
             <div className="relative">
               {/* Main Glass Card - Enhanced Glass Feel */}
-              <div className="relative bg-white/30 rounded-3xl border border-white/50 shadow-2xl p-8 sm:p-12 lg:p-16 mx-1 sm:mx-4 lg:mx-6">
+              <div className="relative bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl p-8 sm:p-12 lg:p-16 mx-1 sm:mx-4 lg:mx-6 transition-all duration-300 hover:backdrop-blur-3xl hover:bg-white/15 hover:border-white/20">
+                {/* Glass reflection effect */}
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+                {/* Subtle border highlight */}
+                <div className="absolute inset-0 rounded-3xl border border-white/5 pointer-events-none"></div>
 
                 {/* Content */}
                 <div className="relative z-10">
                   <div className="mb-8 sm:mb-10 flex flex-col items-center gap-6 sm:gap-4">
                     {/* Trust Badges with Enhanced Glass Effect - Stronger Glass Feel */}
-                    <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-4 w-full max-w-2xl">
-                      <div className="inline-flex items-center gap-3 bg-white/40 text-red-600 px-8 py-4 rounded-full text-sm font-medium border border-white/60 shadow-2xl w-full sm:w-auto justify-center">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
+                      <div className="flex items-center gap-3 text-red-600 text-sm font-medium">
                         <Sparkles className="w-5 h-5" />
-                        <span className="text-center">Trusted by 10K+ users worldwide</span>
+                        <span>Trusted by 10K+ users worldwide</span>
                       </div>
 
-                      <div className="w-full sm:w-auto">
-                        <a
-                          target="_blank"
-                          href="https://betalist.com/startups/slimfile-inc?utm_campaign=badge-slimfile-inc&utm_medium=badge&utm_source=badge-featured"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-3 bg-white/35 text-gray-700 px-8 py-4 rounded-full text-sm font-medium border border-white/60 shadow-2xl hover:bg-white/45 hover:border-white/70 transition-all duration-300 w-full sm:w-auto justify-center"
-                        >
-                          <Sparkles className="w-5 h-5" />
-                          <span className="text-center">Featured on BetaList</span>
-                        </a>
-                      </div>
+                      <div className="hidden sm:block text-gray-400">•</div>
+                      
+                      <a
+                        target="_blank"
+                        href="https://betalist.com/startups/slimfile-inc?utm_campaign=badge-slimfile-inc&utm_medium=badge&utm_source=badge-featured"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 text-gray-700 text-sm font-medium hover:text-red-600 transition-colors duration-300"
+                      >
+                        <Sparkles className="w-5 h-5" />
+                        <span>Featured on BetaList</span>
+                      </a>
                     </div>
 
                     {/* Enhanced Main Title with Better Mobile Scaling */}
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-4 sm:mb-10 leading-tight px-1 sm:px-2">
-                      <span className="block bg-white/40 rounded-2xl px-6 py-3 sm:px-8 sm:py-4 border border-white/60 shadow-2xl mb-2">
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-3 sm:mb-6 leading-tight px-1 sm:px-2">
+                      <span className="block text-gray-900 mb-1">
                         File Compression
                       </span>
-                      <span className="text-red-600 block bg-gradient-to-r from-red-600 via-red-500 to-red-400 bg-clip-text text-transparent drop-shadow-lg">
+                      <span className="text-red-600 block">
                         Made Simple
                       </span>
                     </h1>
 
                     {/* Enhanced Description with Better Mobile Layout */}
-                    <div className="bg-white/35 rounded-2xl px-6 sm:px-8 py-5 sm:py-6 border-2 border-white/50 shadow-2xl max-w-4xl mx-1 sm:mx-2">
-                      <p className="text-lg sm:text-xl lg:text-2xl text-gray-700 leading-relaxed text-center" style={{ wordSpacing: '0.1em' }}>
-                        Reduce file sizes instantly without losing quality&nbsp;
+                    <div className="max-w-3xl mx-1 sm:mx-2">
+                      <p className="text-base sm:text-lg text-gray-700 leading-relaxed text-center">
+                        Reduce file sizes instantly without losing quality
                         <br className="hidden sm:block" />
-                        <span className="text-red-600 font-semibold text-xl sm:text-2xl">Fast and secure</span> compression for images, PDFs, and PPTX.
+                        <span className="text-red-600 font-semibold">Fast and secure</span> compression for images, PDFs, and PPTX.
                       </p>
                     </div>
                   </div>
@@ -96,7 +128,7 @@ const Home: FC = () => {
                       <Link to="/compress">
                         <Button
                           size="lg"
-                          className="text-lg sm:text-xl px-8 sm:px-10 py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white shadow-2xl hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] transition-all duration-300 transform hover:scale-105 border-2 border-white/30 w-full sm:w-auto"
+                          className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white shadow-2xl hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] transition-all duration-300 transform hover:scale-105 border-2 border-white/30 w-full sm:w-auto"
                         >
                           <span className="flex items-center justify-center">
                             Start Compressing
@@ -111,7 +143,7 @@ const Home: FC = () => {
                         <Button
                           variant="outline"
                           size="lg"
-                          className="text-lg sm:text-xl px-8 sm:px-10 py-4 sm:py-5 rounded-2xl bg-white/20 border-2 border-red-200/70 text-red-600 hover:bg-red-50/90 hover:border-red-300/90 transition-all duration-300 shadow-2xl hover:shadow-[0_0_25px_rgba(239,68,68,0.3)] w-full sm:w-auto"
+                          className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-2xl bg-white/20 border-2 border-red-200/70 text-red-600 hover:bg-red-50/90 hover:border-red-300/90 transition-all duration-300 shadow-2xl hover:shadow-[0_0_25px_rgba(239,68,68,0.3)] w-full sm:w-auto"
                         >
                           <span>SlimFile API</span>
                         </Button>
@@ -127,7 +159,7 @@ const Home: FC = () => {
                         <Button
                           variant="outline"
                           size="lg"
-                          className="text-lg sm:text-xl px-8 sm:px-10 py-4 sm:py-5 rounded-2xl bg-white/20 border-2 border-gray-200/70 text-gray-600 hover:bg-gray-50/90 hover:border-gray-300/90 transition-all duration-300 shadow-2xl hover:shadow-[0_0_25px_rgba(0,0,0,0.2)] w-full sm:w-auto"
+                          className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-2xl bg-white/20 border-2 border-gray-200/70 text-gray-600 hover:bg-gray-50/90 hover:border-gray-300/90 transition-all duration-300 shadow-2xl hover:shadow-[0_0_25px_rgba(0,0,0,0.2)] w-full sm:w-auto"
                         >
                           <span>Support Us</span>
                         </Button>
