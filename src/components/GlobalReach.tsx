@@ -11,7 +11,7 @@ const countries = [
   'Ethiopia', 'Finland', 'Gambia', 'Hungary', 'Kazakhstan', 'Lebanon', 'Malta',
   'Mexico', 'North Macedonia', 'Panama', 'Portugal', 'Qatar', 'Serbia',
   'Sierra Leone', 'South Korea', 'Tanzania', 'Tunisia', 'Uganda', 'Ukraine',
-  'United Arab Emirates', 'Zambia'
+  'United Arab Emirates', 'Zambia', 'Greece'
 ];
 
 const GlobalReach = () => {

@@ -1,7 +1,7 @@
 
 import type { Config } from "tailwindcss";
 
-export default {
+const config = {
 	darkMode: ["class"],
 	content: [
 		"./pages/**/*.{ts,tsx}",
@@ -132,11 +132,39 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.6s ease-out',
-				'slide-in': 'slide-in 0.6s ease-out',
-				'scale-in': 'scale-in 0.4s ease-out',
+				'slide-in': 'slide-in 0.3s ease-out',
+				'scale-in': 'scale-in 0.2s ease-out',
 				'pulse-red': 'pulse-red 2s infinite'
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		function({ addUtilities }: { addUtilities: any }) {
+			const newUtilities = {
+				'.scrollbar-thin': {
+					scrollbarWidth: 'thin',
+					scrollbarColor: '#9ca3af transparent',
+				},
+				'.scrollbar-thin::-webkit-scrollbar': {
+					width: '6px',
+					height: '6px',
+				},
+				'.scrollbar-thin::-webkit-scrollbar-track': {
+					background: 'transparent',
+				},
+				'.scrollbar-thin::-webkit-scrollbar-thumb': {
+					backgroundColor: '#d1d5db',
+					borderRadius: '20px',
+					border: '2px solid transparent',
+					backgroundClip: 'padding-box',
+				},
+				'.scrollbar-thin::-webkit-scrollbar-thumb:hover': {
+					backgroundColor: '#9ca3af',
+				},
+			};
+			addUtilities(newUtilities, ['responsive', 'hover']);
+		},
+	],
 } satisfies Config;
+
+export default config;

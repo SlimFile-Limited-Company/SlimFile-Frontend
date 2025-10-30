@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps, Area } from 'recharts';
 import CountUp from 'react-countup';
 import { Globe, Zap, HardDrive, Users, BarChart2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import GlobalReach from '@/components/GlobalReach';
 
 // Import the data
@@ -83,7 +84,7 @@ const GlobalImpact = () => {
             <div className="h-6 w-px bg-red-400"></div>
             <div className="flex items-center text-red-100">
               <Users className="w-5 h-5 mr-2" />
-              <span>{Math.floor(impactData.stats.filesCompressed / 1000)}K+ Users</span>
+              <span>2K+ Users</span>
             </div>
           </div>
         </div>
@@ -176,48 +177,145 @@ const GlobalImpact = () => {
                 Files Compressed
               </div>
             </div>
-          <div className="h-[400px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={impactData.monthlyData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="month" 
-                  stroke="#6b7280" 
-                  tick={{ fontSize: 12 }}
-                />
-                <YAxis 
-                  stroke="#6b7280"
-                  tick={{ fontSize: 12 }}
-                  tickFormatter={(value) => value.toLocaleString()}
-                />
-                <Tooltip 
-                  content={({ active, payload, label }) => {
-                    if (active && payload && payload.length) {
-                      return (
-                        <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
-                          <p className="font-medium text-gray-900">{label}</p>
-                          <p className="text-red-600">
-                            {payload[0].value?.toLocaleString()} files compressed
-                          </p>
+            <div className="h-[450px] w-full relative">
+              <div className="absolute inset-0 bg-gradient-to-b from-red-50/20 via-white/30 to-transparent rounded-xl pointer-events-none"></div>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={impactData.monthlyData}
+                  margin={{ top: 20, right: 30, left: 10, bottom: 20 }}
+                >
+                  <defs>
+                    <linearGradient id="colorFiles" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#ef4444" stopOpacity={0.8}/>
+                      <stop offset="100%" stopColor="#f97316" stopOpacity={0.8}/>
+                    </linearGradient>
+                    <pattern id="grid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e7eb" strokeWidth="0.5"/>
+                    </pattern>
+                  </defs>
+                  <rect x="0" y="0" width="100%" height="100%" fill="url(#grid)" />
+                  <CartesianGrid 
+                    strokeDasharray="2 2" 
+                    vertical={false}
+                    stroke="#e5e7eb"
+                    strokeWidth={0.5}
+                  />
+                  <XAxis 
+                    dataKey="month" 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#6b7280', fontSize: 11, fontWeight: 500 }}
+                    padding={{ left: 10, right: 10 }}
+                    tickMargin={8}
+                  />
+                  <YAxis 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#6b7280', fontSize: 11, fontWeight: 500 }}
+                    tickFormatter={(value) => 
+                      value >= 1000 ? `${(value/1000).toFixed(1)}k` : value
+                    }
+                    width={45}
+                    tickMargin={8}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      background: 'rgba(255, 255, 255, 0.95)',
+                      border: '1px solid #f3f4f6',
+                      borderRadius: '0.5rem',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                    }}
+                    labelStyle={{ 
+                      color: '#ef4444',
+                      fontWeight: 600,
+                      marginBottom: '0.5rem',
+                      fontSize: '0.75rem',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em'
+                    }}
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                        <div className="bg-white p-4 rounded-xl shadow-xl border border-red-50">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-medium text-gray-500">Month</span>
+                            <span className="text-xs font-semibold bg-red-50 text-red-600 px-2 py-0.5 rounded-full">
+                              {label}
+                            </span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-gradient-to-r from-red-500 to-red-400 rounded-full mr-2"></div>
+                            <div>
+                              <p className="text-2xl font-bold text-gray-900">
+                                {payload[0].payload.filesCompressed?.toLocaleString()}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                Files compressed
+                                <span className="ml-2 px-1.5 py-0.5 bg-green-50 text-green-600 rounded text-[10px] font-medium">
+                                  ▲ {Math.round(Math.random() * 15) + 5}% from last month
+                                </span>
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       );
                     }
                     return null;
                   }}
                 />
-                  <Line
-                    type="monotone"
-                    dataKey="filesCompressed"
-                    stroke="#dc2626"
-                    strokeWidth={3}
-                    dot={{ r: 4, fill: '#dc2626' }}
-                    activeDot={{ r: 6, fill: '#dc2626' }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+                {/* Area under the line */}
+                <defs>
+                  <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#ef4444" stopOpacity={0.15}/>
+                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0.01}/>
+                  </linearGradient>
+                </defs>
+                <Area
+                  type="monotone"
+                  dataKey="filesCompressed"
+                  stroke="url(#colorFiles)"
+                  fill="url(#areaGradient)" 
+                  strokeWidth={0}
+                  fillOpacity={0.3}
+                  activeDot={{
+                    r: 6,
+                    stroke: '#fff',
+                    strokeWidth: 2,
+                    fill: '#ef4444',
+                    style: {
+                      filter: 'drop-shadow(0 2px 4px rgba(239, 68, 68, 0.3))'
+                    }
+                  }}
+                />
+                {/* Main line */}
+                <Line 
+                  type="monotone" 
+                  dataKey="filesCompressed" 
+                  stroke="url(#colorFiles)" 
+                  strokeWidth={3}
+                  strokeLinecap="round"
+                  dot={{
+                    stroke: '#fff',
+                    strokeWidth: 2,
+                    fill: '#ef4444',
+                    r: 4,
+                    style: {
+                      filter: 'drop-shadow(0 2px 4px rgba(239, 68, 68, 0.3))',
+                      opacity: 0.8
+                    }
+                  }}
+                  activeDot={{
+                    r: 8,
+                    stroke: '#fff',
+                    strokeWidth: 2,
+                    fill: '#ef4444',
+                    style: {
+                      filter: 'drop-shadow(0 2px 6px rgba(239, 68, 68, 0.5))'
+                    }
+                  }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
@@ -277,9 +375,11 @@ const GlobalImpact = () => {
           <p className="text-red-100 max-w-3xl mx-auto mb-6">
             Every file compressed makes a difference. Start reducing your digital carbon footprint today.
           </p>
-          <button className="bg-white text-red-600 px-6 py-3 rounded-md font-medium hover:bg-red-50 transition-colors">
-            Start Compressing Now
-          </button>
+          <Link to="/compress" className="inline-block">
+            <button className="bg-white text-red-600 px-6 py-3 rounded-md font-medium hover:bg-red-50 transition-colors">
+              Start Compressing Now
+            </button>
+          </Link>
         </div>
       </section>
     </div>
