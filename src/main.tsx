@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
 import Login from './pages/Login';
+import GlobalImpact from './pages/GlobalImpact';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import Compress from './pages/Compress';
@@ -97,6 +98,7 @@ ReactDOM.createRoot(root).render(
           <Route path="privacy" element={<PrivacyPolicy />} />
           <Route path="sdgs" element={<SlimFileSDGs />} />
           <Route path="partnerships" element={<Partnerships />} />
+          <Route path="global-impact" element={<GlobalImpact />} />
         </Route>
       </Routes>
     </BrowserRouter>

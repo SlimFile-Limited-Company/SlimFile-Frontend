@@ -23,6 +23,7 @@ export const Header = () => {
     { name: "Case Studies", href: "/case-studies" },
     { name: "Our Team", href: "/teams" },
     { name: "About", href: "/about" },
+    { name: "Global Impact", href: "/global-impact" },
     { name: "Partnerships", href: "/partnerships" },
     { name: "Contact", href: "/contact" },
   ];

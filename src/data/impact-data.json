@@ -1,0 +1,21 @@
+{
+  "stats": {
+    "filesCompressed": 12000,
+    "avgSizeReduction": 95,
+    "countriesCount": 64,
+    "storageSavedGB": 0,
+    "co2ReducedKG": 0
+  },
+  "monthlyData": [
+    { "month": "Jan 2025", "filesCompressed": 500 },
+    { "month": "Feb 2025", "filesCompressed": 800 },
+    { "month": "Mar 2025", "filesCompressed": 1200 },
+    { "month": "Apr 2025", "filesCompressed": 2000 },
+    { "month": "May 2025", "filesCompressed": 3500 },
+    { "month": "Jun 2025", "filesCompressed": 5000 },
+    { "month": "Jul 2025", "filesCompressed": 6500 },
+    { "month": "Aug 2025", "filesCompressed": 8500 },
+    { "month": "Sep 2025", "filesCompressed": 10000 },
+    { "month": "Oct 2025", "filesCompressed": 12000 }
+  ]
+}
