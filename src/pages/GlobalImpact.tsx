@@ -9,11 +9,13 @@ import GlobalReach from '@/components/GlobalReach';
 // Import the data
 import impactData from '@/data/impact-data.json';
 
-// Calculate storage saved (assuming average file size of 2MB and 90% of files saved)
+// Calculate storage saved (assuming average file size of 2MB and 90% size reduction)
 const calculateStorageSaved = (filesCompressed: number) => {
   const averageFileSizeMB = 2;
-  const filesSaved = filesCompressed * 0.9; // 90% of compressed files are saved
-  return Math.round((filesSaved * averageFileSizeMB) / 1024); // Convert MB to GB
+  const sizeReduction = 0.9; // 90% size reduction
+  const totalOriginalSizeMB = filesCompressed * averageFileSizeMB;
+  const totalSavedMB = totalOriginalSizeMB * sizeReduction;
+  return Math.round(totalSavedMB / 1024); // Convert MB to GB
 };
 
 // Calculate CO2 savings (0.1kg CO2 per GB saved)

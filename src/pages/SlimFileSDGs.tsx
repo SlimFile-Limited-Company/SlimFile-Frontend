@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 const SDGSection = ({ icon: Icon, title, objective, children, bgColor = "bg-white" }) => (
-  <section className={`rounded-2xl p-8 mb-8 shadow-lg border-l-4 ${bgColor} border-primary`}>
+  <section className={`rounded-2xl p-8 mb-8 shadow-lg border-l-4 ${bgColor} border-primary w-full`}>
     <div className="flex flex-col sm:flex-row sm:items-center mb-6">
       <div className="flex items-center justify-center sm:justify-start w-full sm:w-auto mb-4 sm:mb-0">
         <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mr-4">
@@ -44,7 +44,7 @@ const SlimFileSDGs = () => {
     <div className="min-h-screen pt-16 bg-gray-50">
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-primary/10 via-white to-green-50 py-20 px-4 sm:px-6 lg:px-8 mb-12">
-        <div className="container mx-auto max-w-4xl text-left sm:text-center">
+        <div className="container mx-auto max-w-5xl text-left sm:text-center">
           <div className="flex items-center justify-start sm:justify-center mb-6">
             <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mr-4">
               <Globe className="w-10 h-10 text-primary" />
@@ -66,7 +66,7 @@ const SlimFileSDGs = () => {
         </div>
       </div>
 
-      <div className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-8 py-12 max-w-6xl">
         {/* Introduction */}
         <div className="bg-white rounded-2xl p-8 mb-12 shadow-lg">
           <h2 className="text-3xl font-bold text-gray-900 mb-6 text-left sm:text-center">
