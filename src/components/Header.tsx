@@ -111,6 +111,20 @@ export const Header = () => {
                 <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
               )}
             </Link>
+
+            <Link
+              to="/slimfile-game"
+              className={cn(
+                "text-sm font-medium transition-all duration-300 hover:text-red-600 relative flex items-center gap-1",
+                location.pathname === "/slimfile-game" ? "text-red-600" : "text-gray-600"
+              )}
+            >
+              <span>Game</span>
+              <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full">New</span>
+              {location.pathname === "/slimfile-game" && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
+              )}
+            </Link>
             <div
               className="relative"
               onMouseEnter={() => handleDropdownHover('product')}
