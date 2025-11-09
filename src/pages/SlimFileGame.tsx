@@ -1,1364 +1,1458 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Play, Pause, RotateCw, Trophy, Zap, File, FileImage, FileArchive, FileText, FileVideo, FileAudio, Star, Sparkles, Target } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { 
+  FileImage, 
+  FileText, 
+  FileVideo, 
+  FileAudio, 
+  Lock, 
+  Check, 
+  Zap, 
+  Star, 
+  RotateCw, 
+  Trophy,
+  Sparkles,
+  Target,
+  Heart,
+  Frown,
+  Smile,
+  Laugh,
+  Volume2,
+  VolumeX
+} from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
-type FileType = 'image' | 'pdf' | 'ppt' | 'video';
-type PowerUpType = 'super-compress' | 'slow-motion' | 'point-multiplier' | 'time-freeze' | 'auto-compress' | 'shield';
-
-interface LevelConfig {
-  level: number;
-  speed: number;
-  spawnRate: number;
-  bossChance: number;
-  pointsMultiplier: number;
-  filesToNextLevel: number;
-  bossHealth: number;
-}
-
-interface ComboState {
-  count: number;
-  multiplier: number;
-  lastComboTime: number;
-  maxMultiplier: number;
-}
-
-interface GameStats {
-  totalFilesCompressed: number;
-  totalBytesSaved: number;
-  maxCombo: number;
-  levelsCompleted: number;
-  powerUpsCollected: number;
-  lastPlayed: string | null;
-  consecutiveDays: number;
-}
-
-interface MascotMessage {
-  text: string;
-  type: 'encouragement' | 'combo' | 'levelup' | 'warning' | 'celebration';
-}
-
-const LEVELS: LevelConfig[] = [
-  { level: 1, speed: 1.0, spawnRate: 2000, bossChance: 0, pointsMultiplier: 1.0, filesToNextLevel: 10, bossHealth: 3 },
-  { level: 2, speed: 1.2, spawnRate: 1800, bossChance: 0.1, pointsMultiplier: 1.2, filesToNextLevel: 15, bossHealth: 4 },
-  { level: 3, speed: 1.4, spawnRate: 1600, bossChance: 0.15, pointsMultiplier: 1.4, filesToNextLevel: 20, bossHealth: 5 },
-  { level: 4, speed: 1.6, spawnRate: 1400, bossChance: 0.2, pointsMultiplier: 1.6, filesToNextLevel: 25, bossHealth: 6 },
-  { level: 5, speed: 1.8, spawnRate: 1200, bossChance: 0.25, pointsMultiplier: 2.0, filesToNextLevel: 30, bossHealth: 7 },
-];
-
-const COMBO_CONFIG = {
-  COMBO_WINDOW: 2000,
-  MULTIPLIER_THRESHOLDS: [3, 5, 8, 12],
-  MAX_MULTIPLIER: 3,
-};
-
-const POWER_UP_CONFIG = {
-  SPAWN_CHANCE: 0.15,
-  DURATION: 10000,
-  TYPES: ['slow-motion', 'point-multiplier', 'auto-compress', 'shield'] as const,
-  EFFECTS: {
-    'slow-motion': { speedMultiplier: 0.5, color: 'blue' },
-    'point-multiplier': { multiplier: 2, color: 'gold' },
-    'auto-compress': { autoCompressCount: 3, color: 'green' },
-    'shield': { duration: 5000, color: 'purple' },
-  },
-};
-
-const MASCOT_MESSAGES = {
-  encouragement: [
-    "You're doing great! 🎉",
-    "Keep it up! 💪",
-    "Awesome compression! 🌟",
-    "You're a natural! 🚀",
-    "Looking good! ✨",
-    "Nice work! 👏",
-  ],
-  combo: [
-    "Combo Master! 🔥",
-    "Unstoppable! ⚡",
-    "On fire! 🌟",
-    "Amazing streak! 💫",
-    "Can't be stopped! 🚀",
-  ],
-  levelup: [
-    "Level Up! You're crushing it! 🎊",
-    "New level unlocked! 🏆",
-    "Leveling up like a pro! 🌟",
-    "You're getting stronger! 💪",
-  ],
-  warning: [
-    "Files piling up! ⚠️",
-    "Stay focused! 👀",
-    "Speed up! ⏱️",
-    "Don't let them through! 🛡️",
-  ],
-  celebration: [
-    "INCREDIBLE! 🎆",
-    "LEGENDARY! 👑",
-    "MASTER COMPRESSOR! 🏅",
-    "ABSOLUTE CHAMPION! 🌟",
-  ],
-};
-
-interface FileObject {
-  id: number;
-  type: FileType;
-  size: number;
-  x: number;
-  y: number;
-  speed: number;
-  compressed: boolean;
-  isBoss?: boolean;
-  health?: number;
-  points: number;
-}
+type FileType = 'image' | 'pdf' | 'ppt' | 'video' | 'audio';
 
 interface PowerUp {
-  id: number;
-  type: PowerUpType;
+  type: 'row-blast' | 'column-blast' | 'bomb' | 'compression-burst';
+  name: string;
+  description: string;
+  icon: JSX.Element;
+  color: string;
+}
+
+type PowerUpType = PowerUp['type'];
+
+interface LevelConfig {
+  targetScore: number;
+  moves: number;
+  lockedFiles: number;
+  speed: number;
+  pointsMultiplier: number;
+}
+
+interface GridCell {
+  id: string;
+  type: FileType;
   x: number;
   y: number;
-  active: boolean;
-  duration: number;
-  endTime?: number;
+  compressed: boolean;
+  compressing: boolean;
+  size: number;
+  originalSize: number;
+  points: number;
+  isLocked: boolean;
+  isMatched: boolean;
+  isPowerUp: boolean;
+  powerUpType?: PowerUpType;
+}
+
+interface GameState {
+  grid: (GridCell | null)[][];
+  score: number;
+  movesLeft: number;
+  level: number;
+  isGameOver: boolean;
+  isLevelComplete: boolean;
+  selectedCell: { x: number; y: number } | null;
+  comboCount: number;
+  totalCompressed: number;
+  targetCompressed: number;
+  powerUps: { type: PowerUpType; count: number }[];
+  compressionProgress: number;
+  targetScore: number;
+  activePowerUp: PowerUpType | null;
+  streak: number;
 }
 
 interface Particle {
-  id: number;
+  id: string;
   x: number;
   y: number;
-  size: number;
   color: string;
-  velocity: { x: number; y: number };
+  size: number;
   life: number;
-  maxLife: number;
+  velocity: { x: number; y: number };
 }
 
-const FILE_TYPES: FileType[] = ['image', 'pdf', 'ppt', 'video'];
-const FILE_ICONS = {
-  image: <FileImage className="w-6 h-6" />,
-  pdf: <FileText className="w-6 h-6" />,
-  ppt: <FileText className="w-6 h-6" />,
-  video: <FileVideo className="w-6 h-6" />,
+interface Encouragement {
+  id: string;
+  message: string;
+  emoji: string;
+  type: 'success' | 'warning' | 'celebration';
+}
+
+// Game configuration
+const GRID_SIZE = 8;
+const LEVELS: LevelConfig[] = [
+  { targetScore: 1000, moves: 25, lockedFiles: 5, speed: 1.0, pointsMultiplier: 1.0 },
+  { targetScore: 2500, moves: 22, lockedFiles: 8, speed: 1.1, pointsMultiplier: 1.1 },
+  { targetScore: 5000, moves: 20, lockedFiles: 12, speed: 1.2, pointsMultiplier: 1.2 },
+  { targetScore: 8000, moves: 18, lockedFiles: 15, speed: 1.3, pointsMultiplier: 1.3 },
+  { targetScore: 12000, moves: 16, lockedFiles: 18, speed: 1.4, pointsMultiplier: 1.4 },
+  { targetScore: 17000, moves: 15, lockedFiles: 22, speed: 1.5, pointsMultiplier: 1.5 },
+  { targetScore: 23000, moves: 14, lockedFiles: 26, speed: 1.6, pointsMultiplier: 1.6 },
+  { targetScore: 30000, moves: 13, lockedFiles: 30, speed: 1.7, pointsMultiplier: 1.7 },
+];
+
+// File type configurations
+const FILE_CONFIG = {
+  image: { 
+    name: 'Image', 
+    color: 'bg-blue-100 text-blue-600 border-blue-300',
+    icon: <FileImage className="w-4 h-4 sm:w-6 sm:h-6" />,
+    baseSize: 2000,
+    compressedSize: 500,
+    blastColor: '#3B82F6'
+  },
+  pdf: { 
+    name: 'PDF', 
+    color: 'bg-red-100 text-red-600 border-red-300',
+    icon: <FileText className="w-4 h-4 sm:w-6 sm:h-6" />,
+    baseSize: 5000,
+    compressedSize: 1000,
+    blastColor: '#EF4444'
+  },
+  ppt: { 
+    name: 'Presentation', 
+    color: 'bg-orange-100 text-orange-600 border-orange-300',
+    icon: <FileText className="w-4 h-4 sm:w-6 sm:h-6" />,
+    baseSize: 10000,
+    compressedSize: 2500,
+    blastColor: '#F97316'
+  },
+  video: { 
+    name: 'Video', 
+    color: 'bg-purple-100 text-purple-600 border-purple-300',
+    icon: <FileVideo className="w-4 h-4 sm:w-6 sm:h-6" />,
+    baseSize: 50000,
+    compressedSize: 10000,
+    blastColor: '#8B5CF6'
+  },
+  audio: {
+    name: 'Audio',
+    color: 'bg-green-100 text-green-600 border-green-300',
+    icon: <FileAudio className="w-4 h-4 sm:w-6 sm:h-6" />,
+    baseSize: 10000,
+    compressedSize: 1000,
+    blastColor: '#10B981'
+  }
 };
 
-const FILE_COLORS: Record<FileType, string> = {
-  image: 'bg-blue-100 text-blue-600 border-blue-300',
-  pdf: 'bg-red-100 text-red-600 border-red-300',
-  ppt: 'bg-orange-100 text-orange-600 border-orange-300',
-  video: 'bg-purple-100 text-purple-600 border-purple-300',
-};
-
+// Points system
 const POINTS = {
+  MATCH_3: 100,
+  MATCH_4: 200,
+  MATCH_5: 500,
+  COMPRESSION: 50,
+  POWER_UP: 150,
+  COMBO_MULTIPLIER: 1.2,
   COMPRESS: 10,
-  COMBO: 5,
   LEVEL_UP: 100,
-  BOSS_DEFEAT: 200,
+  STREAK_BONUS: 25,
+  
   FILE_POINTS: {
     image: 10,
     pdf: 15,
     ppt: 20,
     video: 25,
+    audio: 30
+  }
+};
+
+// Power-up configurations
+const POWER_UPS: PowerUp[] = [
+  { 
+    type: 'row-blast', 
+    name: 'Row Blast', 
+    description: 'Clears an entire row',
+    icon: <div className="w-6 h-6 sm:w-8 sm:h-8 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 text-sm sm:text-base">→</div>,
+    color: 'bg-yellow-100 text-yellow-600'
   },
+  { 
+    type: 'column-blast', 
+    name: 'Column Blast', 
+    description: 'Clears an entire column',
+    icon: <div className="w-6 h-6 sm:w-8 sm:h-8 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 text-sm sm:text-base">↓</div>,
+    color: 'bg-yellow-100 text-yellow-600'
+  },
+  { 
+    type: 'bomb', 
+    name: 'Bomb', 
+    description: 'Clears a 3x3 area',
+    icon: <div className="w-6 h-6 sm:w-8 sm:h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 text-sm sm:text-base">💣</div>,
+    color: 'bg-red-100 text-red-600'
+  },
+  { 
+    type: 'compression-burst', 
+    name: 'Compression Burst', 
+    description: 'Compresses all locked files',
+    icon: <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-sm sm:text-base">⚡</div>,
+    color: 'bg-blue-100 text-blue-600'
+  }
+];
+
+// Encouraging messages
+const ENCOURAGEMENTS: Omit<Encouragement, 'id'>[] = [
+  { message: "Awesome! 🚀", emoji: "🚀", type: 'success' },
+  { message: "Great job! 👍", emoji: "👍", type: 'success' },
+  { message: "You're a star! ⭐", emoji: "⭐", type: 'success' },
+  { message: "Fantastic! 🌟", emoji: "🌟", type: 'success' },
+  { message: "Incredible! 😎", emoji: "😎", type: 'success' },
+  { message: "Power move! 💪", emoji: "💪", type: 'success' },
+  { message: "Unstoppable! 🏆", emoji: "🏆", type: 'celebration' },
+  { message: "Legendary! 🏅", emoji: "🏅", type: 'celebration' },
+  { message: "Master compressor! 🎯", emoji: "🎯", type: 'celebration' },
+  { message: "File crushing genius! 🤯", emoji: "🤯", type: 'celebration' },
+];
+
+// Background music
+const playBackgroundMusic = () => {
+  // This would typically be an actual audio file
+  console.log('Background music would play here');
+};
+
+const stopBackgroundMusic = () => {
+  console.log('Background music would stop here');
 };
 
 export default function SlimFileGame() {
-  // Game state
-  const [gameStarted, setGameStarted] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
-  const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
-  const [level, setLevel] = useState(1);
-  const [files, setFiles] = useState<FileObject[]>([]);
-  const [activePowerUps, setActivePowerUps] = useState<PowerUp[]>([]);
-  const [isPaused, setIsPaused] = useState(false);
-  const [showPauseMenu, setShowPauseMenu] = useState(false);
-  const [particles, setParticles] = useState<Particle[]>([]);
-  const [combo, setCombo] = useState<ComboState>({
-    count: 0,
-    multiplier: 1,
-    lastComboTime: 0,
-    maxMultiplier: 1,
-  });
-  const [filesCompressed, setFilesCompressed] = useState(0);
-  const [currentLevelConfig, setCurrentLevelConfig] = useState<LevelConfig>(LEVELS[0]);
-  const [showLevelUp, setShowLevelUp] = useState(false);
-  const [pointMultiplier, setPointMultiplier] = useState(1);
-  const [gameSpeed, setGameSpeed] = useState(1);
-  const [compressionProgress, setCompressionProgress] = useState<Record<number, number>>({});
-  const [showComboText, setShowComboText] = useState(false);
-  const [comboPosition, setComboPosition] = useState({ x: 0, y: 0 });
-  const [showPowerUpNotification, setShowPowerUpNotification] = useState<{
-    show: boolean;
-    type: PowerUpType | null;
-  }>({ show: false, type: null });
-  const [maxCombo, setMaxCombo] = useState(0);
-  const [showTutorial, setShowTutorial] = useState(false);
-  const [mascotMessage, setMascotMessage] = useState<MascotMessage | null>(null);
-  const [streak, setStreak] = useState(0);
-  const [perfectCompressStreak, setPerfectCompressStreak] = useState(0);
-  
-  // Game stats
-  const [gameStats, setGameStats] = useState<GameStats>(() => {
-    const savedStats = typeof window !== 'undefined' ? localStorage.getItem('slimfileGameStats') : null;
-    return savedStats 
-      ? JSON.parse(savedStats) 
-      : {
-          totalFilesCompressed: 0,
-          totalBytesSaved: 0,
-          maxCombo: 0,
-          levelsCompleted: 0,
-          powerUpsCollected: 0,
-          lastPlayed: null,
-          consecutiveDays: 0,
-        };
-  });
-  
-  // Refs
-  const gameAreaRef = useRef<HTMLDivElement>(null);
-  const lastPowerUpTime = useRef<number>(0);
-  const animationFrameRef = useRef<number>();
-  const lastFileTimeRef = useRef<number>(0);
-  const gameLoopIdRef = useRef<number>();
   const { toast } = useToast();
+  const [gameState, setGameState] = useState<GameState>({
+    grid: [],
+    score: 0,
+    movesLeft: 0,
+    level: 1,
+    isGameOver: false,
+    isLevelComplete: false,
+    selectedCell: null,
+    comboCount: 0,
+    totalCompressed: 0,
+    targetCompressed: 0,
+    powerUps: POWER_UPS.map(powerUp => ({ type: powerUp.type, count: 1 })),
+    compressionProgress: 0,
+    targetScore: 0,
+    activePowerUp: null,
+    streak: 0,
+  });
+  
+  const [highScore, setHighScore] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return parseInt(localStorage.getItem('slimfileMatch3HighScore') || '0', 10);
+    }
+    return 0;
+  });
+  
+  const [isPaused, setIsPaused] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(true);
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const [compressionBlasts, setCompressionBlasts] = useState<Array<{x: number, y: number, color: string}>>([]);
+  const [showAutoCompress, setShowAutoCompress] = useState(false);
+  const [encouragements, setEncouragements] = useState<Encouragement[]>([]);
+  const [dragStart, setDragStart] = useState<{x: number, y: number} | null>(null);
+  const [dragCurrent, setDragCurrent] = useState<{x: number, y: number} | null>(null);
+  const [musicEnabled, setMusicEnabled] = useState(false);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
 
-  // Show mascot message
-  const showMascotMessage = (type: MascotMessage['type']) => {
-    const messages = MASCOT_MESSAGES[type];
-    const message = messages[Math.floor(Math.random() * messages.length)];
-    setMascotMessage({ text: message, type });
-    setTimeout(() => setMascotMessage(null), 3000);
-  };
-
-  // Load high score
+  // Toggle background music
   useEffect(() => {
-    const savedHighScore = localStorage.getItem('slimfileGameHighScore');
-    if (savedHighScore) {
-      setHighScore(parseInt(savedHighScore, 10));
+    if (musicEnabled) {
+      playBackgroundMusic();
+    } else {
+      stopBackgroundMusic();
     }
-  }, []);
+  }, [musicEnabled]);
 
-  // Save high score
-  useEffect(() => {
-    if (score > highScore) {
-      setHighScore(score);
-      localStorage.setItem('slimfileGameHighScore', score.toString());
-    }
-  }, [score, highScore]);
-
-  // Update level config
-  useEffect(() => {
-    const newConfig = LEVELS.find(l => l.level === level) || LEVELS[0];
-    setCurrentLevelConfig(newConfig);
+  // Show encouraging message
+  const showEncouragement = useCallback((type: 'success' | 'celebration' = 'success') => {
+    const filtered = ENCOURAGEMENTS.filter(e => e.type === type);
+    const randomEncouragement = filtered[Math.floor(Math.random() * filtered.length)];
     
-    if (level > 1) {
-      setShowLevelUp(true);
-      showMascotMessage('levelup');
-      setTimeout(() => setShowLevelUp(false), 2000);
-      
-      setGameStats(prev => {
-        const newStats = {
-          ...prev,
-          levelsCompleted: Math.max(prev.levelsCompleted, level - 1),
-        };
-        localStorage.setItem('slimfileGameStats', JSON.stringify(newStats));
-        return newStats;
-      });
-    }
-  }, [level]);
-
-  // Check for level up
-  useEffect(() => {
-    if (filesCompressed > 0 && filesCompressed % currentLevelConfig.filesToNextLevel === 0) {
-      setLevel(prev => Math.min(prev + 1, LEVELS.length));
-    }
-  }, [filesCompressed, currentLevelConfig.filesToNextLevel]);
-
-  // Update combo multiplier
-  const updateComboMultiplier = (comboCount: number): number => {
-    const { MULTIPLIER_THRESHOLDS, MAX_MULTIPLIER } = COMBO_CONFIG;
-    for (let i = 0; i < MULTIPLIER_THRESHOLDS.length; i++) {
-      if (comboCount < MULTIPLIER_THRESHOLDS[i]) {
-        return i + 1;
-      }
-    }
-    return MAX_MULTIPLIER;
-  };
-
-  // Add to combo
-  const addToCombo = (x: number, y: number) => {
-    const now = Date.now();
-    const timeSinceLastCombo = now - combo.lastComboTime;
-    
-    let newCount = timeSinceLastCombo < COMBO_CONFIG.COMBO_WINDOW ? combo.count + 1 : 1;
-    const newMultiplier = updateComboMultiplier(newCount);
-    
-    setCombo({
-      count: newCount,
-      multiplier: newMultiplier,
-      lastComboTime: now,
-      maxMultiplier: Math.max(combo.maxMultiplier, newMultiplier),
-    });
-    
-    if (newCount > 1) {
-      setComboPosition({ x, y });
-      setShowComboText(true);
-      setTimeout(() => setShowComboText(false), 1000);
-    }
-    
-    if (newCount === 5 || newCount === 10 || newCount === 20) {
-      showMascotMessage('combo');
-    }
-    
-    if (newCount > gameStats.maxCombo) {
-      setGameStats(prev => ({
-        ...prev,
-        maxCombo: newCount,
-      }));
-    }
-  };
-
-  // Reset combo
-  useEffect(() => {
-    if (combo.count === 0) return;
-    
-    const timer = setTimeout(() => {
-      const timeSinceLastCombo = Date.now() - combo.lastComboTime;
-      if (timeSinceLastCombo >= COMBO_CONFIG.COMBO_WINDOW) {
-        setCombo(prev => ({
-          ...prev,
-          count: 0,
-          multiplier: 1,
-        }));
-      }
-    }, COMBO_CONFIG.COMBO_WINDOW);
-    
-    return () => clearTimeout(timer);
-  }, [combo.count, combo.lastComboTime]);
-
-  // Spawn power-up
-  const spawnPowerUp = (x: number, y: number) => {
-    if (Math.random() > POWER_UP_CONFIG.SPAWN_CHANCE) return;
-    
-    const powerUpType = POWER_UP_CONFIG.TYPES[
-      Math.floor(Math.random() * POWER_UP_CONFIG.TYPES.length)
-    ] as PowerUpType;
-    
-    const newPowerUp: PowerUp = {
-      id: Date.now(),
-      type: powerUpType,
-      x,
-      y,
-      active: false,
-      duration: POWER_UP_CONFIG.DURATION,
+    const encouragement: Encouragement = {
+      ...randomEncouragement,
+      id: Date.now().toString()
     };
     
-    setActivePowerUps(prev => [...prev, newPowerUp]);
-  };
-
-  const spawnRandomPowerUp = () => {
-    const gameArea = gameAreaRef.current;
-    if (!gameArea) return;
-    
-    const powerUpType = POWER_UP_CONFIG.TYPES[
-      Math.floor(Math.random() * POWER_UP_CONFIG.TYPES.length)
-    ] as PowerUpType;
-    
-    const newPowerUp: PowerUp = {
-      id: Date.now(),
-      type: powerUpType,
-      x: Math.random() * (gameArea.clientWidth - 40),
-      y: -40,
-      active: false,
-      duration: POWER_UP_CONFIG.DURATION,
-    };
-    
-    setActivePowerUps(prev => [...prev, newPowerUp]);
-  };
-
-  // Activate power-up
-  const activatePowerUp = (powerUp: PowerUp) => {
-    const now = Date.now();
-    
-    if (now - lastPowerUpTime.current < 2000) return;
-    lastPowerUpTime.current = now;
-    
-    setGameStats(prev => ({
-      ...prev,
-      powerUpsCollected: prev.powerUpsCollected + 1,
-    }));
-    
-    switch (powerUp.type) {
-      case 'slow-motion':
-        setGameSpeed(POWER_UP_CONFIG.EFFECTS['slow-motion'].speedMultiplier);
-        setTimeout(() => setGameSpeed(1), POWER_UP_CONFIG.DURATION);
-        break;
-        
-      case 'point-multiplier':
-        const { multiplier } = POWER_UP_CONFIG.EFFECTS['point-multiplier'];
-        setPointMultiplier(multiplier);
-        setTimeout(() => setPointMultiplier(1), POWER_UP_CONFIG.DURATION);
-        break;
-        
-      case 'auto-compress':
-        const { autoCompressCount } = POWER_UP_CONFIG.EFFECTS['auto-compress'];
-        let compressed = 0;
-        const autoCompressInterval = setInterval(() => {
-          if (compressed >= autoCompressCount) {
-            clearInterval(autoCompressInterval);
-            return;
-          }
-          
-          setFiles(prevFiles => {
-            const uncompressedFiles = prevFiles.filter(f => !f.compressed);
-            if (uncompressedFiles.length === 0) return prevFiles;
-            
-            const fileToCompress = uncompressedFiles[0];
-            compressed++;
-            return prevFiles.map(f => 
-              f.id === fileToCompress.id ? { ...f, compressed: true } : f
-            );
-          });
-        }, 500);
-        
-        setTimeout(() => clearInterval(autoCompressInterval), POWER_UP_CONFIG.DURATION);
-        break;
-        
-      case 'super-compress':
-        setFiles(prev => 
-          prev.map(file => {
-            if (!file.compressed) {
-              createParticles(file.x, file.y, getFileColor(file.type));
-              return { ...file, compressed: true, size: Math.floor(file.size * 0.3) };
-            }
-            return file;
-          })
-        );
-        break;
-        
-      case 'shield':
-        break;
-    }
-    
-    setShowPowerUpNotification({
-      type: powerUp.type,
-      show: true
-    });
+    setEncouragements(prev => [...prev, encouragement]);
     
     setTimeout(() => {
-      setShowPowerUpNotification(prev => ({ ...prev, show: false }));
-    }, 2000);
+      setEncouragements(prev => prev.filter(e => e.id !== encouragement.id));
+    }, 3000);
+  }, []);
+
+  // Simple blast effect
+  const createCompressionBlast = useCallback((x: number, y: number, color: string) => {
+    const blast = { x, y, color };
+    setCompressionBlasts(prev => [...prev, blast]);
     
-    setActivePowerUps(prev => prev.filter(p => p.id !== powerUp.id));
-  };
+    setTimeout(() => {
+      setCompressionBlasts(prev => prev.filter(b => b !== blast));
+    }, 400);
+  }, []);
 
-  // Game loop
-  useEffect(() => {
-    if (!gameStarted || gameOver || isPaused) return;
-
-    let lastTime = performance.now();
-    let fileSpawnTimer = 0;
-    let powerUpSpawnTimer = 0;
-    const gameArea = gameAreaRef.current;
-    if (!gameArea) return;
-
-    const updatePowerUps = () => {
-      setActivePowerUps(prev => {
-        const now = Date.now();
-        const updated = prev.filter(powerUp => {
-          if (powerUp.endTime && powerUp.endTime < now) {
-            if (powerUp.type === 'point-multiplier') setPointMultiplier(1);
-            if (powerUp.type === 'slow-motion') setGameSpeed(1);
-            return false;
-          }
-          return true;
-        });
-        return updated;
-      });
-    };
-
-    const updateParticles = (deltaTime: number) => {
-      setParticles(prev => 
-        prev
-          .map(particle => ({
-            ...particle,
-            x: particle.x + particle.velocity.x * deltaTime * 0.05,
-            y: particle.y + particle.velocity.y * deltaTime * 0.05,
-            life: particle.life - deltaTime * 0.05,
-          }))
-          .filter(particle => particle.life > 0)
-      );
-    };
-
-    const gameLoop = (currentTime: number) => {
-      const deltaTime = currentTime - lastTime;
-      lastTime = currentTime;
-      
-      setFiles(prevFiles => {
-        const updatedFiles = prevFiles.map(file => {
-          if (file.compressed) return file;
-          
-          const currentSpeed = file.speed * gameSpeed;
-          const newY = file.y + currentSpeed;
-          
-          if (newY > gameArea.clientHeight - 60) {
-            if (!file.isBoss) {
-              setGameOver(true);
-            }
-            return file;
-          }
-          
-          return { ...file, y: newY };
-        });
-        
-        return updatedFiles.filter(file => !(file.compressed && file.y < -50));
-      });
-
-      fileSpawnTimer += deltaTime;
-      powerUpSpawnTimer += deltaTime;
-      
-      const spawnInterval = Math.max(500, 2000 - (level * 100));
-      
-      if (fileSpawnTimer > spawnInterval) {
-        spawnFile();
-        fileSpawnTimer = 0;
-      }
-      
-      if (powerUpSpawnTimer > 10000 && Math.random() < 0.2) {
-        spawnRandomPowerUp();
-        powerUpSpawnTimer = 0;
-      }
-      
-      updatePowerUps();
-      updateParticles(deltaTime);
-
-      animationFrameRef.current = requestAnimationFrame(gameLoop);
-    };
-
-    animationFrameRef.current = requestAnimationFrame(gameLoop);
-    
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [gameStarted, gameOver, isPaused, level, gameSpeed]);
-
-  const createParticles = (x: number, y: number, color: string, count: number = 10, text?: string) => {
-    const newParticles = Array.from({ length: count }, (_, i) => ({
-      id: Date.now() + i,
-      x,
-      y,
-      size: Math.random() * 3 + 1,
-      color,
-      velocity: {
-        x: (Math.random() - 0.5) * 8,
-        y: (Math.random() - 0.5) * 8
-      },
+  // Simple power-up effect
+  const createPowerUpEffect = useCallback((x: number, y: number) => {
+    const newParticles: Particle[] = Array.from({ length: 8 }, (_, i) => ({
+      id: `${Date.now()}-powerup-${i}`,
+      x: x * 60 + 30,
+      y: y * 60 + 30,
+      color: '#FFD700',
+      size: Math.random() * 4 + 2,
       life: 1,
-      maxLife: Math.random() * 2 + 1,
+      velocity: {
+        x: (Math.random() - 0.5) * 6,
+        y: (Math.random() - 0.5) * 6
+      }
     }));
     
     setParticles(prev => [...prev, ...newParticles]);
-  };
+  }, []);
 
-  const compressFile = (file: FileObject) => {
-    if (file.compressed || isPaused) return;
+  // Update particles
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setParticles(prev => 
+        prev.map(p => ({ 
+          ...p, 
+          life: p.life - 0.03,
+          x: p.x + p.velocity.x * 0.3,
+          y: p.y + p.velocity.y * 0.3
+        }))
+        .filter(p => p.life > 0)
+      );
+    }, 50);
 
-    if (file.isBoss && file.health !== undefined) {
-      const newHealth = (file.health || 1) - 1;
-      
-      if (newHealth <= 0) {
-        createParticles(file.x, file.y, 'rgba(220, 38, 38, 0.8)', 20);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Check for auto-compression opportunities
+  const checkAutoCompression = useCallback((grid: (GridCell | null)[][]) => {
+    let autoCompressed = false;
+    
+    for (let y = 0; y < GRID_SIZE; y++) {
+      for (let x = 0; x < GRID_SIZE - 2; x++) {
+        const cell = grid[y][x];
+        if (!cell || cell.compressed) continue;
         
-        setFiles(prev => 
-          prev.map(f => 
-            f.id === file.id 
-              ? { ...f, compressed: true, size: Math.floor(f.size * 0.3) } 
-              : f
-          )
-        );
+        const type = cell.type;
+        let matchLength = 1;
         
-        addToCombo(file.x, file.y);
-        setFilesCompressed(prev => prev + 1);
-        setGameStats(prev => ({
-          ...prev,
-          totalFilesCompressed: prev.totalFilesCompressed + 1,
-          totalBytesSaved: prev.totalBytesSaved + file.size,
-        }));
-        
-        const points = POINTS.BOSS_DEFEAT * pointMultiplier;
-        addScore(points);
-        createParticles(file.x, file.y, '#10B981', 10, `+${points}`);
-        showMascotMessage('celebration');
-        
-        if (Math.random() < POWER_UP_CONFIG.SPAWN_CHANCE) {
-          spawnPowerUp(file.x, file.y);
+        while (x + matchLength < GRID_SIZE && grid[y][x + matchLength]?.type === type) {
+          matchLength++;
         }
         
-      } else {
-        setFiles(prev => 
-          prev.map(f => 
-            f.id === file.id 
-              ? { ...f, health: newHealth } 
-              : f
-          )
-        );
-        
-        createParticles(file.x, file.y, '#F59E0B', 5);
+        if (matchLength >= 3) {
+          autoCompressed = true;
+          setShowAutoCompress(true);
+          setTimeout(() => setShowAutoCompress(false), 1000);
+          break;
+        }
       }
+      if (autoCompressed) break;
+    }
+    
+    if (!autoCompressed) {
+      for (let x = 0; x < GRID_SIZE; x++) {
+        for (let y = 0; y < GRID_SIZE - 2; y++) {
+          const cell = grid[y][x];
+          if (!cell || cell.compressed) continue;
+          
+          const type = cell.type;
+          let matchLength = 1;
+          
+          while (y + matchLength < GRID_SIZE && grid[y + matchLength][x]?.type === type) {
+            matchLength++;
+          }
+          
+          if (matchLength >= 3) {
+            autoCompressed = true;
+            setShowAutoCompress(true);
+            setTimeout(() => setShowAutoCompress(false), 1000);
+            break;
+          }
+        }
+        if (autoCompressed) break;
+      }
+    }
+    
+    return autoCompressed;
+  }, []);
+
+  // Initialize game
+  const initGame = useCallback((levelIndex = 0) => {
+    const levelConfig = LEVELS[levelIndex] || LEVELS[LEVELS.length - 1];
+    const fileTypes = Object.keys(FILE_CONFIG) as FileType[];
+    
+    const newGrid: (GridCell | null)[][] = [];
+    
+    for (let y = 0; y < GRID_SIZE; y++) {
+      const row: (GridCell | null)[] = [];
+      for (let x = 0; x < GRID_SIZE; x++) {
+        const fileType = fileTypes[Math.floor(Math.random() * fileTypes.length)];
+        const isLocked = Math.random() < (0.15 + levelIndex * 0.05);
+        const fileConfig = FILE_CONFIG[fileType];
+        
+        row.push({
+          id: `${x}-${y}-${Math.random()}`,
+          type: fileType,
+          x,
+          y,
+          compressed: false,
+          compressing: false,
+          size: fileConfig.baseSize,
+          originalSize: fileConfig.baseSize,
+          points: POINTS.FILE_POINTS[fileType] * levelConfig.pointsMultiplier,
+          isLocked,
+          isMatched: false,
+          isPowerUp: false,
+        });
+      }
+      newGrid.push(row);
+    }
+    
+    setGameState(prev => ({
+      ...prev,
+      grid: newGrid,
+      score: 0,
+      movesLeft: levelConfig.moves,
+      level: levelIndex + 1,
+      isGameOver: false,
+      isLevelComplete: false,
+      totalCompressed: 0,
+      targetCompressed: levelConfig.lockedFiles,
+      targetScore: levelConfig.targetScore,
+      compressionProgress: 0,
+      activePowerUp: null,
+      streak: 0,
+      powerUps: POWER_UPS.map(powerUp => ({ 
+        type: powerUp.type, 
+        count: Math.max(1, 3 - levelIndex)
+      })),
+    }));
+    setParticles([]);
+    setCompressionBlasts([]);
+  }, []);
+
+  // Find and remove matches
+  const findAndRemoveMatches = useCallback((grid: (GridCell | null)[][]) => {
+    const matchedCells: Set<string> = new Set();
+    let score = 0;
+    let powerUpsEarned = 0;
+    
+    const gridCopy = grid.map(row => [...row]);
+    
+    // Check horizontal matches
+    for (let y = 0; y < GRID_SIZE; y++) {
+      for (let x = 0; x < GRID_SIZE - 2; x++) {
+        const cell = gridCopy[y][x];
+        if (!cell) continue;
+        
+        const type = cell.type;
+        let matchLength = 1;
+        
+        while (x + matchLength < GRID_SIZE && gridCopy[y][x + matchLength]?.type === type) {
+          matchLength++;
+        }
+        
+        if (matchLength >= 3) {
+          for (let i = 0; i < matchLength; i++) {
+            matchedCells.add(`${x + i}-${y}`);
+          }
+          
+          if (matchLength === 3) score += POINTS.MATCH_3;
+          else if (matchLength === 4) {
+            score += POINTS.MATCH_4;
+            powerUpsEarned++;
+          }
+          else {
+            score += POINTS.MATCH_5;
+            powerUpsEarned += 2;
+          }
+        }
+        
+        x += matchLength - 1;
+      }
+    }
+    
+    // Check vertical matches
+    for (let x = 0; x < GRID_SIZE; x++) {
+      for (let y = 0; y < GRID_SIZE - 2; y++) {
+        const cell = gridCopy[y][x];
+        if (!cell) continue;
+        
+        const type = cell.type;
+        let matchLength = 1;
+        
+        while (y + matchLength < GRID_SIZE && gridCopy[y + matchLength][x]?.type === type) {
+          matchLength++;
+        }
+        
+        if (matchLength >= 3) {
+          for (let i = 0; i < matchLength; i++) {
+            matchedCells.add(`${x}-${y + i}`);
+          }
+          
+          if (matchLength === 3) score += POINTS.MATCH_3;
+          else if (matchLength === 4) {
+            score += POINTS.MATCH_4;
+            powerUpsEarned++;
+          }
+          else {
+            score += POINTS.MATCH_5;
+            powerUpsEarned += 2;
+          }
+        }
+        
+        y += matchLength - 1;
+      }
+    }
+    
+    // Remove matched cells and create new ones
+    const newGrid = gridCopy.map(row => [...row]);
+    const fileTypes = Object.keys(FILE_CONFIG) as FileType[];
+    let compressedCount = 0;
+
+    matchedCells.forEach(cellId => {
+      const [x, y] = cellId.split('-').map(Number);
+      const cell = newGrid[y][x];
+      if (cell && !cell.compressed) {
+        compressedCount++;
+        createCompressionBlast(x, y, FILE_CONFIG[cell.type].blastColor);
+      }
+      const fileType = fileTypes[Math.floor(Math.random() * fileTypes.length)];
+      const fileConfig = FILE_CONFIG[fileType];
+      newGrid[y][x] = {
+        id: `${x}-${y}-${Math.random()}`,
+        type: fileType,
+        x,
+        y,
+        compressed: false,
+        compressing: false,
+        size: fileConfig.baseSize,
+        originalSize: fileConfig.baseSize,
+        points: POINTS.FILE_POINTS[fileType],
+        isLocked: Math.random() < 0.1,
+        isMatched: false,
+        isPowerUp: false,
+      };
+    });
+
+    // Award power-ups for large matches
+    if (powerUpsEarned > 0) {
+      setGameState(prev => {
+        const updatedPowerUps = [...prev.powerUps];
+        const randomPowerUp = POWER_UPS[Math.floor(Math.random() * POWER_UPS.length)];
+        const powerUpIndex = updatedPowerUps.findIndex(p => p.type === randomPowerUp.type);
+        
+        if (powerUpIndex !== -1) {
+          updatedPowerUps[powerUpIndex].count += powerUpsEarned;
+          
+          const randomX = Math.floor(Math.random() * GRID_SIZE);
+          const randomY = Math.floor(Math.random() * GRID_SIZE);
+          createPowerUpEffect(randomX, randomY);
+          
+          toast({
+            title: "Power-Up Earned!",
+            description: `You got ${powerUpsEarned} ${randomPowerUp.name} power-up${powerUpsEarned > 1 ? 's' : ''}!`,
+          });
+        }
+        
+        return { ...prev, powerUps: updatedPowerUps };
+      });
+    }
+    
+    return { 
+      grid: newGrid, 
+      score, 
+      matches: matchedCells.size,
+      compressedCount 
+    };
+  }, [createCompressionBlast, createPowerUpEffect, toast]);
+
+  // Improved drag functionality
+  const handleDragStart = useCallback((x: number, y: number) => {
+    if (isPaused || gameState.isGameOver || gameState.isLevelComplete || gameState.activePowerUp) return;
+    
+    const cell = gameState.grid[y][x];
+    if (!cell || cell.isLocked) return;
+    
+    isDragging.current = true;
+    setDragStart({ x, y });
+    setDragCurrent({ x, y });
+  }, [gameState, isPaused]);
+
+  const handleDragMove = useCallback((x: number, y: number) => {
+    if (!isDragging.current || !dragStart) return;
+    
+    const cell = gameState.grid[y]?.[x];
+    if (!cell || cell.isLocked) return;
+    
+    setDragCurrent({ x, y });
+  }, [dragStart, gameState.grid]);
+
+  const handleDragEnd = useCallback(() => {
+    if (!isDragging.current || !dragStart || !dragCurrent) {
+      isDragging.current = false;
+      setDragStart(null);
+      setDragCurrent(null);
+      return;
+    }
+
+    const { x: startX, y: startY } = dragStart;
+    const { x: endX, y: endY } = dragCurrent;
+
+    // Check if cells are adjacent
+    const isAdjacent = 
+      (Math.abs(startX - endX) === 1 && startY === endY) || 
+      (Math.abs(startY - endY) === 1 && startX === endX);
+
+    if (isAdjacent && (startX !== endX || startY !== endY)) {
+      // Perform swap
+      const newGrid = gameState.grid.map(row => [...row]);
+      [newGrid[startY][startX], newGrid[endY][endX]] = [newGrid[endY][endX], newGrid[startY][startX]];
       
+      const { grid: matchedGrid, score: matchScore, compressedCount } = findAndRemoveMatches(newGrid);
+      
+      if (matchScore === 0) {
+        // No match, swap back
+        toast({
+          title: "No Match",
+          description: "Try to match 3 or more files of the same type!",
+          variant: "destructive",
+        });
+      } else {
+        // Valid move
+        const newMovesLeft = gameState.movesLeft - 1;
+        const newScore = gameState.score + matchScore;
+        const newTotalCompressed = gameState.totalCompressed + compressedCount;
+        const levelConfig = LEVELS[gameState.level - 1] || LEVELS[0];
+        const isLevelComplete = newScore >= gameState.targetScore && newTotalCompressed >= gameState.targetCompressed;
+        const isGameOver = newMovesLeft <= 0 && !isLevelComplete;
+
+        // Update streak
+        const newStreak = gameState.streak + 1;
+        const streakBonus = newStreak >= 3 ? POINTS.STREAK_BONUS * Math.floor(newStreak / 3) : 0;
+
+        if (newStreak >= 3) {
+          showEncouragement('celebration');
+        } else if (matchScore >= POINTS.MATCH_4) {
+          showEncouragement('success');
+        }
+
+        setGameState(prev => ({
+          ...prev,
+          grid: matchedGrid,
+          movesLeft: newMovesLeft,
+          score: newScore + streakBonus,
+          totalCompressed: newTotalCompressed,
+          streak: newStreak,
+          isLevelComplete,
+          isGameOver,
+        }));
+        
+        if (newScore + streakBonus > highScore) {
+          setHighScore(newScore + streakBonus);
+          localStorage.setItem('slimfileMatch3HighScore', (newScore + streakBonus).toString());
+        }
+
+        setTimeout(() => {
+          checkAutoCompression(matchedGrid);
+        }, 500);
+      }
+    }
+
+    isDragging.current = false;
+    setDragStart(null);
+    setDragCurrent(null);
+  }, [dragStart, dragCurrent, gameState, findAndRemoveMatches, toast, highScore, checkAutoCompression, showEncouragement]);
+
+  // Activate a power-up
+  const activatePowerUp = useCallback((powerUpType: PowerUpType) => {
+    setGameState(prev => {
+      const powerUp = prev.powerUps.find(p => p.type === powerUpType);
+      if (!powerUp || powerUp.count <= 0) return prev;
+      
+      return {
+        ...prev,
+        activePowerUp: powerUpType
+      };
+    });
+    
+    toast({
+      title: "Power-Up Activated!",
+      description: `Click on the grid to use ${POWER_UPS.find(p => p.type === powerUpType)?.name}`,
+    });
+  }, [toast]);
+
+  // Apply power-up effect
+  const applyPowerUpEffect = useCallback((x: number, y: number) => {
+    if (!gameState.activePowerUp) return;
+
+    const powerUpType = gameState.activePowerUp;
+    let affectedCells: {x: number, y: number}[] = [];
+    let scoreEarned = 0;
+
+    switch (powerUpType) {
+      case 'row-blast':
+        for (let i = 0; i < GRID_SIZE; i++) {
+          affectedCells.push({ x: i, y });
+        }
+        break;
+      case 'column-blast':
+        for (let i = 0; i < GRID_SIZE; i++) {
+          affectedCells.push({ x, y: i });
+        }
+        break;
+      case 'bomb':
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
+              affectedCells.push({ x: nx, y: ny });
+            }
+          }
+        }
+        break;
+      case 'compression-burst':
+        for (let cy = 0; cy < GRID_SIZE; cy++) {
+          for (let cx = 0; cx < GRID_SIZE; cx++) {
+            const cell = gameState.grid[cy][cx];
+            if (cell && cell.isLocked) {
+              affectedCells.push({ x: cx, y: cy });
+            }
+          }
+        }
+        break;
+    }
+
+    const newGrid = gameState.grid.map(row => [...row]);
+    affectedCells.forEach(({x, y}) => {
+      const cell = newGrid[y][x];
+      if (cell) {
+        createCompressionBlast(x, y, FILE_CONFIG[cell.type].blastColor);
+        scoreEarned += POINTS.POWER_UP;
+        
+        if (powerUpType === 'compression-burst') {
+          newGrid[y][x] = {
+            ...cell,
+            compressed: true,
+            isLocked: false,
+            size: FILE_CONFIG[cell.type].compressedSize
+          };
+        } else {
+          const fileTypes = Object.keys(FILE_CONFIG) as FileType[];
+          const newFileType = fileTypes[Math.floor(Math.random() * fileTypes.length)];
+          const fileConfig = FILE_CONFIG[newFileType];
+          newGrid[y][x] = {
+            id: `${x}-${y}-${Math.random()}`,
+            type: newFileType,
+            x,
+            y,
+            compressed: false,
+            compressing: false,
+            size: fileConfig.baseSize,
+            originalSize: fileConfig.baseSize,
+            points: POINTS.FILE_POINTS[newFileType],
+            isLocked: Math.random() < 0.1,
+            isMatched: false,
+            isPowerUp: false,
+          };
+        }
+      }
+    });
+
+    const newMovesLeft = gameState.movesLeft - 1;
+    const newScore = gameState.score + scoreEarned;
+    const newTotalCompressed = powerUpType === 'compression-burst' 
+      ? gameState.totalCompressed + affectedCells.length 
+      : gameState.totalCompressed;
+
+    const isLevelComplete = newScore >= gameState.targetScore && newTotalCompressed >= gameState.targetCompressed;
+    const isGameOver = newMovesLeft <= 0 && !isLevelComplete;
+
+    setGameState(prev => {
+      const updatedPowerUps = prev.powerUps.map(p => 
+        p.type === powerUpType ? { ...p, count: p.count - 1 } : p
+      );
+
+      return {
+        ...prev,
+        grid: newGrid,
+        movesLeft: newMovesLeft,
+        score: newScore,
+        totalCompressed: newTotalCompressed,
+        powerUps: updatedPowerUps,
+        activePowerUp: null,
+        isLevelComplete,
+        isGameOver,
+      };
+    });
+
+    toast({
+      title: "Power-Up Used!",
+      description: `${POWER_UPS.find(p => p.type === powerUpType)?.name} affected ${affectedCells.length} files!`,
+    });
+  }, [gameState, createCompressionBlast, toast]);
+
+  // Handle cell click
+  const handleCellClick = useCallback((x: number, y: number) => {
+    if (isPaused || gameState.isGameOver || gameState.isLevelComplete) return;
+    
+    if (gameState.activePowerUp) {
+      applyPowerUpEffect(x, y);
       return;
     }
     
-    setFiles(prevFiles => 
-      prevFiles.map(f => 
-        f.id === file.id ? { ...f, compressed: true, size: Math.floor(f.size * 0.3) } : f
-      )
-    );
-
-    createParticles(file.x, file.y, getFileColor(file.type));
-    addToCombo(file.x, file.y);
-    setFilesCompressed(prev => prev + 1);
-    setGameStats(prev => ({
-      ...prev,
-      totalFilesCompressed: prev.totalFilesCompressed + 1,
-      totalBytesSaved: prev.totalBytesSaved + file.size,
-    }));
-
-    addScore(POINTS.FILE_POINTS[file.type]);
-
-    if (Math.random() < POWER_UP_CONFIG.SPAWN_CHANCE) {
-      spawnPowerUp(file.x, file.y);
+    const cell = gameState.grid[y][x];
+    if (!cell || cell.isLocked) return;
+    
+    if (!gameState.selectedCell) {
+      setGameState(prev => ({ ...prev, selectedCell: { x, y } }));
+      return;
     }
     
-    if (combo.count > 0 && combo.count % 5 === 0) {
-      showMascotMessage('encouragement');
+    const { x: selectedX, y: selectedY } = gameState.selectedCell;
+    
+    if (selectedX === x && selectedY === y) {
+      setGameState(prev => ({ ...prev, selectedCell: null }));
+      return;
     }
     
-    if (combo.count > 3) {
+    const isAdjacent = 
+      (Math.abs(selectedX - x) === 1 && selectedY === y) || 
+      (Math.abs(selectedY - y) === 1 && selectedX === x);
+    
+    if (!isAdjacent) {
+      setGameState(prev => ({ ...prev, selectedCell: { x, y } }));
+      return;
+    }
+    
+    const newGrid = gameState.grid.map(row => [...row]);
+    [newGrid[selectedY][selectedX], newGrid[y][x]] = [newGrid[y][x], newGrid[selectedY][selectedX]];
+    
+    const { grid: matchedGrid, score: matchScore, compressedCount } = findAndRemoveMatches(newGrid);
+    
+    if (matchScore === 0) {
       toast({
-        title: `Combo x${combo.count}!`,
-        description: `+${POINTS.COMPRESS * combo.multiplier * pointMultiplier * currentLevelConfig.pointsMultiplier} points!`,
-        variant: "default",
+        title: "No Match",
+        description: "Try to match 3 or more files of the same type!",
+        variant: "destructive",
       });
+      setGameState(prev => ({ ...prev, selectedCell: null }));
+      return;
     }
-  };
-
-  const addScore = (basePoints: number) => {
-    const points = Math.floor(basePoints * combo.multiplier * pointMultiplier * currentLevelConfig.pointsMultiplier);
-    setScore(prev => prev + points);
     
-    createParticles(
-      window.innerWidth / 2, 
-      100, 
-      '#10B981', 
-      Math.min(10, points / 10),
-      `+${points}`
-    );
-  };
+    const newMovesLeft = gameState.movesLeft - 1;
+    const newScore = gameState.score + matchScore;
+    const newTotalCompressed = gameState.totalCompressed + compressedCount;
+    const levelConfig = LEVELS[gameState.level - 1] || LEVELS[0];
+    const isLevelComplete = newScore >= gameState.targetScore && newTotalCompressed >= gameState.targetCompressed;
+    const isGameOver = newMovesLeft <= 0 && !isLevelComplete;
 
-  const startGame = () => {
-    setGameStarted(true);
-    setGameOver(false);
-    setScore(0);
-    setLevel(1);
-    setFilesCompressed(0);
-    setCombo({
-      count: 0,
-      multiplier: 1,
-      lastComboTime: 0,
-      maxMultiplier: 1,
-    });
-    setCurrentLevelConfig(LEVELS[0]);
-    setActivePowerUps([]);
-    setPointMultiplier(1);
-    setGameSpeed(1);
-    setFiles([]);
-    setParticles([]);
-    setCompressionProgress({});
-    setStreak(0);
-    setPerfectCompressStreak(0);
-    lastFileTimeRef.current = performance.now();
-    showMascotMessage('encouragement');
-  };
-  
-  const togglePause = () => {
-    const newPauseState = !isPaused;
-    setIsPaused(newPauseState);
-    setShowPauseMenu(newPauseState);
-  };
+    const newStreak = gameState.streak + 1;
+    const streakBonus = newStreak >= 3 ? POINTS.STREAK_BONUS * Math.floor(newStreak / 3) : 0;
 
-  const resetGame = () => {
-    setGameStarted(false);
-    setGameOver(false);
-    setIsPaused(false);
-    setShowPauseMenu(false);
-  };
+    if (newStreak >= 3) {
+      showEncouragement('celebration');
+    } else if (matchScore >= POINTS.MATCH_4) {
+      showEncouragement('success');
+    }
 
-  const getFileColor = (type: FileType) => {
-    const colors = {
-      'image': '#3B82F6',
-      'pdf': '#EF4444',
-      'ppt': '#F97316',
-      'video': '#8B5CF6'
-    };
-    return colors[type] || '#6B7280';
-  };
-
-  const spawnFile = () => {
-    const gameArea = gameAreaRef.current;
-    if (!gameArea) return;
-
-    const isBoss = Math.random() < currentLevelConfig.bossChance;
-    const type = FILE_TYPES[Math.floor(Math.random() * FILE_TYPES.length)];
-    const size = isBoss 
-      ? Math.floor(Math.random() * 100) + 150
-      : Math.floor(Math.random() * 50) + 50;
-      
-    const x = Math.random() * (gameArea.clientWidth - 60);
-    const baseSpeed = currentLevelConfig.speed;
-    const speed = isBoss ? baseSpeed * 0.7 : baseSpeed;
+    setGameState(prev => ({
+      ...prev,
+      grid: matchedGrid,
+      selectedCell: null,
+      movesLeft: newMovesLeft,
+      score: newScore + streakBonus,
+      totalCompressed: newTotalCompressed,
+      streak: newStreak,
+      isLevelComplete,
+      isGameOver,
+    }));
     
-    const newFile: FileObject = {
-      id: Date.now() + Math.random(),
-      type,
-      size,
-      x,
-      y: -60,
-      speed,
-      compressed: false,
-      isBoss,
-      health: isBoss ? currentLevelConfig.bossHealth : undefined,
-      points: isBoss ? POINTS.BOSS_DEFEAT : POINTS.FILE_POINTS[type]
-    };
+    if (newScore + streakBonus > highScore) {
+      setHighScore(newScore + streakBonus);
+      localStorage.setItem('slimfileMatch3HighScore', (newScore + streakBonus).toString());
+    }
 
-    setFiles(prev => [...prev, newFile]);
-  };
+    setTimeout(() => {
+      checkAutoCompression(matchedGrid);
+    }, 500);
+  }, [gameState, isPaused, highScore, toast, findAndRemoveMatches, applyPowerUpEffect, checkAutoCompression, showEncouragement]);
 
-  const handleFileClick = (file: FileObject) => {
-    compressFile(file);
-  };
-  
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-purple-50 to-pink-50 py-4 px-2 sm:px-4 lg:px-8 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full opacity-20 blur-xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1.2, 1, 1.2],
-            rotate: [360, 180, 0],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute bottom-20 right-10 w-40 h-40 bg-gradient-to-br from-pink-200 to-red-200 rounded-full opacity-20 blur-xl"
-        />
-      </div>
+  // Initialize game on component mount
+  useEffect(() => {
+    initGame(0);
+  }, [initGame]);
 
-      {/* Mascot with Messages */}
-      <AnimatePresence>
-        {mascotMessage && (
-          <motion.div
-            initial={{ scale: 0, y: -20 }}
-            animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0, y: -20 }}
-            className="fixed top-20 sm:top-24 right-4 z-50 flex items-center gap-2 bg-white rounded-full shadow-2xl px-4 py-2 border-2 border-purple-300"
-          >
+  // Render game grid
+  const renderGrid = () => {
+    return (
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-2xl mb-6 mx-auto max-w-max relative border border-white/20">
+        {/* Encouragement Messages */}
+        <AnimatePresence>
+          {encouragements.map((encouragement) => (
             <motion.div
-              animate={{
-                rotate: [0, 10, -10, 0],
-              }}
-              transition={{
-                duration: 0.5,
-                repeat: Infinity,
-              }}
-              className="text-4xl"
+              key={encouragement.id}
+              initial={{ scale: 0, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0, opacity: 0, y: -20 }}
+              className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-6 py-3 rounded-full text-sm font-bold z-20 flex items-center gap-2 shadow-lg border-2 border-white/30"
             >
-              😊
+              <span className="text-lg">{encouragement.emoji}</span>
+              {encouragement.message}
             </motion.div>
-            <div className="flex flex-col">
-              <span className="font-bold text-purple-600 text-sm">{mascotMessage.text}</span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          ))}
+        </AnimatePresence>
 
-      {/* Level Up Animation */}
-      <AnimatePresence>
-        {showLevelUp && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none"
-          >
+        {/* Auto-compress hint */}
+        <AnimatePresence>
+          {showAutoCompress && (
             <motion.div
-              animate={{
-                scale: [1, 1.2, 1],
-                rotate: [0, 5, -5, 0],
-              }}
-              transition={{ duration: 0.5 }}
-              className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-white px-8 py-4 rounded-full text-4xl font-bold shadow-2xl"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-bold z-20 shadow-lg border border-white/20"
             >
-              <Sparkles className="inline mr-2" />
-              Level {level}!
-              <Sparkles className="inline ml-2" />
+              🎯 Match Available!
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Pause Menu */}
-      {showPauseMenu && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-white p-6 sm:p-8 rounded-xl max-w-md w-full mx-4"
-          >
-            <h2 className="text-2xl font-bold text-center mb-6 text-purple-600">Game Paused</h2>
-            <div className="space-y-4">
-              <Button 
-                onClick={togglePause}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                size="lg"
-              >
-                <Play className="mr-2 h-5 w-5" />
-                Resume Game
-              </Button>
-              <Button 
-                onClick={resetGame}
-                variant="outline"
-                className="w-full"
-                size="lg"
-              >
-                Exit to Menu
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      )}
-      
-      {/* Power-up Notification */}
-      <AnimatePresence>
-        {showPowerUpNotification.show && showPowerUpNotification.type && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed top-24 sm:top-28 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-400 shadow-lg rounded-full px-6 py-3 z-50 flex items-center gap-2"
-          >
-            <span className="font-bold text-white text-sm sm:text-base">
-              {showPowerUpNotification.type === 'point-multiplier' && '⭐ 2x Points!'}
-              {showPowerUpNotification.type === 'slow-motion' && '🐢 Slow Motion!'}
-              {showPowerUpNotification.type === 'super-compress' && '💥 Super Compress!'}
-              {showPowerUpNotification.type === 'auto-compress' && '⚡ Auto Compress!'}
-              {showPowerUpNotification.type === 'shield' && '🛡️ Shield Active!'}
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        <motion.div
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="text-center mb-4 sm:mb-8 pt-16 sm:pt-20"
-        >
-          <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent mb-4">
-            SlimFile Hero
-          </h1>
-          <p className="text-base sm:text-lg text-gray-700 px-4 sm:px-6 py-2 bg-white/50 rounded-full inline-block shadow-sm">Compress files before they hit the ground! 🎯</p>
-          
-          {/* Active Power-ups */}
-          {activePowerUps.filter(p => p.active || p.endTime).length > 0 && (
-            <div className="flex justify-center gap-2 sm:gap-3 mt-4 flex-wrap px-2">
-              {activePowerUps.filter(p => p.active || p.endTime).map(powerUp => (
-                <motion.div
-                  key={powerUp.id}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="bg-white px-2 sm:px-3 py-1 rounded-full text-xs font-medium shadow-md border-2 border-purple-200 flex items-center gap-1"
-                >
-                  {powerUp.type === 'point-multiplier' && (
-                    <span className="text-yellow-600">⭐ 2x Points</span>
-                  )}
-                  {powerUp.type === 'slow-motion' && (
-                    <span className="text-blue-600">🐢 Slow</span>
-                  )}
-                  {powerUp.type === 'super-compress' && (
-                    <span className="text-purple-600">💥 Super</span>
-                  )}
-                  {powerUp.type === 'auto-compress' && (
-                    <span className="text-green-600">⚡ Auto</span>
-                  )}
-                  {powerUp.endTime && (
-                    <div className="w-8 sm:w-12 h-1 bg-gray-200 rounded-full overflow-hidden">
-                      <motion.div 
-                        className="h-full bg-gradient-to-r from-green-500 to-blue-500"
-                        animate={{
-                          width: `${((powerUp.endTime - Date.now()) / 10000) * 100}%`
-                        }}
-                        transition={{ duration: 0.1 }}
-                      />
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
           )}
-        </motion.div>
+        </AnimatePresence>
 
-        {/* Game Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6 px-2">
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Card className="border-2 border-purple-200 bg-gradient-to-br from-white to-purple-50">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-xs sm:text-sm font-medium text-gray-500">Score</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold text-purple-600">{score}</div>
-              </CardContent>
-            </Card>
-          </motion.div>
-          
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Card className="border-2 border-yellow-200 bg-gradient-to-br from-white to-yellow-50">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-xs sm:text-sm font-medium text-gray-500">High Score</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold flex items-center gap-1 text-yellow-600">
-                  <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
-                  {highScore}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-          
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Card className="border-2 border-blue-200 bg-gradient-to-br from-white to-blue-50">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-xs sm:text-sm font-medium text-gray-500">Level</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold text-blue-600">{level}</div>
-                <Progress 
-                  value={(filesCompressed % currentLevelConfig.filesToNextLevel) / currentLevelConfig.filesToNextLevel * 100} 
-                  className="h-1 mt-1"
-                />
-              </CardContent>
-            </Card>
-          </motion.div>
-          
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Card className="border-2 border-pink-200 bg-gradient-to-br from-white to-pink-50">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-xs sm:text-sm font-medium text-gray-500">Combo</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-xl sm:text-2xl font-bold flex items-center gap-1 text-pink-600">
-                  <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
-                  {combo.count}x
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-
-        {/* Game Area */}
-        <div 
-          ref={gameAreaRef}
-          className="relative w-full h-[65vh] sm:h-[70vh] bg-gradient-to-b from-blue-100 via-purple-100 to-pink-100 rounded-xl shadow-2xl border-4 border-purple-300 overflow-hidden"
-          onClick={(e) => {
-            if (!gameStarted && !gameOver) {
-              startGame();
-            }
-          }}
-        >
-          {!gameStarted && !gameOver && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-70 text-white z-10 p-4 sm:p-6 text-center">
-              <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="max-w-md"
-              >
-                <motion.div
-                  animate={{
-                    rotate: [0, 10, -10, 0],
-                    scale: [1, 1.1, 1],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                  }}
-                  className="text-6xl sm:text-8xl mb-4"
-                >
-                  😊
-                </motion.div>
-                
-                <div className="mb-6">
-                  <h2 className="text-2xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-yellow-400 to-pink-400 bg-clip-text text-transparent">
-                    Ready to Compress?
-                  </h2>
-                  <p className="text-base sm:text-xl mb-6 text-gray-200">
-                    Tap files to compress them! ⚡
-                  </p>
-                </div>
-                
-                <div className="mb-6 sm:mb-8 p-3 sm:p-4 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-                  <div className="flex items-start gap-3 mb-3 sm:mb-4">
-                    <div className="p-2 bg-yellow-500/20 rounded-full">
-                      <Target className="h-4 w-4 sm:h-6 sm:w-6 text-yellow-400" />
-                    </div>
-                    <div className="text-left">
-                      <h4 className="font-bold text-yellow-400 text-sm sm:text-base">Quick Start</h4>
-                      <p className="text-xs sm:text-sm text-gray-300">Tap files to compress and score!</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 bg-purple-500/20 rounded-full">
-                      <Trophy className="h-4 w-4 sm:h-6 sm:w-6 text-purple-400" />
-                    </div>
-                    <div className="text-left">
-                      <h4 className="font-bold text-purple-400 text-sm sm:text-base">High Score</h4>
-                      <p className="text-xs sm:text-sm text-gray-300">Your best: {highScore} points</p>
-                    </div>
-                  </div>
-                </div>
-
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-700 hover:via-pink-700 hover:to-red-700 text-white font-bold py-4 sm:py-6 px-6 sm:px-8 rounded-full text-base sm:text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 flex items-center gap-2 mx-auto"
-                  onClick={startGame}
-                >
-                  <Play className="h-5 w-5 sm:h-6 sm:w-6" /> Start Game
-                </Button>
-                
-                <p className="mt-4 text-xs sm:text-sm text-gray-400">
-                  Tap anywhere or press the button to begin
-                </p>
-              </motion.div>
-            </div>
+        {/* Active power-up indicator */}
+        <AnimatePresence>
+          {gameState.activePowerUp && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-bold z-20 flex items-center gap-2 shadow-lg border border-white/20"
+            >
+              <Zap className="w-4 h-4" />
+              {POWER_UPS.find(p => p.type === gameState.activePowerUp)?.name} Active!
+            </motion.div>
           )}
-          
-          {gameOver && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-70 text-white z-10 p-4 sm:p-6">
-              <motion.div 
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="text-center max-w-md"
-              >
-                <motion.div
-                  animate={{
-                    rotate: [0, -10, 10, 0],
-                  }}
-                  transition={{
-                    duration: 1,
-                    repeat: Infinity,
-                  }}
-                  className="text-5xl sm:text-7xl mb-4"
-                >
-                  😢
-                </motion.div>
-                
-                <h2 className="text-3xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-red-400 bg-clip-text text-transparent">
-                  Game Over!
-                </h2>
-                <div className="text-2xl sm:text-3xl font-bold mb-2">Score: {score}</div>
-                <div className="text-lg sm:text-xl mb-2">High Score: {highScore}</div>
-                <div className="text-base sm:text-lg mb-6">
-                  Level: {level} | Max Combo: {combo.maxMultiplier}x
-                </div>
-                
-                <div className="flex flex-col items-center gap-3 sm:gap-4">
-                  <Button 
-                    size="lg" 
-                    className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 flex items-center gap-2 w-full sm:w-auto"
-                    onClick={startGame}
-                  >
-                    <RotateCw className="h-5 w-5" /> Play Again
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="bg-white text-purple-600 border-purple-600 hover:bg-purple-50 w-full sm:w-auto"
-                    onClick={resetGame}
-                  >
-                    Main Menu
-                  </Button>
-                </div>
-              </motion.div>
-            </div>
-          )}
+        </AnimatePresence>
 
-          {/* Power-ups */}
+        <div className="relative inline-grid grid-cols-8 gap-1.5 sm:gap-2">
+          {/* Simple Blast Effects */}
           <AnimatePresence>
-            {activePowerUps
-              .filter(powerUp => !powerUp.active && !powerUp.endTime)
-              .map(powerUp => (
-                <motion.div
-                  key={powerUp.id}
-                  className="absolute w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-yellow-400 via-orange-400 to-red-500 flex items-center justify-center text-white font-bold text-xs shadow-lg cursor-pointer z-10 border-2 border-white"
-                  style={{
-                    left: powerUp.x,
-                    top: powerUp.y,
-                  }}
-                  initial={{ y: -50, opacity: 0, scale: 0.8 }}
-                  animate={{ 
-                    y: powerUp.y,
-                    opacity: 1,
-                    scale: [1, 1.2, 1],
-                  }}
-                  transition={{
-                    scale: {
-                      duration: 1,
-                      repeat: Infinity,
-                    }
-                  }}
-                  exit={{ opacity: 0, scale: 1.5 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    activatePowerUp(powerUp);
-                  }}
-                  whileTap={{ scale: 0.8 }}
-                >
-                  {powerUp.type === 'point-multiplier' && '⭐'}
-                  {powerUp.type === 'slow-motion' && '🐢'}
-                  {powerUp.type === 'super-compress' && '💥'}
-                  {powerUp.type === 'auto-compress' && '⚡'}
-                  {powerUp.type === 'shield' && '🛡️'}
-                </motion.div>
-              ))}
-          </AnimatePresence>
-          
-          {/* Game elements */}
-          <AnimatePresence>
-            {files.map((file) => (
+            {compressionBlasts.map((blast, index) => (
               <motion.div
-                key={file.id}
-                className={`absolute w-12 h-12 sm:w-14 sm:h-14 rounded-lg border-2 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 ${
-                  file.compressed 
-                    ? 'opacity-50 scale-90' 
-                    : 'hover:scale-110 shadow-lg hover:shadow-xl'
-                } ${FILE_COLORS[file.type]} ${file.isBoss ? 'border-4 border-red-500' : ''}`}
+                key={`blast-${blast.x}-${blast.y}-${index}`}
+                className="absolute pointer-events-none rounded-full"
                 style={{
-                  left: `${file.x}px`,
-                  top: `${file.y}px`,
+                  left: blast.x * 48 + 12,
+                  top: blast.y * 48 + 12,
+                  width: 24,
+                  height: 24,
+                  backgroundColor: blast.color,
+                  zIndex: 5,
                 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleFileClick(file);
-                }}
-                initial={{ opacity: 0, y: -20, scale: 0.5 }}
-                animate={{ 
-                  opacity: 1, 
-                  y: file.y,
-                  scale: file.compressed ? 0.7 : 1,
-                  rotate: file.compressed ? 180 : 0
-                }}
-                exit={{ opacity: 0, scale: 0 }}
-                transition={{ type: 'spring', damping: 15 }}
-                whileTap={{ scale: 0.8 }}
-              >
-                <div className="flex items-center justify-center">
-                  {FILE_ICONS[file.type]}
-                </div>
-                <div className="text-[10px] sm:text-xs font-bold mt-1">
-                  {file.size}MB
-                </div>
-                
-                {file.isBoss && file.health && file.health > 0 && (
-                  <div className="absolute -top-2 left-0 right-0 flex justify-center gap-0.5 sm:gap-1">
-                    {Array.from({ length: file.health }).map((_, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full border border-white"
-                      />
-                    ))}
-                  </div>
-                )}
-              </motion.div>
+                initial={{ scale: 0, opacity: 0.8 }}
+                animate={{ scale: 1.5, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              />
             ))}
           </AnimatePresence>
 
-          {/* Particles */}
+          {/* Minimal Particles */}
           <AnimatePresence>
-            {particles.map((particle) => (
+            {particles.map(particle => (
               <motion.div
                 key={particle.id}
-                className="absolute rounded-full"
+                className="absolute rounded-full pointer-events-none"
                 style={{
                   left: particle.x,
                   top: particle.y,
                   width: particle.size,
                   height: particle.size,
                   backgroundColor: particle.color,
+                  opacity: particle.life,
                 }}
-                initial={{ opacity: 1 }}
-                animate={{ opacity: 0 }}
+                initial={{ scale: 0 }}
+                animate={{ 
+                  scale: 1,
+                  x: particle.x + particle.velocity.x,
+                  y: particle.y + particle.velocity.y,
+                }}
                 exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
               />
             ))}
           </AnimatePresence>
-        </div>
 
-        {/* Game Controls */}
-        <div className="mt-4 sm:mt-6 flex flex-wrap justify-center gap-2 sm:gap-4 items-center px-2">
-          {gameStarted && !gameOver && (
-            <>
-              <Button 
-                variant="outline" 
-                onClick={togglePause}
-                className="flex items-center gap-2 border-2 border-purple-300 hover:bg-purple-50"
-                size="sm"
+          {/* Grid Cells */}
+          {gameState.grid.map((row, y) =>
+            row.map((cell, x) => (
+              <motion.div
+                key={cell?.id || `${x}-${y}`}
+                className={`w-10 h-10 sm:w-12 sm:h-12 border-2 rounded-xl flex items-center justify-center cursor-pointer transition-all duration-200 ${
+                  cell ? FILE_CONFIG[cell.type].color : 'bg-gray-200/50'
+                } ${
+                  gameState.selectedCell?.x === x && gameState.selectedCell?.y === y
+                    ? 'ring-2 ring-purple-500 ring-offset-2 transform scale-105 shadow-lg'
+                    : ''
+                } ${
+                  cell?.isLocked ? 'opacity-70 grayscale-30' : 'hover:scale-105 hover:shadow-md'
+                } ${
+                  cell?.compressing ? 'animate-pulse' : ''
+                } ${
+                  gameState.activePowerUp ? 'cursor-crosshair' : ''
+                } shadow-sm hover:shadow-lg transition-shadow`}
+                onClick={() => handleCellClick(x, y)}
+                onMouseDown={() => handleDragStart(x, y)}
+                onMouseEnter={() => handleDragMove(x, y)}
+                onMouseUp={handleDragEnd}
+                whileHover={{ scale: cell?.isLocked ? 1 : 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                {isPaused ? (
-                  <Play className="h-4 w-4" />
-                ) : (
-                  <Pause className="h-4 w-4" />
-                )}
-                <span className="hidden sm:inline">{isPaused ? 'Resume' : 'Pause'}</span>
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                onClick={() => setGameOver(true)}
-                className="flex items-center gap-2 border-2 border-pink-300 hover:bg-pink-50"
-                size="sm"
-              >
-                <RotateCw className="h-4 w-4" />
-                <span className="hidden sm:inline">Restart</span>
-              </Button>
-            </>
+                {cell ? (
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    {FILE_CONFIG[cell.type].icon}
+                    {cell.compressed && (
+                      <Check className="w-3 h-3 sm:w-4 sm:h-4 absolute -top-1 -right-1 text-green-600 bg-white rounded-full p-0.5" />
+                    )}
+                    {cell.isLocked && (
+                      <Lock className="w-2 h-2 sm:w-3 sm:h-3 absolute -bottom-1 -right-1 text-red-600" />
+                    )}
+                    {cell.compressing && (
+                      <motion.div
+                        className="absolute inset-0 bg-blue-500 rounded-xl opacity-20"
+                        animate={{ opacity: [0.2, 0.4, 0.2] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                      />
+                    )}
+                  </div>
+                ) : null}
+              </motion.div>
+            ))
           )}
-          
-          <Button 
-            variant="outline" 
-            onClick={() => setShowTutorial(true)}
-            className="flex items-center gap-2 border-2 border-blue-300 hover:bg-blue-50"
-            size="sm"
-          >
-            <File className="h-4 w-4" />
-            <span className="hidden sm:inline">How to Play</span>
-          </Button>
         </div>
       </div>
+    );
+  };
 
-      {/* Tutorial Modal */}
-      {showTutorial && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-          >
-            <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <CardHeader>
-                <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  How to Play SlimFile Hero 🎮
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-purple-100 to-pink-100 pt-20 pb-4 px-2 sm:px-4 lg:px-8 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{
+            y: [0, -20, 0],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-200 rounded-full blur-3xl opacity-30"
+        />
+        <motion.div
+          animate={{
+            y: [0, 20, 0],
+            opacity: [0.4, 0.6, 0.4],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-200 rounded-full blur-3xl opacity-30"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.1, 1],
+            rotate: [0, 5, 0],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-1/3 right-1/3 w-48 h-48 bg-pink-200 rounded-full blur-3xl opacity-40"
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="text-center mb-6 sm:mb-8"
+        >
+          <div className="flex justify-between items-center mb-4 px-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setMusicEnabled(!musicEnabled)}
+              className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border-white/30"
+            >
+              {musicEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+              {musicEnabled ? 'Music On' : 'Music Off'}
+            </Button>
+            
+            <h1 className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-red-500 to-purple-600 bg-clip-text text-transparent">
+              SlimFile Match-3
+            </h1>
+            
+            <div className="w-20"></div>
+          </div>
+          
+          <p className="text-sm sm:text-lg text-gray-700 px-2 bg-white/50 backdrop-blur-sm rounded-full py-2 inline-block">Match files to compress them and complete levels! 🎯</p>
+        </motion.div>
+
+        {/* Game Stats */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-6 px-2">
+          {/* Score Card */}
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Card className="h-full border-2 border-purple-200/50 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-4">
+                <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center">
+                  <span className="w-2 h-2 rounded-full bg-purple-400 mr-2"></span>
+                  Score
                 </CardTitle>
-                <CardDescription>
-                  Master the art of file compression!
-                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4 text-sm sm:text-base">
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-base sm:text-lg flex items-center gap-2">
-                    <Target className="h-5 w-5 text-purple-600" />
-                    Gameplay
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-2">
-                    <li>Tap falling files to compress them</li>
-                    <li>Build combos for bonus points</li>
-                    <li>Collect power-ups for special abilities</li>
-                    <li>Watch out for boss files (need multiple taps!)</li>
-                    <li>Don't let files reach the bottom!</li>
-                  </ul>
-                </div>
-                
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-base sm:text-lg flex items-center gap-2">
-                    <Trophy className="h-5 w-5 text-yellow-600" />
-                    Scoring
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div className="flex justify-between p-2 bg-blue-50 rounded">
-                      <span>Image:</span>
-                      <span className="font-mono font-bold">+{POINTS.FILE_POINTS.image} pts</span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-red-50 rounded">
-                      <span>PDF:</span>
-                      <span className="font-mono font-bold">+{POINTS.FILE_POINTS.pdf} pts</span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-orange-50 rounded">
-                      <span>PPT:</span>
-                      <span className="font-mono font-bold">+{POINTS.FILE_POINTS.ppt} pts</span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-purple-50 rounded">
-                      <span>Video:</span>
-                      <span className="font-mono font-bold">+{POINTS.FILE_POINTS.video} pts</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-base sm:text-lg flex items-center gap-2">
-                    <Zap className="h-5 w-5 text-yellow-600" />
-                    Power-Ups
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div className="flex items-center gap-2 p-2 bg-yellow-50 rounded">
-                      <span className="text-xl">⭐</span>
-                      <span className="text-sm">2x Points</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 bg-blue-50 rounded">
-                      <span className="text-xl">🐢</span>
-                      <span className="text-sm">Slow Motion</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 bg-purple-50 rounded">
-                      <span className="text-xl">💥</span>
-                      <span className="text-sm">Super Compress</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 bg-green-50 rounded">
-                      <span className="text-xl">⚡</span>
-                      <span className="text-sm">Auto Compress</span>
-                    </div>
-                  </div>
+              <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
+                <div className="text-xl sm:text-2xl font-bold text-purple-700">{gameState.score.toLocaleString()}</div>
+                <div className="text-xs text-gray-500 mt-1">Target: {gameState.targetScore.toLocaleString()}</div>
+              </CardContent>
+            </Card>
+          </motion.div>
+          
+          {/* High Score Card */}
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Card className="h-full border-2 border-yellow-200/50 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-4">
+                <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center">
+                  <span className="w-2 h-2 rounded-full bg-yellow-400 mr-2"></span>
+                  High Score
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
+                  <span className="text-xl sm:text-2xl font-bold text-yellow-700">{highScore.toLocaleString()}</span>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-end">
-                <Button 
-                  onClick={() => setShowTutorial(false)}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                >
-                  Let's Play! 🚀
-                </Button>
-              </CardFooter>
+            </Card>
+          </motion.div>
+          
+          {/* Level Card */}
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Card className="h-full border-2 border-blue-200/50 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-4">
+                <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center">
+                  <span className="w-2 h-2 rounded-full bg-blue-400 mr-2"></span>
+                  Level {gameState.level}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
+                <div className="text-xl sm:text-2xl font-bold text-blue-700">{gameState.movesLeft} moves</div>
+                <div className="flex items-center text-xs text-gray-500 mt-1">
+                  <span>Streak:</span>
+                  <span className="ml-1 font-semibold text-blue-600">{gameState.streak}x</span>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+          
+          {/* Compressed Card */}
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Card className="h-full border-2 border-green-200/50 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-4">
+                <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center">
+                  <span className="w-2 h-2 rounded-full bg-green-400 mr-2"></span>
+                  Compressed
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
+                <div className="flex items-center gap-2">
+                  <Check className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                  <span className="text-xl sm:text-2xl font-bold text-green-700">
+                    {gameState.totalCompressed}<span className="text-sm font-normal text-gray-500">/</span>{gameState.targetCompressed}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200/50 rounded-full h-1.5 mt-2 overflow-hidden">
+                  <div 
+                    className="bg-green-500 h-1.5 rounded-full transition-all duration-300" 
+                    style={{ width: `${Math.min(100, (gameState.totalCompressed / gameState.targetCompressed) * 100)}%` }}
+                  />
+                </div>
+              </CardContent>
             </Card>
           </motion.div>
         </div>
-      )}
+
+        {/* Difficulty Indicator */}
+        {gameState.level > 1 && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center mb-4"
+          >
+            <div className="inline-flex items-center gap-2 bg-orange-100/80 backdrop-blur-sm text-orange-700 px-4 py-2 rounded-full text-sm font-medium border border-orange-200/50">
+              <Zap className="w-4 h-4" />
+              Level {gameState.level} Difficulty 
+              <div className="flex gap-1">
+                {Array.from({ length: gameState.level }).map((_, i) => (
+                  <Star key={i} className="w-3 h-3 fill-orange-500 text-orange-500" />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Game Grid - Centered */}
+        <div className="flex justify-center px-2 sm:px-4">
+          <div className="w-full max-w-md sm:max-w-xl">
+            {renderGrid()}
+          </div>
+        </div>
+
+        {/* Power-ups */}
+        <Card className="mb-6 mx-2 bg-white/80 backdrop-blur-sm border-white/50">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm sm:text-base font-medium">Power-ups</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+              {POWER_UPS.map((powerUp) => {
+                const powerUpCount = gameState.powerUps.find(p => p.type === powerUp.type)?.count || 0;
+                const isActive = gameState.activePowerUp === powerUp.type;
+                
+                return (
+                  <motion.div
+                    key={powerUp.type}
+                    whileHover={{ scale: powerUpCount > 0 ? 1.05 : 1 }}
+                    whileTap={{ scale: powerUpCount > 0 ? 0.95 : 1 }}
+                  >
+                    <Button
+                      variant="outline"
+                      className={`flex flex-col items-center gap-1 sm:gap-2 h-auto p-2 sm:p-3 ${powerUp.color} border-2 w-full ${
+                        isActive ? 'ring-2 ring-purple-500 ring-offset-2' : ''
+                      } ${powerUpCount > 0 ? 'cursor-pointer hover:shadow-md' : 'cursor-not-allowed opacity-50'} transition-all`}
+                      onClick={() => powerUpCount > 0 && activatePowerUp(powerUp.type)}
+                      disabled={powerUpCount <= 0}
+                    >
+                      {powerUp.icon}
+                      <span className="text-xs font-medium">{powerUp.name}</span>
+                      <span className="text-xs">({powerUpCount})</span>
+                    </Button>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Game Controls */}
+        <div className="flex justify-center gap-2 sm:gap-4 px-2 mb-8">
+          <Button 
+            onClick={() => initGame(gameState.level - 1)}
+            variant="outline"
+            size="sm"
+            className="text-xs sm:text-sm bg-white/80 backdrop-blur-sm border-white/50"
+          >
+            <RotateCw className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+            Reset Level
+          </Button>
+          <Button 
+            onClick={() => setShowTutorial(true)}
+            size="sm"
+            className="text-xs sm:text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600"
+          >
+            How to Play
+          </Button>
+        </div>
+
+        {/* Tutorial Modal */}
+        {showTutorial && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+            >
+              <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white/95 backdrop-blur-sm border-white/50">
+                <CardHeader>
+                  <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    How to Play SlimFile Match-3 🎮
+                  </CardTitle>
+                  <CardDescription>
+                    Master the art of file compression through matching!
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 text-sm sm:text-base">
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-base sm:text-lg flex items-center gap-2">
+                      <Target className="h-5 w-5 text-purple-600" />
+                      Gameplay
+                    </h3>
+                    <ul className="list-disc pl-5 space-y-2">
+                      <li><strong>Click or Drag</strong> to swap adjacent files and make matches of 3 or more</li>
+                      <li>Matches can be horizontal or vertical</li>
+                      <li>Each match compresses files and adds to your score</li>
+                      <li>Locked files need to be matched to be compressed</li>
+                      <li>Build streaks for bonus points! 🔥</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-base sm:text-lg flex items-center gap-2">
+                      <Zap className="h-5 w-5 text-yellow-600" />
+                      Power-Ups
+                    </h3>
+                    <ul className="list-disc pl-5 space-y-2">
+                      <li><strong>Row Blast:</strong> Clear an entire row of files</li>
+                      <li><strong>Column Blast:</strong> Clear an entire column of files</li>
+                      <li><strong>Bomb:</strong> Clear a 3x3 area around your click</li>
+                      <li><strong>Compression Burst:</strong> Compress all locked files instantly</li>
+                      <li>Earn power-ups by making matches of 4 or more files</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-base sm:text-lg flex items-center gap-2">
+                      <Trophy className="h-5 w-5 text-yellow-600" />
+                      Difficulty
+                    </h3>
+                    <ul className="list-disc pl-5 space-y-2">
+                      <li>Game gets harder each level with more locked files</li>
+                      <li>Fewer moves available as you progress</li>
+                      <li>Higher score targets to challenge you</li>
+                      <li>Complete all 8 levels to become a SlimFile Master! 🏆</li>
+                    </ul>
+                  </div>
+                </CardContent>
+                <CardFooter className="flex justify-end">
+                  <Button 
+                    onClick={() => setShowTutorial(false)}
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                  >
+                    Let's Play! 🚀
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Level Complete Modal */}
+        {gameState.isLevelComplete && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+            >
+              <Card className="w-full max-w-md text-center bg-white/95 backdrop-blur-sm border-white/50">
+                <CardHeader>
+                  <CardTitle className="text-2xl text-green-600 flex items-center justify-center gap-2">
+                    <Sparkles className="h-6 w-6" />
+                    Level {gameState.level} Complete! 🎉
+                    <Sparkles className="h-6 w-6" />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-4xl font-bold text-purple-600">{gameState.score} points</div>
+                  <div className="text-lg">You compressed {gameState.totalCompressed} files!</div>
+                  <div className="text-lg flex items-center justify-center gap-2 text-yellow-600">
+                    <Zap className="h-5 w-5" />
+                    Max Streak: {gameState.streak}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {gameState.level < LEVELS.length ? 'Ready for the next challenge?' : 'You completed all levels!'}
+                  </div>
+                </CardContent>
+                <CardFooter className="flex justify-center">
+                  <Button 
+                    onClick={() => gameState.level < LEVELS.length ? initGame(gameState.level) : initGame(0)}
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                    size="lg"
+                  >
+                    {gameState.level < LEVELS.length ? 'Next Level' : 'Play Again'}
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Game Over Modal */}
+        {gameState.isGameOver && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+            >
+              <Card className="w-full max-w-md text-center bg-white/95 backdrop-blur-sm border-white/50">
+                <CardHeader>
+                  <CardTitle className="text-2xl text-red-600 flex items-center justify-center gap-2">
+                    <Frown className="h-6 w-6" />
+                    Game Over
+                    <Frown className="h-6 w-6" />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-4xl font-bold text-purple-600">{gameState.score} points</div>
+                  <div className="text-lg">Level {gameState.level} • {gameState.totalCompressed} files compressed</div>
+                  <div className="text-lg flex items-center justify-center gap-2 text-yellow-600">
+                    <Zap className="h-5 w-5" />
+                    Best Streak: {gameState.streak}
+                  </div>
+                  <div className="text-sm text-gray-600">Don't give up! Try again! 💪</div>
+                  
+                  {gameState.score > highScore * 0.7 && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="bg-yellow-100 border border-yellow-300 rounded-lg p-3"
+                    >
+                      <div className="flex items-center justify-center gap-2 text-yellow-700">
+                        <Laugh className="h-5 w-5" />
+                        <span className="font-bold">So close! You were {Math.round((1 - gameState.score / gameState.targetScore) * 100)}% from completing the level!</span>
+                      </div>
+                    </motion.div>
+                  )}
+                </CardContent>
+                <CardFooter className="flex justify-center gap-4">
+                  <Button 
+                    onClick={() => initGame(gameState.level - 1)}
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white flex-1"
+                    size="lg"
+                  >
+                    <RotateCw className="h-4 w-4 mr-2" />
+                    Try Again
+                  </Button>
+                  <Button 
+                    onClick={() => initGame(0)}
+                    variant="outline"
+                    className="flex-1"
+                    size="lg"
+                  >
+                    New Game
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
