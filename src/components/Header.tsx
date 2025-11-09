@@ -254,6 +254,20 @@ export const Header = () => {
               >
                 SDGs
               </Link>
+              <Link
+                to="/slimfile-game"
+                className={cn(
+                  "px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-red-600 rounded-lg flex items-center gap-2",
+                  location.pathname === "/slimfile-game"
+                    ? "text-red-600 bg-red-50"
+                    : "text-gray-600 hover:bg-gray-50"
+                )}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <span>Game</span>
+                <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full">New</span>
+              </Link>
+
               <div className="px-4 py-2">
                 <div className="text-sm font-semibold text-gray-900 mb-2">Product</div>
                 <div className="ml-4 space-y-1">
