@@ -62,14 +62,26 @@ export const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center space-x-4 hover:opacity-80 transition-opacity">
-            <img
-              src="/logo.gif"
-              alt="SlimFile Logo"
-              className="h-10 w-10 object-contain rounded-lg"
-            />
-            <span className="text-2xl font-bold text-gray-900">SlimFile</span>
-          </Link>
+          <div className="flex items-center space-x-4">
+            <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+              <img
+                src="/logo.gif"
+                alt="SlimFile Logo"
+                className="h-10 w-10 object-contain rounded-lg"
+              />
+              <span className="text-2xl font-bold text-gray-900">SlimFile</span>
+            </Link>
+            <Link
+              to="/slimfile-game"
+              className={cn(
+                "md:hidden text-sm font-medium transition-all duration-300 hover:text-red-600 relative flex items-center gap-1 px-2 py-1 rounded-md",
+                location.pathname === "/slimfile-game" ? "text-red-600 bg-red-50" : "text-gray-600"
+              )}
+            >
+              <span>Game</span>
+              <span className="bg-red-100 text-red-600 text-xs px-1.5 py-0.5 rounded-full">New</span>
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 absolute left-1/2 transform -translate-x-1/2">
@@ -254,20 +266,7 @@ export const Header = () => {
               >
                 SDGs
               </Link>
-              <Link
-                to="/slimfile-game"
-                className={cn(
-                  "px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-red-600 rounded-lg flex items-center gap-2",
-                  location.pathname === "/slimfile-game"
-                    ? "text-red-600 bg-red-50"
-                    : "text-gray-600 hover:bg-gray-50"
-                )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span>Game</span>
-                <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full">New</span>
-              </Link>
-
+  
               <div className="px-4 py-2">
                 <div className="text-sm font-semibold text-gray-900 mb-2">Product</div>
                 <div className="ml-4 space-y-1">
