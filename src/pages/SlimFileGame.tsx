@@ -2,11 +2,10 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { 
+import {
   FileImage, 
   FileText, 
   FileVideo, 
-  FileAudio, 
   Lock, 
   Check, 
   Zap, 
@@ -18,13 +17,11 @@ import {
   Heart,
   Frown,
   Smile,
-  Laugh,
-  Volume2,
-  VolumeX
+  Laugh
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
-type FileType = 'image' | 'pdf' | 'ppt' | 'video' | 'audio';
+type FileType = 'image' | 'pdf' | 'ppt' | 'video';
 
 interface PowerUp {
   type: 'row-blast' | 'column-blast' | 'bomb' | 'compression-burst';
@@ -142,14 +139,6 @@ const FILE_CONFIG = {
     compressedSize: 10000,
     blastColor: '#8B5CF6'
   },
-  audio: {
-    name: 'Audio',
-    color: 'bg-green-100 text-green-600 border-green-300',
-    icon: <FileAudio className="w-4 h-4 sm:w-6 sm:h-6" />,
-    baseSize: 10000,
-    compressedSize: 1000,
-    blastColor: '#10B981'
-  }
 };
 
 // Points system
@@ -219,15 +208,6 @@ const ENCOURAGEMENTS: Omit<Encouragement, 'id'>[] = [
   { message: "File crushing genius! 🤯", emoji: "🤯", type: 'celebration' },
 ];
 
-// Background music
-const playBackgroundMusic = () => {
-  // This would typically be an actual audio file
-  console.log('Background music would play here');
-};
-
-const stopBackgroundMusic = () => {
-  console.log('Background music would stop here');
-};
 
 export default function SlimFileGame() {
   const { toast } = useToast();
@@ -264,18 +244,8 @@ export default function SlimFileGame() {
   const [encouragements, setEncouragements] = useState<Encouragement[]>([]);
   const [dragStart, setDragStart] = useState<{x: number, y: number} | null>(null);
   const [dragCurrent, setDragCurrent] = useState<{x: number, y: number} | null>(null);
-  const [musicEnabled, setMusicEnabled] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
-
-  // Toggle background music
-  useEffect(() => {
-    if (musicEnabled) {
-      playBackgroundMusic();
-    } else {
-      stopBackgroundMusic();
-    }
-  }, [musicEnabled]);
 
   // Show encouraging message
   const showEncouragement = useCallback((type: 'success' | 'celebration' = 'success') => {
@@ -1097,22 +1067,10 @@ export default function SlimFileGame() {
           animate={{ y: 0, opacity: 1 }}
           className="text-center mb-6 sm:mb-8"
         >
-          <div className="flex justify-between items-center mb-4 px-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setMusicEnabled(!musicEnabled)}
-              className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border-white/30"
-            >
-              {musicEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-              {musicEnabled ? 'Music On' : 'Music Off'}
-            </Button>
-            
+          <div className="flex justify-center items-center mb-4 px-2">
             <h1 className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-red-500 to-purple-600 bg-clip-text text-transparent">
               SlimFile Match-3
             </h1>
-            
-            <div className="w-20"></div>
           </div>
           
           <p className="text-sm sm:text-lg text-gray-700 px-2 bg-white/50 backdrop-blur-sm rounded-full py-2 inline-block">Match files to compress them and complete levels! 🎯</p>
