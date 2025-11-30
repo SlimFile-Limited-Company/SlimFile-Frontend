@@ -141,7 +141,11 @@ const Home: FC = () => {
                     </div>
 
                     <div>
-                      <Link to="/api">
+                      <a
+                        href="https://api.slim-file.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         <Button
                           variant="outline"
                           size="lg"
@@ -149,7 +153,7 @@ const Home: FC = () => {
                         >
                           <span>SlimFile API</span>
                         </Button>
-                      </Link>
+                      </a>
                     </div>
 
                     <div>
