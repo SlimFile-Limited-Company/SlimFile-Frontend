@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -16,15 +15,18 @@ export const Header = () => {
     { name: "Compress", href: "/compress" },
     { name: "Features", href: "/features" },
     { name: "API", href: "/api" },
+    { name: "Game", href: "/slimfile-game", badge: "New" },
     { name: "Why Compression?", href: "/file-compression-education" },
   ];
 
   const companyNavigation = [
-    { name: "Case Studies", href: "/case-studies" },
-    { name: "Our Team", href: "/teams" },
     { name: "About", href: "/about" },
+    { name: "Our Team", href: "/teams" },
+    { name: "Case Studies", href: "/case-studies" },
     { name: "Global Impact", href: "/global-impact" },
     { name: "Partnerships", href: "/partnerships" },
+    { name: "SDGs", href: "/sdgs" },
+    { name: "Our Blogs", href: "/blog" },
     { name: "Contact", href: "/contact" },
   ];
 
@@ -71,16 +73,6 @@ export const Header = () => {
               />
               <span className="text-2xl font-bold text-gray-900">SlimFile</span>
             </Link>
-            <Link
-              to="/slimfile-game"
-              className={cn(
-                "md:hidden text-sm font-medium transition-all duration-300 hover:text-red-600 relative flex items-center gap-1 px-2 py-1 rounded-md",
-                location.pathname === "/slimfile-game" ? "text-red-600 bg-red-50" : "text-gray-600"
-              )}
-            >
-              <span>Game</span>
-              <span className="bg-red-100 text-red-600 text-xs px-1.5 py-0.5 rounded-full">New</span>
-            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -98,45 +90,7 @@ export const Header = () => {
               )}
             </Link>
 
-            <Link
-              to="/blog"
-              className={cn(
-                "text-sm font-medium transition-all duration-300 hover:text-red-600 relative",
-                location.pathname === "/blog" ? "text-red-600" : "text-gray-600"
-              )}
-            >
-              Our Blogs
-              {location.pathname === "/blog" && (
-                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-              )}
-            </Link>
-
-            <Link
-              to="/sdgs"
-              className={cn(
-                "text-sm font-medium transition-all duration-300 hover:text-red-600 relative",
-                location.pathname === "/sdgs" ? "text-red-600" : "text-gray-600"
-              )}
-            >
-              SDGs
-              {location.pathname === "/sdgs" && (
-                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-              )}
-            </Link>
-
-            <Link
-              to="/slimfile-game"
-              className={cn(
-                "text-sm font-medium transition-all duration-300 hover:text-red-600 relative flex items-center gap-1",
-                location.pathname === "/slimfile-game" ? "text-red-600" : "text-gray-600"
-              )}
-            >
-              <span>Game</span>
-              <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full">New</span>
-              {location.pathname === "/slimfile-game" && (
-                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-              )}
-            </Link>
+            {/* Product Dropdown */}
             <div
               className="relative"
               onMouseEnter={() => handleDropdownHover('product')}
@@ -151,7 +105,7 @@ export const Header = () => {
               </button>
               {hoveredDropdown === 'product' && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                  {productNavigation.map((item, index) => (
+                  {productNavigation.map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}
@@ -160,7 +114,14 @@ export const Header = () => {
                         isActiveRoute(item.href) ? "text-red-600 bg-red-50" : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                       )}
                     >
-                      {item.name}
+                      <div className="flex items-center justify-between">
+                        <span>{item.name}</span>
+                        {item.badge && (
+                          <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full ml-2">
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
                     </Link>
                   ))}
                 </div>
@@ -182,7 +143,7 @@ export const Header = () => {
               </button>
               {hoveredDropdown === 'company' && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                  {companyNavigation.map((item, index) => (
+                  {companyNavigation.map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}
@@ -240,37 +201,11 @@ export const Header = () => {
               >
                 Home
               </Link>
-
-              <Link
-                to="/blog"
-                className={cn(
-                  "px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-red-600 rounded-lg",
-                  location.pathname === "/blog"
-                    ? "text-red-600 bg-red-50"
-                    : "text-gray-600 hover:bg-gray-50"
-                )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Our Blogs
-              </Link>
-
-              <Link
-                to="/sdgs"
-                className={cn(
-                  "px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-red-600 rounded-lg",
-                  location.pathname === "/sdgs"
-                    ? "text-red-600 bg-red-50"
-                    : "text-gray-600 hover:bg-gray-50"
-                )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                SDGs
-              </Link>
   
               <div className="px-4 py-2">
                 <div className="text-sm font-semibold text-gray-900 mb-2">Product</div>
                 <div className="ml-4 space-y-1">
-                  {productNavigation.map((item, index) => (
+                  {productNavigation.map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}
@@ -282,7 +217,14 @@ export const Header = () => {
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      {item.name}
+                      <div className="flex items-center justify-between">
+                        <span>{item.name}</span>
+                        {item.badge && (
+                          <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full">
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
                     </Link>
                   ))}
                 </div>
@@ -292,7 +234,7 @@ export const Header = () => {
               <div className="px-4 py-2">
                 <div className="text-sm font-semibold text-gray-900 mb-2">Company</div>
                 <div className="ml-4 space-y-1">
-                  {companyNavigation.map((item, index) => (
+                  {companyNavigation.map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}
