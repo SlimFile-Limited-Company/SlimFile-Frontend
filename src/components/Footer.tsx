@@ -14,7 +14,8 @@ import {
   ArrowRight,
   Star,
   Clock,
-  Zap
+  Zap,
+  Settings
 } from "lucide-react";
 
 export const Footer = () => {
@@ -255,6 +256,40 @@ export const Footer = () => {
                   © 2025 SlimFile. Reduce file sizes smartly without quality loss.
                 </p>
               </div>
+            </div>
+          </div>
+
+          {/* Quick Access Section */}
+          <div className="border-t border-gray-200 pt-6 mt-6">
+            <h5 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
+              <Settings className="w-4 h-4 mr-2 text-primary" />
+              Quick Access
+            </h5>
+            <div className="flex flex-wrap gap-4">
+              <a
+                href="https://api.slim-file.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200"
+              >
+                API Documentation
+              </a>
+              <a
+                href="https://api.slim-file.com/developer-program"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200"
+              >
+                Developer Program
+              </a>
+              <a
+                href="https://api.slim-file.com/pricing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200"
+              >
+                API Pricing
+              </a>
             </div>
           </div>
         </div>

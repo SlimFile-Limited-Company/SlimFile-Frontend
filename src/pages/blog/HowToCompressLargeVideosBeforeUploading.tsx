@@ -37,7 +37,8 @@ import {
   Gauge,
   Wifi,
   Server,
-  Cloud
+  Cloud,
+  Mail
 } from "lucide-react";
 
 export default function BlogHowToCompressLargeVideosBeforeUploading() {
@@ -680,7 +681,7 @@ export default function BlogHowToCompressLargeVideosBeforeUploading() {
               </Button>
             </Link>
             <Link to="/blog/why-file-compression-is-essential-for-remote-work">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
+              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 hover:text-primary px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
                 <Users className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Remote Work Guide
               </Button>

@@ -66,7 +66,7 @@ export default function BlogReducePdfFileSizeOnMobile() {
                 </Button>
               </Link>
               <Link to="/compress-pdf-online">
-                <Button size="lg" variant="outline" className="px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
+                <Button size="lg" className="bg-white text-primary hover:bg-gray-100 hover:text-primary px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
                   <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   All PDF Tools
                 </Button>
@@ -772,7 +772,7 @@ export default function BlogReducePdfFileSizeOnMobile() {
               </Button>
             </Link>
             <Link to="/compress-pdf-online">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
+              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 hover:text-primary px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
                 <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 All PDF Tools
               </Button>

@@ -33,7 +33,8 @@ import {
   Globe,
   Wifi,
   Server,
-  Database
+  Database,
+  Video
 } from "lucide-react";
 
 export default function BlogCompressingPdfForPrintingVsEmailing() {
@@ -708,7 +709,7 @@ export default function BlogCompressingPdfForPrintingVsEmailing() {
               </Button>
             </Link>
             <Link to="/compress-pdf-for-email">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
+              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 hover:text-primary px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Email-Optimized Compression
               </Button>

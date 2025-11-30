@@ -404,7 +404,7 @@ export default function OurBlogs() {
               </Button>
             </Link>
             <Link to="/api">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-red-600 px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
+              <Button size="lg" className="bg-white text-red-600 hover:bg-gray-100 hover:text-red-600 px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
                 <Settings className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 API Documentation
               </Button>

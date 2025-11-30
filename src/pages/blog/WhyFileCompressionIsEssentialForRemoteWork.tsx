@@ -80,7 +80,7 @@ export default function BlogWhyFileCompressionIsEssentialForRemoteWork() {
                 </Button>
               </Link>
             </div>
-            <div className="flex items-center justify-center text-green-600 font-medium text-sm sm:text-base">
+            <div className="flex items-center justify-center text-green-600 font-medium text-sm">
               <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Remote Work • Global Teams • Productivity • Cost Efficiency
             </div>
@@ -836,7 +836,7 @@ export default function BlogWhyFileCompressionIsEssentialForRemoteWork() {
               </Button>
             </Link>
             <Link to="/blog/how-to-compress-large-videos-before-uploading">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
+              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 hover:text-primary px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base w-full sm:w-auto">
                 <Video className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Video Optimization Guide
               </Button>

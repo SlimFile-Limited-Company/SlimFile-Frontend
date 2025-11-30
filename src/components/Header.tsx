@@ -14,7 +14,6 @@ export const Header = () => {
   const productNavigation = [
     { name: "Compress", href: "/compress" },
     { name: "Features", href: "/features" },
-    { name: "API", href: "/api" },
     { name: "Game", href: "/slimfile-game", badge: "New" },
     { name: "Why Compression?", href: "/file-compression-education" },
   ];
@@ -28,6 +27,12 @@ export const Header = () => {
     { name: "SDGs", href: "/sdgs" },
     { name: "Our Blogs", href: "/blog" },
     { name: "Contact", href: "/contact" },
+  ];
+
+  const apiNavigation = [
+    { name: "API Documentation", href: "https://api.slim-file.com/", external: true },
+    { name: "Developer Program", href: "https://api.slim-file.com/developer-program", external: true },
+    { name: "API Pricing", href: "https://api.slim-file.com/pricing", external: true },
   ];
 
   const isActiveRoute = (href: string) => {
@@ -105,15 +110,8 @@ export const Header = () => {
               </button>
               {hoveredDropdown === 'product' && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                  {productNavigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={cn(
-                        "block px-4 py-2 text-sm transition-colors duration-200",
-                        isActiveRoute(item.href) ? "text-red-600 bg-red-50" : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                      )}
-                    >
+                  {productNavigation.map((item) => {
+                    const linkContent = (
                       <div className="flex items-center justify-between">
                         <span>{item.name}</span>
                         {item.badge && (
@@ -122,8 +120,34 @@ export const Header = () => {
                           </span>
                         )}
                       </div>
-                    </Link>
-                  ))}
+                    );
+
+                    return item.external ? (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          "block px-4 py-2 text-sm transition-colors duration-200",
+                          "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                        )}
+                      >
+                        {linkContent}
+                      </a>
+                    ) : (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={cn(
+                          "block px-4 py-2 text-sm transition-colors duration-200",
+                          isActiveRoute(item.href) ? "text-red-600 bg-red-50" : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                        )}
+                      >
+                        {linkContent}
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -154,6 +178,36 @@ export const Header = () => {
                     >
                       {item.name}
                     </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* SlimFile API Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => handleDropdownHover('api')}
+              onMouseLeave={() => handleDropdownHover(null)}
+            >
+              <button className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-red-600 transition-all duration-300 relative">
+                <span>SlimFile API</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              {hoveredDropdown === 'api' && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                  {apiNavigation.map((item) => (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        "block px-4 py-2 text-sm transition-colors duration-200",
+                        "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                      )}
+                    >
+                      {item.name}
+                    </a>
                   ))}
                 </div>
               )}
@@ -205,18 +259,8 @@ export const Header = () => {
               <div className="px-4 py-2">
                 <div className="text-sm font-semibold text-gray-900 mb-2">Product</div>
                 <div className="ml-4 space-y-1">
-                  {productNavigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={cn(
-                        "block px-3 py-2 text-sm font-medium transition-all duration-300 hover:text-red-600 rounded-lg",
-                        isActiveRoute(item.href)
-                          ? "text-red-600 bg-red-50"
-                          : "text-gray-600 hover:bg-gray-50"
-                      )}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
+                  {productNavigation.map((item) => {
+                    const linkContent = (
                       <div className="flex items-center justify-between">
                         <span>{item.name}</span>
                         {item.badge && (
@@ -225,8 +269,38 @@ export const Header = () => {
                           </span>
                         )}
                       </div>
-                    </Link>
-                  ))}
+                    );
+
+                    return item.external ? (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          "block px-3 py-2 text-sm font-medium transition-all duration-300 hover:text-red-600 rounded-lg",
+                          "text-gray-600 hover:bg-gray-50"
+                        )}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {linkContent}
+                      </a>
+                    ) : (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={cn(
+                          "block px-3 py-2 text-sm font-medium transition-all duration-300 hover:text-red-600 rounded-lg",
+                          isActiveRoute(item.href)
+                            ? "text-red-600 bg-red-50"
+                            : "text-gray-600 hover:bg-gray-50"
+                        )}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {linkContent}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -248,6 +322,28 @@ export const Header = () => {
                     >
                       {item.name}
                     </Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile SlimFile API Section */}
+              <div className="px-4 py-2">
+                <div className="text-sm font-semibold text-gray-900 mb-2">SlimFile API</div>
+                <div className="ml-4 space-y-1">
+                  {apiNavigation.map((item) => (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        "block px-3 py-2 text-sm font-medium transition-all duration-300 hover:text-red-600 rounded-lg",
+                        "text-gray-600 hover:bg-gray-50"
+                      )}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {item.name}
+                    </a>
                   ))}
                 </div>
               </div>

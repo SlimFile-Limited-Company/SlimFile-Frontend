@@ -30,7 +30,8 @@ import {
   Award,
   FileImage,
   Palette,
-  Camera
+  Camera,
+  Mail
 } from "lucide-react";
 
 export default function CompressImagesForWebsite() {
@@ -563,7 +564,7 @@ export default function CompressImagesForWebsite() {
               </Button>
             </Link>
             <Link to="/blog/how-to-compress-files-for-faster-website-loading">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary px-8 py-3 rounded-lg font-semibold">
+              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold">
                 <Info className="w-5 h-5 mr-2" />
                 Performance Guide
               </Button>
