@@ -29,8 +29,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
     const validFiles: File[] = [];
     let errorMsg = '';
 
-    if (files.length > 10) {
-      errorMsg = 'You can upload up to 10 files at a time.';
+    if (files.length > 300) {
+      errorMsg = 'You can upload up to 300 files at a time.';
     } else {
       for (const file of files) {
         if (!Object.keys(ACCEPTED_TYPES).includes(file.type)) {
@@ -164,7 +164,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
                   Drop your files here or click to browse
                 </p>
                 <p className="text-sm text-gray-500">
-                  Drag and drop or click to select up to 10 files
+                  Drag and drop or click to select up to 300 files
                 </p>
               </div>
             </div>

@@ -72,7 +72,7 @@ const apiDocs = [
       { code: 500, message: "Batch compression failed." }
     ],
     notes: [
-      "Maximum number of files per request: 10.",
+      "Maximum number of files per request: 300.",
       "Supported file types: JPEG, PNG, PDF.",
       "The response is a ZIP file download.",
       "No authentication required.",

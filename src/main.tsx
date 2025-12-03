@@ -42,6 +42,7 @@ import BlogWhyFileCompressionIsEssentialForRemoteWork from './pages/blog/WhyFile
 import BlogCompressingPdfForPrintingVsEmailing from './pages/blog/CompressingPdfForPrintingVsEmailing';
 import BlogHowToCompressLargeVideosBeforeUploading from './pages/blog/HowToCompressLargeVideosBeforeUploading';
 import OurBlogs from './pages/OurBlogs';
+import StepsBuild from './pages/StepsBuild';
 
 // Register service worker for PWA functionality
 if ('serviceWorker' in navigator) {
@@ -101,6 +102,7 @@ ReactDOM.createRoot(root).render(
           <Route path="partnerships" element={<Partnerships />} />
           <Route path="slimfile-game" element={<SlimFileGame />} />
           <Route path="global-impact" element={<GlobalImpact />} />
+          <Route path="stepsbuild" element={<StepsBuild />} />
         </Route>
       </Routes>
     </BrowserRouter>

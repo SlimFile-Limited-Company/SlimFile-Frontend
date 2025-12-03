@@ -12,10 +12,10 @@ export const Header = () => {
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const productNavigation = [
-    { name: "Compress", href: "/compress" },
-    { name: "Features", href: "/features" },
-    { name: "Game", href: "/slimfile-game", badge: "New" },
-    { name: "Why Compression?", href: "/file-compression-education" },
+    { name: "Compress", href: "/compress", external: false },
+    { name: "Features", href: "/features", external: false },
+    { name: "Game", href: "/slimfile-game", badge: "New", external: false },
+    { name: "Why Compression?", href: "/file-compression-education", external: false },
   ];
 
   const companyNavigation = [
@@ -30,7 +30,7 @@ export const Header = () => {
   ];
 
   const apiNavigation = [
-    { name: "API Documentation", href: "https://api.slim-file.com/", external: true },
+    { name: "API Dashboard", href: "https://api.slim-file.com/", external: true },
     { name: "Developer Program", href: "https://api.slim-file.com/developer-program", external: true },
     { name: "API Pricing", href: "https://api.slim-file.com/pricing", external: true },
   ];
@@ -213,6 +213,19 @@ export const Header = () => {
               )}
             </div>
 
+            <Link
+              to="/stepsbuild"
+              className={cn(
+                "text-sm font-medium transition-all duration-300 hover:text-red-600 relative",
+                location.pathname === "/stepsbuild" ? "text-red-600" : "text-gray-600"
+              )}
+            >
+              STEPsBuild
+              {location.pathname === "/stepsbuild" && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
+              )}
+            </Link>
+
             {isAuthenticated() && (
               <Button
                 variant="outline"
@@ -347,6 +360,19 @@ export const Header = () => {
                   ))}
                 </div>
               </div>
+
+              <Link
+                to="/stepsbuild"
+                className={cn(
+                  "px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-red-600 rounded-lg",
+                  location.pathname === "/stepsbuild"
+                    ? "text-red-600 bg-red-50"
+                    : "text-gray-600 hover:bg-gray-50"
+                )}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                STEPsBuild
+              </Link>
 
               {isAuthenticated() && (
                 <div className="mt-2">
