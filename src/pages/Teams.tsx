@@ -6,7 +6,7 @@ const teamMembers = [
     role: 'CEO and Founder',
     bio: 'Leads SlimFile vision, guiding innovation, strategy, and long-term product growth with excellence.',
     image: '/lovable-uploads/Isaac.jpg',
-    linkedin: 'http://linkedin.com/in/isaac-abakah',
+    linkedin: 'https://www.linkedin.com/in/isaac-abakah',
   },
 
   {
@@ -14,7 +14,7 @@ const teamMembers = [
     role: 'FullStack Developer',
     bio: 'Builds secure fullstack systems powering SlimFile’s fast, reliable, and scalable compression platform.',
     image: '/lovable-uploads/Abel-New.png',
-    linkedin: 'http://linkedin.com/in/abendin-abel-601a0b351',
+    
   },
 
   {
@@ -22,7 +22,7 @@ const teamMembers = [
     role: 'MERN Stack Developer',
     bio: 'Develops efficient MERN applications supporting SlimFile’s seamless performance and user-focused functionality.',
     image: '/lovable-uploads/Selorm.jpg',
-    linkedin: 'https://www.linkedin.com/in/selormsem',
+    
   },
 
   {
@@ -30,7 +30,7 @@ const teamMembers = [
     role: 'Frontend Developer',
     bio: 'Creates responsive interfaces that improve SlimFile usability, accessibility, and overall user experience consistently.',
     image: '/lovable-uploads/Atta.png',
-    linkedin: 'https://www.linkedin.com/in/joel-tsewagbe',
+    
   },
 
   {
@@ -38,7 +38,7 @@ const teamMembers = [
     role: 'Frontend Developer',
     bio: 'Designs polished user interfaces that elevate SlimFile’s appearance, navigation, and interactive experience effectively.',
     image: '/lovable-uploads/Juliet-1.png',
-    linkedin: 'https://www.linkedin.com/in/juliet-angaandi-1bab6b295',
+    
   },
 
   {
@@ -46,7 +46,7 @@ const teamMembers = [
     role: 'Backend Developer',
     bio: 'Builds strong backend systems powering SlimFile’s core compression speed, accuracy, and overall reliability.',
     image: '/lovable-uploads/Selby.png',
-    linkedin: 'https://www.linkedin.com/in/selormsem',
+    
   },
 
   {
@@ -54,7 +54,7 @@ const teamMembers = [
     role: 'Motion Designer',
     bio: 'Creates motion graphics enhancing SlimFile storytelling, brand communication, and overall visual engagement effectively.',
     image: '/lovable-uploads/Maxi.png',
-    linkedin: 'https://www.linkedin.com/in/joel-tsewagbe',
+    
   },
 
   {
@@ -62,7 +62,7 @@ const teamMembers = [
     role: 'UI/UX Designer',
     bio: 'Designs intuitive interfaces focused on simplicity, ensuring SlimFile remains seamless, accessible, and user-centered.',
     image: '/lovable-uploads/Ferdinand-New.png',
-    linkedin: 'https://www.linkedin.com/in/ferdinard-ofei-55138735a',
+    
   },
 
   {
@@ -70,7 +70,7 @@ const teamMembers = [
     role: 'UI/UX Designer',
     bio: 'Creates user-focused design systems that improve SlimFile functionality, clarity, and the overall experience.',
     image: '/lovable-uploads/OB.png',
-    linkedin: 'https://www.linkedin.com/in/joel-tsewagbe',
+    
   },
 
   {
@@ -78,7 +78,7 @@ const teamMembers = [
     role: 'UI/UX Designer',
     bio: 'Designs clean user flows improving SlimFile’s ease-of-use, visual appeal, and interaction consistency globally.',
     image: '/lovable-uploads/Nii.jpg',
-    linkedin: 'https://www.linkedin.com/in/joel-tsewagbe',
+    
   },
 
   {
@@ -86,7 +86,7 @@ const teamMembers = [
     role: 'Graphic Designer',
     bio: 'Creates engaging graphics supporting SlimFile branding, communication, and promotional content across multiple platforms.',
     image: '/lovable-uploads/Edward.png',
-    linkedin: 'https://www.linkedin.com/in/joel-tsewagbe',
+    
   },
 
   {
@@ -94,7 +94,7 @@ const teamMembers = [
     role: 'Graphic Designer',
     bio: 'Produces high-quality visuals enhancing SlimFile’s branding, user messaging, and product presentation effectively.',
     image: '/lovable-uploads/Penuel.jpg',
-    linkedin: 'https://www.linkedin.com/in/joel-tsewagbe',
+    
   },
 
   {
@@ -102,7 +102,7 @@ const teamMembers = [
     role: 'Chief Executive Officer',
     bio: 'Provides leadership direction ensuring SlimFile growth, strategic planning, and sustainable operational excellence.',
     image: '/lovable-uploads/Emmanuel.jpg',
-    linkedin: 'https://www.linkedin.com/in/joel-tsewagbe',
+    
   },
 
   {
@@ -110,7 +110,7 @@ const teamMembers = [
     role: 'Partnership Head',
     bio: 'Builds strong partnerships expanding SlimFile reach, securing collaborations, and strengthening long-term external relationships.',
     image: '/lovable-uploads/Godfred-New.png',
-    linkedin: 'https://www.linkedin.com/in/godfred-agbosu-96b634366',
+    
   },
 
   {
@@ -118,7 +118,7 @@ const teamMembers = [
     role: 'Lawyer',
     bio: 'Provides legal guidance protecting SlimFile operations, compliance, partnerships, and intellectual property rights consistently.',
     image: '/lovable-uploads/Marlyn.png',
-    linkedin: 'https://www.linkedin.com/in/joel-tsewagbe',
+    
   },
 
   {
@@ -126,7 +126,7 @@ const teamMembers = [
     role: 'Research Lead',
     bio: 'Leads research initiatives improving SlimFile technology, user insights, product development, and overall innovation.',
     image: '/lovable-uploads/munira.png',
-    linkedin: 'https://www.linkedin.com/in/joel-tsewagbe',
+    
   },
 
   {
@@ -134,7 +134,7 @@ const teamMembers = [
     role: 'Analytical Expert',
     bio: 'Analyzes performance metrics guiding SlimFile improvements, strategy decisions, and data-driven feature enhancements.',
     image: '/lovable-uploads/Joel-new.png',
-    linkedin: 'https://www.linkedin.com/in/joel-tsewagbe',
+    
   },
 
   {
@@ -142,7 +142,7 @@ const teamMembers = [
     role: 'Digital Marketer',
     bio: 'Leads digital campaigns growing SlimFile audience, increasing engagement, and strengthening long-term online presence.',
     image: '/lovable-uploads/Helena.png',
-    linkedin: 'https://www.linkedin.com/in/helena-amoabeng-2bb52535a',
+  
   },
 
   {
@@ -150,7 +150,7 @@ const teamMembers = [
     role: 'Linkedin Marketer',
     bio: 'Drives LinkedIn strategies connecting SlimFile with professionals, brands, and high-value partnership opportunities.',
     image: '/lovable-uploads/Veronica-new.png',
-    linkedin: 'https://www.linkedin.com/in/veronica-akwojinga-505196368',
+    
   },
 ];
 
