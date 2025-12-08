@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { CompressionResult } from "@/components/CompressionResult";
 import { toast } from "@/hooks/use-toast";
 import { isAuthenticated } from "@/lib/auth";
-import { Zap, Shield, Clock } from "lucide-react";
+import { Zap, Shield, Clock, ArrowDown, CheckCircle2 } from "lucide-react";
 
 const Compress = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -169,115 +168,213 @@ const Compress = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-red-100/50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-red-50/30">
 
       {/* Main Content */}
-      <main className="relative pt-16 z-10">
+      <main className="relative pt-20 z-10">
         {/* Enhanced Hero Section */}
-        <section className="py-20 px-0 sm:px-6 lg:px-8">
-          <div className="container mx-auto text-center px-4 sm:px-6 lg:px-8">
-            <div
-              className="max-w-6xl mx-auto"
-            >
-              {/* Enhanced Glass Card for Hero Content */}
-              <div className="relative bg-white/30 rounded-3xl border border-white/50 shadow-2xl p-6 sm:p-12 lg:p-16 mx-0 sm:mx-6 lg:mx-8 backdrop-blur-sm">
+        <section className="py-16 px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto">
+            <div className="max-w-5xl mx-auto text-center space-y-6">
+              {/* Title */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+                <span className="block text-gray-900 mb-2">
+                  Compress Files
+                </span>
+                <span className="block bg-gradient-to-r from-red-600 via-red-500 to-orange-500 bg-clip-text text-transparent">
+                  Instantly
+                </span>
+              </h1>
 
-                {/* Content */}
-                <div className="relative z-10">
-                  {/* Enhanced Title */}
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-6 sm:mb-8 leading-tight">
-                    <span className="block bg-white/40 rounded-2xl px-4 py-2 sm:px-6 sm:py-3 border border-white/60 mb-2">
-                      Compress Files
-                    </span>
-                    <span className="text-red-600 block bg-gradient-to-r from-red-600 via-red-500 to-red-400 bg-clip-text text-transparent drop-shadow-lg">
-                      Instantly
-                    </span>
-                  </h1>
+              {/* Description */}
+              <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+                Reduce file sizes without compromising quality. Support for PDF, PPTX and image files with
+                <span className="text-red-600 font-semibold"> lightning-fast processing</span>.
+              </p>
 
-                  {/* Compress Now Button */}
-                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8">
-                    <div>
-                      <div
-                        className="text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white shadow-2xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden group border-2 border-white/30 cursor-pointer"
-                        onClick={() => {
-                          const uploadSection = document.getElementById('upload-section');
-                          if (uploadSection) {
-                            uploadSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                          }
-                        }}
-                      >
-                        <span className="relative z-10 flex items-center justify-center">
-                          Compress now
-                        </span>
-                      </div>
+              {/* Scroll to Upload Button */}
+              <button
+                onClick={() => {
+                  const uploadSection = document.getElementById('upload-section');
+                  if (uploadSection) {
+                    uploadSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                Start Compressing
+                <ArrowDown className="w-5 h-5" />
+              </button>
+
+              {/* Features Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-3xl mx-auto pt-8">
+                {[
+                  {
+                    icon: Zap,
+                    title: "Lightning Fast",
+                    description: "Compress in seconds",
+                    gradient: "from-yellow-400 to-orange-500"
+                  },
+                  {
+                    icon: Shield,
+                    title: "100% Secure",
+                    description: "Client-side processing",
+                    gradient: "from-blue-400 to-blue-600"
+                  },
+                  {
+                    icon: Clock,
+                    title: "Always Available",
+                    description: "24/7 compression",
+                    gradient: "from-green-400 to-green-600"
+                  }
+                ].map((feature, index) => (
+                  <div
+                    key={feature.title}
+                    className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <div className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center mx-auto mb-4`}>
+                      <feature.icon className="w-6 h-6 text-white" />
                     </div>
+                    <h3 className="font-bold text-gray-900 mb-1 text-sm">{feature.title}</h3>
+                    <p className="text-xs text-gray-600">{feature.description}</p>
                   </div>
-
-                  {/* Enhanced Description */}
-                  <div className="bg-white/35 rounded-2xl px-4 sm:px-6 py-4 sm:py-5 border-2 border-white/50 shadow-2xl max-w-3xl mx-auto mb-8 backdrop-blur-sm">
-                    <p className="text-base sm:text-lg text-gray-700 leading-relaxed text-center" style={{ wordSpacing: '0.1em' }}>
-                      Reduce file sizes without compromising quality. Support for PDF, PPTX and image files with
-                      <span className="text-red-600 font-semibold"> lightning-fast processing</span>.
-                    </p>
-                  </div>
-
-                  {/* Enhanced Features */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto mb-8">
-                    <div className="bg-white/40 rounded-2xl p-4 border-2 border-white/50 shadow-xl backdrop-blur-sm">
-                      <div className="flex flex-col items-center text-center">
-                        <div className="w-12 h-12 bg-red-100/70 rounded-xl flex items-center justify-center mb-3 border border-white/50">
-                          <Zap className="w-6 h-6 text-red-600" />
-                        </div>
-                        <h3 className="font-semibold text-gray-900 mb-1">Lightning Fast</h3>
-                        <p className="text-sm text-gray-600">Compress in seconds</p>
-                      </div>
-                    </div>
-
-                    <div className="bg-white/40 rounded-2xl p-4 border-2 border-white/50 shadow-xl backdrop-blur-sm">
-                      <div className="flex flex-col items-center text-center">
-                        <div className="w-12 h-12 bg-blue-100/70 rounded-xl flex items-center justify-center mb-3 border border-white/50">
-                          <Shield className="w-6 h-6 text-blue-600" />
-                        </div>
-                        <h3 className="font-semibold text-gray-900 mb-1">100% Secure</h3>
-                        <p className="text-sm text-gray-600">Client-side processing</p>
-                      </div>
-                    </div>
-
-                    <div className="bg-white/40 rounded-2xl p-4 border-2 border-white/50 shadow-xl backdrop-blur-sm">
-                      <div className="flex flex-col items-center text-center">
-                        <div className="w-12 h-12 bg-green-100/70 rounded-xl flex items-center justify-center mb-3 border border-white/50">
-                          <Clock className="w-6 h-6 text-green-600" />
-                        </div>
-                        <h3 className="font-semibold text-gray-900 mb-1">Always Available</h3>
-                        <p className="text-sm text-gray-600">24/7 compression</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         </section>
 
-        {/* Enhanced File Upload/Result Section */}
-        <section id="upload-section" className="pb-20 px-0 sm:px-6 lg:px-8">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white/30 rounded-3xl border-2 border-red-400 border-dashed shadow-2xl p-4 sm:p-8 max-w-4xl mx-0 sm:mx-auto backdrop-blur-sm hover:border-red-500 hover:shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-300">
-              {!selectedFiles.length ? (
-                <FileUpload
-                  onFileSelect={handleFilesSelect}
-                  isProcessing={isCompressing}
-                />
-              ) : (
-                <CompressionResult
-                  originalFiles={selectedFiles}
-                  compressedFiles={compressedFiles}
-                  compressedSizes={compressedSizes}
-                  compressionProgress={compressionProgress}
-                  isCompressing={isCompressing}
-                  onReset={handleReset}
-                />
-              )}
+        {/* How It Works Section */}
+        <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
+          <div className="container mx-auto">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+                How It Works
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  {
+                    step: "1",
+                    title: "Upload Files",
+                    description: "Select or drag and drop your files"
+                  },
+                  {
+                    step: "2",
+                    title: "Compress",
+                    description: "We optimize your files instantly"
+                  },
+                  {
+                    step: "3",
+                    title: "Download",
+                    description: "Get your compressed files"
+                  }
+                ].map((item, index) => (
+                  <div key={item.step} className="text-center">
+                    <div className="relative inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full text-white text-2xl font-bold mb-4">
+                      {item.step}
+                      {index < 2 && (
+                        <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 w-full">
+                          <div className="h-0.5 bg-gradient-to-r from-red-500 to-red-300"></div>
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                    <p className="text-sm text-gray-600">{item.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* File Upload/Result Section */}
+        <section id="upload-section" className="py-16 px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto">
+            <div className="max-w-5xl mx-auto">
+              {/* Section Header */}
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                  {!selectedFiles.length ? "Upload Your Files" : "Compression Results"}
+                </h2>
+                <p className="text-gray-600">
+                  {!selectedFiles.length 
+                    ? "Drag and drop your files or click to browse" 
+                    : "Your files are being compressed"}
+                </p>
+              </div>
+
+              {/* Upload/Result Card */}
+              <div className="relative bg-white rounded-3xl border-2 border-gray-200 shadow-xl p-8 hover:shadow-2xl transition-all duration-300">
+                {/* Decorative corner accents */}
+                <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-red-500 rounded-tl-3xl"></div>
+                <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-red-500 rounded-br-3xl"></div>
+
+                {!selectedFiles.length ? (
+                  <FileUpload
+                    onFileSelect={handleFilesSelect}
+                    isProcessing={isCompressing}
+                  />
+                ) : (
+                  <CompressionResult
+                    originalFiles={selectedFiles}
+                    compressedFiles={compressedFiles}
+                    compressedSizes={compressedSizes}
+                    compressionProgress={compressionProgress}
+                    isCompressing={isCompressing}
+                    onReset={handleReset}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white">
+          <div className="container mx-auto">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+                Why Choose SlimFile?
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  {
+                    icon: CheckCircle2,
+                    title: "High Quality",
+                    description: "Maintain excellent quality while reducing file size"
+                  },
+                  {
+                    icon: CheckCircle2,
+                    title: "All File Types",
+                    description: "Support for images, PDFs, and PPTX files"
+                  },
+                  {
+                    icon: CheckCircle2,
+                    title: "Batch Processing",
+                    description: "Compress multiple files at once"
+                  },
+                  {
+                    icon: CheckCircle2,
+                    title: "No Installation",
+                    description: "Works directly in your browser"
+                  }
+                ].map((feature, index) => (
+                  <div
+                    key={feature.title}
+                    className="flex items-start gap-4 p-6 bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
+                  >
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center">
+                        <feature.icon className="w-5 h-5 text-white" />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 mb-1">{feature.title}</h3>
+                      <p className="text-sm text-gray-600">{feature.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
