@@ -262,14 +262,15 @@ export const CompressionResult = ({
                     {file.name} has been successfully compressed
                   </p>
                 </div>
-                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                {/* FIXED: Changed from md:grid-cols-2 to grid-cols-1 md:grid-cols-2 and removed max-w-32 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <Card className="bg-gray-50 border border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-3 mb-3">
                         {getFileIcon(file.type)}
-                        <div>
+                        <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-gray-900">Original File</h4>
-                          <p className="text-sm text-gray-600 truncate max-w-32">
+                          <p className="text-sm text-gray-600 truncate">
                             {file.name}
                           </p>
                         </div>
@@ -283,9 +284,9 @@ export const CompressionResult = ({
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-3 mb-3">
                         {getFileIcon(file.type)}
-                        <div>
+                        <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-gray-900">Compressed File</h4>
-                          <p className="text-sm text-gray-600 truncate max-w-32">
+                          <p className="text-sm text-gray-600 truncate">
                             {compressedFiles[idx]?.name}
                           </p>
                         </div>
@@ -296,14 +297,14 @@ export const CompressionResult = ({
                     </CardContent>
                   </Card>
                 </div>
-                {/* NEW: Individual File Compression Stats */}
+                {/* Individual File Compression Stats */}
                 <div className="text-center mb-6">
-                  <div className="inline-flex items-center space-x-2 bg-red-100 text-red-800 px-4 py-2 rounded-full mr-2">
+                  <div className="inline-flex items-center space-x-2 bg-red-100 text-red-800 px-4 py-2 rounded-full mr-2 mb-2">
                     <span className="text-sm font-medium">
                       {getCompressionRatio(file, compressedFiles[idx])}% size reduction
                     </span>
                   </div>
-                  <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full">
+                  <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full mb-2">
                     <span className="text-sm font-medium">
                       Saved: {formatFileSize(file.size - (compressedFiles[idx]?.size || 0))}
                     </span>
@@ -353,7 +354,7 @@ export const CompressionResult = ({
           ) : null}
         </motion.div>
       ))}
-      {/* NEW: Total Compression Stats for Multiple Files */}
+      {/* Total Compression Stats for Multiple Files */}
       {compressedFiles.filter(Boolean).length > 1 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -365,7 +366,7 @@ export const CompressionResult = ({
               <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">
                 Total Compression Statistics
               </h3>
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <Card className="bg-gray-50 border border-gray-200">
                   <CardContent className="p-4">
                     <h4 className="font-medium text-gray-900 mb-2">Total Original Size</h4>
