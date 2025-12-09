@@ -303,8 +303,8 @@ const Compress = () => {
                 </p>
               </div>
 
-              {/* Upload/Result Card */}
-              <div className="relative bg-white rounded-3xl border-2 border-gray-200 shadow-xl p-8 hover:shadow-2xl transition-all duration-300">
+              {/* Upload/Result Card - FIXED: Responsive padding */}
+              <div className="relative bg-white rounded-3xl border-2 border-gray-200 shadow-xl p-4 sm:p-6 md:p-8 hover:shadow-2xl transition-all duration-300">
                 {/* Decorative corner accents */}
                 <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-red-500 rounded-tl-3xl"></div>
                 <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-red-500 rounded-br-3xl"></div>
