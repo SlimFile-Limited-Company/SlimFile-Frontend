@@ -219,7 +219,7 @@ export const CompressionResult = ({
   const { totalOriginalSize, totalCompressedSize, totalSizeReduction, totalCompressionRatio } = calculateTotalStats();
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-6">
+    <div className="w-full space-y-6">
       {originalFiles.map((file, idx) => (
         <motion.div
           key={file.name + idx}
@@ -246,7 +246,7 @@ export const CompressionResult = ({
             </Card>
           ) : compressedFiles[idx] ? (
             <Card className="bg-white shadow-lg border border-red-100 mb-6">
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="text-center mb-6">
                   <motion.div
                     initial={{ scale: 0 }}
@@ -263,7 +263,7 @@ export const CompressionResult = ({
                   </p>
                 </div>
                 {/* FIXED: Changed from md:grid-cols-2 to grid-cols-1 md:grid-cols-2 and removed max-w-32 */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-6">
                   <Card className="bg-gray-50 border border-gray-200">
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-3 mb-3">
@@ -299,19 +299,21 @@ export const CompressionResult = ({
                 </div>
                 {/* Individual File Compression Stats */}
                 <div className="text-center mb-6">
-                  <div className="inline-flex items-center space-x-2 bg-red-100 text-red-800 px-4 py-2 rounded-full mr-2 mb-2">
-                    <span className="text-sm font-medium">
-                      {getCompressionRatio(file, compressedFiles[idx])}% size reduction
-                    </span>
-                  </div>
-                  <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full mb-2">
-                    <span className="text-sm font-medium">
-                      Saved: {formatFileSize(file.size - (compressedFiles[idx]?.size || 0))}
-                    </span>
+                  <div className="inline-flex flex-wrap justify-center items-center gap-2">
+                    <div className="inline-flex items-center space-x-2 bg-red-100 text-red-800 px-3 sm:px-4 py-2 rounded-full">
+                      <span className="text-xs sm:text-sm font-medium">
+                        {getCompressionRatio(file, compressedFiles[idx])}% size reduction
+                      </span>
+                    </div>
+                    <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-3 sm:px-4 py-2 rounded-full">
+                      <span className="text-xs sm:text-sm font-medium">
+                        Saved: {formatFileSize(file.size - (compressedFiles[idx]?.size || 0))}
+                      </span>
+                    </div>
                   </div>
                   {!isAuthenticated() && (
-                    <div className="mt-3 inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full">
-                      <span className="text-sm font-medium">
+                    <div className="mt-3 inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-3 sm:px-4 py-2 rounded-full">
+                      <span className="text-xs sm:text-sm font-medium">
                         Login required to download or share compressed files
                       </span>
                     </div>
