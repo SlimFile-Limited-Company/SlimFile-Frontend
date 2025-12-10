@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star } from "lucide-react";
+import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType } from "lucide-react";
 
 // Add keyframes for animations
 const style = document.createElement('style');
@@ -91,6 +91,10 @@ const Home: FC = () => {
                 <Sparkles className="w-4 h-4 text-red-600" />
                 <span className="text-sm font-semibold text-gray-800">Featured on BetaList</span>
               </a>
+              <div className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-600 backdrop-blur-sm rounded-full px-5 py-2 shadow-lg">
+                <Sparkles className="w-4 h-4 text-white" />
+                <span className="text-sm font-semibold text-white">Now with Office Support!</span>
+              </div>
             </div>
 
             {/* Main Hero Content */}
@@ -108,7 +112,7 @@ const Home: FC = () => {
               {/* Subtitle */}
               <p className="text-xl sm:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                 Reduce file sizes instantly without losing quality.
-                <span className="block mt-2 text-red-600 font-semibold">Fast, secure, and powerful compression</span>
+                <span className="block mt-2 text-red-600 font-semibold">Fast, secure, and powerful compression for images, PDFs, and Office documents</span>
               </p>
 
               {/* CTA Buttons */}
@@ -157,7 +161,28 @@ const Home: FC = () => {
         </div>
       </section>
 
-      {/* Features Section - Redesigned */}
+      {/* Supported Formats Banner */}
+      <section className="py-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-red-50 to-orange-50 border-y border-red-100">
+        <div className="container mx-auto">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-700">
+            <span className="font-semibold text-gray-900">Supported formats:</span>
+            <div className="flex items-center gap-2 bg-white/80 rounded-full px-4 py-2">
+              <FileImage className="w-4 h-4 text-red-600" />
+              <span>JPEG, PNG, WebP</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/80 rounded-full px-4 py-2">
+              <FileText className="w-4 h-4 text-red-600" />
+              <span>PDF, PPTX</span>
+            </div>
+            <div className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-full px-4 py-2">
+              <FileType className="w-4 h-4" />
+              <span className="font-semibold">DOCX, XLSX</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section - Redesigned with Office Documents */}
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="container mx-auto">
           <div className="text-center mb-16">
@@ -169,39 +194,58 @@ const Home: FC = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {[
               {
                 icon: FileImage,
                 title: "Image Compression",
                 description: "Optimize JPEG, PNG, and WebP images while maintaining visual quality.",
-                features: ["Smart algorithms", "Batch processing", "Quality control"]
+                features: ["Smart algorithms", "Batch processing", "Up to 95% reduction"],
+                gradient: "from-blue-500 to-blue-600"
               },
               {
                 icon: FileText,
-                title: "Document Compression",
+                title: "PDF & Presentations",
                 description: "Reduce PDF and PPTX file sizes significantly without losing quality.",
-                features: ["PDF optimization", "PPTX support", "Fast processing"]
+                features: ["PDF optimization", "PPTX support", "Fast processing"],
+                gradient: "from-red-500 to-red-600"
               },
               {
-                icon: Download,
-                title: "Batch Processing",
-                description: "Compress multiple files at once with our powerful batch tools.",
-                features: ["Multiple files", "Time saving", "Easy download"]
+                icon: FileType,
+                title: "Word Documents",
+                description: "Compress DOCX files through image optimization and metadata removal.",
+                features: ["DOCX support", "XML optimization", "Up to 95% smaller"],
+                gradient: "from-purple-500 to-purple-600",
+                badge: "New"
+              },
+              {
+                icon: FileSpreadsheet,
+                title: "Excel Spreadsheets",
+                description: "Optimize XLSX files by compressing charts and removing unnecessary data.",
+                features: ["XLSX support", "Chart compression", "Fast & safe"],
+                gradient: "from-green-500 to-green-600",
+                badge: "New"
               }
             ].map((feature, index) => (
               <div key={feature.title} className="group relative">
                 <div className="relative bg-gradient-to-br from-gray-50 to-white p-8 rounded-3xl border-2 border-gray-100 hover:border-red-200 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl h-full">
+                  {/* New Badge */}
+                  {feature.badge && (
+                    <div className="absolute -top-3 -right-3 bg-gradient-to-r from-red-600 to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                      {feature.badge}
+                    </div>
+                  )}
+
                   {/* Icon */}
-                  <div className="w-14 h-14 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className={`w-14 h-14 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                     <feature.icon className="w-7 h-7 text-white" />
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 mb-6 leading-relaxed">
+                  <p className="text-gray-600 mb-6 leading-relaxed text-sm">
                     {feature.description}
                   </p>
 
@@ -234,8 +278,120 @@ const Home: FC = () => {
         </div>
       </section>
 
+      {/* Office Documents Highlight Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white border-y border-gray-200">
+        <div className="container mx-auto">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-full px-6 py-2 mb-6">
+                <Sparkles className="w-4 h-4" />
+                <span className="font-semibold">NEW FEATURE</span>
+              </div>
+              <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+                Microsoft Office Document Compression
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Now supporting Word documents and Excel spreadsheets with powerful compression
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="bg-white rounded-2xl p-8 border-2 border-purple-200 hover:border-purple-300 transition-all duration-300 shadow-lg hover:shadow-xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                    <FileType className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900">DOCX Files</h3>
+                    <p className="text-sm text-gray-600">Word Documents</p>
+                  </div>
+                </div>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Compress embedded images and graphics</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Remove unnecessary metadata and revision history</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Works even without images through XML optimization</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">
+                      <strong>5-30% reduction</strong> for text-only documents
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">
+                      <strong>Up to 95% reduction</strong> for documents with images
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-white rounded-2xl p-8 border-2 border-green-200 hover:border-green-300 transition-all duration-300 shadow-lg hover:shadow-xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                    <FileSpreadsheet className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900">XLSX Files</h3>
+                    <p className="text-sm text-gray-600">Excel Spreadsheets</p>
+                  </div>
+                </div>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Optimize charts and embedded images</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Remove calculation chains (auto-recalculated on open)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Maximum ZIP compression for better file size</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">
+                      <strong>5-30% reduction</strong> for data-only spreadsheets
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">
+                      <strong>Up to 95% reduction</strong> for files with charts/images
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-8 text-center">
+              <Link to="/compress">
+                <Button
+                  size="lg"
+                  className="text-lg px-8 py-4 rounded-2xl bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  <span className="flex items-center gap-2">
+                    Try Office Compression Now
+                    <ArrowRight className="w-5 h-5" />
+                  </span>
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Video Section - Enhanced */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="container mx-auto">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
@@ -279,7 +435,7 @@ const Home: FC = () => {
       </section>
 
       {/* Why Choose Us - Redesigned */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white">
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
