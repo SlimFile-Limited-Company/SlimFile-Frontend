@@ -390,6 +390,219 @@ const Home: FC = () => {
         </div>
       </section>
 
+      {/* File Conversion Section - NEW */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 to-white border-y border-purple-100">
+        <div className="container mx-auto">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full px-6 py-2 mb-6">
+                <Sparkles className="w-4 h-4" />
+                <span className="font-semibold">NEW FEATURES</span>
+              </div>
+              <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+                File Conversion Tools
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Convert your files between different formats with our powerful conversion tools
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              {/* Convert Only */}
+              <div className="group relative">
+                <div className="relative bg-gradient-to-br from-white to-purple-50 p-8 rounded-3xl border-2 border-purple-200 hover:border-purple-300 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl h-full">
+                  {/* New Badge */}
+                  <div className="absolute -top-3 -right-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    New
+                  </div>
+
+                  {/* Icon */}
+                  <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <FileText className="w-7 h-7 text-white" />
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    Convert Only
+                  </h3>
+                  <p className="text-gray-600 mb-6 leading-relaxed">
+                    Transform your files between different formats without compression. Perfect for format compatibility.
+                  </p>
+
+                  {/* Features */}
+                  <ul className="space-y-3 mb-6">
+                    <li className="flex items-center gap-2 text-sm text-gray-600">
+                      <CheckCircle2 className="w-4 h-4 text-purple-500" />
+                      <span>Image formats: JPG, PNG, WebP, PDF</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-gray-600">
+                      <CheckCircle2 className="w-4 h-4 text-purple-500" />
+                      <span>Office docs: DOCX, PPTX, XLSX to PDF</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-gray-600">
+                      <CheckCircle2 className="w-4 h-4 text-purple-500" />
+                      <span>PDF to Images (ZIP)</span>
+                    </li>
+                  </ul>
+
+                  {/* Link */}
+                  <Link to="/convert-only">
+                    <Button
+                      variant="ghost"
+                      className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-xl px-0 transition-all duration-300 group-hover:gap-2"
+                    >
+                      <span className="flex items-center gap-1">
+                        Try Convert Only
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Convert and Compress */}
+              <div className="group relative">
+                <div className="relative bg-gradient-to-br from-white to-red-50 p-8 rounded-3xl border-2 border-red-200 hover:border-red-300 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl h-full">
+                  {/* New Badge */}
+                  <div className="absolute -top-3 -right-3 bg-gradient-to-r from-red-600 to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    New
+                  </div>
+
+                  {/* Icon */}
+                  <div className="w-14 h-14 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <Zap className="w-7 h-7 text-white" />
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    Convert & Compress
+                  </h3>
+                  <p className="text-gray-600 mb-6 leading-relaxed">
+                    The ultimate two-in-one solution. Convert between formats AND optimize file size in a single step.
+                  </p>
+
+                  {/* Features */}
+                  <ul className="space-y-3 mb-6">
+                    <li className="flex items-center gap-2 text-sm text-gray-600">
+                      <CheckCircle2 className="w-4 h-4 text-red-500" />
+                      <span>All conversion features included</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-gray-600">
+                      <CheckCircle2 className="w-4 h-4 text-red-500" />
+                      <span>Maximum file size reduction</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-gray-600">
+                      <CheckCircle2 className="w-4 h-4 text-red-500" />
+                      <span>Perfect quality with smaller files</span>
+                    </li>
+                  </ul>
+
+                  {/* Link */}
+                  <Link to="/convert-compress">
+                    <Button
+                      variant="ghost"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl px-0 transition-all duration-300 group-hover:gap-2"
+                    >
+                      <span className="flex items-center gap-1">
+                        Try Convert & Compress
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Compress Only */}
+              <div className="group relative">
+                <div className="relative bg-gradient-to-br from-white to-blue-50 p-8 rounded-3xl border-2 border-blue-200 hover:border-blue-300 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl h-full">
+                  {/* New Badge */}
+                  <div className="absolute -top-3 -right-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    New
+                  </div>
+
+                  {/* Icon */}
+                  <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <FileImage className="w-7 h-7 text-white" />
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    Compress Only
+                  </h3>
+                  <p className="text-gray-600 mb-6 leading-relaxed">
+                    Reduce file sizes while maintaining the same format. Ideal for storage optimization and faster sharing.
+                  </p>
+
+                  {/* Features */}
+                  <ul className="space-y-3 mb-6">
+                    <li className="flex items-center gap-2 text-sm text-gray-600">
+                      <CheckCircle2 className="w-4 h-4 text-blue-500" />
+                      <span>Images: JPEG, PNG, WebP</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-gray-600">
+                      <CheckCircle2 className="w-4 h-4 text-blue-500" />
+                      <span>Documents: PDF, DOCX, PPTX, XLSX</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-sm text-gray-600">
+                      <CheckCircle2 className="w-4 h-4 text-blue-500" />
+                      <span>Up to 95% size reduction</span>
+                    </li>
+                  </ul>
+
+                  {/* Link */}
+                  <Link to="/compress">
+                    <Button
+                      variant="ghost"
+                      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl px-0 transition-all duration-300 group-hover:gap-2"
+                    >
+                      <span className="flex items-center gap-1">
+                        Try Compress Only
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <div className="inline-flex items-center gap-4 bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+                <div className="text-left">
+                  <h4 className="text-lg font-bold text-gray-900 mb-1">Choose Your Tool</h4>
+                  <p className="text-sm text-gray-600">Select the perfect tool for your needs</p>
+                </div>
+                <div className="flex gap-3">
+                  <Link to="/convert-only">
+                    <Button
+                      size="sm"
+                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white rounded-xl font-semibold transition-all shadow-md hover:shadow-lg"
+                    >
+                      Convert Only
+                    </Button>
+                  </Link>
+                  <Link to="/convert-compress">
+                    <Button
+                      size="sm"
+                      className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white rounded-xl font-semibold transition-all shadow-md hover:shadow-lg"
+                    >
+                      Convert & Compress
+                    </Button>
+                  </Link>
+                  <Link to="/compress">
+                    <Button
+                      size="sm"
+                      className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-xl font-semibold transition-all shadow-md hover:shadow-lg"
+                    >
+                      Compress Only
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Video Section - Enhanced */}
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="container mx-auto">
