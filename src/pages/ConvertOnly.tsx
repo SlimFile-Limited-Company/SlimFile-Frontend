@@ -77,7 +77,7 @@ const ConvertOnly = () => {
   const convertFile = async (file: File, targetFormat: string, idx: number): Promise<{ file: File | null; warning?: string }> => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('targetFormat', targetFormat); // ← CRITICAL: Added targetFormat!
+    formData.append('targetFormat', targetFormat);
     
     try {
       const response = await fetch(`${API_BASE_URL}/convert`, {
@@ -91,13 +91,32 @@ const ConvertOnly = () => {
       }
       
       const blob = await response.blob();
-      const contentDisposition = response.headers.get('Content-Disposition');
-      let filename = `converted_${file.name}`;
+      
+      // FIXED: Better header parsing
+      const contentDisposition = response.headers.get('Content-Disposition') || response.headers.get('content-disposition');
+      let filename = `converted_${file.name.replace(/\.[^/.]+$/, '')}.${targetFormat}`; // Better fallback
+      
+      console.log('Content-Disposition header:', contentDisposition); // Debug log
       
       if (contentDisposition) {
-        const match = contentDisposition.match(/filename="(.+)"/);
-        if (match) filename = match[1];
+        // Try multiple regex patterns
+        const patterns = [
+          /filename[^;=\n]*=["']([^"']+)["']/i,  // filename="file.jpg" or filename='file.jpg'
+          /filename[^;=\n]*=([^;"\s]+)/i,         // filename=file.jpg
+          /filename\*=UTF-8''(.+)/i               // filename*=UTF-8''file.jpg
+        ];
+        
+        for (const pattern of patterns) {
+          const match = contentDisposition.match(pattern);
+          if (match && match[1]) {
+            filename = decodeURIComponent(match[1]);
+            console.log('Extracted filename:', filename); // Debug log
+            break;
+          }
+        }
       }
+      
+      console.log('Final filename:', filename); // Debug log
       
       const convertedFile = new File([blob], filename, { type: blob.type, lastModified: Date.now() });
       return { file: convertedFile };
