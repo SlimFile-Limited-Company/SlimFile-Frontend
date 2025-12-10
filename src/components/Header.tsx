@@ -16,7 +16,6 @@ export const Header = () => {
     { name: "Convert", href: "/convert-only", external: false },
     { name: "Convert and Compress", href: "/convert-compress", external: false },
     { name: "Game", href: "/slimfile-game", badge: "New", external: false },
-    { name: "Why Compression?", href: "/file-compression-education", external: false },
   ];
 
   const companyNavigation = [
@@ -27,6 +26,7 @@ export const Header = () => {
     { name: "Partnerships", href: "/partnerships" },
     { name: "SDGs", href: "/sdgs" },
     { name: "Features", href: "/features" },
+    { name: "Why Compression?", href: "/file-compression-education" },
     { name: "Our Blogs", href: "/blog" },
     { name: "Contact", href: "/contact" },
   ];
