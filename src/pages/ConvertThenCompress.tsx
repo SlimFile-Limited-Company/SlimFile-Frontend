@@ -145,8 +145,9 @@ const ConvertThenCompress = () => {
         return updated;
       });
       
-      const convertProgress = [5, 15, 30, 45, 50];
-      const convertDelays = [200, 300, 400, 300, 200];
+      // Shorter delays - just show initial progress
+      const convertProgress = [5, 15, 30, 45];
+      const convertDelays = [100, 150, 200, 150];
       for (let i = 0; i < convertProgress.length; i++) {
         await new Promise(resolve => setTimeout(resolve, convertDelays[i]));
         setProcessingProgress(prev => {
@@ -156,15 +157,15 @@ const ConvertThenCompress = () => {
         });
       }
 
-      // Step 2: Compressing (50-100% progress)
+      // Step 2: Compressing (50-95% progress) - DON'T go to 100% yet!
       setCurrentStep(prev => {
         const updated = [...prev];
         updated[idx] = 'Compressing...';
         return updated;
       });
       
-      const compressProgress = [55, 70, 85, 95, 100];
-      const compressDelays = [300, 400, 300, 200, 100];
+      const compressProgress = [50, 65, 80, 95]; // Stop at 95%!
+      const compressDelays = [150, 200, 150, 100];
       for (let i = 0; i < compressProgress.length; i++) {
         await new Promise(resolve => setTimeout(resolve, compressDelays[i]));
         setProcessingProgress(prev => {
@@ -172,19 +173,13 @@ const ConvertThenCompress = () => {
           updated[idx] = compressProgress[i];
           return updated;
         });
-        
-        if (compressProgress[i] === 95) {
-          toast({
-            title: `Almost Done (${file.name})`,
-            description: "Hang in there… finalizing conversion and compression!",
-            variant: "default",
-          });
-        }
       }
       
+      // NOW make the actual API call (progress stays at 95%)
       try {
         const { file: processed, warning } = await convertAndCompressFile(file, targetFormat, idx);
         
+        // Only NOW set to 100% after API completes
         setProcessedFiles(prev => {
           const updated = [...prev];
           updated[idx] = processed;
@@ -197,7 +192,7 @@ const ConvertThenCompress = () => {
         });
         setProcessingProgress(prev => {
           const updated = [...prev];
-          updated[idx] = 100;
+          updated[idx] = 100; // Set to 100% ONLY after API completes
           return updated;
         });
         setCurrentStep(prev => {

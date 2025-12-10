@@ -136,30 +136,24 @@ const ConvertOnly = () => {
     for (let idx = 0; idx < files.length; idx++) {
       const file = files[idx];
       
-      // Progress simulation
-      const progressSteps = [10, 25, 45, 65, 80, 95, 100];
-      const delays = [300, 400, 500, 400, 300, 200, 100];
+      // Progress simulation - Stop at 95%!
+      const progressSteps = [10, 25, 45, 65, 80, 95]; // Don't go to 100 yet!
+      const delays = [200, 300, 400, 300, 200, 100];
       
-      for (let i = 0; i < progressSteps.length - 1; i++) {
+      for (let i = 0; i < progressSteps.length; i++) {
         await new Promise(resolve => setTimeout(resolve, delays[i]));
         setConversionProgress(prev => {
           const updated = [...prev];
           updated[idx] = progressSteps[i];
           return updated;
         });
-        
-        if (progressSteps[i] === 95) {
-          toast({
-            title: `Almost Done (${file.name})`,
-            description: "Hang in there… finalizing conversion!",
-            variant: "default",
-          });
-        }
       }
       
+      // NOW make the actual API call (progress stays at 95%)
       try {
         const { file: converted, warning } = await convertFile(file, targetFormat, idx);
         
+        // Only NOW set to 100% after API completes
         setConvertedFiles(prev => {
           const updated = [...prev];
           updated[idx] = converted;
@@ -172,7 +166,7 @@ const ConvertOnly = () => {
         });
         setConversionProgress(prev => {
           const updated = [...prev];
-          updated[idx] = 100;
+          updated[idx] = 100; // Set to 100% ONLY after API completes
           return updated;
         });
         setConversionWarnings(prev => {
