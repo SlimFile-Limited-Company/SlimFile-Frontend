@@ -12,6 +12,11 @@ const ConvertOnly = () => {
   const [convertedFiles, setConvertedFiles] = useState<(File | null)[]>([]);
   const [convertedSizes, setConvertedSizes] = useState<number[]>([]);
   const [conversionWarnings, setConversionWarnings] = useState<string[]>([]);
+  
+  // NEW: Format selection states
+  const [selectedFormat, setSelectedFormat] = useState<string>('pdf');
+  const [availableFormats, setAvailableFormats] = useState<string[]>([]);
+  const [showFormatSelector, setShowFormatSelector] = useState(false);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
@@ -26,14 +31,12 @@ const ConvertOnly = () => {
         try {
           const downloadData = JSON.parse(pendingDownload);
           
-          // Show message asking user to re-convert
           toast({
             title: "Login Successful",
             description: "Please re-convert your files to download them.",
             variant: "default"
           });
           
-          // Clear the pending download
           sessionStorage.removeItem(downloadKey);
           sessionStorage.removeItem('pendingDownloadIndex');
           sessionStorage.removeItem('redirectAfterLogin');
@@ -48,26 +51,54 @@ const ConvertOnly = () => {
     }
   }, []);
 
-  // Send file to backend for conversion
-  const convertFile = async (file: File, idx: number): Promise<{ file: File | null; warning?: string }> => {
+  // NEW: Detect available formats based on file type
+  const getAvailableFormats = (file: File): string[] => {
+    const ext = file.name.split('.').pop()?.toLowerCase() || '';
+    
+    // Images can convert to: jpg, png, webp, pdf
+    if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
+      return ['jpg', 'png', 'webp', 'pdf'];
+    }
+    
+    // PDF can convert to: jpg, png (returns ZIP)
+    if (ext === 'pdf') {
+      return ['jpg', 'png'];
+    }
+    
+    // Office docs can convert to: pdf
+    if (['docx', 'pptx', 'xlsx'].includes(ext)) {
+      return ['pdf'];
+    }
+    
+    return ['pdf']; // default
+  };
+
+  // UPDATED: Send file to backend with targetFormat
+  const convertFile = async (file: File, targetFormat: string, idx: number): Promise<{ file: File | null; warning?: string }> => {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('targetFormat', targetFormat); // ← CRITICAL: Added targetFormat!
+    
     try {
       const response = await fetch(`${API_BASE_URL}/convert`, {
         method: 'POST',
         body: formData,
       });
+      
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         return { file: null, warning: data.error || 'Conversion failed' };
       }
+      
       const blob = await response.blob();
       const contentDisposition = response.headers.get('Content-Disposition');
-      let filename = `slimfile_${file.name}`;
+      let filename = `converted_${file.name}`;
+      
       if (contentDisposition) {
         const match = contentDisposition.match(/filename="(.+)"/);
         if (match) filename = match[1];
       }
+      
       const convertedFile = new File([blob], filename, { type: blob.type, lastModified: Date.now() });
       return { file: convertedFile };
     } catch (err: any) {
@@ -75,7 +106,8 @@ const ConvertOnly = () => {
     }
   };
 
-  const simulateConversion = async (files: File[]) => {
+  // UPDATED: Conversion with selected format
+  const simulateConversion = async (files: File[], targetFormat: string) => {
     setIsConverting(true);
     setConversionProgress(Array(files.length).fill(0));
     setConvertedFiles(Array(files.length).fill(null));
@@ -84,9 +116,11 @@ const ConvertOnly = () => {
 
     for (let idx = 0; idx < files.length; idx++) {
       const file = files[idx];
+      
       // Progress simulation
       const progressSteps = [10, 25, 45, 65, 80, 95, 100];
       const delays = [300, 400, 500, 400, 300, 200, 100];
+      
       for (let i = 0; i < progressSteps.length - 1; i++) {
         await new Promise(resolve => setTimeout(resolve, delays[i]));
         setConversionProgress(prev => {
@@ -94,7 +128,7 @@ const ConvertOnly = () => {
           updated[idx] = progressSteps[i];
           return updated;
         });
-        // Show "Hang in there..." at 95%
+        
         if (progressSteps[i] === 95) {
           toast({
             title: `Almost Done (${file.name})`,
@@ -103,8 +137,10 @@ const ConvertOnly = () => {
           });
         }
       }
+      
       try {
-        const { file: converted, warning } = await convertFile(file, idx);
+        const { file: converted, warning } = await convertFile(file, targetFormat, idx);
+        
         setConvertedFiles(prev => {
           const updated = [...prev];
           updated[idx] = converted;
@@ -125,6 +161,7 @@ const ConvertOnly = () => {
           updated[idx] = warning || '';
           return updated;
         });
+        
         if (warning) {
           toast({
             title: `Conversion Notice (${file.name})`,
@@ -134,7 +171,7 @@ const ConvertOnly = () => {
         } else if (converted) {
           toast({
             title: `Conversion Complete! (${file.name})`,
-            description: `File converted successfully.`,
+            description: `File converted successfully to ${targetFormat.toUpperCase()}.`,
           });
         }
       } catch (error: any) {
@@ -145,16 +182,31 @@ const ConvertOnly = () => {
         });
       }
     }
+    
     setIsConverting(false);
   };
 
+  // UPDATED: Handle file selection - don't start processing yet
   const handleFilesSelect = (files: File[]) => {
     setSelectedFiles(files);
     setConvertedFiles(Array(files.length).fill(null));
     setConvertedSizes(Array(files.length).fill(0));
     setConversionProgress(Array(files.length).fill(0));
     setConversionWarnings(Array(files.length).fill(''));
-    simulateConversion(files);
+    
+    // NEW: Set available formats based on first file
+    if (files.length > 0) {
+      const formats = getAvailableFormats(files[0]);
+      setAvailableFormats(formats);
+      setSelectedFormat(formats[0]); // Set first format as default
+      setShowFormatSelector(true); // Show format selector
+    }
+  };
+
+  // NEW: Start conversion when user clicks the button
+  const handleStartConversion = () => {
+    setShowFormatSelector(false);
+    simulateConversion(selectedFiles, selectedFormat);
   };
 
   const handleReset = () => {
@@ -164,6 +216,8 @@ const ConvertOnly = () => {
     setConversionProgress([]);
     setConversionWarnings([]);
     setIsConverting(false);
+    setShowFormatSelector(false);
+    setAvailableFormats([]);
   };
 
   return (
@@ -358,11 +412,13 @@ const ConvertOnly = () => {
               {/* Section Header */}
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-3">
-                  {!selectedFiles.length ? "Upload Your Files" : "Conversion Results"}
+                  {!selectedFiles.length ? "Upload Your Files" : showFormatSelector ? "Choose Output Format" : "Conversion Results"}
                 </h2>
                 <p className="text-gray-600">
                   {!selectedFiles.length 
                     ? "Drag and drop your files or click to browse" 
+                    : showFormatSelector
+                    ? "Select the format you want to convert to"
                     : "Your files are being converted"}
                 </p>
               </div>
@@ -378,6 +434,55 @@ const ConvertOnly = () => {
                     onFileSelect={handleFilesSelect}
                     isProcessing={isConverting}
                   />
+                ) : showFormatSelector ? (
+                  /* NEW: Format Selector UI */
+                  <div className="space-y-6">
+                    {/* File Info */}
+                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                      <p className="text-sm text-gray-600 mb-2">Selected file{selectedFiles.length > 1 ? 's' : ''}:</p>
+                      {selectedFiles.map((file, idx) => (
+                        <p key={idx} className="font-semibold text-gray-900">{file.name}</p>
+                      ))}
+                    </div>
+
+                    {/* Format Selection */}
+                    <div>
+                      <label className="block text-lg font-bold text-gray-900 mb-4">
+                        Convert to:
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {availableFormats.map((format) => (
+                          <button
+                            key={format}
+                            onClick={() => setSelectedFormat(format)}
+                            className={`px-6 py-4 rounded-xl font-bold text-lg transition-all transform ${
+                              selectedFormat === format
+                                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg scale-105'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102'
+                            }`}
+                          >
+                            {format.toUpperCase()}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleStartConversion}
+                        className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl"
+                      >
+                        Convert to {selectedFormat.toUpperCase()}
+                      </button>
+                      <button
+                        onClick={handleReset}
+                        className="px-6 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
                 ) : (
                   <CompressionResult
                     originalFiles={selectedFiles}

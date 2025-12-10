@@ -13,8 +13,8 @@ export const Header = () => {
 
   const productNavigation = [
     { name: "Compress Only", href: "/compress", external: false },
-    { name: "Convert Page", href: "/convert-only", external: false },
-    { name: "Convert and Compress Page", href: "/convert-compress", external: false },
+    { name: "Convert", href: "/convert-only", external: false },
+    { name: "Convert and Compress", href: "/convert-compress", external: false },
     { name: "Game", href: "/slimfile-game", badge: "New", external: false },
     { name: "Why Compression?", href: "/file-compression-education", external: false },
   ];

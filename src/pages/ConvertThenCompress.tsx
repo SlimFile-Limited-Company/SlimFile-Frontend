@@ -14,6 +14,11 @@ const ConvertThenCompress = () => {
   const [processingWarnings, setProcessingWarnings] = useState<string[]>([]);
   const [currentStep, setCurrentStep] = useState<string[]>([]);
 
+  // NEW: Format selection states
+  const [selectedFormat, setSelectedFormat] = useState<string>('pdf');
+  const [availableFormats, setAvailableFormats] = useState<string[]>([]);
+  const [showFormatSelector, setShowFormatSelector] = useState(false);
+
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
   // Handle pending download after login
@@ -27,14 +32,12 @@ const ConvertThenCompress = () => {
         try {
           const downloadData = JSON.parse(pendingDownload);
           
-          // Show message asking user to re-process
           toast({
             title: "Login Successful",
             description: "Please re-process your files to download them.",
             variant: "default"
           });
           
-          // Clear the pending download
           sessionStorage.removeItem(downloadKey);
           sessionStorage.removeItem('pendingDownloadIndex');
           sessionStorage.removeItem('redirectAfterLogin');
@@ -49,26 +52,54 @@ const ConvertThenCompress = () => {
     }
   }, []);
 
-  // Send file to backend for conversion and compression
-  const convertAndCompressFile = async (file: File, idx: number): Promise<{ file: File | null; warning?: string }> => {
+  // NEW: Detect available formats based on file type
+  const getAvailableFormats = (file: File): string[] => {
+    const ext = file.name.split('.').pop()?.toLowerCase() || '';
+    
+    // Images can convert to: jpg, png, webp, pdf
+    if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
+      return ['jpg', 'png', 'webp', 'pdf'];
+    }
+    
+    // PDF can convert to: jpg, png (returns ZIP)
+    if (ext === 'pdf') {
+      return ['jpg', 'png'];
+    }
+    
+    // Office docs can convert to: pdf
+    if (['docx', 'pptx', 'xlsx'].includes(ext)) {
+      return ['pdf'];
+    }
+    
+    return ['pdf']; // default
+  };
+
+  // UPDATED: Send file to backend with targetFormat
+  const convertAndCompressFile = async (file: File, targetFormat: string, idx: number): Promise<{ file: File | null; warning?: string }> => {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('targetFormat', targetFormat); // ← CRITICAL: Added targetFormat!
+    
     try {
       const response = await fetch(`${API_BASE_URL}/convert-compress`, {
         method: 'POST',
         body: formData,
       });
+      
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         return { file: null, warning: data.error || 'Processing failed' };
       }
+      
       const blob = await response.blob();
       const contentDisposition = response.headers.get('Content-Disposition');
-      let filename = `slimfile_${file.name}`;
+      let filename = `converted_compressed_${file.name}`;
+      
       if (contentDisposition) {
         const match = contentDisposition.match(/filename="(.+)"/);
         if (match) filename = match[1];
       }
+      
       const processedFile = new File([blob], filename, { type: blob.type, lastModified: Date.now() });
       return { file: processedFile };
     } catch (err: any) {
@@ -76,7 +107,8 @@ const ConvertThenCompress = () => {
     }
   };
 
-  const simulateProcessing = async (files: File[]) => {
+  // UPDATED: Processing with selected format
+  const simulateProcessing = async (files: File[], targetFormat: string) => {
     setIsProcessing(true);
     setProcessingProgress(Array(files.length).fill(0));
     setProcessedFiles(Array(files.length).fill(null));
@@ -122,7 +154,6 @@ const ConvertThenCompress = () => {
           return updated;
         });
         
-        // Show "Hang in there..." at 95%
         if (compressProgress[i] === 95) {
           toast({
             title: `Almost Done (${file.name})`,
@@ -133,7 +164,8 @@ const ConvertThenCompress = () => {
       }
       
       try {
-        const { file: processed, warning } = await convertAndCompressFile(file, idx);
+        const { file: processed, warning } = await convertAndCompressFile(file, targetFormat, idx);
+        
         setProcessedFiles(prev => {
           const updated = [...prev];
           updated[idx] = processed;
@@ -159,6 +191,7 @@ const ConvertThenCompress = () => {
           updated[idx] = warning || '';
           return updated;
         });
+        
         if (warning) {
           toast({
             title: `Processing Notice (${file.name})`,
@@ -169,7 +202,7 @@ const ConvertThenCompress = () => {
           const reductionPercentage = Math.round(((file.size - processed.size) / file.size) * 100);
           toast({
             title: `Processing Complete! (${file.name})`,
-            description: `File converted and compressed successfully. Size reduced by ${reductionPercentage}%`,
+            description: `File converted to ${targetFormat.toUpperCase()} and compressed. Size reduced by ${reductionPercentage}%`,
           });
         }
       } catch (error: any) {
@@ -180,9 +213,11 @@ const ConvertThenCompress = () => {
         });
       }
     }
+    
     setIsProcessing(false);
   };
 
+  // UPDATED: Handle file selection - don't start processing yet
   const handleFilesSelect = (files: File[]) => {
     setSelectedFiles(files);
     setProcessedFiles(Array(files.length).fill(null));
@@ -190,7 +225,20 @@ const ConvertThenCompress = () => {
     setProcessingProgress(Array(files.length).fill(0));
     setProcessingWarnings(Array(files.length).fill(''));
     setCurrentStep(Array(files.length).fill(''));
-    simulateProcessing(files);
+    
+    // NEW: Set available formats based on first file
+    if (files.length > 0) {
+      const formats = getAvailableFormats(files[0]);
+      setAvailableFormats(formats);
+      setSelectedFormat(formats[0]); // Set first format as default
+      setShowFormatSelector(true); // Show format selector
+    }
+  };
+
+  // NEW: Start processing when user clicks the button
+  const handleStartProcessing = () => {
+    setShowFormatSelector(false);
+    simulateProcessing(selectedFiles, selectedFormat);
   };
 
   const handleReset = () => {
@@ -201,6 +249,8 @@ const ConvertThenCompress = () => {
     setProcessingWarnings([]);
     setCurrentStep([]);
     setIsProcessing(false);
+    setShowFormatSelector(false);
+    setAvailableFormats([]);
   };
 
   return (
@@ -412,11 +462,13 @@ const ConvertThenCompress = () => {
               {/* Section Header */}
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-3">
-                  {!selectedFiles.length ? "Upload Your Files" : "Processing Results"}
+                  {!selectedFiles.length ? "Upload Your Files" : showFormatSelector ? "Choose Output Format" : "Processing Results"}
                 </h2>
                 <p className="text-gray-600">
                   {!selectedFiles.length 
                     ? "Drag and drop your files or click to browse" 
+                    : showFormatSelector
+                    ? "Select the format you want to convert to"
                     : "Your files are being converted and compressed"}
                 </p>
               </div>
@@ -432,6 +484,55 @@ const ConvertThenCompress = () => {
                     onFileSelect={handleFilesSelect}
                     isProcessing={isProcessing}
                   />
+                ) : showFormatSelector ? (
+                  /* NEW: Format Selector UI */
+                  <div className="space-y-6">
+                    {/* File Info */}
+                    <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
+                      <p className="text-sm text-gray-600 mb-2">Selected file{selectedFiles.length > 1 ? 's' : ''}:</p>
+                      {selectedFiles.map((file, idx) => (
+                        <p key={idx} className="font-semibold text-gray-900">{file.name}</p>
+                      ))}
+                    </div>
+
+                    {/* Format Selection */}
+                    <div>
+                      <label className="block text-lg font-bold text-gray-900 mb-4">
+                        Convert to:
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {availableFormats.map((format) => (
+                          <button
+                            key={format}
+                            onClick={() => setSelectedFormat(format)}
+                            className={`px-6 py-4 rounded-xl font-bold text-lg transition-all transform ${
+                              selectedFormat === format
+                                ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-lg scale-105'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102'
+                            }`}
+                          >
+                            {format.toUpperCase()}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleStartProcessing}
+                        className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-xl font-bold text-lg hover:from-purple-700 hover:to-purple-600 transition-all shadow-lg hover:shadow-xl"
+                      >
+                        Convert & Compress to {selectedFormat.toUpperCase()}
+                      </button>
+                      <button
+                        onClick={handleReset}
+                        className="px-6 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
                 ) : (
                   <CompressionResult
                     originalFiles={selectedFiles}
