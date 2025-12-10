@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,14 +13,16 @@ import {
   Gauge,
   Lock,
   RefreshCw,
-  Users
+  Users,
+  FileSpreadsheet,
+  FileType
 } from "lucide-react";
 
 const features = [
   {
     icon: <Zap className="w-8 h-8" />,
     title: "Lightning Fast Compression",
-    description: "Advanced algorithms compress your files up to 80% smaller without losing quality.",
+    description: "Advanced algorithms compress your files up to 95% smaller without losing quality.",
     category: "Performance"
   },
   {
@@ -51,7 +52,7 @@ const features = [
   {
     icon: <Layers className="w-8 h-8" />,
     title: "Multiple Formats",
-    description: "Support for JPEG, PNG, WebP images, PPTX and PDF documents with more formats coming.",
+    description: "Support for JPEG, PNG, WebP images, PDF documents, and Microsoft Office files (PPTX, DOCX, XLSX).",
     category: "Compatibility"
   },
   {
@@ -64,6 +65,18 @@ const features = [
     icon: <FileText className="w-8 h-8" />,
     title: "PDF Compression",
     description: "Reduce PDF file sizes while preserving text clarity and image quality.",
+    category: "Technology"
+  },
+  {
+    icon: <FileType className="w-8 h-8" />,
+    title: "Word Document Compression",
+    description: "Compress DOCX files up to 95% by optimizing embedded images and removing unnecessary metadata.",
+    category: "Technology"
+  },
+  {
+    icon: <FileSpreadsheet className="w-8 h-8" />,
+    title: "Excel Optimization",
+    description: "Reduce XLSX file sizes up to 95% through image compression, metadata stripping, and XML optimization.",
     category: "Technology"
   },
   {
@@ -87,7 +100,7 @@ const features = [
   {
     icon: <Users className="w-8 h-8" />,
     title: "Registration",
-    description: "Register just by selecting your google account,No need to enter any user credentials ",
+    description: "Register just by selecting your google account. No need to enter any user credentials.",
     category: "Simplicity"
   }
 ];
@@ -107,7 +120,13 @@ export default function Features() {
             <p className="text-xl text-gray-600 mb-8">
               SlimFile combines cutting-edge compression technology with an intuitive interface to deliver the best file compression experience on the web.
             </p>
-            
+            <div className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 rounded-full text-primary font-semibold">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+              </span>
+              Now with Microsoft Office support (DOCX, XLSX)!
+            </div>
           </div>
         </div>
       </section>
@@ -147,6 +166,98 @@ export default function Features() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Office Compression Highlight Section */}
+      <section className="py-16 bg-gradient-to-b from-white to-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <Badge className="mb-4" variant="secondary">
+                New Feature
+              </Badge>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Microsoft Office Document Compression
+              </h2>
+              <p className="text-lg text-gray-600">
+                Powerful compression for your Word documents and Excel spreadsheets
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <Card className="border-2 border-primary/20">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <FileType className="w-10 h-10 text-primary" />
+                    <CardTitle className="text-2xl">DOCX Compression</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3 text-gray-600">
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">✓</span>
+                      <span>Compress embedded images to reduce file size</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">✓</span>
+                      <span>Strip unnecessary metadata and revision history</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">✓</span>
+                      <span>Works even without images through XML optimization</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">✓</span>
+                      <span>Typical reduction: 5-30% (text) or up to 95% (with images)</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 border-primary/20">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <FileSpreadsheet className="w-10 h-10 text-primary" />
+                    <CardTitle className="text-2xl">XLSX Compression</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3 text-gray-600">
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">✓</span>
+                      <span>Optimize charts and embedded images</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">✓</span>
+                      <span>Remove calculation chains (recalculated on open)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">✓</span>
+                      <span>Maximum ZIP compression for better file size</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">✓</span>
+                      <span>Typical reduction: 5-30% (data) or up to 95% (with charts/images)</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="mt-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-start gap-3">
+                <Shield className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="font-semibold text-blue-900 mb-2">Safe & Compatible</h3>
+                  <p className="text-blue-800 text-sm">
+                    All optimizations are safe and non-destructive. Your documents open normally in Microsoft Office, Google Docs, 
+                    and other compatible applications. All content, formatting, formulas, and functionality are preserved.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
