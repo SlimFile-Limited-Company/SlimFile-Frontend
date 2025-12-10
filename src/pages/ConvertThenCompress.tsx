@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FileUpload } from "@/components/FileUpload";
-import { CompressionResult } from "@/components/CompressionResult";
+import { ConversionCompressionResult } from "@/components/ConversionCompressionResult";
 import { toast } from "@/hooks/use-toast";
 import { isAuthenticated } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image, ArrowRight } from "lucide-react";
@@ -534,13 +534,15 @@ const ConvertThenCompress = () => {
                     </div>
                   </div>
                 ) : (
-                  <CompressionResult
+                  <ConversionCompressionResult
                     originalFiles={selectedFiles}
-                    compressedFiles={processedFiles}
-                    compressedSizes={processedSizes}
-                    compressionProgress={processingProgress}
-                    isCompressing={isProcessing}
+                    processedFiles={processedFiles}
+                    processedSizes={processedSizes}
+                    processingProgress={processingProgress}
+                    isProcessing={isProcessing}
                     onReset={handleReset}
+                    targetFormat={selectedFormat}
+                    currentStep={currentStep}
                   />
                 )}
               </div>
