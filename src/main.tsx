@@ -30,6 +30,8 @@ import CompressPdfOnIphone from './pages/CompressPdfOnIphone';
 import CompressPdfWithoutLosingQuality from './pages/CompressPdfWithoutLosingQuality';
 import CompressPptxForPresentation from './pages/CompressPptxForPresentation';
 import CompressImagesForWebsite from './pages/CompressImagesForWebsite';
+import ConvertOnly from './pages/ConvertOnly';
+import ConvertThenCompress from './pages/ConvertThenCompress';
 
 // Blog Pages
 import BlogHowToCompressPdfForEmail from './pages/blog/HowToCompressPdfForEmail';
@@ -69,6 +71,8 @@ ReactDOM.createRoot(root).render(
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
           <Route path="compress" element={<Compress />} />
+          <Route path="convert-only" element={<ConvertOnly />} />
+          <Route path="convert-compress" element={<ConvertThenCompress />} />
           <Route path="case-studies" element={<CaseStudies />} />
           <Route path="about" element={<About />} />
           <Route path="teams" element={<Teams />} />

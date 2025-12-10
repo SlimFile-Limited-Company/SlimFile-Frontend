@@ -3,15 +3,16 @@ import { FileUpload } from "@/components/FileUpload";
 import { CompressionResult } from "@/components/CompressionResult";
 import { toast } from "@/hooks/use-toast";
 import { isAuthenticated } from "@/lib/auth";
-import { Zap, Shield, Clock, ArrowDown, CheckCircle2 } from "lucide-react";
+import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image, ArrowRight } from "lucide-react";
 
-const Compress = () => {
+const ConvertThenCompress = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [isCompressing, setIsCompressing] = useState(false);
-  const [compressionProgress, setCompressionProgress] = useState<number[]>([]); // per file
-  const [compressedFiles, setCompressedFiles] = useState<(File | null)[]>([]);
-  const [compressedSizes, setCompressedSizes] = useState<number[]>([]);
-  const [pdfWarnings, setPdfWarnings] = useState<string[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingProgress, setProcessingProgress] = useState<number[]>([]);
+  const [processedFiles, setProcessedFiles] = useState<(File | null)[]>([]);
+  const [processedSizes, setProcessedSizes] = useState<number[]>([]);
+  const [processingWarnings, setProcessingWarnings] = useState<string[]>([]);
+  const [currentStep, setCurrentStep] = useState<string[]>([]);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
@@ -26,10 +27,10 @@ const Compress = () => {
         try {
           const downloadData = JSON.parse(pendingDownload);
           
-          // Show message asking user to re-compress
+          // Show message asking user to re-process
           toast({
             title: "Login Successful",
-            description: "Please re-compress your files to download them.",
+            description: "Please re-process your files to download them.",
             variant: "default"
           });
           
@@ -48,18 +49,18 @@ const Compress = () => {
     }
   }, []);
 
-  // Send file to backend for compression
-  const compressFile = async (file: File, idx: number): Promise<{ file: File | null; warning?: string }> => {
+  // Send file to backend for conversion and compression
+  const convertAndCompressFile = async (file: File, idx: number): Promise<{ file: File | null; warning?: string }> => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      const response = await fetch(`${API_BASE_URL}/compress`, {
+      const response = await fetch(`${API_BASE_URL}/convert-compress`, {
         method: 'POST',
         body: formData,
       });
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        return { file: null, warning: data.error || 'Compression failed' };
+        return { file: null, warning: data.error || 'Processing failed' };
       }
       const blob = await response.blob();
       const contentDisposition = response.headers.get('Content-Disposition');
@@ -68,107 +69,142 @@ const Compress = () => {
         const match = contentDisposition.match(/filename="(.+)"/);
         if (match) filename = match[1];
       }
-      const compressedFile = new File([blob], filename, { type: blob.type, lastModified: Date.now() });
-      return { file: compressedFile };
+      const processedFile = new File([blob], filename, { type: blob.type, lastModified: Date.now() });
+      return { file: processedFile };
     } catch (err: any) {
-      return { file: null, warning: err.message || 'Compression failed' };
+      return { file: null, warning: err.message || 'Processing failed' };
     }
   };
 
-  const simulateCompression = async (files: File[]) => {
-    setIsCompressing(true);
-    setCompressionProgress(Array(files.length).fill(0));
-    setCompressedFiles(Array(files.length).fill(null));
-    setCompressedSizes(Array(files.length).fill(0));
-    setPdfWarnings(Array(files.length).fill(''));
+  const simulateProcessing = async (files: File[]) => {
+    setIsProcessing(true);
+    setProcessingProgress(Array(files.length).fill(0));
+    setProcessedFiles(Array(files.length).fill(null));
+    setProcessedSizes(Array(files.length).fill(0));
+    setProcessingWarnings(Array(files.length).fill(''));
+    setCurrentStep(Array(files.length).fill(''));
 
     for (let idx = 0; idx < files.length; idx++) {
       const file = files[idx];
-      // Progress simulation
-      const progressSteps = [10, 25, 45, 65, 80, 95, 100];
-      const delays = [300, 400, 500, 400, 300, 200, 100];
-      for (let i = 0; i < progressSteps.length - 1; i++) {
-        await new Promise(resolve => setTimeout(resolve, delays[i]));
-        setCompressionProgress(prev => {
+      
+      // Step 1: Converting (0-50% progress)
+      setCurrentStep(prev => {
+        const updated = [...prev];
+        updated[idx] = 'Converting...';
+        return updated;
+      });
+      
+      const convertProgress = [5, 15, 30, 45, 50];
+      const convertDelays = [200, 300, 400, 300, 200];
+      for (let i = 0; i < convertProgress.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, convertDelays[i]));
+        setProcessingProgress(prev => {
           const updated = [...prev];
-          updated[idx] = progressSteps[i];
+          updated[idx] = convertProgress[i];
           return updated;
         });
+      }
+
+      // Step 2: Compressing (50-100% progress)
+      setCurrentStep(prev => {
+        const updated = [...prev];
+        updated[idx] = 'Compressing...';
+        return updated;
+      });
+      
+      const compressProgress = [55, 70, 85, 95, 100];
+      const compressDelays = [300, 400, 300, 200, 100];
+      for (let i = 0; i < compressProgress.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, compressDelays[i]));
+        setProcessingProgress(prev => {
+          const updated = [...prev];
+          updated[idx] = compressProgress[i];
+          return updated;
+        });
+        
         // Show "Hang in there..." at 95%
-        if (progressSteps[i] === 95) {
+        if (compressProgress[i] === 95) {
           toast({
             title: `Almost Done (${file.name})`,
-            description: "Hang in there… finalizing compression!",
+            description: "Hang in there… finalizing conversion and compression!",
             variant: "default",
           });
         }
       }
+      
       try {
-        const { file: compressed, warning } = await compressFile(file, idx);
-        setCompressedFiles(prev => {
+        const { file: processed, warning } = await convertAndCompressFile(file, idx);
+        setProcessedFiles(prev => {
           const updated = [...prev];
-          updated[idx] = compressed;
+          updated[idx] = processed;
           return updated;
         });
-        setCompressedSizes(prev => {
+        setProcessedSizes(prev => {
           const updated = [...prev];
-          updated[idx] = compressed ? compressed.size : 0;
+          updated[idx] = processed ? processed.size : 0;
           return updated;
         });
-        setCompressionProgress(prev => {
+        setProcessingProgress(prev => {
           const updated = [...prev];
           updated[idx] = 100;
           return updated;
         });
-        setPdfWarnings(prev => {
+        setCurrentStep(prev => {
+          const updated = [...prev];
+          updated[idx] = 'Complete';
+          return updated;
+        });
+        setProcessingWarnings(prev => {
           const updated = [...prev];
           updated[idx] = warning || '';
           return updated;
         });
         if (warning) {
           toast({
-            title: `Compression Notice (${file.name})`,
+            title: `Processing Notice (${file.name})`,
             description: warning,
             variant: 'default',
           });
-        } else if (compressed) {
-          const reductionPercentage = Math.round(((file.size - compressed.size) / file.size) * 100);
+        } else if (processed) {
+          const reductionPercentage = Math.round(((file.size - processed.size) / file.size) * 100);
           toast({
-            title: `Compression Complete! (${file.name})`,
-            description: `File compressed successfully. Size reduced by ${reductionPercentage}%`,
+            title: `Processing Complete! (${file.name})`,
+            description: `File converted and compressed successfully. Size reduced by ${reductionPercentage}%`,
           });
         }
       } catch (error: any) {
         toast({
-          title: `Compression Failed (${file.name})`,
-          description: error?.message || "There was an error compressing your file. Please try again.",
+          title: `Processing Failed (${file.name})`,
+          description: error?.message || "There was an error processing your file. Please try again.",
           variant: "destructive"
         });
       }
     }
-    setIsCompressing(false);
+    setIsProcessing(false);
   };
 
   const handleFilesSelect = (files: File[]) => {
     setSelectedFiles(files);
-    setCompressedFiles(Array(files.length).fill(null));
-    setCompressedSizes(Array(files.length).fill(0));
-    setCompressionProgress(Array(files.length).fill(0));
-    setPdfWarnings(Array(files.length).fill(''));
-    simulateCompression(files);
+    setProcessedFiles(Array(files.length).fill(null));
+    setProcessedSizes(Array(files.length).fill(0));
+    setProcessingProgress(Array(files.length).fill(0));
+    setProcessingWarnings(Array(files.length).fill(''));
+    setCurrentStep(Array(files.length).fill(''));
+    simulateProcessing(files);
   };
 
   const handleReset = () => {
     setSelectedFiles([]);
-    setCompressedFiles([]);
-    setCompressedSizes([]);
-    setCompressionProgress([]);
-    setPdfWarnings([]);
-    setIsCompressing(false);
+    setProcessedFiles([]);
+    setProcessedSizes([]);
+    setProcessingProgress([]);
+    setProcessingWarnings([]);
+    setCurrentStep([]);
+    setIsProcessing(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-red-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50/30">
 
       {/* Main Content */}
       <main className="relative pt-20 z-10">
@@ -179,18 +215,31 @@ const Compress = () => {
               {/* Title */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
                 <span className="block text-gray-900 mb-2">
-                  Compress Files
+                  Convert & Compress
                 </span>
-                <span className="block bg-gradient-to-r from-red-600 via-red-500 to-orange-500 bg-clip-text text-transparent">
-                  Instantly
+                <span className="block bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+                  All in One
                 </span>
               </h1>
 
               {/* Description */}
               <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
-                Reduce file sizes without compromising quality. Support for images, PDFs, and Office documents with
-                <span className="text-red-600 font-semibold"> lightning-fast processing</span>.
+                Transform your files between formats and optimize their size in a single step. Perfect quality with
+                <span className="text-purple-600 font-semibold"> maximum efficiency</span>.
               </p>
+
+              {/* Process Flow */}
+              <div className="flex items-center justify-center gap-4 py-4">
+                <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-lg">
+                  <FileText className="w-5 h-5 text-blue-600" />
+                  <span className="text-blue-800 font-medium">Convert</span>
+                </div>
+                <ArrowRight className="w-5 h-5 text-gray-400" />
+                <div className="flex items-center gap-2 px-4 py-2 bg-red-100 rounded-lg">
+                  <Zap className="w-5 h-5 text-red-600" />
+                  <span className="text-red-800 font-medium">Compress</span>
+                </div>
+              </div>
 
               {/* Scroll to Upload Button */}
               <button
@@ -200,9 +249,9 @@ const Compress = () => {
                     uploadSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }
                 }}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
-                Start Compressing
+                Start Processing
                 <ArrowDown className="w-5 h-5" />
               </button>
 
@@ -211,8 +260,8 @@ const Compress = () => {
                 {[
                   {
                     icon: Zap,
-                    title: "Lightning Fast",
-                    description: "Compress in seconds",
+                    title: "Two-in-One",
+                    description: "Convert and compress together",
                     gradient: "from-yellow-400 to-orange-500"
                   },
                   {
@@ -223,8 +272,8 @@ const Compress = () => {
                   },
                   {
                     icon: Clock,
-                    title: "Always Available",
-                    description: "24/7 compression",
+                    title: "Time Saver",
+                    description: "Single step processing",
                     gradient: "from-green-400 to-green-600"
                   }
                 ].map((feature, index) => (
@@ -249,58 +298,62 @@ const Compress = () => {
           <div className="container mx-auto">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-                Supported Compression Formats
+                Supported Formats
               </h2>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Image Compression */}
-                <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl p-6 border border-red-200">
+                {/* Image Conversions */}
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-200">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center">
-                      <Zap className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                      <Image className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">Image Compression</h3>
+                    <h3 className="text-xl font-bold text-gray-900">Image Formats</h3>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">JPG/JPEG</span>
+                      <span className="text-gray-700">JPG/JPEG ↔ PNG ↔ WEBP</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">PNG</span>
+                      <span className="text-gray-700">PDF → JPG/PNG (ZIP of pages)</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">WEBP</span>
+                      <span className="text-gray-700">Images → PDF</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <span className="text-gray-700">Compression: JPG, PNG, WEBP</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Document Compression */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
+                {/* Document Conversions */}
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
-                      <Shield className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">Document Compression</h3>
+                    <h3 className="text-xl font-bold text-gray-900">Document Formats</h3>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">PDF</span>
+                      <span className="text-gray-700">DOCX → PDF</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">DOCX</span>
+                      <span className="text-gray-700">PPTX → PDF</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">PPTX</span>
+                      <span className="text-gray-700">XLSX → PDF</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">XLSX</span>
+                      <span className="text-gray-700">Compression: PDF, DOCX, PPTX, XLSX</span>
                     </div>
                   </div>
                 </div>
@@ -325,21 +378,21 @@ const Compress = () => {
                   },
                   {
                     step: "2",
-                    title: "Compress",
-                    description: "We optimize your files instantly"
+                    title: "Convert & Compress",
+                    description: "We transform and optimize your files"
                   },
                   {
                     step: "3",
                     title: "Download",
-                    description: "Get your compressed files"
+                    description: "Get your converted and compressed files"
                   }
                 ].map((item, index) => (
                   <div key={item.step} className="text-center">
-                    <div className="relative inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full text-white text-2xl font-bold mb-4">
+                    <div className="relative inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full text-white text-2xl font-bold mb-4">
                       {item.step}
                       {index < 2 && (
                         <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 w-full">
-                          <div className="h-0.5 bg-gradient-to-r from-red-500 to-red-300"></div>
+                          <div className="h-0.5 bg-gradient-to-r from-purple-500 to-purple-300"></div>
                         </div>
                       )}
                     </div>
@@ -359,33 +412,33 @@ const Compress = () => {
               {/* Section Header */}
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-3">
-                  {!selectedFiles.length ? "Upload Your Files" : "Compression Results"}
+                  {!selectedFiles.length ? "Upload Your Files" : "Processing Results"}
                 </h2>
                 <p className="text-gray-600">
                   {!selectedFiles.length 
                     ? "Drag and drop your files or click to browse" 
-                    : "Your files are being compressed"}
+                    : "Your files are being converted and compressed"}
                 </p>
               </div>
 
-              {/* Upload/Result Card - FIXED: Responsive padding */}
+              {/* Upload/Result Card */}
               <div className="relative bg-white rounded-3xl border-2 border-gray-200 shadow-xl p-4 sm:p-6 md:p-8 hover:shadow-2xl transition-all duration-300">
                 {/* Decorative corner accents */}
-                <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-red-500 rounded-tl-3xl"></div>
-                <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-red-500 rounded-br-3xl"></div>
+                <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-purple-500 rounded-tl-3xl"></div>
+                <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-purple-500 rounded-br-3xl"></div>
 
                 {!selectedFiles.length ? (
                   <FileUpload
                     onFileSelect={handleFilesSelect}
-                    isProcessing={isCompressing}
+                    isProcessing={isProcessing}
                   />
                 ) : (
                   <CompressionResult
                     originalFiles={selectedFiles}
-                    compressedFiles={compressedFiles}
-                    compressedSizes={compressedSizes}
-                    compressionProgress={compressionProgress}
-                    isCompressing={isCompressing}
+                    compressedFiles={processedFiles}
+                    compressedSizes={processedSizes}
+                    compressionProgress={processingProgress}
+                    isCompressing={isProcessing}
                     onReset={handleReset}
                   />
                 )}
@@ -405,18 +458,18 @@ const Compress = () => {
                 {[
                   {
                     icon: CheckCircle2,
-                    title: "High Quality",
-                    description: "Maintain excellent quality while reducing file size"
+                    title: "Perfect Quality",
+                    description: "Maintain excellent quality while converting and compressing"
                   },
                   {
                     icon: CheckCircle2,
-                    title: "All File Types",
-                    description: "Support for images, PDFs, and PPTX files"
+                    title: "Maximum Efficiency",
+                    description: "Get both conversion and compression in one step"
                   },
                   {
                     icon: CheckCircle2,
                     title: "Batch Processing",
-                    description: "Compress multiple files at once"
+                    description: "Process multiple files simultaneously"
                   },
                   {
                     icon: CheckCircle2,
@@ -448,4 +501,4 @@ const Compress = () => {
   );
 };
 
-export default Compress;
+export default ConvertThenCompress;

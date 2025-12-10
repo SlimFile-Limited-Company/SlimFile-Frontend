@@ -12,8 +12,9 @@ export const Header = () => {
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const productNavigation = [
-    { name: "Compress", href: "/compress", external: false },
-    { name: "Features", href: "/features", external: false },
+    { name: "Compress Only", href: "/compress", external: false },
+    { name: "Convert Page", href: "/convert-only", external: false },
+    { name: "Convert and Compress Page", href: "/convert-compress", external: false },
     { name: "Game", href: "/slimfile-game", badge: "New", external: false },
     { name: "Why Compression?", href: "/file-compression-education", external: false },
   ];
@@ -25,6 +26,7 @@ export const Header = () => {
     { name: "Global Impact", href: "/global-impact" },
     { name: "Partnerships", href: "/partnerships" },
     { name: "SDGs", href: "/sdgs" },
+    { name: "Features", href: "/features" },
     { name: "Our Blogs", href: "/blog" },
     { name: "Contact", href: "/contact" },
   ];
