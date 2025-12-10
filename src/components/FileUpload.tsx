@@ -20,7 +20,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
     'image/png': '.png',
     'image/webp': '.webp',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation': '.pptx',
-    'application/vnd.ms-powerpoint': '.ppt'
+    'application/vnd.ms-powerpoint': '.ppt',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+    'application/msword': '.doc',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
+    'application/vnd.ms-excel': '.xls'
   };
 
   const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
@@ -34,13 +38,23 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
     } else {
       for (const file of files) {
         if (!Object.keys(ACCEPTED_TYPES).includes(file.type)) {
-          errorMsg = 'Please select only PDF, JPEG, PNG, WebP, PPTX, or PPT files.';
+          errorMsg = 'Please select only PDF, JPEG, PNG, WebP, PPTX, DOCX, or XLSX files.';
           break;
         }
 
-        // Warn for old .ppt format
+        // Warn for old formats
         if (file.type === 'application/vnd.ms-powerpoint') {
           errorMsg = 'Please save your presentation as a .pptx file before uploading.';
+          break;
+        }
+
+        if (file.type === 'application/msword') {
+          errorMsg = 'Please save your document as a .docx file before uploading.';
+          break;
+        }
+
+        if (file.type === 'application/vnd.ms-excel') {
+          errorMsg = 'Please save your spreadsheet as a .xlsx file before uploading.';
           break;
         }
 
@@ -129,7 +143,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
         <div className="text-center mb-6">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Upload Your File</h2>
           <p className="text-gray-600 backdrop-blur-sm bg-white/10 rounded-xl px-4 py-2 border border-white/20 shadow-lg" style={{ backdropFilter: 'blur(5px)' }}>
-            Support for PDF, JPEG, PNG, WebP, PPTX, and PPT files up to 200MB
+            Support for PDF, Images, PPTX, DOCX, and XLSX files up to 200MB
           </p>
         </div>
 
