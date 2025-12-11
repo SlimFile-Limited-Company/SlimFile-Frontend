@@ -228,7 +228,7 @@ export const Footer = () => {
             Quick Access
           </h5>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {/* Product Column */}
             <div>
               <h6 className="text-sm font-semibold text-gray-900 mb-2">Product</h6>
@@ -399,7 +399,7 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Logo & Socials Section - Moved to be just above copyright */}
+        {/* Logo & Socials Section */}
         <div className="border-t border-gray-200 pt-8 mt-8">
           <div className="flex flex-col md:flex-row items-center justify-between">
             {/* Logo on the left */}
@@ -408,8 +408,8 @@ export const Footer = () => {
               <span className="text-base font-semibold text-gray-900 ml-2">SlimFile</span>
             </div>
 
-            {/* Social icons in the center on mobile, right on desktop */}
-            <div className="flex items-center justify-center md:justify-end">
+            {/* Social icons */}
+            <div className="flex items-center">
               <div className="flex items-center space-x-4">
                 <a href="https://www.linkedin.com/company/slimfile-inc" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-blue-600">
                   <img src="https://img.icons8.com/ios-filled/50/000000/linkedin.png" alt="LinkedIn" className="w-6 h-6" />
@@ -434,10 +434,7 @@ export const Footer = () => {
         {/* Copyright Section */}
         <div className="mt-8 pt-6 border-t border-gray-200 text-center">
           <p className="text-sm text-gray-600 mb-2">
-            © 2025 SlimFile.
-          </p>
-          <p className="text-xs text-gray-500 font-medium">
-            Slim it • Save it • Send it
+            © 2025 SlimFile.  Slim it • Save it • Send it
           </p>
         </div>
       </div>
