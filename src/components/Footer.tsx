@@ -446,3 +446,8 @@ export const Footer = () => {
     </p>
   </div>
 </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
