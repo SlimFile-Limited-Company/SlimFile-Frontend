@@ -377,10 +377,10 @@ export const Header = () => {
               </Link>
 
               {isAuthenticated() && (
-                <div className="mt-2">
+                <div className="px-4 pt-2">
                   <Button
                     variant="outline"
-                    className="w-full mx-4"
+                    size="sm"
                     onClick={() => {
                       setMobileMenuOpen(false);
                       logout();
