@@ -12,7 +12,6 @@ import {
   Video,
   ChevronRight,
   ArrowRight,
-  Star,
   Clock,
   Zap,
   Settings
@@ -129,8 +128,8 @@ export const Footer = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Tools Section */}
-          <div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <div className="text-center md:text-left">
+            <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center justify-center md:justify-start">
               <Zap className="w-5 h-5 mr-2 text-yellow-500" />
               Compression Tools
             </h4>
@@ -145,7 +144,7 @@ export const Footer = () => {
                 return (
                   <button
                     key={item.href}
-                    className="flex items-center text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 p-2 rounded-lg hover:bg-white"
+                    className="flex items-center justify-center md:justify-start text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 p-2 rounded-lg hover:bg-white mx-auto md:mx-0"
                     onClick={() => handleFooterClick(item.href, item.label)}
                   >
                     <IconComponent className="w-4 h-4 mr-2 text-gray-400" />
@@ -159,7 +158,7 @@ export const Footer = () => {
           {/* Blog Carousels */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
-              <h4 className="text-lg font-semibold text-gray-900 flex items-center">
+              <h4 className="text-lg font-semibold text-gray-900 flex items-center justify-center md:justify-start">
                 <BookOpen className="w-5 h-5 mr-2 text-blue-500" />
                 Our Blog Posts
               </h4>
@@ -180,7 +179,7 @@ export const Footer = () => {
                     key={category.title}
                     className={`bg-gradient-to-br ${category.bgColor} rounded-xl p-6 border-2 ${category.borderColor} hover:shadow-lg transition-all duration-300`}
                   >
-                    <div className="flex items-center mb-4">
+                    <div className="flex items-center justify-center md:justify-start mb-4">
                       <div className={`flex items-center justify-center w-10 h-10 rounded-full bg-white mr-3`}>
                         <CategoryIcon className={`w-5 h-5 ${category.color}`} />
                       </div>
@@ -224,13 +223,15 @@ export const Footer = () => {
 
         {/* Bottom Section */}
         <div className="border-t border-gray-200 pt-8 mt-8">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="flex items-center space-x-3 mb-4 md:mb-0">
+          <div className="flex flex-col items-center justify-center md:flex-row md:justify-between">
+            {/* Logo */}
+            <div className="flex items-center mb-6 md:mb-0">
               <img src="/logo.gif" alt="SlimFile Logo" className="h-8 w-8 object-contain rounded-md" />
-              <span className="text-base font-semibold text-gray-900">SlimFile</span>
+              <span className="text-base font-semibold text-gray-900 ml-2">SlimFile</span>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
+            {/* Social icons */}
+            <div className="flex items-center justify-center">
               <div className="flex items-center space-x-4">
                 <a href="https://www.linkedin.com/company/slimfile-inc" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-blue-600">
                   <img src="https://img.icons8.com/ios-filled/50/000000/linkedin.png" alt="LinkedIn" className="w-6 h-6" />
@@ -248,204 +249,193 @@ export const Footer = () => {
                   <img src="https://img.icons8.com/ios-filled/50/000000/star--v1.png" alt="Trustpilot" className="w-6 h-6" />
                 </a>
               </div>
-              <div className="text-center md:text-right">
-                <p className="text-sm text-gray-600 mb-2">
-                  File Compression Made Simple.
-                </p>
-                <p className="text-xs text-gray-500">
-                  © 2025 SlimFile. Reduce file sizes smartly without quality loss.
-                </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Access Section - Centered on mobile */}
+        <div className="border-t border-gray-200 pt-6 mt-6">
+          <h5 className="text-sm font-semibold text-gray-900 mb-3 flex items-center justify-center md:justify-start">
+            <Settings className="w-4 h-4 mr-2 text-primary" />
+            Quick Access
+          </h5>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {/* Product Column */}
+            <div className="text-center md:text-left">
+              <h6 className="text-sm font-semibold text-gray-900 mb-2">Product</h6>
+              <div className="space-y-1">
+                <button
+                  onClick={() => handleFooterClick('/compress', 'Compress')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Compress
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/convert-only', 'Convert Only')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Convert Only
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/convert-compress', 'Convert and Compress')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Convert and Compress
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/slimfile-game', 'Game')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Game
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/features', 'Features')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Features
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/file-compression-education', 'Why Compression?')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Why Compression?
+                </button>
+              </div>
+            </div>
+
+            {/* Company Column */}
+            <div className="text-center md:text-left">
+              <h6 className="text-sm font-semibold text-gray-900 mb-2">Company</h6>
+              <div className="space-y-1">
+                <button
+                  onClick={() => handleFooterClick('/about', 'About')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  About
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/teams', 'Our Team')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Our Team
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/case-studies', 'Case Studies')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Case Studies
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/global-impact', 'Global Impact')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Global Impact
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/partnerships', 'Partnerships')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Partnerships
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/sdgs', 'SDGs')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  SDGs
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/blog', 'Our Blogs')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Our Blogs
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/contact', 'Contact')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Contact
+                </button>
+              </div>
+            </div>
+
+            {/* SlimFile API Column */}
+            <div className="text-center md:text-left">
+              <h6 className="text-sm font-semibold text-gray-900 mb-2">SlimFile API</h6>
+              <div className="space-y-1">
+                <a
+                  href="https://api.slim-file.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  API Dashboard
+                </a>
+                <a
+                  href="https://api.slim-file.com/developer-program"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Developer Program
+                </a>
+                <a
+                  href="https://api.slim-file.com/pricing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  API Pricing
+                </a>
+                <button
+                  onClick={() => handleFooterClick('/stepsbuild', 'STEPsBuild')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  STEPsBuild
+                </button>
+              </div>
+            </div>
+
+            {/* Resources Column */}
+            <div className="text-center md:text-left">
+              <h6 className="text-sm font-semibold text-gray-900 mb-2">Resources</h6>
+              <div className="space-y-1">
+                <a
+                  href="https://api.slim-file.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Documentation
+                </a>
+                <button
+                  onClick={() => handleFooterClick('/help', 'Help Center')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Help Center
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/privacy', 'Privacy Policy')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Privacy Policy
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/terms', 'Terms of Service')}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 mx-auto md:mx-0"
+                >
+                  Terms of Service
+                </button>
               </div>
             </div>
           </div>
 
-         {/* Quick Access Section */}
-<div className="border-t border-gray-200 pt-6 mt-6">
-  <h5 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
-    <Settings className="w-4 h-4 mr-2 text-primary" />
-    Quick Access
-  </h5>
-  
-  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-    {/* Product Column */}
-    <div>
-      <h6 className="text-sm font-semibold text-gray-900 mb-2">Product</h6>
-      <div className="space-y-1">
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/compress', 'Compress')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Compress
-        </button>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/convert-only', 'Convert Only')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Convert Only
-        </button>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/convert-compress', 'Convert and Compress')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Convert and Compress
-        </button>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/slimfile-game', 'Game')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Game
-        </button>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/features', 'Features')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Features
-        </button>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/file-compression-education', 'Why Compression?')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Why Compression?
-        </button>
-      </div>
-    </div>
-
-    {/* Company Column */}
-    <div>
-      <h6 className="text-sm font-semibold text-gray-900 mb-2">Company</h6>
-      <div className="space-y-1">
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/about', 'About')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          About
-        </button>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/teams', 'Our Team')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Our Team
-        </button>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/case-studies', 'Case Studies')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Case Studies
-        </button>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/global-impact', 'Global Impact')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Global Impact
-        </button>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/partnerships', 'Partnerships')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Partnerships
-        </button>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/sdgs', 'SDGs')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          SDGs
-        </button>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/blog', 'Our Blogs')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Our Blogs
-        </button>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/contact', 'Contact')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Contact
-        </button>
-      </div>
-    </div>
-
-    {/* SlimFile API Column */}
-    <div>
-      <h6 className="text-sm font-semibold text-gray-900 mb-2">SlimFile API</h6>
-      <div className="space-y-1">
-        <a
-          href="https://api.slim-file.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200"
-        >
-          API Dashboard
-        </a>
-        <a
-          href="https://api.slim-file.com/developer-program"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200"
-        >
-          Developer Program
-        </a>
-        <a
-          href="https://api.slim-file.com/pricing"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200"
-        >
-          API Pricing
-        </a>
-        <button
-          onClick={() => handleFooterClick('https://www.slim-file.com/stepsbuild', 'STEPsBuild')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          STEPsBuild
-        </button>
-      </div>
-    </div>
-
-    {/* Resources Column */}
-    <div>
-      <h6 className="text-sm font-semibold text-gray-900 mb-2">Resources</h6>
-      <div className="space-y-1">
-        <a
-          href="https://api.slim-file.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200"
-        >
-          Documentation
-        </a>
-        <button
-          onClick={() => handleFooterClick('/help', 'Help Center')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Help Center
-        </button>
-        <button
-          onClick={() => handleFooterClick('/privacy', 'Privacy Policy')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Privacy Policy
-        </button>
-        <button
-          onClick={() => handleFooterClick('/terms', 'Terms of Service')}
-          className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-        >
-          Terms of Service
-        </button>
-      </div>
-    </div>
-  </div>
-
-  {/* Footer Bottom Text */}
-  <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-    <p className="text-sm text-gray-600 mb-2">
-      © 2025 SlimFile. Reduce file sizes smartly without quality loss.
-    </p>
-    <p className="text-xs text-gray-500 font-medium">
-      Slim it • Save it • Send it
-    </p>
-  </div>
-</div>
+          {/* Footer Bottom Text */}
+          <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+            <p className="text-sm text-gray-600 mb-2">
+              © 2025 SlimFile. Slim it • Save it • Send it
+            </p>
+          </div>
         </div>
       </div>
     </footer>
