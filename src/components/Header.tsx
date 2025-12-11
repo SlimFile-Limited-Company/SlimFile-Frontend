@@ -256,7 +256,7 @@ export const Header = () => {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-gray-100 bg-white/95 backdrop-blur-xl transition-all duration-300">
+          <nav className="md:hidden py-4 border-t border-gray-100 bg-white/95 backdrop-blur-xl transition-all duration-300 overflow-y-auto max-h-[calc(100vh-4rem)]">
             <div className="flex flex-col space-y-2">
               <Link
                 to="/"
