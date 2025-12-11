@@ -66,7 +66,7 @@ const Home: FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-red-50/30 overflow-x-hidden">
       {/* Hero Section - Enhanced */}
-      <section className="relative pt-16 sm:pt-20 md:pt-24 pb-16 sm:pb-20 md:pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 md:pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Animated gradient background */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-1/2 -left-1/4 w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] md:w-[600px] md:h-[600px] bg-gradient-to-br from-red-100 to-red-200 rounded-full mix-blend-multiply filter blur-2xl sm:blur-3xl opacity-30 animate-blob"></div>
@@ -76,7 +76,7 @@ const Home: FC = () => {
 
         <div className="container mx-auto relative z-10">
           <div className="max-w-6xl mx-auto">
-            {/* Trust Badges */}
+            {/* Trust Badges - Reduced margin-bottom since we have more top padding */}
             <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 animate-float">
               <div className="flex items-center gap-1 sm:gap-2 bg-white/80 backdrop-blur-sm rounded-full px-3 sm:px-4 py-1.5 sm:py-2 shadow-lg border border-red-100">
                 <Star className="w-3 h-3 sm:w-4 sm:h-4 text-red-600 fill-red-600" />
