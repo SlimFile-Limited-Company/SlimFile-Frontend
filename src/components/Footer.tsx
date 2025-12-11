@@ -115,7 +115,6 @@ export const Footer = () => {
 
   const handleFooterClick = (path: string, label: string) => {
     trackEvent('footer_link_click', { path, label });
-    // Navigate with hash to trigger hero scroll
     if (path.startsWith('/blog/')) {
       navigate(path + '#hero');
     } else {
@@ -223,12 +222,13 @@ export const Footer = () => {
 
         {/* Quick Access Section */}
         <div className="border-t border-gray-200 pt-6 mt-6">
-          <h5 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
+          <h5 className="text-sm font-semibold text-gray-900 mb-3 flex items-center justify-center md:justify-start">
             <Settings className="w-4 h-4 mr-2 text-primary" />
             Quick Access
           </h5>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {/* Equal spacing on left and right - px-0 on mobile, balanced on desktop */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 md:gap-6 px-2 md:px-0">
             {/* Product Column */}
             <div>
               <h6 className="text-sm font-semibold text-gray-900 mb-2">Product</h6>
@@ -364,7 +364,7 @@ export const Footer = () => {
               </div>
             </div>
 
-            {/* Resources Column */}
+            {/* Resources Column - HELP CENTER REMOVED */}
             <div>
               <h6 className="text-sm font-semibold text-gray-900 mb-2">Resources</h6>
               <div className="space-y-1">
@@ -376,12 +376,7 @@ export const Footer = () => {
                 >
                   Documentation
                 </a>
-                <button
-                  onClick={() => handleFooterClick('/help', 'Help Center')}
-                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-                >
-                  Help Center
-                </button>
+                {/* HELP CENTER REMOVED */}
                 <button
                   onClick={() => handleFooterClick('/privacy', 'Privacy Policy')}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
@@ -434,7 +429,7 @@ export const Footer = () => {
         {/* Copyright Section */}
         <div className="mt-8 pt-6 border-t border-gray-200 text-center">
           <p className="text-sm text-gray-600 mb-2">
-            © 2025 SlimFile.  Slim it • Save it • Send it
+            © 2025 SlimFile. Slim it • Save it • Send it
           </p>
         </div>
       </div>
