@@ -282,12 +282,7 @@ export const Footer = () => {
                 >
                   About
                 </button>
-                <button
-                  onClick={() => handleFooterClick('/teams', 'Our Team')}
-                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-                >
-                  Our Team
-                </button>
+                
                 <button
                   onClick={() => handleFooterClick('/case-studies', 'Case Studies')}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
