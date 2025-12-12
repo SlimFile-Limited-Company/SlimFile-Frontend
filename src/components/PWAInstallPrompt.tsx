@@ -140,27 +140,30 @@ export const PWAInstallPrompt = () => {
   }
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-primary to-primary/90 text-white shadow-lg">
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
+    <div className="fixed top-16 left-0 right-0 z-40 bg-gradient-to-r from-red-500/98 via-orange-400/98 to-pink-500/98 backdrop-blur-xl border-b border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+      <div className="container mx-auto px-4 py-3 sm:py-4">
+        <div className="flex items-center justify-between gap-3">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center overflow-hidden">
-              <img 
-                src="/lovable-uploads/logo.png" 
-                alt="SlimFile Logo" 
-                className="w-8 h-8 object-cover rounded"
-              />
+            <div className="relative">
+              <div className="absolute inset-0 bg-white/20 rounded-xl blur-md"></div>
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/30 backdrop-blur-lg rounded-xl flex items-center justify-center overflow-hidden border-2 border-white/40 relative z-10">
+                <img
+                  src="/lovable-uploads/logo.png"
+                  alt="SlimFile Logo"
+                  className="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-lg"
+                />
+              </div>
             </div>
             <div>
-              <p className="font-medium text-sm">Install SlimFile</p>
-              <p className="text-xs opacity-90">Get quick access to file compression</p>
+              <p className="font-black text-sm sm:text-base text-white drop-shadow-lg">Install SlimFile</p>
+              <p className="text-xs sm:text-sm text-white/90 drop-shadow-lg font-semibold">Get quick access to file compression</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
             <Button
               onClick={handleInstallClick}
               size="sm"
-              className="bg-white text-primary hover:bg-white/90"
+              className="bg-white text-gray-900 hover:bg-white/95 font-black shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               Install
             </Button>
@@ -168,9 +171,9 @@ export const PWAInstallPrompt = () => {
               onClick={handleDismiss}
               size="sm"
               variant="ghost"
-              className="text-white hover:bg-white/10"
+              className="text-white hover:bg-white/20 backdrop-blur-md border-2 border-white/30 transition-all duration-300"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4 drop-shadow-lg" />
             </Button>
           </div>
         </div>

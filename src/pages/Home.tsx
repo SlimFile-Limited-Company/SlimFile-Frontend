@@ -208,22 +208,25 @@ const Home: FC = () => {
         </div>
       </section>
 
-      {/* Supported Formats Banner */}
-      <section className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-red-50 to-orange-50 border-y border-red-100">
-        <div className="container mx-auto">
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4 text-xs sm:text-sm text-gray-700">
-            <span className="font-semibold text-gray-900 text-sm sm:text-base">Supported formats:</span>
-            <div className="flex items-center gap-1 sm:gap-2 bg-white/80 rounded-full px-3 py-1.5 sm:px-4 sm:py-2">
-              <FileImage className="w-3 h-3 sm:w-4 sm:h-4 text-red-600" />
-              <span className="text-xs sm:text-sm">JPEG, PNG, WebP</span>
+      {/* Supported Formats Banner - Glass Morphism Style */}
+      <section className="relative py-6 sm:py-8 md:py-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-red-500 via-orange-400 to-pink-500 border-y border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.2)] overflow-hidden">
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-transparent to-blue-500/20"></div>
+
+        <div className="container mx-auto relative z-10">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs sm:text-sm">
+            <span className="font-black text-white text-base sm:text-lg drop-shadow-lg">Supported formats:</span>
+            <div className="flex items-center gap-2 bg-white/30 backdrop-blur-lg rounded-full px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-white/40 shadow-lg hover:bg-white/40 transition-all duration-300">
+              <FileImage className="w-4 h-4 sm:w-5 sm:h-5 text-white drop-shadow-lg" />
+              <span className="text-sm sm:text-base font-bold text-white drop-shadow-lg">JPEG, PNG, WebP</span>
             </div>
-            <div className="flex items-center gap-1 sm:gap-2 bg-white/80 rounded-full px-3 py-1.5 sm:px-4 sm:py-2">
-              <FileText className="w-3 h-3 sm:w-4 sm:h-4 text-red-600" />
-              <span className="text-xs sm:text-sm">PDF, PPTX</span>
+            <div className="flex items-center gap-2 bg-white/30 backdrop-blur-lg rounded-full px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-white/40 shadow-lg hover:bg-white/40 transition-all duration-300">
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-white drop-shadow-lg" />
+              <span className="text-sm sm:text-base font-bold text-white drop-shadow-lg">PDF, PPTX</span>
             </div>
-            <div className="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2">
-              <FileType className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="font-semibold text-xs sm:text-sm">DOCX, XLSX</span>
+            <div className="flex items-center gap-2 bg-white/40 backdrop-blur-lg text-white rounded-full px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-white/50 shadow-xl hover:bg-white/50 transition-all duration-300 hover:scale-105">
+              <FileType className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-300 drop-shadow-[0_0_10px_rgba(253,224,71,0.8)]" />
+              <span className="font-black text-sm sm:text-base drop-shadow-lg">DOCX, XLSX</span>
             </div>
           </div>
         </div>
