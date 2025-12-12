@@ -100,22 +100,83 @@ const Index = () => {
   return (
     <div className="min-h-screen pt-16">
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto text-center">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Compress Files
-              <span className="text-primary block">Instantly</span>
+          <div className="max-w-5xl mx-auto">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm mb-8">
+              <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13 7H7v6h6V7z" />
+                <path fillRule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm font-medium text-gray-700">File compression platform</span>
+            </div>
+
+            {/* Main Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
+              From managing files,
+              <br />
+              to doing the work for you
             </h1>
-            <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-              Reduce file sizes without compromising quality. Support for PDF and image files with lightning-fast processing.
+
+            {/* Subheadline */}
+            <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+              Smart file compression that delivers results across images,
+              <br className="hidden sm:block" />
+              PDFs, presentations, and documents.
             </p>
+
+            {/* CTA Button */}
+            <div className="mb-4">
+              <button
+                onClick={() => {
+                  const uploadSection = document.querySelector('[data-upload-section]');
+                  uploadSection?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white text-lg font-semibold rounded-lg hover:bg-primary/90 transition-colors shadow-md"
+              >
+                Get Started
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Small text below button */}
+            <p className="text-sm text-gray-500 mb-16">
+              No credit card needed ✦ Unlimited compression on Free plan
+            </p>
+
+            {/* Category Selection */}
+            <div className="mt-12">
+              <p className="text-sm font-medium text-gray-700 mb-4">Where would you like to start?</p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <button className="px-6 py-3 bg-white border-2 border-primary text-primary rounded-full font-medium hover:bg-primary/5 transition-colors">
+                  Images
+                </button>
+                <button className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-full font-medium hover:border-gray-400 transition-colors">
+                  PDFs
+                </button>
+                <button className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-full font-medium hover:border-gray-400 transition-colors">
+                  Presentations
+                </button>
+                <button className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-full font-medium hover:border-gray-400 transition-colors">
+                  Documents
+                </button>
+                <button className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-full font-medium hover:border-gray-400 transition-colors">
+                  Videos
+                </button>
+                <button className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-full font-medium hover:border-gray-400 transition-colors">
+                  All Files
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Upload/Result Section */}
-      <section className="pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="pb-20 px-4 sm:px-6 lg:px-8" data-upload-section>
         <div className="container mx-auto">
           {!selectedFile ? (
             <FileUpload 

@@ -87,15 +87,15 @@ export const Header = () => {
             <Link
               to="/"
               className={cn(
-                "text-sm font-bold transition-all duration-300 relative drop-shadow-lg",
+                "text-sm font-medium transition-all duration-300 relative",
                 location.pathname === "/"
-                  ? "text-gray-900 [text-shadow:_0_0_20px_rgba(0,0,0,0.1)]"
-                  : "text-gray-700 hover:text-gray-900 hover:[text-shadow:_0_0_15px_rgba(0,0,0,0.1)]"
+                  ? "text-gray-900"
+                  : "text-gray-600 hover:text-gray-900"
               )}
             >
               Home
               {location.pathname === "/" && (
-                <div className="absolute -bottom-1 left-0 right-0 h-1 bg-red-600 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
               )}
             </Link>
 
@@ -106,19 +106,19 @@ export const Header = () => {
               onMouseLeave={() => handleDropdownHover(null)}
             >
               <button className={cn(
-                "flex items-center space-x-1 text-sm font-bold transition-all duration-300 relative drop-shadow-lg",
+                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 relative",
                 productNavigation.some(item => isActiveRoute(item.href))
-                  ? "text-gray-900 [text-shadow:_0_0_20px_rgba(0,0,0,0.1)]"
-                  : "text-gray-700 hover:text-gray-900 hover:[text-shadow:_0_0_15px_rgba(0,0,0,0.1)]"
+                  ? "text-gray-900"
+                  : "text-gray-600 hover:text-gray-900"
               )}>
                 <span>Product</span>
                 <ChevronDown className="w-4 h-4" />
                 {productNavigation.some(item => isActiveRoute(item.href)) && (
-                  <div className="absolute -bottom-1 left-0 right-0 h-1 bg-red-600 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
                 )}
               </button>
               {hoveredDropdown === 'product' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border-2 border-gray-200 py-2 z-50">
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
                   {productNavigation.map((item) => {
                     const linkContent = (
                       <div className="flex items-center justify-between">
@@ -168,19 +168,19 @@ export const Header = () => {
               onMouseLeave={() => handleDropdownHover(null)}
             >
               <button className={cn(
-                "flex items-center space-x-1 text-sm font-bold transition-all duration-300 relative drop-shadow-lg",
+                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 relative",
                 companyNavigation.some(item => isActiveRoute(item.href))
-                  ? "text-gray-900 [text-shadow:_0_0_20px_rgba(0,0,0,0.1)]"
-                  : "text-gray-700 hover:text-gray-900 hover:[text-shadow:_0_0_15px_rgba(0,0,0,0.1)]"
+                  ? "text-gray-900"
+                  : "text-gray-600 hover:text-gray-900"
               )}>
                 <span>Company</span>
                 <ChevronDown className="w-4 h-4" />
                 {companyNavigation.some(item => isActiveRoute(item.href)) && (
-                  <div className="absolute -bottom-1 left-0 right-0 h-1 bg-red-600 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
                 )}
               </button>
               {hoveredDropdown === 'company' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border-2 border-gray-200 py-2 z-50">
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
                   {companyNavigation.map((item) => (
                     <Link
                       key={item.name}
@@ -203,12 +203,12 @@ export const Header = () => {
               onMouseEnter={() => handleDropdownHover('api')}
               onMouseLeave={() => handleDropdownHover(null)}
             >
-              <button className="flex items-center space-x-1 text-sm font-bold text-gray-700 hover:text-gray-900 hover:[text-shadow:_0_0_15px_rgba(0,0,0,0.1)] transition-all duration-300 relative drop-shadow-lg">
+              <button className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 transition-all duration-300 relative">
                 <span>SlimFile API</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
               {hoveredDropdown === 'api' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border-2 border-gray-200 py-2 z-50">
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
                   {apiNavigation.map((item) => (
                     <a
                       key={item.name}
@@ -230,15 +230,15 @@ export const Header = () => {
             <Link
               to="/stepsbuild"
               className={cn(
-                "text-sm font-bold transition-all duration-300 relative drop-shadow-lg",
+                "text-sm font-medium transition-all duration-300 relative",
                 location.pathname === "/stepsbuild"
-                  ? "text-gray-900 [text-shadow:_0_0_20px_rgba(0,0,0,0.1)]"
-                  : "text-gray-700 hover:text-gray-900 hover:[text-shadow:_0_0_15px_rgba(0,0,0,0.1)]"
+                  ? "text-gray-900"
+                  : "text-gray-600 hover:text-gray-900"
               )}
             >
               STEPsBuild
               {location.pathname === "/stepsbuild" && (
-                <div className="absolute -bottom-1 left-0 right-0 h-1 bg-red-600 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
               )}
             </Link>
 
@@ -270,14 +270,14 @@ export const Header = () => {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-red-200 bg-white/98 backdrop-blur-xl transition-all duration-300 overflow-y-auto max-h-[calc(100vh-4rem)] relative z-50 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+          <nav className="md:hidden py-4 border-t border-gray-200 bg-white transition-all duration-300 overflow-y-auto max-h-[calc(100vh-4rem)] relative z-50 shadow-md">
             <div className="flex flex-col space-y-2">
               <Link
                 to="/"
                 className={cn(
-                  "px-4 py-2 text-sm font-bold transition-all duration-300 rounded-lg",
+                  "px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
                   location.pathname === "/"
-                    ? "text-red-600 bg-red-50 backdrop-blur-md border-2 border-red-100"
+                    ? "text-red-600 bg-red-50 border border-red-100"
                     : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                 )}
                 onClick={() => setMobileMenuOpen(false)}
@@ -286,7 +286,7 @@ export const Header = () => {
               </Link>
 
               <div className="px-4 py-2">
-                <div className="text-sm font-black text-gray-900 mb-2">Product</div>
+                <div className="text-sm font-semibold text-gray-900 mb-2">Product</div>
                 <div className="ml-4 space-y-1">
                   {productNavigation.map((item) => {
                     const linkContent = (
@@ -307,7 +307,7 @@ export const Header = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={cn(
-                          "block px-3 py-2 text-sm font-bold transition-all duration-300 rounded-lg",
+                          "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
                           "text-gray-700 hover:text-red-600 hover:bg-red-50"
                         )}
                         onClick={() => setMobileMenuOpen(false)}
@@ -319,9 +319,9 @@ export const Header = () => {
                         key={item.name}
                         to={item.href}
                         className={cn(
-                          "block px-3 py-2 text-sm font-bold transition-all duration-300 rounded-lg",
+                          "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
                           isActiveRoute(item.href)
-                            ? "text-red-600 bg-red-50 backdrop-blur-md border-2 border-red-100"
+                            ? "text-red-600 bg-red-50 border border-red-100"
                             : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                         )}
                         onClick={() => setMobileMenuOpen(false)}
@@ -335,16 +335,16 @@ export const Header = () => {
 
               {/* Mobile Company Section */}
               <div className="px-4 py-2">
-                <div className="text-sm font-black text-gray-900 mb-2">Company</div>
+                <div className="text-sm font-semibold text-gray-900 mb-2">Company</div>
                 <div className="ml-4 space-y-1">
                   {companyNavigation.map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}
                       className={cn(
-                        "block px-3 py-2 text-sm font-bold transition-all duration-300 rounded-lg",
+                        "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
                         isActiveRoute(item.href)
-                          ? "text-red-600 bg-red-50 backdrop-blur-md border-2 border-red-100"
+                          ? "text-red-600 bg-red-50 border border-red-100"
                           : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                       )}
                       onClick={() => setMobileMenuOpen(false)}
@@ -357,7 +357,7 @@ export const Header = () => {
 
               {/* Mobile SlimFile API Section */}
               <div className="px-4 py-2">
-                <div className="text-sm font-black text-gray-900 mb-2">SlimFile API</div>
+                <div className="text-sm font-semibold text-gray-900 mb-2">SlimFile API</div>
                 <div className="ml-4 space-y-1">
                   {apiNavigation.map((item) => (
                     <a
@@ -366,7 +366,7 @@ export const Header = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={cn(
-                        "block px-3 py-2 text-sm font-bold transition-all duration-300 rounded-lg",
+                        "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
                         "text-gray-700 hover:text-red-600 hover:bg-red-50"
                       )}
                       onClick={() => setMobileMenuOpen(false)}
@@ -380,9 +380,9 @@ export const Header = () => {
               <Link
                 to="/stepsbuild"
                 className={cn(
-                  "px-4 py-2 text-sm font-bold transition-all duration-300 rounded-lg",
+                  "px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
                   location.pathname === "/stepsbuild"
-                    ? "text-red-600 bg-red-50 backdrop-blur-md border-2 border-red-100"
+                    ? "text-red-600 bg-red-50 border border-red-100"
                     : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                 )}
                 onClick={() => setMobileMenuOpen(false)}

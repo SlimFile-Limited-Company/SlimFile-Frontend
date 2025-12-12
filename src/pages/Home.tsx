@@ -65,168 +65,66 @@ const Home: FC = () => {
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
-      {/* Hero Section - Figma Pro Design */}
-      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 md:pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Bold Gradient Background - Figma Style */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Modern gradient mesh background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-red-500 via-orange-400 to-pink-500 opacity-90"></div>
-
-          {/* Noise texture overlay for depth */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-purple-600/30 via-transparent to-blue-500/30"></div>
-
-          {/* Large animated gradient orbs */}
-          <div className="absolute -top-1/3 -left-1/4 w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] md:w-[1200px] md:h-[1200px] bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 rounded-full blur-3xl opacity-60 animate-blob"></div>
-          <div className="absolute -bottom-1/3 -right-1/4 w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] md:w-[1200px] md:h-[1200px] bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 rounded-full blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] sm:w-[700px] sm:h-[700px] md:w-[1000px] md:h-[1000px] bg-gradient-to-br from-blue-500 via-cyan-400 to-teal-500 rounded-full blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
-
-          {/* Bright accent spots */}
-          <div className="absolute top-20 right-20 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-gradient-to-br from-yellow-300 to-orange-400 rounded-full blur-2xl opacity-70 animate-blob"></div>
-          <div className="absolute bottom-20 left-20 w-[350px] h-[350px] md:w-[550px] md:h-[550px] bg-gradient-to-br from-pink-400 to-red-500 rounded-full blur-2xl opacity-60 animate-blob animation-delay-2000"></div>
-
-          {/* Subtle light overlay for contrast */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-white/10"></div>
-        </div>
-
-        <div className="container mx-auto relative z-10">
-          <div className="max-w-6xl mx-auto">
-            {/* Trust Badges - Glass Morphism */}
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-8 sm:mb-10 animate-float">
-              <div className="group flex items-center gap-2 bg-white/20 backdrop-blur-lg rounded-full px-4 sm:px-5 py-2 sm:py-2.5 shadow-2xl border border-white/30 hover:bg-white/30 hover:shadow-[0_8px_32px_rgba(255,255,255,0.3)] transition-all duration-300">
-                <div className="relative">
-                  <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-300 fill-yellow-300 animate-pulse drop-shadow-[0_0_8px_rgba(253,224,71,0.8)]" />
-                </div>
-                <span className="text-sm sm:text-base font-bold text-white drop-shadow-lg">10K+ Users</span>
-              </div>
-              <a
-                target="_blank"
-                href="https://betalist.com/startups/slimfile-inc"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-2 bg-white/20 backdrop-blur-lg rounded-full px-4 sm:px-5 py-2 sm:py-2.5 shadow-2xl border border-white/30 hover:bg-white/30 hover:shadow-[0_8px_32px_rgba(255,255,255,0.3)] transition-all duration-300 hover:scale-105"
-              >
-                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white drop-shadow-lg group-hover:rotate-12 transition-transform" />
-                <span className="text-sm sm:text-base font-bold text-white drop-shadow-lg">Featured on BetaList</span>
-              </a>
-              <div className="group flex items-center gap-2 bg-white/20 backdrop-blur-lg rounded-full px-4 sm:px-5 py-2 sm:py-2.5 shadow-2xl border border-white/30 hover:bg-white/30 hover:shadow-[0_8px_32px_rgba(255,255,255,0.3)] transition-all duration-300 hover:scale-105">
-                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white drop-shadow-lg animate-pulse" />
-                <span className="text-sm sm:text-base font-bold text-white drop-shadow-lg">Office Support</span>
-              </div>
-            </div>
-
+      {/* Hero Section */}
+      <section className="relative pt-24 sm:pt-32 md:pt-40 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="container mx-auto">
+          <div className="max-w-4xl mx-auto">
             {/* Main Hero Content */}
-            <div className="text-center space-y-6 sm:space-y-8">
-              {/* Headline - Bold White Text on Gradient */}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-tight tracking-tight">
-                <span className="block text-white mb-2 sm:mb-3 drop-shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
-                  File Compression
-                </span>
-                <span className="block text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.4)] [text-shadow:_0_0_30px_rgba(255,255,255,0.5)]">
-                  Made Simple
-                </span>
+            <div className="text-center space-y-4 sm:space-y-6">
+              {/* Headline - Apple style */}
+              <h1 className="text-5xl sm:text-6xl md:text-7xl font-semibold leading-tight tracking-tight text-gray-900">
+                File Compression.
+                <br />
+                Elevated.
               </h1>
 
-              {/* Subtitle - Glass Morphism Style */}
-              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/95 max-w-4xl mx-auto leading-relaxed px-2 font-semibold drop-shadow-[0_2px_12px_rgba(0,0,0,0.3)]">
+              {/* Subtitle */}
+              <p className="text-xl sm:text-2xl text-gray-600 max-w-2xl mx-auto font-normal">
                 Reduce file sizes instantly without losing quality.
               </p>
-              <div className="flex justify-center px-2">
-                {/* Mobile version - Slim it. Save it. Send it */}
-                <span className="md:hidden inline-flex items-center gap-2 bg-white/25 backdrop-blur-md px-5 py-3 rounded-full border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
-                  <Zap className="w-5 h-5 text-yellow-300 drop-shadow-[0_0_10px_rgba(253,224,71,0.8)]" />
-                  <span className="font-bold text-white text-sm drop-shadow-lg">Slim it. Save it. Send it</span>
-                </span>
 
-                {/* Desktop version - Full description */}
-                <span className="hidden md:inline-flex items-center gap-2 sm:gap-3 bg-white/25 backdrop-blur-md px-5 sm:px-6 py-3 sm:py-3.5 rounded-full border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
-                  <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-300 drop-shadow-[0_0_10px_rgba(253,224,71,0.8)]" />
-                  <span className="font-bold text-white text-sm sm:text-base md:text-lg drop-shadow-lg">Fast, secure, and powerful compression for images, PDFs, and Office documents</span>
-                </span>
-              </div>
-
-              {/* CTA Buttons - Glass Morphism Style */}
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center pt-8">
-                <Link to="/compress" className="w-full sm:w-auto">
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6">
+                <Link to="/compress">
                   <Button
                     size="lg"
-                    className="group relative text-base sm:text-lg font-black px-10 sm:px-12 md:px-14 py-6 sm:py-7 md:py-8 rounded-2xl bg-white text-gray-900 hover:bg-white/95 shadow-[0_20px_60px_rgba(0,0,0,0.3)] hover:shadow-[0_25px_70px_rgba(0,0,0,0.4)] transition-all duration-300 transform hover:scale-105 w-full overflow-hidden"
+                    className="px-8 py-3 rounded-full bg-primary text-white hover:bg-primary/90 transition-all duration-200 text-base font-medium"
                   >
-                    {/* Shine effect */}
-                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-200/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
-
-                    <span className="flex items-center justify-center gap-2 sm:gap-3 relative z-10">
-                      Start Compressing Free
-                      <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
-                    </span>
+                    Get Started
                   </Button>
                 </Link>
-                <a href="https://api.slim-file.com/" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+                <a href="https://api.slim-file.com/" target="_blank" rel="noopener noreferrer">
                   <Button
-                    variant="outline"
+                    variant="link"
                     size="lg"
-                    className="group text-base sm:text-lg font-bold px-10 sm:px-12 md:px-14 py-6 sm:py-7 md:py-8 rounded-2xl border-2 border-white/40 bg-white/20 backdrop-blur-lg text-white hover:bg-white/30 hover:border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)] transition-all duration-300 hover:scale-105 w-full"
+                    className="text-primary hover:text-primary/80 transition-all duration-200 text-base font-medium"
                   >
-                    <span className="flex items-center justify-center gap-2 drop-shadow-lg">
-                      Explore API
-                      <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
-                    </span>
+                    SlimFile API <ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
                 </a>
               </div>
 
-              {/* Quick Stats - Glass Morphism Cards - Optimized for Mobile */}
-              <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6 max-w-3xl mx-auto pt-10 sm:pt-12 md:pt-14">
-                {[
-                  { value: "12K+", label: "Files Compressed", mobileLabel: "Files", icon: "📊" },
-                  { value: "95%", label: "Size Reduction", mobileLabel: "Reduction", icon: "⚡" },
-                  { value: "24/7", label: "Available", mobileLabel: "Available", icon: "🌐" }
-                ].map((stat, index) => (
-                  <div key={stat.label} className="group relative">
-                    <div className="relative bg-white/25 backdrop-blur-lg rounded-xl sm:rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-6 border-2 border-white/30 hover:bg-white/35 hover:border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)] transition-all duration-300 transform hover:-translate-y-2">
-                      {/* Glow effect */}
-                      <div className="absolute inset-0 bg-white/10 rounded-xl sm:rounded-2xl md:rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                      <div className="text-center relative z-10">
-                        <div className="text-2xl sm:text-3xl md:text-4xl mb-1 sm:mb-2">{stat.icon}</div>
-                        <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-white mb-1 sm:mb-2 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
-                          {stat.value}
-                        </div>
-                        {/* Mobile label */}
-                        <div className="block sm:hidden text-[10px] text-white/90 font-bold drop-shadow-lg leading-tight">
-                          {stat.mobileLabel}
-                        </div>
-                        {/* Desktop label */}
-                        <div className="hidden sm:block text-xs sm:text-sm md:text-base text-white/90 font-bold drop-shadow-lg">
-                          {stat.label}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Supported Formats Banner - Glass Morphism Style */}
-      <section className="relative py-6 sm:py-8 md:py-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-red-500 via-orange-400 to-pink-500 border-y border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.2)] overflow-hidden">
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-transparent to-blue-500/20"></div>
-
-        <div className="container mx-auto relative z-10">
+      {/* Supported Formats Banner */}
+      <section className="py-6 sm:py-8 md:py-10 px-4 sm:px-6 lg:px-8 bg-gray-50 border-y border-gray-200">
+        <div className="container mx-auto">
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs sm:text-sm">
-            <span className="font-black text-white text-base sm:text-lg drop-shadow-lg">Supported formats:</span>
-            <div className="flex items-center gap-2 bg-white/30 backdrop-blur-lg rounded-full px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-white/40 shadow-lg hover:bg-white/40 transition-all duration-300">
-              <FileImage className="w-4 h-4 sm:w-5 sm:h-5 text-white drop-shadow-lg" />
-              <span className="text-sm sm:text-base font-bold text-white drop-shadow-lg">JPEG, PNG, WebP</span>
+            <span className="font-black text-gray-900 text-base sm:text-lg">Supported formats:</span>
+            <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-300">
+              <FileImage className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <span className="text-sm sm:text-base font-bold text-gray-900">JPEG, PNG, WebP</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/30 backdrop-blur-lg rounded-full px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-white/40 shadow-lg hover:bg-white/40 transition-all duration-300">
-              <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-white drop-shadow-lg" />
-              <span className="text-sm sm:text-base font-bold text-white drop-shadow-lg">PDF, PPTX</span>
+            <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-300">
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <span className="text-sm sm:text-base font-bold text-gray-900">PDF, PPTX</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/40 backdrop-blur-lg text-white rounded-full px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-white/50 shadow-xl hover:bg-white/50 transition-all duration-300 hover:scale-105">
-              <FileType className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-300 drop-shadow-[0_0_10px_rgba(253,224,71,0.8)]" />
-              <span className="font-black text-sm sm:text-base drop-shadow-lg">DOCX, XLSX</span>
+            <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-primary shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
+              <FileType className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <span className="font-black text-sm sm:text-base text-gray-900">DOCX, XLSX</span>
             </div>
           </div>
         </div>
