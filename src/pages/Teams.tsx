@@ -115,10 +115,10 @@ const teamMembers = [
 
   {
     name: 'Marlyn',
-    role: 'Lawyer',
+    role: 'Legal Expert',
     bio: 'Provides legal guidance protecting SlimFile operations, compliance, partnerships, and intellectual property rights consistently.',
     image: '/lovable-uploads/Marlyn.png',
-    
+
   },
 
   {

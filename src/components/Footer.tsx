@@ -222,13 +222,13 @@ export const Footer = () => {
 
         {/* Quick Access Section */}
         <div className="border-t border-gray-200 pt-6 mt-6">
-          <h5 className="text-sm font-semibold text-gray-900 mb-3 flex items-center justify-center md:justify-start">
+          <h5 className="text-sm font-semibold text-gray-900 mb-3 flex items-center justify-center">
             <Settings className="w-4 h-4 mr-2 text-primary" />
             Quick Access
           </h5>
-          
-          {/* Equal spacing on left and right - px-0 on mobile, balanced on desktop */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 md:gap-6 px-2 md:px-0">
+
+          {/* Equal spacing on left and right - balanced on both mobile and desktop */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-4 md:gap-6 px-4 md:px-8 lg:px-0 max-w-6xl mx-auto">
             {/* Product Column */}
             <div>
               <h6 className="text-sm font-semibold text-gray-900 mb-2">Product</h6>
