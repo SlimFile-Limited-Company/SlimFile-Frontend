@@ -645,14 +645,14 @@ const Home: FC = () => {
                   </span>
                 </Button>
               </Link>
-              <Link to="/teams" className="w-full sm:w-auto">
+              <Link to="/about" className="w-full sm:w-auto">
                 <Button
                   size="lg"
                   variant="outline"
                   className="text-base sm:text-lg px-6 sm:px-8 md:px-10 py-4 sm:py-5 md:py-6 rounded-xl sm:rounded-2xl bg-transparent text-white border-2 border-white/30 hover:bg-white/10 hover:border-white transition-all duration-300 w-full"
                 >
                   <Users className="mr-2 w-4 h-4 sm:w-5 sm:h-5" />
-                  Meet Our Team
+                  About Us
                 </Button>
               </Link>
             </div>
