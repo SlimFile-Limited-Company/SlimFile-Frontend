@@ -68,20 +68,17 @@ export const Header = () => {
   }, [dropdownTimeout]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-red-500/95 via-orange-400/95 to-pink-500/95 backdrop-blur-xl border-b border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
-            <Link to="/" className="flex items-center space-x-2 group transition-all duration-300">
-              <div className="relative">
-                <div className="absolute inset-0 bg-white/20 rounded-xl blur-md group-hover:bg-white/30 transition-all duration-300"></div>
-                <img
-                  src="/logo.gif"
-                  alt="SlimFile Logo"
-                  className="h-10 w-10 object-contain rounded-xl relative z-10 border-2 border-white/30 group-hover:border-white/50 transition-all duration-300"
-                />
-              </div>
-              <span className="text-2xl font-black text-white drop-shadow-lg group-hover:[text-shadow:_0_0_20px_rgba(255,255,255,0.5)] transition-all duration-300">SlimFile</span>
+            <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+              <img
+                src="/logo.gif"
+                alt="SlimFile Logo"
+                className="h-10 w-10 object-contain rounded-lg"
+              />
+              <span className="text-2xl font-bold text-gray-900">SlimFile</span>
             </Link>
           </div>
 
@@ -92,13 +89,13 @@ export const Header = () => {
               className={cn(
                 "text-sm font-bold transition-all duration-300 relative drop-shadow-lg",
                 location.pathname === "/"
-                  ? "text-white [text-shadow:_0_0_20px_rgba(255,255,255,0.8)]"
-                  : "text-white/90 hover:text-white hover:[text-shadow:_0_0_15px_rgba(255,255,255,0.6)]"
+                  ? "text-gray-900 [text-shadow:_0_0_20px_rgba(0,0,0,0.1)]"
+                  : "text-gray-700 hover:text-gray-900 hover:[text-shadow:_0_0_15px_rgba(0,0,0,0.1)]"
               )}
             >
               Home
               {location.pathname === "/" && (
-                <div className="absolute -bottom-1 left-0 right-0 h-1 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                <div className="absolute -bottom-1 left-0 right-0 h-1 bg-red-600 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
               )}
             </Link>
 
@@ -111,17 +108,17 @@ export const Header = () => {
               <button className={cn(
                 "flex items-center space-x-1 text-sm font-bold transition-all duration-300 relative drop-shadow-lg",
                 productNavigation.some(item => isActiveRoute(item.href))
-                  ? "text-white [text-shadow:_0_0_20px_rgba(255,255,255,0.8)]"
-                  : "text-white/90 hover:text-white hover:[text-shadow:_0_0_15px_rgba(255,255,255,0.6)]"
+                  ? "text-gray-900 [text-shadow:_0_0_20px_rgba(0,0,0,0.1)]"
+                  : "text-gray-700 hover:text-gray-900 hover:[text-shadow:_0_0_15px_rgba(0,0,0,0.1)]"
               )}>
                 <span>Product</span>
                 <ChevronDown className="w-4 h-4" />
                 {productNavigation.some(item => isActiveRoute(item.href)) && (
-                  <div className="absolute -bottom-1 left-0 right-0 h-1 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                  <div className="absolute -bottom-1 left-0 right-0 h-1 bg-red-600 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
                 )}
               </button>
               {hoveredDropdown === 'product' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border-2 border-white/30 py-2 z-50">
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border-2 border-gray-200 py-2 z-50">
                   {productNavigation.map((item) => {
                     const linkContent = (
                       <div className="flex items-center justify-between">
@@ -173,17 +170,17 @@ export const Header = () => {
               <button className={cn(
                 "flex items-center space-x-1 text-sm font-bold transition-all duration-300 relative drop-shadow-lg",
                 companyNavigation.some(item => isActiveRoute(item.href))
-                  ? "text-white [text-shadow:_0_0_20px_rgba(255,255,255,0.8)]"
-                  : "text-white/90 hover:text-white hover:[text-shadow:_0_0_15px_rgba(255,255,255,0.6)]"
+                  ? "text-gray-900 [text-shadow:_0_0_20px_rgba(0,0,0,0.1)]"
+                  : "text-gray-700 hover:text-gray-900 hover:[text-shadow:_0_0_15px_rgba(0,0,0,0.1)]"
               )}>
                 <span>Company</span>
                 <ChevronDown className="w-4 h-4" />
                 {companyNavigation.some(item => isActiveRoute(item.href)) && (
-                  <div className="absolute -bottom-1 left-0 right-0 h-1 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                  <div className="absolute -bottom-1 left-0 right-0 h-1 bg-red-600 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
                 )}
               </button>
               {hoveredDropdown === 'company' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border-2 border-white/30 py-2 z-50">
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border-2 border-gray-200 py-2 z-50">
                   {companyNavigation.map((item) => (
                     <Link
                       key={item.name}
@@ -206,12 +203,12 @@ export const Header = () => {
               onMouseEnter={() => handleDropdownHover('api')}
               onMouseLeave={() => handleDropdownHover(null)}
             >
-              <button className="flex items-center space-x-1 text-sm font-bold text-white/90 hover:text-white hover:[text-shadow:_0_0_15px_rgba(255,255,255,0.6)] transition-all duration-300 relative drop-shadow-lg">
+              <button className="flex items-center space-x-1 text-sm font-bold text-gray-700 hover:text-gray-900 hover:[text-shadow:_0_0_15px_rgba(0,0,0,0.1)] transition-all duration-300 relative drop-shadow-lg">
                 <span>SlimFile API</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
               {hoveredDropdown === 'api' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border-2 border-white/30 py-2 z-50">
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border-2 border-gray-200 py-2 z-50">
                   {apiNavigation.map((item) => (
                     <a
                       key={item.name}
@@ -235,13 +232,13 @@ export const Header = () => {
               className={cn(
                 "text-sm font-bold transition-all duration-300 relative drop-shadow-lg",
                 location.pathname === "/stepsbuild"
-                  ? "text-white [text-shadow:_0_0_20px_rgba(255,255,255,0.8)]"
-                  : "text-white/90 hover:text-white hover:[text-shadow:_0_0_15px_rgba(255,255,255,0.6)]"
+                  ? "text-gray-900 [text-shadow:_0_0_20px_rgba(0,0,0,0.1)]"
+                  : "text-gray-700 hover:text-gray-900 hover:[text-shadow:_0_0_15px_rgba(0,0,0,0.1)]"
               )}
             >
               STEPsBuild
               {location.pathname === "/stepsbuild" && (
-                <div className="absolute -bottom-1 left-0 right-0 h-1 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                <div className="absolute -bottom-1 left-0 right-0 h-1 bg-red-600 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
               )}
             </Link>
 
@@ -262,10 +259,10 @@ export const Header = () => {
               variant="ghost"
               size="sm"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="bg-white/20 hover:bg-white/30 border-2 border-white/30 backdrop-blur-md text-white transition-all duration-300"
+              className="bg-white/95 hover:bg-red-50 border-2 border-red-200 backdrop-blur-md text-red-600 transition-all duration-300 hover:text-red-700 hover:border-red-300"
             >
               <div className="transition-transform duration-200" style={{ transform: mobileMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}>
-                {mobileMenuOpen ? <X className="w-5 h-5 drop-shadow-lg" /> : <Menu className="w-5 h-5 drop-shadow-lg" />}
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </div>
             </Button>
           </div>
@@ -273,15 +270,15 @@ export const Header = () => {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-white/20 bg-gradient-to-br from-red-500/98 via-orange-400/98 to-pink-500/98 backdrop-blur-xl transition-all duration-300 overflow-y-auto max-h-[calc(100vh-4rem)] relative z-50 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+          <nav className="md:hidden py-4 border-t border-red-200 bg-white/98 backdrop-blur-xl transition-all duration-300 overflow-y-auto max-h-[calc(100vh-4rem)] relative z-50 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
             <div className="flex flex-col space-y-2">
               <Link
                 to="/"
                 className={cn(
-                  "px-4 py-2 text-sm font-bold transition-all duration-300 rounded-lg drop-shadow-lg",
+                  "px-4 py-2 text-sm font-bold transition-all duration-300 rounded-lg",
                   location.pathname === "/"
-                    ? "text-white bg-white/30 backdrop-blur-md border-2 border-white/40"
-                    : "text-white/90 hover:text-white hover:bg-white/20"
+                    ? "text-red-600 bg-red-50 backdrop-blur-md border-2 border-red-100"
+                    : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                 )}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -289,7 +286,7 @@ export const Header = () => {
               </Link>
 
               <div className="px-4 py-2">
-                <div className="text-sm font-black text-white drop-shadow-lg mb-2">Product</div>
+                <div className="text-sm font-black text-gray-900 mb-2">Product</div>
                 <div className="ml-4 space-y-1">
                   {productNavigation.map((item) => {
                     const linkContent = (
@@ -310,8 +307,8 @@ export const Header = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={cn(
-                          "block px-3 py-2 text-sm font-bold transition-all duration-300 rounded-lg drop-shadow-lg",
-                          "text-white/90 hover:text-white hover:bg-white/20"
+                          "block px-3 py-2 text-sm font-bold transition-all duration-300 rounded-lg",
+                          "text-gray-700 hover:text-red-600 hover:bg-red-50"
                         )}
                         onClick={() => setMobileMenuOpen(false)}
                       >
@@ -322,10 +319,10 @@ export const Header = () => {
                         key={item.name}
                         to={item.href}
                         className={cn(
-                          "block px-3 py-2 text-sm font-bold transition-all duration-300 rounded-lg drop-shadow-lg",
+                          "block px-3 py-2 text-sm font-bold transition-all duration-300 rounded-lg",
                           isActiveRoute(item.href)
-                            ? "text-white bg-white/30 backdrop-blur-md border-2 border-white/40"
-                            : "text-white/90 hover:text-white hover:bg-white/20"
+                            ? "text-red-600 bg-red-50 backdrop-blur-md border-2 border-red-100"
+                            : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                         )}
                         onClick={() => setMobileMenuOpen(false)}
                       >
@@ -338,17 +335,17 @@ export const Header = () => {
 
               {/* Mobile Company Section */}
               <div className="px-4 py-2">
-                <div className="text-sm font-black text-white drop-shadow-lg mb-2">Company</div>
+                <div className="text-sm font-black text-gray-900 mb-2">Company</div>
                 <div className="ml-4 space-y-1">
                   {companyNavigation.map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}
                       className={cn(
-                        "block px-3 py-2 text-sm font-bold transition-all duration-300 rounded-lg drop-shadow-lg",
+                        "block px-3 py-2 text-sm font-bold transition-all duration-300 rounded-lg",
                         isActiveRoute(item.href)
-                          ? "text-white bg-white/30 backdrop-blur-md border-2 border-white/40"
-                          : "text-white/90 hover:text-white hover:bg-white/20"
+                          ? "text-red-600 bg-red-50 backdrop-blur-md border-2 border-red-100"
+                          : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -360,7 +357,7 @@ export const Header = () => {
 
               {/* Mobile SlimFile API Section */}
               <div className="px-4 py-2">
-                <div className="text-sm font-black text-white drop-shadow-lg mb-2">SlimFile API</div>
+                <div className="text-sm font-black text-gray-900 mb-2">SlimFile API</div>
                 <div className="ml-4 space-y-1">
                   {apiNavigation.map((item) => (
                     <a
@@ -369,8 +366,8 @@ export const Header = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={cn(
-                        "block px-3 py-2 text-sm font-bold transition-all duration-300 rounded-lg drop-shadow-lg",
-                        "text-white/90 hover:text-white hover:bg-white/20"
+                        "block px-3 py-2 text-sm font-bold transition-all duration-300 rounded-lg",
+                        "text-gray-700 hover:text-red-600 hover:bg-red-50"
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -383,10 +380,10 @@ export const Header = () => {
               <Link
                 to="/stepsbuild"
                 className={cn(
-                  "px-4 py-2 text-sm font-bold transition-all duration-300 rounded-lg drop-shadow-lg",
+                  "px-4 py-2 text-sm font-bold transition-all duration-300 rounded-lg",
                   location.pathname === "/stepsbuild"
-                    ? "text-white bg-white/30 backdrop-blur-md border-2 border-white/40"
-                    : "text-white/90 hover:text-white hover:bg-white/20"
+                    ? "text-red-600 bg-red-50 backdrop-blur-md border-2 border-red-100"
+                    : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                 )}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -402,6 +399,7 @@ export const Header = () => {
                       setMobileMenuOpen(false);
                       logout();
                     }}
+                    className="text-red-600 border-red-300 hover:bg-red-50 hover:text-red-700"
                   >
                     Logout
                   </Button>
