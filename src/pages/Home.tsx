@@ -85,7 +85,7 @@ const Home: FC = () => {
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6">
-                <Link to="/compress">
+                <Link to="/get-started">
                   <Button
                     size="lg"
                     className="px-8 py-3 rounded-full bg-primary text-white hover:bg-primary/90 transition-all duration-200 text-base font-medium"

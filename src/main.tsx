@@ -32,6 +32,7 @@ import CompressPptxForPresentation from './pages/CompressPptxForPresentation';
 import CompressImagesForWebsite from './pages/CompressImagesForWebsite';
 import ConvertOnly from './pages/ConvertOnly';
 import ConvertThenCompress from './pages/ConvertThenCompress';
+import GetStarted from './pages/GetStarted';
 
 // Blog Pages
 import BlogHowToCompressPdfForEmail from './pages/blog/HowToCompressPdfForEmail';
@@ -70,6 +71,7 @@ ReactDOM.createRoot(root).render(
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
+          <Route path="get-started" element={<GetStarted />} />
           <Route path="compress" element={<Compress />} />
           <Route path="convert-only" element={<ConvertOnly />} />
           <Route path="convert-compress" element={<ConvertThenCompress />} />
