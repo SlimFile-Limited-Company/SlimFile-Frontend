@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Download, RefreshCw, FileText, Image, File, Zap, ArrowRight } from 'lucide-react';
+import { CheckCircle2, Download, RefreshCw, FileText, Image, File, Zap, ArrowRight, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { useNavigate } from 'react-router-dom';
+import { isAuthenticated } from '@/lib/auth';
+import { toast } from '@/hooks/use-toast';
 
 interface ConversionCompressionResultProps {
   originalFiles: File[];
@@ -25,6 +28,10 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
   targetFormat = 'PDF',
   currentStep = []
 }) => {
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
+  const navigate = useNavigate();
+
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -58,15 +65,135 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
     return null;
   };
 
-  const handleDownload = (file: File, index: number) => {
+  const handleDownload = async (file: File | null, fileIndex?: number) => {
+    if (!file) return;
+    
+    if (!isAuthenticated()) {
+      const downloadKey = fileIndex !== undefined ? `pendingDownload_${fileIndex}` : 'pendingDownload';
+      
+      sessionStorage.setItem(downloadKey, JSON.stringify({
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        originalFileIndex: fileIndex
+      }));
+      sessionStorage.setItem('redirectAfterLogin', '/convert-compress');
+      sessionStorage.setItem('pendingDownloadIndex', fileIndex?.toString() || '0');
+      
+      toast({
+        title: "Login Required",
+        description: "Please login to download your processed file.",
+        variant: "default"
+      });
+      
+      navigate('/login');
+      return;
+    }
+    
+    setIsDownloading(true);
+    setDownloadingIndex(fileIndex || 0);
+    try {
+      const url = URL.createObjectURL(file);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
+      toast({
+        title: "Download Failed",
+        description: "An error occurred while downloading the file.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDownloading(false);
+      setDownloadingIndex(null);
+    }
+  };
+
+  const handleShare = async (file: File | null, fileIndex?: number) => {
+    if (!file) return;
+    
+    if (!isAuthenticated()) {
+      const shareKey = fileIndex !== undefined ? `pendingShare_${fileIndex}` : 'pendingShare';
+      
+      sessionStorage.setItem(shareKey, JSON.stringify({
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        originalFileIndex: fileIndex
+      }));
+      sessionStorage.setItem('redirectAfterLogin', '/convert-compress');
+      sessionStorage.setItem('pendingShareIndex', fileIndex?.toString() || '0');
+      
+      toast({
+        title: "Login Required",
+        description: "Please login to share your processed file.",
+        variant: "default"
+      });
+      
+      navigate('/login');
+      return;
+    }
+    
     const url = URL.createObjectURL(file);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          files: [file],
+          title: `Share ${file.name}`,
+          text: `Check out this converted and compressed file: ${file.name}`,
+        });
+        toast({
+          title: "Share Successful",
+          description: `Successfully shared ${file.name}`,
+          variant: "default"
+        });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast({
+          title: "Link Copied",
+          description: "File URL copied to clipboard for sharing!",
+          variant: "default"
+        });
+      }
+    } catch (err) {
+      console.error('Share failed:', err);
+      toast({
+        title: "Share Failed",
+        description: "Failed to share the file. Please try downloading and sharing manually.",
+        variant: "destructive"
+      });
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  const handleDownloadAll = () => {
+    if (!isAuthenticated()) {
+      toast({
+        title: "Login Required",
+        description: "Please login to download your processed files.",
+        variant: "default"
+      });
+      navigate('/login');
+      return;
+    }
+    processedFiles.forEach((file) => {
+      if (file) {
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    });
   };
 
   const allComplete = processedFiles.every((f, i) => processingProgress[i] === 100 && f !== null);
@@ -75,247 +202,237 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
   const totalReduction = calculateReduction(totalOriginalSize, totalProcessedSize);
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-0">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="bg-white/10 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/30 p-4 sm:p-6 md:p-8"
-        style={{ backdropFilter: 'blur(15px)' }}
-      >
-        {/* Header */}
-        <div className="text-center mb-6 sm:mb-8">
+    <div className="w-full space-y-6">
+      {originalFiles.map((originalFile, index) => {
+        const processedFile = processedFiles[index];
+        const progress = processingProgress[index];
+        const isComplete = progress === 100 && processedFile;
+        const step = currentStep[index] || '';
+
+        return (
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="w-12 h-12 sm:w-16 sm:h-16 bg-purple-50/70 backdrop-blur-lg rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-white/50 shadow-xl"
-            style={{ backdropFilter: 'blur(8px)' }}
+            key={`${originalFile.name}-${index}`}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}
           >
-            {allComplete ? (
-              <CheckCircle2 className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
-            ) : (
-              <div className="flex items-center gap-1">
-                <RefreshCw className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600 animate-spin" />
-                <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
-                <Zap className="w-4 h-4 sm:w-6 sm:h-6 text-orange-600" />
+            {!isComplete ? (
+              <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-lg">
+                <div className="text-center">
+                  <motion.div
+                    className="h-8 w-8 border-2 border-purple-600 border-r-transparent rounded-full mx-auto mb-4"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Processing: {originalFile.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">{step}</p>
+                  <Progress value={progress || 0} className="w-full mb-2" />
+                  <p className="text-sm text-gray-600">{progress || 0}% complete</p>
+                </div>
               </div>
-            )}
-          </motion.div>
-          
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-            {allComplete ? 'Processing Complete!' : 'Converting & Compressing...'}
-          </h2>
-          <p className="text-sm sm:text-base text-gray-600">
-            {allComplete 
-              ? `Converted to ${targetFormat.toUpperCase()} and optimized`
-              : `Converting to ${targetFormat.toUpperCase()} and compressing...`}
-          </p>
-        </div>
-
-        {/* Processing Steps Indicator */}
-        {!allComplete && (
-          <div className="mb-4 sm:mb-6 flex items-center justify-center gap-2 sm:gap-3 p-3 sm:p-4 bg-gradient-to-r from-blue-50/50 to-purple-50/50 rounded-xl backdrop-blur-lg border border-white/40">
-            <div className="flex items-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-100/70 rounded-lg">
-              <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 animate-spin" />
-              <span className="text-xs sm:text-sm font-semibold text-blue-800">Converting</span>
-            </div>
-            <ArrowRight className="w-3 h-3 sm:w-5 sm:h-5 text-gray-400" />
-            <div className="flex items-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-orange-100/70 rounded-lg">
-              <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-orange-600" />
-              <span className="text-xs sm:text-sm font-semibold text-orange-800">Compressing</span>
-            </div>
-          </div>
-        )}
-
-        {/* File Results */}
-        <div className="space-y-3 sm:space-y-4">
-          {originalFiles.map((originalFile, index) => {
-            const processedFile = processedFiles[index];
-            const progress = processingProgress[index];
-            const isComplete = progress === 100 && processedFile;
-            const step = currentStep[index] || '';
-
-            return (
-              <motion.div
-                key={`${originalFile.name}-${index}`}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white/20 backdrop-blur-2xl rounded-xl p-4 sm:p-6 border-2 border-white/40 shadow-lg"
-                style={{ backdropFilter: 'blur(12px)' }}
-              >
-                {/* File Info Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-4">
-                  <div className="flex items-center space-x-3">
-                    {getFileIcon(originalFile.type)}
-                    <div className="min-w-0">
-                      <p className="font-semibold text-gray-900 truncate max-w-[200px] sm:max-w-xs">
-                        {originalFile.name}
-                      </p>
-                      <p className="text-xs sm:text-sm text-gray-500">
-                        Original: {formatFileSize(originalFile.size)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {isComplete && (
-                    <Button
-                      onClick={() => handleDownload(processedFile, index)}
-                      className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold shadow-lg text-sm sm:text-base mt-3 sm:mt-0"
-                    >
-                      <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                      Download
-                    </Button>
-                  )}
+            ) : (
+              <div className="bg-white rounded-2xl p-6 border-2 border-purple-100 shadow-lg">
+                <div className="text-center mb-6">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                  >
+                    <CheckCircle2 className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+                  </motion.div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    Processing Complete!
+                  </h3>
+                  <p className="text-gray-600">
+                    {originalFile.name} has been converted to {targetFormat.toUpperCase()} and compressed
+                  </p>
                 </div>
 
-                {/* Progress Bar with Current Step */}
-                {!isComplete && (
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-xs sm:text-sm">
-                      <div className="flex items-center gap-2">
-                        {getStepIcon(step)}
-                        <span className="text-gray-600 font-medium truncate">{step}</span>
-                      </div>
-                      <span className="text-purple-600 font-bold">{progress}%</span>
-                    </div>
-                    <Progress value={progress} className="h-2 sm:h-3" />
-                    
-                    {/* Step Progress Indicator */}
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <div className={`flex items-center gap-1 ${progress < 50 ? 'text-blue-600 font-semibold' : 'text-gray-400'}`}>
-                        <div className={`w-2 h-2 rounded-full ${progress < 50 ? 'bg-blue-600 animate-pulse' : 'bg-gray-400'}`} />
-                        Converting
-                      </div>
-                      <ArrowRight className="w-2 h-2 sm:w-3 sm:h-3" />
-                      <div className={`flex items-center gap-1 ${progress >= 50 && progress < 100 ? 'text-orange-600 font-semibold' : 'text-gray-400'}`}>
-                        <div className={`w-2 h-2 rounded-full ${progress >= 50 && progress < 100 ? 'bg-orange-600 animate-pulse' : 'bg-gray-400'}`} />
-                        Compressing
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Processing Success Info */}
-                {isComplete && (
-                  <div className="mt-4 p-3 sm:p-4 bg-gradient-to-r from-green-50/50 to-blue-50/50 backdrop-blur-lg rounded-lg border border-green-200/50">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
-                      <div className="min-w-0">
-                        <p className="text-xs sm:text-sm font-semibold text-green-800">
-                          ✅ Converted & Compressed
+                {/* File Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    <div className="flex items-center space-x-3 mb-3">
+                      {getFileIcon(originalFile.type)}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-gray-900">Original File</h4>
+                        <p className="text-sm text-gray-600 truncate">
+                          {originalFile.name}
                         </p>
-                        <p className="text-xs text-green-600 mt-1 truncate">
+                      </div>
+                    </div>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {formatFileSize(originalFile.size)}
+                    </p>
+                  </div>
+
+                  <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
+                    <div className="flex items-center space-x-3 mb-3">
+                      {getFileIcon(processedFile.type)}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-gray-900">Processed File</h4>
+                        <p className="text-sm text-gray-600 truncate">
                           {processedFile.name}
                         </p>
                       </div>
-                      <div className="text-left sm:text-right mt-2 sm:mt-0">
-                        <p className="text-xs sm:text-sm font-semibold text-gray-700">
-                          {formatFileSize(processedFile.size)}
-                        </p>
-                        <p className="text-xs font-bold text-green-600">
-                          {calculateReduction(originalFile.size, processedFile.size)}% smaller
-                        </p>
-                      </div>
                     </div>
-                    
-                    {/* Size Comparison Bar */}
-                    <div className="mt-3">
-                      <div className="flex items-center gap-2 text-xs">
-                        <span className="text-gray-500">Original</span>
-                        <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-to-r from-green-400 to-green-600"
-                            style={{ 
-                              width: `${Math.max((processedFile.size / originalFile.size) * 100, 5)}%` 
-                            }}
-                          />
-                        </div>
-                        <span className="text-green-600 font-semibold">Compressed</span>
-                      </div>
+                    <p className="text-lg font-semibold text-purple-600">
+                      {formatFileSize(processedFile.size)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Compression Stats */}
+                <div className="text-center mb-6">
+                  <div className="inline-flex flex-wrap justify-center items-center gap-2">
+                    <div className="inline-flex items-center space-x-2 bg-green-100 text-green-800 px-3 sm:px-4 py-2 rounded-full">
+                      <span className="text-xs sm:text-sm font-medium">
+                        {calculateReduction(originalFile.size, processedFile.size)}% size reduction
+                      </span>
+                    </div>
+                    <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-3 sm:px-4 py-2 rounded-full">
+                      <span className="text-xs sm:text-sm font-medium">
+                        Saved: {formatFileSize(originalFile.size - processedFile.size)}
+                      </span>
                     </div>
                   </div>
-                )}
-              </motion.div>
-            );
-          })}
-        </div>
+                  {!isAuthenticated() && (
+                    <div className="mt-3 inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-3 sm:px-4 py-2 rounded-full">
+                      <span className="text-xs sm:text-sm font-medium">
+                        Login required to download or share processed files
+                      </span>
+                    </div>
+                  )}
+                </div>
 
-        {/* Actions */}
-        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-          {allComplete && (
-            <>
-              <Button
-                onClick={onReset}
-                variant="outline"
-                className="w-full sm:w-auto bg-white/50 backdrop-blur-sm border-2 border-gray-300 hover:bg-white/70 font-semibold text-sm sm:text-base"
-              >
-                <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                Process Another File
-              </Button>
-              
-              {processedFiles.length > 1 && (
-                <Button
-                  onClick={() => {
-                    processedFiles.forEach((file, index) => {
-                      if (file) handleDownload(file, index);
-                    });
-                  }}
-                  className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold shadow-lg text-sm sm:text-base"
-                >
-                  <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                  Download All
-                </Button>
-              )}
-            </>
-          )}
-        </div>
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    onClick={() => handleDownload(processedFile, index)}
+                    disabled={(isDownloading && downloadingIndex === index) || !processedFile}
+                    className="flex-1"
+                  >
+                    {(isDownloading && downloadingIndex === index) ? (
+                      <>
+                        <motion.div
+                          className="h-4 w-4 border-2 border-white border-r-transparent rounded-full mr-2"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        />
+                        Downloading...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-4 w-4 mr-2" />
+                        {isAuthenticated() ? 'Download Processed File' : 'Login to Download'}
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => handleShare(processedFile, index)}
+                    disabled={!processedFile}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    <Share2 className="h-4 w-4 mr-2" />
+                    {isAuthenticated() ? (navigator.share ? 'Share' : 'Copy Link') : 'Login to Share'}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        );
+      })}
 
-        {/* Processing Stats Summary */}
-        {allComplete && (
-          <div className="mt-6 p-4 sm:p-6 bg-gradient-to-r from-purple-50/50 to-pink-50/50 backdrop-blur-lg rounded-xl border border-purple-200/50">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-center">
-              <div>
-                <p className="text-xl sm:text-2xl font-bold text-purple-600">
-                  {processedFiles.filter(f => f !== null).length}
-                </p>
-                <p className="text-xs text-gray-600">Files Processed</p>
-              </div>
-              <div>
-                <p className="text-xl sm:text-2xl font-bold text-blue-600">
-                  {targetFormat.toUpperCase()}
-                </p>
-                <p className="text-xs text-gray-600">Output Format</p>
-              </div>
-              <div>
-                <p className="text-xl sm:text-2xl font-bold text-green-600">
-                  {totalReduction}%
-                </p>
-                <p className="text-xs text-gray-600">Size Reduction</p>
-              </div>
-              <div>
-                <p className="text-xl sm:text-2xl font-bold text-orange-600">
-                  {formatFileSize(totalProcessedSize)}
-                </p>
-                <p className="text-xs text-gray-600">Total Size</p>
-              </div>
+      {/* Download All Button */}
+      {processedFiles.filter(Boolean).length > 1 && allComplete && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="flex justify-center mt-4"
+        >
+          <Button
+            onClick={handleDownloadAll}
+            className="bg-purple-600 text-white hover:bg-purple-700"
+            disabled={!isAuthenticated()}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Download All Processed Files
+          </Button>
+        </motion.div>
+      )}
+
+      {/* Processing Stats Summary */}
+      {allComplete && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-lg"
+        >
+          <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">
+            Total Processing Statistics
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+              <p className="text-2xl font-bold text-purple-600">
+                {processedFiles.filter(f => f !== null).length}
+              </p>
+              <p className="text-sm text-gray-600">Files Processed</p>
             </div>
-            
-            {/* Total Savings */}
-            <div className="mt-4 pt-4 border-t border-purple-200/50">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm">
-                <span className="text-gray-600">Total savings:</span>
-                <span className="font-bold text-green-600">
-                  {formatFileSize(totalOriginalSize - totalProcessedSize)}
-                </span>
-                <span className="text-gray-400 hidden sm:inline">•</span>
-                <span className="text-gray-600 text-center sm:text-left">
-                  {formatFileSize(totalOriginalSize)} → {formatFileSize(totalProcessedSize)}
-                </span>
-              </div>
+            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+              <p className="text-2xl font-bold text-blue-600">
+                {targetFormat.toUpperCase()}
+              </p>
+              <p className="text-sm text-gray-600">Output Format</p>
+            </div>
+            <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+              <p className="text-2xl font-bold text-green-600">
+                {totalReduction}%
+              </p>
+              <p className="text-sm text-gray-600">Size Reduction</p>
+            </div>
+            <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
+              <p className="text-2xl font-bold text-purple-600">
+                {formatFileSize(totalProcessedSize)}
+              </p>
+              <p className="text-sm text-gray-600">Total Size</p>
             </div>
           </div>
-        )}
+          
+          {/* Total Savings */}
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm">
+              <span className="text-gray-600">Total savings:</span>
+              <span className="font-bold text-green-600">
+                {formatFileSize(totalOriginalSize - totalProcessedSize)}
+              </span>
+              <span className="text-gray-400 hidden sm:inline">•</span>
+              <span className="text-gray-600 text-center sm:text-left">
+                {formatFileSize(totalOriginalSize)} → {formatFileSize(totalProcessedSize)}
+              </span>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Reset Button */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="flex justify-center mt-4"
+      >
+        <Button
+          variant="outline"
+          onClick={onReset}
+          className="bg-white hover:bg-gray-50"
+        >
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Process Another File
+        </Button>
       </motion.div>
     </div>
   );

@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Download, RefreshCw, FileText, Image, File } from 'lucide-react';
+import { CheckCircle2, Download, RefreshCw, FileText, Image, File, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { useNavigate } from 'react-router-dom';
+import { isAuthenticated } from '@/lib/auth';
+import { toast } from '@/hooks/use-toast';
 
 interface ConversionResultProps {
   originalFiles: File[];
@@ -23,6 +26,10 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
   onReset,
   targetFormat = 'PDF'
 }) => {
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
+  const navigate = useNavigate();
+
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -40,193 +47,337 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
     return <File className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />;
   };
 
-  const handleDownload = (file: File, index: number) => {
+  const handleDownload = async (file: File | null, fileIndex?: number) => {
+    if (!file) return;
+    
+    if (!isAuthenticated()) {
+      const downloadKey = fileIndex !== undefined ? `pendingDownload_${fileIndex}` : 'pendingDownload';
+      
+      sessionStorage.setItem(downloadKey, JSON.stringify({
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        originalFileIndex: fileIndex
+      }));
+      sessionStorage.setItem('redirectAfterLogin', '/convert-only');
+      sessionStorage.setItem('pendingDownloadIndex', fileIndex?.toString() || '0');
+      
+      toast({
+        title: "Login Required",
+        description: "Please login to download your converted file.",
+        variant: "default"
+      });
+      
+      navigate('/login');
+      return;
+    }
+    
+    setIsDownloading(true);
+    setDownloadingIndex(fileIndex || 0);
+    try {
+      const url = URL.createObjectURL(file);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
+      toast({
+        title: "Download Failed",
+        description: "An error occurred while downloading the file.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDownloading(false);
+      setDownloadingIndex(null);
+    }
+  };
+
+  const handleShare = async (file: File | null, fileIndex?: number) => {
+    if (!file) return;
+    
+    if (!isAuthenticated()) {
+      const shareKey = fileIndex !== undefined ? `pendingShare_${fileIndex}` : 'pendingShare';
+      
+      sessionStorage.setItem(shareKey, JSON.stringify({
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        originalFileIndex: fileIndex
+      }));
+      sessionStorage.setItem('redirectAfterLogin', '/convert-only');
+      sessionStorage.setItem('pendingShareIndex', fileIndex?.toString() || '0');
+      
+      toast({
+        title: "Login Required",
+        description: "Please login to share your converted file.",
+        variant: "default"
+      });
+      
+      navigate('/login');
+      return;
+    }
+    
     const url = URL.createObjectURL(file);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          files: [file],
+          title: `Share ${file.name}`,
+          text: `Check out this converted file: ${file.name}`,
+        });
+        toast({
+          title: "Share Successful",
+          description: `Successfully shared ${file.name}`,
+          variant: "default"
+        });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast({
+          title: "Link Copied",
+          description: "File URL copied to clipboard for sharing!",
+          variant: "default"
+        });
+      }
+    } catch (err) {
+      console.error('Share failed:', err);
+      toast({
+        title: "Share Failed",
+        description: "Failed to share the file. Please try downloading and sharing manually.",
+        variant: "destructive"
+      });
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  const handleDownloadAll = () => {
+    if (!isAuthenticated()) {
+      toast({
+        title: "Login Required",
+        description: "Please login to download your converted files.",
+        variant: "default"
+      });
+      navigate('/login');
+      return;
+    }
+    convertedFiles.forEach((file) => {
+      if (file) {
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    });
   };
 
   const allComplete = convertedFiles.every((f, i) => conversionProgress[i] === 100);
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-0">
+    <div className="w-full space-y-6">
+      {originalFiles.map((originalFile, index) => {
+        const convertedFile = convertedFiles[index];
+        const progress = conversionProgress[index];
+        const isComplete = progress === 100 && convertedFile;
+
+        return (
+          <motion.div
+            key={`${originalFile.name}-${index}`}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            {!isComplete ? (
+              <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-lg">
+                <div className="text-center">
+                  <motion.div
+                    className="h-8 w-8 border-2 border-blue-600 border-r-transparent rounded-full mx-auto mb-4"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Converting: {originalFile.name}
+                  </h3>
+                  <Progress value={progress || 0} className="w-full mb-2" />
+                  <p className="text-sm text-gray-600">{progress || 0}% complete</p>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl p-6 border-2 border-blue-100 shadow-lg">
+                <div className="text-center mb-6">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                  >
+                    <CheckCircle2 className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                  </motion.div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    Conversion Complete!
+                  </h3>
+                  <p className="text-gray-600">
+                    {originalFile.name} has been successfully converted to {targetFormat.toUpperCase()}
+                  </p>
+                </div>
+
+                {/* File Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    <div className="flex items-center space-x-3 mb-3">
+                      {getFileIcon(originalFile.type)}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-gray-900">Original File</h4>
+                        <p className="text-sm text-gray-600 truncate">
+                          {originalFile.name}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {formatFileSize(originalFile.size)}
+                    </p>
+                  </div>
+
+                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                    <div className="flex items-center space-x-3 mb-3">
+                      {getFileIcon(convertedFile.type)}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-gray-900">Converted File</h4>
+                        <p className="text-sm text-gray-600 truncate">
+                          {convertedFile.name}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-lg font-semibold text-blue-600">
+                      {formatFileSize(convertedFile.size)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Auth Notice */}
+                {!isAuthenticated() && (
+                  <div className="mb-6 inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full w-full justify-center">
+                    <span className="text-sm font-medium">
+                      Login required to download or share converted files
+                    </span>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    onClick={() => handleDownload(convertedFile, index)}
+                    disabled={(isDownloading && downloadingIndex === index) || !convertedFile}
+                    className="flex-1"
+                  >
+                    {(isDownloading && downloadingIndex === index) ? (
+                      <>
+                        <motion.div
+                          className="h-4 w-4 border-2 border-white border-r-transparent rounded-full mr-2"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        />
+                        Downloading...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-4 w-4 mr-2" />
+                        {isAuthenticated() ? 'Download Converted File' : 'Login to Download'}
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => handleShare(convertedFile, index)}
+                    disabled={!convertedFile}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    <Share2 className="h-4 w-4 mr-2" />
+                    {isAuthenticated() ? (navigator.share ? 'Share' : 'Copy Link') : 'Login to Share'}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        );
+      })}
+
+      {/* Download All Button */}
+      {convertedFiles.filter(Boolean).length > 1 && allComplete && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="flex justify-center mt-4"
+        >
+          <Button
+            onClick={handleDownloadAll}
+            className="bg-blue-600 text-white hover:bg-blue-700"
+            disabled={!isAuthenticated()}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Download All Converted Files
+          </Button>
+        </motion.div>
+      )}
+
+      {/* Conversion Stats Summary */}
+      {allComplete && convertedFiles.length > 1 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-lg"
+        >
+          <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">
+            Total Conversion Statistics
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+              <p className="text-2xl font-bold text-blue-600">
+                {convertedFiles.filter(f => f !== null).length}
+              </p>
+              <p className="text-sm text-gray-600">Files Converted</p>
+            </div>
+            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+              <p className="text-2xl font-bold text-green-600">
+                {targetFormat.toUpperCase()}
+              </p>
+              <p className="text-sm text-gray-600">Output Format</p>
+            </div>
+            <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
+              <p className="text-2xl font-bold text-purple-600">
+                {formatFileSize(
+                  convertedSizes.reduce((sum, size) => sum + size, 0)
+                )}
+              </p>
+              <p className="text-sm text-gray-600">Total Size</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Reset Button */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="bg-white/10 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/30 p-4 sm:p-6 md:p-8"
-        style={{ backdropFilter: 'blur(15px)' }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="flex justify-center mt-4"
       >
-        {/* Header */}
-        <div className="text-center mb-6 sm:mb-8">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-50/70 backdrop-blur-lg rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-white/50 shadow-xl"
-            style={{ backdropFilter: 'blur(8px)' }}
-          >
-            {allComplete ? (
-              <CheckCircle2 className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
-            ) : (
-              <RefreshCw className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 animate-spin" />
-            )}
-          </motion.div>
-          
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-            {allComplete ? 'Conversion Complete!' : 'Converting Files...'}
-          </h2>
-          <p className="text-sm sm:text-base text-gray-600">
-            {allComplete 
-              ? `Successfully converted to ${targetFormat.toUpperCase()}`
-              : `Converting to ${targetFormat.toUpperCase()}...`}
-          </p>
-        </div>
-
-        {/* File Results */}
-        <div className="space-y-3 sm:space-y-4">
-          {originalFiles.map((originalFile, index) => {
-            const convertedFile = convertedFiles[index];
-            const progress = conversionProgress[index];
-            const isComplete = progress === 100 && convertedFile;
-
-            return (
-              <motion.div
-                key={`${originalFile.name}-${index}`}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white/20 backdrop-blur-2xl rounded-xl p-4 sm:p-6 border-2 border-white/40 shadow-lg"
-                style={{ backdropFilter: 'blur(12px)' }}
-              >
-                {/* File Info Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-4">
-                  <div className="flex items-center space-x-3">
-                    {getFileIcon(originalFile.type)}
-                    <div className="min-w-0">
-                      <p className="font-semibold text-gray-900 truncate max-w-[200px] sm:max-w-xs">
-                        {originalFile.name}
-                      </p>
-                      <p className="text-xs sm:text-sm text-gray-500">
-                        {formatFileSize(originalFile.size)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {isComplete && (
-                    <Button
-                      onClick={() => handleDownload(convertedFile, index)}
-                      className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold shadow-lg text-sm sm:text-base"
-                    >
-                      <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                      Download
-                    </Button>
-                  )}
-                </div>
-
-                {/* Progress Bar */}
-                {!isComplete && (
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs sm:text-sm">
-                      <span className="text-gray-600 font-medium">
-                        Converting to {targetFormat.toUpperCase()}...
-                      </span>
-                      <span className="text-blue-600 font-bold">{progress}%</span>
-                    </div>
-                    <Progress value={progress} className="h-2 sm:h-3" />
-                  </div>
-                )}
-
-                {/* Conversion Success Info */}
-                {isComplete && (
-                  <div className="mt-4 p-3 sm:p-4 bg-green-50/50 backdrop-blur-lg rounded-lg border border-green-200/50">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
-                      <div className="min-w-0">
-                        <p className="text-xs sm:text-sm font-semibold text-green-800">
-                          ✅ Converted to {targetFormat.toUpperCase()}
-                        </p>
-                        <p className="text-xs text-green-600 mt-1 truncate">
-                          New file: {convertedFile.name}
-                        </p>
-                      </div>
-                      <div className="text-left sm:text-right mt-2 sm:mt-0">
-                        <p className="text-xs sm:text-sm font-semibold text-gray-700">
-                          {formatFileSize(convertedFile.size)}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {convertedFile.size > originalFile.size ? 'Larger' : 'Smaller'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Actions */}
-        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-          {allComplete && (
-            <>
-              <Button
-                onClick={onReset}
-                variant="outline"
-                className="w-full sm:w-auto bg-white/50 backdrop-blur-sm border-2 border-gray-300 hover:bg-white/70 font-semibold text-sm sm:text-base"
-              >
-                <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                Convert Another File
-              </Button>
-              
-              {convertedFiles.length > 1 && (
-                <Button
-                  onClick={() => {
-                    convertedFiles.forEach((file, index) => {
-                      if (file) handleDownload(file, index);
-                    });
-                  }}
-                  className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-lg text-sm sm:text-base"
-                >
-                  <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                  Download All
-                </Button>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* Conversion Stats Summary */}
-        {allComplete && convertedFiles.length > 1 && (
-          <div className="mt-6 p-4 bg-blue-50/50 backdrop-blur-lg rounded-xl border border-blue-200/50">
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 text-center">
-              <div>
-                <p className="text-xl sm:text-2xl font-bold text-blue-600">
-                  {convertedFiles.filter(f => f !== null).length}
-                </p>
-                <p className="text-xs text-gray-600">Files Converted</p>
-              </div>
-              <div>
-                <p className="text-xl sm:text-2xl font-bold text-green-600">
-                  {targetFormat.toUpperCase()}
-                </p>
-                <p className="text-xs text-gray-600">Output Format</p>
-              </div>
-              <div className="col-span-2 sm:col-span-1 mt-3 sm:mt-0">
-                <p className="text-xl sm:text-2xl font-bold text-purple-600">
-                  {formatFileSize(
-                    convertedSizes.reduce((sum, size) => sum + size, 0)
-                  )}
-                </p>
-                <p className="text-xs text-gray-600">Total Size</p>
-              </div>
-            </div>
-          </div>
-        )}
+        <Button
+          variant="outline"
+          onClick={onReset}
+          className="bg-white hover:bg-gray-50"
+        >
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Convert Another File
+        </Button>
       </motion.div>
     </div>
   );
