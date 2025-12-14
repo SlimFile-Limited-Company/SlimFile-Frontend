@@ -424,7 +424,7 @@ export const Footer = () => {
         {/* Copyright Section */}
         <div className="mt-8 pt-6 border-t border-gray-200 text-center">
           <p className="text-sm text-gray-600 mb-2">
-            © 2025 SlimFile. Slim it • Save it • Send it
+            © 2025 SlimFile. Compress • Convert • Simplify
           </p>
         </div>
       </div>

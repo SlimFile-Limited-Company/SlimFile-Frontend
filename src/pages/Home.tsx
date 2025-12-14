@@ -73,14 +73,14 @@ const Home: FC = () => {
             <div className="text-center space-y-4 sm:space-y-6">
               {/* Headline - Apple style */}
               <h1 className="text-5xl sm:text-6xl md:text-7xl font-semibold leading-tight tracking-tight text-gray-900">
-                File Compression.
+               Compress. Convert.
                 <br />
-                Elevated.
+               Simplify
               </h1>
 
               {/* Subtitle */}
               <p className="text-xl sm:text-2xl text-gray-600 max-w-2xl mx-auto font-normal">
-                Reduce file sizes instantly without losing quality.
+                All your file tools in one place
               </p>
 
               {/* CTA Buttons */}
