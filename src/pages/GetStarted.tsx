@@ -15,7 +15,7 @@ const GetStarted: FC = () => {
               {/* Title */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
                 <span className="block text-gray-900 mb-2">
-                  Choose Your Tool
+                  Hello, What do you want to do today?
                 </span>
                 
               </h1>
