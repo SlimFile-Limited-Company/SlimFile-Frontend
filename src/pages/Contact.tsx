@@ -17,10 +17,10 @@ const contactMethods = [
     icon: <Mail className="w-6 h-6" />,
     title: "Email Support",
     description: "Get help via email",
-    detail: "isaac.abakah.slimfile@gmail.com",
+    detail: "support@slim-file.com",
     response: "Within 24 hours",
     action: "Send Email",
-    href: "mailto:isaac.abakah.slimfile@gmail.com"
+    href: "mailto:support@slim-file.com"
   },
   {
     icon: <Phone className="w-6 h-6" />,
