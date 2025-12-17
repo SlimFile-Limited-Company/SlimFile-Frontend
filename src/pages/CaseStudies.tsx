@@ -39,11 +39,6 @@ const CaseStudies: React.FC = () => {
     <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
       {/* Header Section */}
       <div className="text-center mb-16 space-y-4">
-        <div className="inline-block">
-          <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-semibold px-4 py-1.5 rounded-full">
-            TESTIMONIALS
-          </span>
-        </div>
         <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
           What Our Users Say
         </h2>
