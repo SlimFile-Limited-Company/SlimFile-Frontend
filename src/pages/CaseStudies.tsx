@@ -67,7 +67,7 @@ const CaseStudies: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-20 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto pt-32 pb-20 px-4 sm:px-6 lg:px-8">
       {/* Stats Section - Surprise Addition */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 text-center transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
