@@ -15,6 +15,9 @@ const CaseStudies: React.FC = () => {
     { image: "/lovable-uploads/testimonial6.jpeg" },
     { image: "/lovable-uploads/testimonial7.jpeg" },
     { image: "/lovable-uploads/testimonial8.png" },
+    { image: "/lovable-uploads/testimonial9.jpg" },
+    { image: "/lovable-uploads/testimonial10.jpg" },
+    { image: "/lovable-uploads/testimonial11.jpg" },
   ];
 
   return (
