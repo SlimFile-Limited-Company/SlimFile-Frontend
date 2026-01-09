@@ -80,7 +80,7 @@ export default function DashboardTimeline() {
   const selectedDayActivity = selectedDay ? getDayActivity(selectedDay) : null;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Activity Timeline</h1>
