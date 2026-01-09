@@ -6,7 +6,11 @@ import {
   BarChart3,
   Settings,
   Menu,
-  X
+  X,
+  Leaf,
+  Target,
+  Lightbulb,
+  Calendar
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/Header';
@@ -15,6 +19,10 @@ const navigation = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { name: 'History', href: '/dashboard/history', icon: History },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+  { name: 'Impact', href: '/dashboard/impact', icon: Leaf },
+  { name: 'Goals', href: '/dashboard/goals', icon: Target },
+  { name: 'Insights', href: '/dashboard/insights', icon: Lightbulb },
+  { name: 'Timeline', href: '/dashboard/timeline', icon: Calendar },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 

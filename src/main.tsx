@@ -15,6 +15,10 @@ import DashboardOverview from './pages/dashboard/Overview';
 import DashboardHistory from './pages/dashboard/History';
 import DashboardAnalytics from './pages/dashboard/Analytics';
 import DashboardSettings from './pages/dashboard/Settings';
+import DashboardImpact from './pages/dashboard/Impact';
+import DashboardGoals from './pages/dashboard/Goals';
+import DashboardInsights from './pages/dashboard/Insights';
+import DashboardTimeline from './pages/dashboard/Timeline';
 import Home from './pages/Home';
 import Compress from './pages/Compress';
 import CaseStudies from './pages/CaseStudies';
@@ -94,6 +98,10 @@ ReactDOM.createRoot(root).render(
           <Route index element={<DashboardOverview />} />
           <Route path="history" element={<DashboardHistory />} />
           <Route path="analytics" element={<DashboardAnalytics />} />
+          <Route path="impact" element={<DashboardImpact />} />
+          <Route path="goals" element={<DashboardGoals />} />
+          <Route path="insights" element={<DashboardInsights />} />
+          <Route path="timeline" element={<DashboardTimeline />} />
           <Route path="settings" element={<DashboardSettings />} />
         </Route>
         {/* Old dashboard route - keeping for backwards compatibility */}
