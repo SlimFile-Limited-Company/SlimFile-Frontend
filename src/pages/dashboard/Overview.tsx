@@ -56,12 +56,28 @@ export default function DashboardOverview() {
     refetchInterval: 60000, // Refetch every minute
   });
 
+  // Get user name from JWT token
+  const getUserName = () => {
+    try {
+      const token = localStorage.getItem('jwt');
+      if (!token) return null;
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.name?.split(' ')[0] || null; // Get first name
+    } catch {
+      return null;
+    }
+  };
+
+  const userName = getUserName();
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Welcome back! Here's your compression overview.</p>
+        <p className="text-gray-600 mt-1">
+          Welcome back{userName ? `, ${userName}` : ''}! Here's your compression overview.
+        </p>
       </div>
 
       {/* Quick Actions */}
