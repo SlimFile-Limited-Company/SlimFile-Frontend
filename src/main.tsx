@@ -2,6 +2,10 @@ import './index.css';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import { Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import App from './App';
 import Login from './pages/Login';
 import GlobalImpact from './pages/GlobalImpact';
@@ -66,12 +70,17 @@ if ('serviceWorker' in navigator) {
 }
 
 const root = document.getElementById('root');
+const queryClient = new QueryClient();
 
 ReactDOM.createRoot(root).render(
   <StrictMode>
-    <BrowserRouter>
-      <ScrollToTop />
-      <Routes>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
         <Route path="/login" element={<Login />} />
         {/* New Dashboard with nested routes */}
         <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
@@ -124,7 +133,9 @@ ReactDOM.createRoot(root).render(
           <Route path="stepsbuild" element={<StepsBuild />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   </StrictMode>
 );
 
