@@ -46,12 +46,14 @@ const fetchRecent = async () => {
 export default function DashboardOverview() {
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboard-stats'],
-    queryFn: fetchStats
+    queryFn: fetchStats,
+    refetchInterval: 60000, // Refetch every minute
   });
 
   const { data: recent, isLoading: recentLoading } = useQuery({
     queryKey: ['dashboard-recent'],
-    queryFn: fetchRecent
+    queryFn: fetchRecent,
+    refetchInterval: 60000, // Refetch every minute
   });
 
   return (
@@ -69,7 +71,7 @@ export default function DashboardOverview() {
             Compress Files
           </Button>
         </Link>
-        <Link to="/convert">
+        <Link to="/convert-only">
           <Button variant="outline" className="w-full">
             Convert Files
           </Button>

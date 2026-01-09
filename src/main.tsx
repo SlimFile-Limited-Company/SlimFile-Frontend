@@ -70,7 +70,14 @@ if ('serviceWorker' in navigator) {
 }
 
 const root = document.getElementById('root');
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30000, // 30 seconds
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 ReactDOM.createRoot(root).render(
   <StrictMode>

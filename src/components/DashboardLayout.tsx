@@ -9,6 +9,7 @@ import {
   X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Header } from '@/components/Header';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -22,9 +23,11 @@ export default function DashboardLayout() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
+    <>
+      <Header />
+      <div className="min-h-screen bg-gray-50">
+        {/* Mobile sidebar overlay */}
+        {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="fixed inset-0 bg-gray-900/80" onClick={() => setSidebarOpen(false)} />
           <div className="fixed inset-y-0 left-0 w-64 bg-white p-6 shadow-xl">
@@ -106,6 +109,7 @@ export default function DashboardLayout() {
           <Outlet />
         </main>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
