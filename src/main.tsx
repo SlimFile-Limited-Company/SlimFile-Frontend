@@ -19,6 +19,9 @@ import DashboardImpact from './pages/dashboard/Impact';
 import DashboardGoals from './pages/dashboard/Goals';
 import DashboardInsights from './pages/dashboard/Insights';
 import DashboardTimeline from './pages/dashboard/Timeline';
+import DashboardNotifications from './pages/dashboard/Notifications';
+import DashboardIntegrations from './pages/dashboard/Integrations';
+import DashboardReferrals from './pages/dashboard/Referrals';
 import Home from './pages/Home';
 import Compress from './pages/Compress';
 import CaseStudies from './pages/CaseStudies';
@@ -55,6 +58,7 @@ import BlogReducePdfFileSizeOnMobile from './pages/blog/ReducePdfFileSizeOnMobil
 import BlogHowToCompressFilesForFasterWebsiteLoading from './pages/blog/HowToCompressFilesForFasterWebsiteLoading';
 import ScrollToTop from './components/ScrollToTop';
 import BlogWhyFileCompressionIsEssentialForRemoteWork from './pages/blog/WhyFileCompressionIsEssentialForRemoteWork';
+import { NotificationService } from './services/notificationService';
 import BlogCompressingPdfForPrintingVsEmailing from './pages/blog/CompressingPdfForPrintingVsEmailing';
 import BlogHowToCompressLargeVideosBeforeUploading from './pages/blog/HowToCompressLargeVideosBeforeUploading';
 import OurBlogs from './pages/OurBlogs';
@@ -102,6 +106,9 @@ ReactDOM.createRoot(root).render(
           <Route path="goals" element={<DashboardGoals />} />
           <Route path="insights" element={<DashboardInsights />} />
           <Route path="timeline" element={<DashboardTimeline />} />
+          <Route path="notifications" element={<DashboardNotifications />} />
+          <Route path="integrations" element={<DashboardIntegrations />} />
+          <Route path="referrals" element={<DashboardReferrals />} />
           <Route path="settings" element={<DashboardSettings />} />
         </Route>
         {/* Old dashboard route - keeping for backwards compatibility */}

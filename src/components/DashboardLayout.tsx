@@ -10,7 +10,10 @@ import {
   Leaf,
   Target,
   Lightbulb,
-  Calendar
+  Calendar,
+  Bell,
+  Plug,
+  Gift
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/Header';
@@ -23,6 +26,9 @@ const navigation = [
   { name: 'Goals', href: '/dashboard/goals', icon: Target },
   { name: 'Insights', href: '/dashboard/insights', icon: Lightbulb },
   { name: 'Timeline', href: '/dashboard/timeline', icon: Calendar },
+  { name: 'Notifications', href: '/dashboard/notifications', icon: Bell },
+  { name: 'Integrations', href: '/dashboard/integrations', icon: Plug },
+  { name: 'Referrals', href: '/dashboard/referrals', icon: Gift },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 
