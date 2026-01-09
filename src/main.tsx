@@ -6,6 +6,11 @@ import App from './App';
 import Login from './pages/Login';
 import GlobalImpact from './pages/GlobalImpact';
 import Dashboard from './pages/Dashboard';
+import DashboardLayout from './components/DashboardLayout';
+import DashboardOverview from './pages/dashboard/Overview';
+import DashboardHistory from './pages/dashboard/History';
+import DashboardAnalytics from './pages/dashboard/Analytics';
+import DashboardSettings from './pages/dashboard/Settings';
 import Home from './pages/Home';
 import Compress from './pages/Compress';
 import CaseStudies from './pages/CaseStudies';
@@ -68,7 +73,15 @@ ReactDOM.createRoot(root).render(
       <ScrollToTop />
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        {/* New Dashboard with nested routes */}
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+          <Route index element={<DashboardOverview />} />
+          <Route path="history" element={<DashboardHistory />} />
+          <Route path="analytics" element={<DashboardAnalytics />} />
+          <Route path="settings" element={<DashboardSettings />} />
+        </Route>
+        {/* Old dashboard route - keeping for backwards compatibility */}
+        <Route path="/dashboard-old" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
           <Route path="get-started" element={<GetStarted />} />

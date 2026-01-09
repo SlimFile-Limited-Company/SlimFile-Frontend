@@ -52,10 +52,19 @@ const Compress = () => {
   const compressFile = async (file: File, idx: number): Promise<{ file: File | null; warning?: string }> => {
     const formData = new FormData();
     formData.append('file', file);
+
+    // Include JWT token if user is logged in (for history tracking)
+    const token = localStorage.getItem('jwt');
+    const headers: HeadersInit = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     try {
       const response = await fetch(`${API_BASE_URL}/compress`, {
         method: 'POST',
         body: formData,
+        headers
       });
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
