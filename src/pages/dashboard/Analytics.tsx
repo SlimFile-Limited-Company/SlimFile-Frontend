@@ -17,7 +17,7 @@ import {
 } from 'recharts';
 import { TrendingUp, HardDrive, FileArchive, Gauge } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
 const COLORS = ['#dc2626', '#ea580c', '#ca8a04', '#65a30d', '#16a34a', '#0891b2'];
 
