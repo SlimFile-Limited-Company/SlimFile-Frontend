@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from '@/lib/auth';
 import { toast } from '@/hooks/use-toast';
+import { CloudStorageSave } from '@/components/CloudStorageSave';
 
 interface ConversionResultProps {
   originalFiles: File[];
@@ -408,6 +409,13 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
                       </>
                     )}
                   </Button>
+                  <CloudStorageSave
+                    file={convertedFile}
+                    fileName={convertedFile?.name || 'converted-file'}
+                    disabled={!convertedFile}
+                    variant="outline"
+                    className="flex-1"
+                  />
                   <Button
                     onClick={() => handleShare(convertedFile, index)}
                     disabled={!convertedFile}

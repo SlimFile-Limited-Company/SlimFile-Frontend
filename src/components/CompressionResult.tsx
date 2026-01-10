@@ -8,6 +8,7 @@ import { isAuthenticated } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { playSuccessSound } from "@/utils/sound";
+import { CloudStorageSave } from "@/components/CloudStorageSave";
 
 interface CompressionResultProps {
   originalFiles: File[];
@@ -404,8 +405,8 @@ export const CompressionResult = ({
                   )}
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Button 
-                    onClick={() => handleDownload(compressedFiles[idx], idx)} 
+                  <Button
+                    onClick={() => handleDownload(compressedFiles[idx], idx)}
                     disabled={(isDownloading && downloadingIndex === idx) || !compressedFiles[idx]}
                     className="flex-1"
                   >
@@ -425,6 +426,13 @@ export const CompressionResult = ({
                       </>
                     )}
                   </Button>
+                  <CloudStorageSave
+                    file={compressedFiles[idx]}
+                    fileName={compressedFiles[idx]?.name || 'compressed-file'}
+                    disabled={!compressedFiles[idx]}
+                    variant="outline"
+                    className="flex-1"
+                  />
                   <Button
                     onClick={() => handleShare(compressedFiles[idx], idx)}
                     disabled={!compressedFiles[idx]}
