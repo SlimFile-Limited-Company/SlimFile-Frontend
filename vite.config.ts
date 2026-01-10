@@ -15,7 +15,17 @@ export default defineConfig(({ mode }) => ({
     }
   },
   build: {
-    sourcemap: true
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['framer-motion', 'lucide-react'],
+          'pdf-worker': ['pdfjs-dist'],
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1000
   },
   plugins: [
     react(),
@@ -50,6 +60,7 @@ export default defineConfig(({ mode }) => ({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
