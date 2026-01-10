@@ -56,11 +56,11 @@ export function CloudStorageSave({
     setSavingTo(provider);
 
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com';
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
       const token = localStorage.getItem('jwt');
 
       // Check if user has connected this cloud provider
-      const checkResponse = await fetch(`${API_BASE_URL}/api/cloud/check/${provider}`, {
+      const checkResponse = await fetch(`${API_BASE_URL}/cloud/check/${provider}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -85,7 +85,7 @@ export function CloudStorageSave({
         }));
 
         // Redirect to OAuth
-        window.location.href = `${API_BASE_URL}/api/cloud/auth/${provider}?redirect=${encodeURIComponent(window.location.href)}`;
+        window.location.href = `${API_BASE_URL}/cloud/auth/${provider}?redirect=${encodeURIComponent(window.location.href)}`;
         return;
       }
 
@@ -95,7 +95,7 @@ export function CloudStorageSave({
       formData.append('fileName', fileName);
       formData.append('provider', provider);
 
-      const uploadResponse = await fetch(`${API_BASE_URL}/api/cloud/upload`, {
+      const uploadResponse = await fetch(`${API_BASE_URL}/cloud/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

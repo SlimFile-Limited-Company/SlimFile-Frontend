@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
 export type CloudProvider = 'google-drive' | 'dropbox' | 'onedrive';
 
@@ -30,7 +30,7 @@ export async function checkCloudConnection(
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/cloud/check/${provider}`, {
+    const response = await fetch(`${API_BASE_URL}/cloud/check/${provider}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -58,7 +58,7 @@ export async function getAllCloudConnections(): Promise<CloudStorageConnection[]
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/cloud/connections`, {
+    const response = await fetch(`${API_BASE_URL}/cloud/connections`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -80,7 +80,7 @@ export async function getAllCloudConnections(): Promise<CloudStorageConnection[]
  */
 export function initiateCloudOAuth(provider: CloudProvider, redirectUrl?: string): void {
   const currentUrl = redirectUrl || window.location.href;
-  const authUrl = `${API_BASE_URL}/api/cloud/auth/${provider}?redirect=${encodeURIComponent(currentUrl)}`;
+  const authUrl = `${API_BASE_URL}/cloud/auth/${provider}?redirect=${encodeURIComponent(currentUrl)}`;
   window.location.href = authUrl;
 }
 
@@ -104,7 +104,7 @@ export async function uploadToCloud(
   formData.append('provider', provider);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/cloud/upload`, {
+    const response = await fetch(`${API_BASE_URL}/cloud/upload`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -135,7 +135,7 @@ export async function disconnectCloudProvider(provider: CloudProvider): Promise<
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/cloud/disconnect/${provider}`, {
+    const response = await fetch(`${API_BASE_URL}/cloud/disconnect/${provider}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`
