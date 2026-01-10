@@ -4,6 +4,7 @@ import { CompressionResult } from "@/components/CompressionResult";
 import { toast } from "@/hooks/use-toast";
 import { isAuthenticated } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2 } from "lucide-react";
+import { notifyCompressionComplete } from "@/services/pushNotificationService";
 
 const Compress = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -14,6 +15,14 @@ const Compress = () => {
   const [pdfWarnings, setPdfWarnings] = useState<string[]>([]);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
 
   // Handle pending download after login
   useEffect(() => {
@@ -142,10 +151,15 @@ const Compress = () => {
           });
         } else if (compressed) {
           const reductionPercentage = Math.round(((file.size - compressed.size) / file.size) * 100);
+          const spaceSaved = formatFileSize(file.size - compressed.size);
+
           toast({
             title: `Compression Complete! (${file.name})`,
             description: `File compressed successfully. Size reduced by ${reductionPercentage}%`,
           });
+
+          // Show push notification
+          notifyCompressionComplete(file.name, reductionPercentage, spaceSaved);
         }
       } catch (error: any) {
         toast({

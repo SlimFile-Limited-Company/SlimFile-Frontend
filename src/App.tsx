@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
+import { NotificationPrompt } from "@/components/NotificationPrompt";
 import { registerServiceWorker } from "@/utils/pwa";
 import { useEffect } from "react";
 
@@ -13,6 +14,7 @@ const App = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <PWAInstallPrompt />
+      <NotificationPrompt />
       <Header />
       <main className="flex-1">
         <Outlet />
