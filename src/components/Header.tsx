@@ -203,7 +203,7 @@ export const Header = () => {
               onMouseLeave={() => handleDropdownHover(null)}
             >
               <button className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 transition-all duration-300 relative">
-                <span>SlimFile API</span>
+                <span>API</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
               {hoveredDropdown === 'api' && (
@@ -226,20 +226,7 @@ export const Header = () => {
               )}
             </div>
 
-            <Link
-              to="/stepsbuild"
-              className={cn(
-                "text-sm font-medium transition-all duration-300 relative",
-                location.pathname === "/stepsbuild"
-                  ? "text-gray-900"
-                  : "text-gray-600 hover:text-gray-900"
-              )}
-            >
-              STEPsBuild
-              {location.pathname === "/stepsbuild" && (
-                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-              )}
-            </Link>
+            
 
             {isAuthenticated() ? (
               <>
@@ -257,6 +244,22 @@ export const Header = () => {
                     <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
                   )}
                 </Link>
+
+                <Link
+              to="/stepsbuild"
+              className={cn(
+                "text-sm font-medium transition-all duration-300 relative",
+                location.pathname === "/stepsbuild"
+                  ? "text-gray-900"
+                  : "text-gray-600 hover:text-gray-900"
+              )}
+            >
+              STEPsBuild
+              {location.pathname === "/stepsbuild" && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
+              )}
+            </Link>
+            
                 <Button
                   variant="outline"
                   className="ml-4"
