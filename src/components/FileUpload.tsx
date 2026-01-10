@@ -141,8 +141,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
         style={{ backdropFilter: 'blur(15px)' }}
       >
         <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Upload Your File</h2>
-          <p className="text-gray-600 backdrop-blur-sm bg-white/10 rounded-xl px-4 py-2 border border-white/20 shadow-lg" style={{ backdropFilter: 'blur(5px)' }}>
+          <p className="text-gray-600">
             Support for PDF, Images, PPTX, DOCX, and XLSX files up to 200MB
           </p>
         </div>
