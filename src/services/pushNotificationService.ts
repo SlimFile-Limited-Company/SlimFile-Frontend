@@ -79,7 +79,7 @@ async function subscribeToPushNotifications(): Promise<PushSubscription | null> 
 
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource
       });
 
       console.log('✅ Push subscription created:', subscription);
@@ -194,7 +194,6 @@ export async function showLocalNotification(payload: NotificationPayload): Promi
       badge: payload.badge || '/logo.png',
       tag: payload.tag || 'slimfile-notification',
       data: payload.data,
-      vibrate: [200, 100, 200],
       requireInteraction: false,
       actions: [
         {
@@ -206,7 +205,7 @@ export async function showLocalNotification(payload: NotificationPayload): Promi
           title: 'Dismiss'
         }
       ]
-    });
+    } as NotificationOptions);
 
     console.log('✅ Local notification shown:', payload.title);
   } catch (error) {
@@ -259,6 +258,67 @@ export async function notifyCompressionComplete(
     icon: '/logo.png',
     tag: 'compression-complete',
     data: { type: 'compression', fileName }
+  });
+}
+
+/**
+ * Show notification for conversion complete
+ */
+export async function notifyConversionComplete(
+  fileName: string,
+  targetFormat: string
+): Promise<void> {
+  await showLocalNotification({
+    title: '✅ Conversion Complete!',
+    body: `${fileName} successfully converted to ${targetFormat.toUpperCase()}`,
+    icon: '/logo.png',
+    tag: 'conversion-complete',
+    data: { type: 'conversion', fileName, targetFormat }
+  });
+}
+
+/**
+ * Show notification for conversion + compression complete
+ */
+export async function notifyConversionCompressionComplete(
+  fileName: string,
+  targetFormat: string,
+  compressionRatio: number
+): Promise<void> {
+  await showLocalNotification({
+    title: '✅ Processing Complete!',
+    body: `${fileName} converted to ${targetFormat.toUpperCase()} and compressed by ${compressionRatio}%`,
+    icon: '/logo.png',
+    tag: 'processing-complete',
+    data: { type: 'conversion-compression', fileName, targetFormat, compressionRatio }
+  });
+}
+
+/**
+ * Show greeting notification based on time of day
+ */
+export async function notifyGreeting(userName: string): Promise<void> {
+  const hour = new Date().getHours();
+  let greeting = '';
+  let emoji = '';
+
+  if (hour >= 5 && hour < 12) {
+    greeting = 'Good Morning';
+    emoji = '☀️';
+  } else if (hour >= 12 && hour < 17) {
+    greeting = 'Good Afternoon';
+    emoji = '🌤️';
+  } else {
+    greeting = 'Good Evening';
+    emoji = '🌙';
+  }
+
+  await showLocalNotification({
+    title: `${emoji} ${greeting}, ${userName}!`,
+    body: 'Welcome back to SlimFile. Ready to compress and convert your files?',
+    icon: '/logo.png',
+    tag: 'greeting',
+    data: { type: 'greeting', userName }
   });
 }
 

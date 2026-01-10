@@ -4,6 +4,7 @@ import { ConversionCompressionResult } from "@/components/ConversionCompressionR
 import { toast } from "@/hooks/use-toast";
 import { isAuthenticated } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image, ArrowRight } from "lucide-react";
+import { notifyConversionCompressionComplete } from "@/services/pushNotificationService";
 
 const ConvertThenCompress = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -218,6 +219,9 @@ const ConvertThenCompress = () => {
             title: `Processing Complete! (${file.name})`,
             description: `File converted to ${targetFormat.toUpperCase()} and compressed. Size reduced by ${reductionPercentage}%`,
           });
+
+          // Show push notification
+          notifyConversionCompressionComplete(file.name, targetFormat, reductionPercentage);
         }
       } catch (error: any) {
         toast({

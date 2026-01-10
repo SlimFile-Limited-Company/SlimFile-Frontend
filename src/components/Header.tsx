@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isAuthenticated, logout } from "@/lib/auth";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 export const Header = () => {
   const location = useLocation();
@@ -226,7 +227,9 @@ export const Header = () => {
               )}
             </div>
 
-            
+
+            {/* Language Selector */}
+            <LanguageSelector />
 
             {isAuthenticated() ? (
               <>
@@ -280,8 +283,9 @@ export const Header = () => {
             )}
           </nav>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
+          {/* Mobile menu button and language selector */}
+          <div className="md:hidden flex items-center gap-2">
+            <LanguageSelector />
             <Button
               variant="ghost"
               size="sm"

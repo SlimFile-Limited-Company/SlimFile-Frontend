@@ -4,6 +4,7 @@ import { ConversionResult } from "@/components/ConversionResult";
 import { toast } from "@/hooks/use-toast";
 import { isAuthenticated } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image } from "lucide-react";
+import { notifyConversionComplete } from "@/services/pushNotificationService";
 
 const ConvertOnly = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -186,6 +187,9 @@ const ConvertOnly = () => {
             title: `Conversion Complete! (${file.name})`,
             description: `File converted successfully to ${targetFormat.toUpperCase()}.`,
           });
+
+          // Show push notification
+          notifyConversionComplete(file.name, targetFormat);
         }
       } catch (error: any) {
         toast({
