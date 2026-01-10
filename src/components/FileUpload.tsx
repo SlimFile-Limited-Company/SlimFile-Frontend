@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Upload, X, FileText, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface FileUploadProps {
   onFileSelect: (files: File[]) => void;
@@ -9,6 +10,7 @@ interface FileUploadProps {
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessing }) => {
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -34,32 +36,32 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
     let errorMsg = '';
 
     if (files.length > 10) {
-      errorMsg = 'You can upload up to 10 files at a time.';
+      errorMsg = t('fileUpload.errorMaxFiles');
     } else {
       for (const file of files) {
         if (!Object.keys(ACCEPTED_TYPES).includes(file.type)) {
-          errorMsg = 'Please select only PDF, JPEG, PNG, WebP, PPTX, DOCX, or XLSX files.';
+          errorMsg = t('fileUpload.errorInvalidType');
           break;
         }
 
         // Warn for old formats
         if (file.type === 'application/vnd.ms-powerpoint') {
-          errorMsg = 'Please save your presentation as a .pptx file before uploading.';
+          errorMsg = t('fileUpload.errorOldPpt');
           break;
         }
 
         if (file.type === 'application/msword') {
-          errorMsg = 'Please save your document as a .docx file before uploading.';
+          errorMsg = t('fileUpload.errorOldDoc');
           break;
         }
 
         if (file.type === 'application/vnd.ms-excel') {
-          errorMsg = 'Please save your spreadsheet as a .xlsx file before uploading.';
+          errorMsg = t('fileUpload.errorOldXls');
           break;
         }
 
         if (file.size > MAX_FILE_SIZE) {
-          errorMsg = 'Each file must be less than 200MB.';
+          errorMsg = t('fileUpload.errorFileSize');
           break;
         }
 
@@ -142,7 +144,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
       >
         <div className="text-center mb-6">
           <p className="text-gray-600">
-            Support for PDF, Images, PPTX, DOCX, and XLSX files up to 200MB
+            {t('fileUpload.supportText')}
           </p>
         </div>
 
@@ -174,10 +176,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
               </motion.div>
               <div>
                 <p className="text-lg font-semibold text-gray-900 mb-2">
-                  Drop your files here or click to browse
+                  {t('fileUpload.dropFiles')}
                 </p>
                 <p className="text-sm text-gray-500">
-                  Drag and drop or click to select up to 10 files
+                  {t('fileUpload.dragDropText')}
                 </p>
               </div>
             </div>

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -45,13 +44,10 @@ export function LanguageSelector() {
         <Button
           variant="ghost"
           size="icon"
-          className="relative hover:bg-gray-100 transition-colors"
+          className="hover:bg-gray-100 transition-colors text-2xl"
           title="Change Language"
         >
-          <Globe className="w-5 h-5 text-gray-700" />
-          <span className="absolute -bottom-1 -right-1 text-xs">
-            {currentLangInfo?.flag}
-          </span>
+          {currentLangInfo?.flag}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
