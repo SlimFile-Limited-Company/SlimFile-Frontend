@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // Add keyframes for animations
 const style = document.createElement('style');
@@ -39,6 +40,7 @@ const getApiBase = (): string => {
 };
 
 const Home: FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [compressedCount, setCompressedCount] = useState<number>(0);
 
@@ -73,14 +75,12 @@ const Home: FC = () => {
             <div className="text-center space-y-4 sm:space-y-6">
               {/* Headline - Apple style */}
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal leading-tight tracking-tight text-gray-900">
-               Compress. Convert.
-                <br />
-               Simplify
+                {t('hero.title')}
               </h1>
 
               {/* Subtitle */}
               <p className="text-xl sm:text-2xl text-gray-600 max-w-2xl mx-auto font-normal">
-                All your file tools in one place
+                {t('hero.subtitle')}
               </p>
 
               {/* CTA Buttons */}

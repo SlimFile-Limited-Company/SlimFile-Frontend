@@ -5,8 +5,10 @@ import { toast } from "@/hooks/use-toast";
 import { isAuthenticated } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2 } from "lucide-react";
 import { notifyCompressionComplete } from "@/services/pushNotificationService";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const Compress = () => {
+  const { t } = useTranslation();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isCompressing, setIsCompressing] = useState(false);
   const [compressionProgress, setCompressionProgress] = useState<number[]>([]); // per file
@@ -37,8 +39,8 @@ const Compress = () => {
           
           // Show message asking user to re-compress
           toast({
-            title: "Login Successful",
-            description: "Please re-compress your files to download them.",
+            title: t('compress.loginSuccess'),
+            description: t('compress.recompressPrompt'),
             variant: "default"
           });
           
@@ -115,8 +117,8 @@ const Compress = () => {
         // Show "Hang in there..." at 95%
         if (progressSteps[i] === 95) {
           toast({
-            title: `Almost Done (${file.name})`,
-            description: "Hang in there… finalizing compression!",
+            title: `${t('compress.almostDone')} (${file.name})`,
+            description: t('compress.hangInThere'),
             variant: "default",
           });
         }
@@ -145,7 +147,7 @@ const Compress = () => {
         });
         if (warning) {
           toast({
-            title: `Compression Notice (${file.name})`,
+            title: `${t('compress.notice')} (${file.name})`,
             description: warning,
             variant: 'default',
           });
@@ -154,8 +156,8 @@ const Compress = () => {
           const spaceSaved = formatFileSize(file.size - compressed.size);
 
           toast({
-            title: `Compression Complete! (${file.name})`,
-            description: `File compressed successfully. Size reduced by ${reductionPercentage}%`,
+            title: `${t('compress.complete')} (${file.name})`,
+            description: `${t('compress.sizeReduced')} ${reductionPercentage}%`,
           });
 
           // Show push notification
@@ -163,8 +165,8 @@ const Compress = () => {
         }
       } catch (error: any) {
         toast({
-          title: `Compression Failed (${file.name})`,
-          description: error?.message || "There was an error compressing your file. Please try again.",
+          title: `${t('compress.failed')} (${file.name})`,
+          description: error?.message || t('compress.failedDesc'),
           variant: "destructive"
         });
       }
@@ -202,17 +204,17 @@ const Compress = () => {
               {/* Title */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
                 <span className="block text-gray-900 mb-2">
-                  Compress Files
+                  {t('compress.heroTitle')}
                 </span>
                 <span className="block bg-gradient-to-r from-red-600 via-red-500 to-orange-500 bg-clip-text text-transparent">
-                  Instantly
+                  {t('compress.heroSubtitle')}
                 </span>
               </h1>
 
               {/* Description */}
               <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
-                Reduce file sizes without compromising quality. Support for images, PDFs, and Office documents with
-                <span className="text-red-600 font-semibold"> lightning-fast processing</span>.
+                {t('compress.heroDescription')}
+                <span className="text-red-600 font-semibold"> {t('compress.lightningFast')}</span>.
               </p>
 
               {/* Scroll to Upload Button */}
@@ -225,7 +227,7 @@ const Compress = () => {
                 }}
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
-                Start Compressing
+                {t('compress.start')}
                 <ArrowDown className="w-5 h-5" />
               </button>
 
@@ -234,20 +236,20 @@ const Compress = () => {
                 {[
                   {
                     icon: Zap,
-                    title: "Lightning Fast",
-                    description: "Compress in seconds",
+                    title: t('compress.feature.fast'),
+                    description: t('compress.feature.fastDesc'),
                     gradient: "from-yellow-400 to-orange-500"
                   },
                   {
                     icon: Shield,
-                    title: "100% Secure",
-                    description: "Client-side processing",
+                    title: t('compress.feature.secure'),
+                    description: t('compress.feature.secureDesc'),
                     gradient: "from-blue-400 to-blue-600"
                   },
                   {
                     icon: Clock,
-                    title: "Always Available",
-                    description: "24/7 compression",
+                    title: t('compress.feature.available'),
+                    description: t('compress.feature.availableDesc'),
                     gradient: "from-green-400 to-green-600"
                   }
                 ].map((feature, index) => (
@@ -272,7 +274,7 @@ const Compress = () => {
           <div className="container mx-auto">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-                Supported Compression Formats
+                {t('compress.formatsTitle')}
               </h2>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -282,7 +284,7 @@ const Compress = () => {
                     <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center">
                       <Zap className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">Image Compression</h3>
+                    <h3 className="text-xl font-bold text-gray-900">{t('compress.imageCompression')}</h3>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -306,7 +308,7 @@ const Compress = () => {
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
                       <Shield className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">Document Compression</h3>
+                    <h3 className="text-xl font-bold text-gray-900">{t('compress.documentCompression')}</h3>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -337,24 +339,24 @@ const Compress = () => {
           <div className="container mx-auto">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-                How It Works
+                {t('compress.howItWorks')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {[
                   {
                     step: "1",
-                    title: "Upload Files",
-                    description: "Select or drag and drop your files"
+                    title: t('compress.step1'),
+                    description: t('compress.step1Desc')
                   },
                   {
                     step: "2",
-                    title: "Compress",
-                    description: "We optimize your files instantly"
+                    title: t('compress.step2'),
+                    description: t('compress.step2Desc')
                   },
                   {
                     step: "3",
-                    title: "Download",
-                    description: "Get your compressed files"
+                    title: t('compress.step3'),
+                    description: t('compress.step3Desc')
                   }
                 ].map((item, index) => (
                   <div key={item.step} className="text-center">
@@ -382,12 +384,12 @@ const Compress = () => {
               {/* Section Header */}
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-3">
-                  {!selectedFiles.length ? "Upload Your Files" : "Compression Results"}
+                  {!selectedFiles.length ? t('compress.uploadTitle') : t('compress.resultsTitle')}
                 </h2>
                 <p className="text-gray-600">
-                  {!selectedFiles.length 
-                    ? "Drag and drop your files or click to browse" 
-                    : "Your files are being compressed"}
+                  {!selectedFiles.length
+                    ? t('compress.uploadSubtitle')
+                    : t('compress.processingSubtitle')}
                 </p>
               </div>
 
@@ -422,29 +424,29 @@ const Compress = () => {
           <div className="container mx-auto">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-                Why Choose SlimFile?
+                {t('compress.whyChoose')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
                   {
                     icon: CheckCircle2,
-                    title: "High Quality",
-                    description: "Maintain excellent quality while reducing file size"
+                    title: t('compress.quality'),
+                    description: t('compress.qualityDesc')
                   },
                   {
                     icon: CheckCircle2,
-                    title: "All File Types",
-                    description: "Support for images, PDFs, and PPTX files"
+                    title: t('compress.allTypes'),
+                    description: t('compress.allTypesDesc')
                   },
                   {
                     icon: CheckCircle2,
-                    title: "Batch Processing",
-                    description: "Compress multiple files at once"
+                    title: t('compress.batch'),
+                    description: t('compress.batchDesc')
                   },
                   {
                     icon: CheckCircle2,
-                    title: "No Installation",
-                    description: "Works directly in your browser"
+                    title: t('compress.noInstall'),
+                    description: t('compress.noInstallDesc')
                   }
                 ].map((feature, index) => (
                   <div

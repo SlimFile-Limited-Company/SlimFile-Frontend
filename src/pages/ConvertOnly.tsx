@@ -5,8 +5,10 @@ import { toast } from "@/hooks/use-toast";
 import { isAuthenticated } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image } from "lucide-react";
 import { notifyConversionComplete } from "@/services/pushNotificationService";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const ConvertOnly = () => {
+  const { t } = useTranslation();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isConverting, setIsConverting] = useState(false);
   const [conversionProgress, setConversionProgress] = useState<number[]>([]);
@@ -33,8 +35,8 @@ const ConvertOnly = () => {
           const downloadData = JSON.parse(pendingDownload);
           
           toast({
-            title: "Login Successful",
-            description: "Please re-convert your files to download them.",
+            title: t('convert.loginSuccess'),
+            description: t('convert.reconvertPrompt'),
             variant: "default"
           });
           
@@ -178,14 +180,14 @@ const ConvertOnly = () => {
         
         if (warning) {
           toast({
-            title: `Conversion Notice (${file.name})`,
+            title: `${t('convert.notice')} (${file.name})`,
             description: warning,
             variant: 'default',
           });
         } else if (converted) {
           toast({
-            title: `Conversion Complete! (${file.name})`,
-            description: `File converted successfully to ${targetFormat.toUpperCase()}.`,
+            title: `${t('convert.complete')} (${file.name})`,
+            description: `${t('convert.successDesc')} ${targetFormat.toUpperCase()}.`,
           });
 
           // Show push notification
@@ -193,8 +195,8 @@ const ConvertOnly = () => {
         }
       } catch (error: any) {
         toast({
-          title: `Conversion Failed (${file.name})`,
-          description: error?.message || "There was an error converting your file. Please try again.",
+          title: `${t('convert.failed')} (${file.name})`,
+          description: error?.message || t('convert.failedDesc'),
           variant: "destructive"
         });
       }
@@ -249,17 +251,17 @@ const ConvertOnly = () => {
               {/* Title */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
                 <span className="block text-gray-900 mb-2">
-                  Convert Files
+                  {t('convert.heroTitle')}
                 </span>
                 <span className="block bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
-                  Seamlessly
+                  {t('convert.heroSubtitle')}
                 </span>
               </h1>
 
               {/* Description */}
               <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
-                Transform your files between formats with perfect quality. Support for images, PDFs, and Office documents with
-                <span className="text-blue-600 font-semibold"> lightning-fast processing</span>.
+                {t('convert.heroDescription')}
+                <span className="text-blue-600 font-semibold"> {t('convert.lightningFast')}</span>.
               </p>
 
               {/* Scroll to Upload Button */}
@@ -272,7 +274,7 @@ const ConvertOnly = () => {
                 }}
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
-                Start Converting
+                {t('convert.start')}
                 <ArrowDown className="w-5 h-5" />
               </button>
 
@@ -281,20 +283,20 @@ const ConvertOnly = () => {
                 {[
                   {
                     icon: Zap,
-                    title: "Lightning Fast",
-                    description: "Convert in seconds",
+                    title: t('convert.feature.fast'),
+                    description: t('convert.feature.fastDesc'),
                     gradient: "from-yellow-400 to-orange-500"
                   },
                   {
                     icon: Shield,
-                    title: "100% Secure",
-                    description: "Client-side processing",
+                    title: t('convert.feature.secure'),
+                    description: t('convert.feature.secureDesc'),
                     gradient: "from-blue-400 to-blue-600"
                   },
                   {
                     icon: Clock,
-                    title: "Always Available",
-                    description: "24/7 conversion",
+                    title: t('convert.feature.available'),
+                    description: t('convert.feature.availableDesc'),
                     gradient: "from-green-400 to-green-600"
                   }
                 ].map((feature, index) => (
@@ -319,9 +321,9 @@ const ConvertOnly = () => {
           <div className="container mx-auto">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-                Supported Conversions
+                {t('convert.conversionsTitle')}
               </h2>
-              
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Image Conversions */}
                 <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-200">
@@ -329,7 +331,7 @@ const ConvertOnly = () => {
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
                       <Image className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">Image Conversions</h3>
+                    <h3 className="text-xl font-bold text-gray-900">{t('convert.imageConversions')}</h3>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -353,7 +355,7 @@ const ConvertOnly = () => {
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
                       <FileText className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">Document Conversions</h3>
+                    <h3 className="text-xl font-bold text-gray-900">{t('convert.documentConversions')}</h3>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -384,24 +386,24 @@ const ConvertOnly = () => {
           <div className="container mx-auto">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-                How It Works
+                {t('convert.howItWorks')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {[
                   {
                     step: "1",
-                    title: "Upload Files",
-                    description: "Select or drag and drop your files"
+                    title: t('convert.step1'),
+                    description: t('convert.step1Desc')
                   },
                   {
                     step: "2",
-                    title: "Convert",
-                    description: "We transform your files instantly"
+                    title: t('convert.step2'),
+                    description: t('convert.step2Desc')
                   },
                   {
                     step: "3",
-                    title: "Download",
-                    description: "Get your converted files"
+                    title: t('convert.step3'),
+                    description: t('convert.step3Desc')
                   }
                 ].map((item, index) => (
                   <div key={item.step} className="text-center">
@@ -429,14 +431,14 @@ const ConvertOnly = () => {
               {/* Section Header */}
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-3">
-                  {!selectedFiles.length ? "Upload Your Files" : showFormatSelector ? "Choose Output Format" : "Conversion Results"}
+                  {!selectedFiles.length ? t('convert.uploadTitle') : showFormatSelector ? t('convert.chooseFormat') : t('convert.resultsTitle')}
                 </h2>
                 <p className="text-gray-600">
-                  {!selectedFiles.length 
-                    ? "Drag and drop your files or click to browse" 
+                  {!selectedFiles.length
+                    ? t('convert.uploadSubtitle')
                     : showFormatSelector
-                    ? "Select the format you want to convert to"
-                    : "Your files are being converted"}
+                    ? t('convert.selectFormatSubtitle')
+                    : t('convert.processingSubtitle')}
                 </p>
               </div>
 
@@ -456,7 +458,7 @@ const ConvertOnly = () => {
                   <div className="space-y-6">
                     {/* File Info */}
                     <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                      <p className="text-sm text-gray-600 mb-2">Selected file{selectedFiles.length > 1 ? 's' : ''}:</p>
+                      <p className="text-sm text-gray-600 mb-2">{selectedFiles.length > 1 ? t('convert.selectedFilesPlural') : t('convert.selectedFiles')}:</p>
                       {selectedFiles.map((file, idx) => (
                         <p key={idx} className="font-semibold text-gray-900">{file.name}</p>
                       ))}
@@ -465,7 +467,7 @@ const ConvertOnly = () => {
                     {/* Format Selection */}
                     <div>
                       <label className="block text-lg font-bold text-gray-900 mb-4">
-                        Convert to:
+                        {t('convert.convertToLabel')}
                       </label>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {availableFormats.map((format) => (
@@ -490,13 +492,13 @@ const ConvertOnly = () => {
                         onClick={handleStartConversion}
                         className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl"
                       >
-                        Convert to {selectedFormat.toUpperCase()}
+                        {t('convert.convertButton')} {selectedFormat.toUpperCase()}
                       </button>
                       <button
                         onClick={handleReset}
                         className="px-6 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all"
                       >
-                        Cancel
+                        {t('convert.cancel')}
                       </button>
                     </div>
                   </div>
@@ -521,29 +523,29 @@ const ConvertOnly = () => {
           <div className="container mx-auto">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-                Why Choose SlimFile?
+                {t('convert.whyChoose')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
                   {
                     icon: CheckCircle2,
-                    title: "Perfect Quality",
-                    description: "Maintain excellent quality during conversion"
+                    title: t('convert.quality'),
+                    description: t('convert.qualityDesc')
                   },
                   {
                     icon: CheckCircle2,
-                    title: "All File Types",
-                    description: "Support for images, PDFs, and Office documents"
+                    title: t('convert.allTypes'),
+                    description: t('convert.allTypesDesc')
                   },
                   {
                     icon: CheckCircle2,
-                    title: "Batch Processing",
-                    description: "Convert multiple files at once"
+                    title: t('convert.batch'),
+                    description: t('convert.batchDesc')
                   },
                   {
                     icon: CheckCircle2,
-                    title: "No Installation",
-                    description: "Works directly in your browser"
+                    title: t('convert.noInstall'),
+                    description: t('convert.noInstallDesc')
                   }
                 ].map((feature, index) => (
                   <div

@@ -5,8 +5,10 @@ import { toast } from "@/hooks/use-toast";
 import { isAuthenticated } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image, ArrowRight } from "lucide-react";
 import { notifyConversionCompressionComplete } from "@/services/pushNotificationService";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const ConvertThenCompress = () => {
+  const { t } = useTranslation();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingProgress, setProcessingProgress] = useState<number[]>([]);
@@ -34,8 +36,8 @@ const ConvertThenCompress = () => {
           const downloadData = JSON.parse(pendingDownload);
           
           toast({
-            title: "Login Successful",
-            description: "Please re-process your files to download them.",
+            title: t('convertCompress.loginSuccess'),
+            description: t('convertCompress.reprocessPrompt'),
             variant: "default"
           });
           
@@ -142,7 +144,7 @@ const ConvertThenCompress = () => {
       // Step 1: Converting (0-50% progress)
       setCurrentStep(prev => {
         const updated = [...prev];
-        updated[idx] = 'Converting...';
+        updated[idx] = t('convertCompress.converting');
         return updated;
       });
       
@@ -161,7 +163,7 @@ const ConvertThenCompress = () => {
       // Step 2: Compressing (50-95% progress) - DON'T go to 100% yet!
       setCurrentStep(prev => {
         const updated = [...prev];
-        updated[idx] = 'Compressing...';
+        updated[idx] = t('convertCompress.compressing');
         return updated;
       });
       
@@ -198,7 +200,7 @@ const ConvertThenCompress = () => {
         });
         setCurrentStep(prev => {
           const updated = [...prev];
-          updated[idx] = 'Complete';
+          updated[idx] = t('convertCompress.complete');
           return updated;
         });
         setProcessingWarnings(prev => {
@@ -206,18 +208,18 @@ const ConvertThenCompress = () => {
           updated[idx] = warning || '';
           return updated;
         });
-        
+
         if (warning) {
           toast({
-            title: `Processing Notice (${file.name})`,
+            title: `${t('convertCompress.notice')} (${file.name})`,
             description: warning,
             variant: 'default',
           });
         } else if (processed) {
           const reductionPercentage = Math.round(((file.size - processed.size) / file.size) * 100);
           toast({
-            title: `Processing Complete! (${file.name})`,
-            description: `File converted to ${targetFormat.toUpperCase()} and compressed. Size reduced by ${reductionPercentage}%`,
+            title: `${t('convertCompress.successTitle')} (${file.name})`,
+            description: `${t('convertCompress.successDesc')} ${targetFormat.toUpperCase()} ${t('convertCompress.sizeReduced')} ${reductionPercentage}%`,
           });
 
           // Show push notification
@@ -225,8 +227,8 @@ const ConvertThenCompress = () => {
         }
       } catch (error: any) {
         toast({
-          title: `Processing Failed (${file.name})`,
-          description: error?.message || "There was an error processing your file. Please try again.",
+          title: `${t('convertCompress.failed')} (${file.name})`,
+          description: error?.message || t('convertCompress.failedDesc'),
           variant: "destructive"
         });
       }
@@ -283,29 +285,29 @@ const ConvertThenCompress = () => {
               {/* Title */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
                 <span className="block text-gray-900 mb-2">
-                  Convert & Compress
+                  {t('convertCompress.title')}
                 </span>
                 <span className="block bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                  All in One
+                  {t('convertCompress.subtitle')}
                 </span>
               </h1>
 
               {/* Description */}
               <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
-                Transform your files between formats and optimize their size in a single step. Perfect quality with
-                <span className="text-purple-600 font-semibold"> maximum efficiency</span>.
+                {t('convertCompress.heroDescription')}
+                <span className="text-purple-600 font-semibold"> {t('convertCompress.maxEfficiency')}</span>.
               </p>
 
               {/* Process Flow */}
               <div className="flex items-center justify-center gap-4 py-4">
                 <div className="flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-lg">
                   <FileText className="w-5 h-5 text-blue-600" />
-                  <span className="text-blue-800 font-medium">Convert</span>
+                  <span className="text-blue-800 font-medium">{t('convertCompress.convertLabel')}</span>
                 </div>
                 <ArrowRight className="w-5 h-5 text-gray-400" />
                 <div className="flex items-center gap-2 px-4 py-2 bg-red-100 rounded-lg">
                   <Zap className="w-5 h-5 text-red-600" />
-                  <span className="text-red-800 font-medium">Compress</span>
+                  <span className="text-red-800 font-medium">{t('convertCompress.compressLabel')}</span>
                 </div>
               </div>
 
@@ -319,7 +321,7 @@ const ConvertThenCompress = () => {
                 }}
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
-                Start Processing
+                {t('convertCompress.start')}
                 <ArrowDown className="w-5 h-5" />
               </button>
 
@@ -328,20 +330,20 @@ const ConvertThenCompress = () => {
                 {[
                   {
                     icon: Zap,
-                    title: "Two-in-One",
-                    description: "Convert and compress together",
+                    title: t('convertCompress.feature.twoInOne'),
+                    description: t('convertCompress.feature.twoInOneDesc'),
                     gradient: "from-yellow-400 to-orange-500"
                   },
                   {
                     icon: Shield,
-                    title: "100% Secure",
-                    description: "Client-side processing",
+                    title: t('convertCompress.feature.secure'),
+                    description: t('convertCompress.feature.secureDesc'),
                     gradient: "from-blue-400 to-blue-600"
                   },
                   {
                     icon: Clock,
-                    title: "Time Saver",
-                    description: "Single step processing",
+                    title: t('convertCompress.feature.timeSaver'),
+                    description: t('convertCompress.feature.timeSaverDesc'),
                     gradient: "from-green-400 to-green-600"
                   }
                 ].map((feature, index) => (
@@ -366,9 +368,9 @@ const ConvertThenCompress = () => {
           <div className="container mx-auto">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-                Supported Formats
+                {t('convertCompress.formatsTitle')}
               </h2>
-              
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Image Conversions */}
                 <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-200">
@@ -376,7 +378,7 @@ const ConvertThenCompress = () => {
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
                       <Image className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">Image Formats</h3>
+                    <h3 className="text-xl font-bold text-gray-900">{t('convertCompress.imageFormats')}</h3>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -404,7 +406,7 @@ const ConvertThenCompress = () => {
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
                       <FileText className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">Document Formats</h3>
+                    <h3 className="text-xl font-bold text-gray-900">{t('convertCompress.documentFormats')}</h3>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -435,24 +437,24 @@ const ConvertThenCompress = () => {
           <div className="container mx-auto">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-                How It Works
+                {t('convertCompress.howItWorks')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {[
                   {
                     step: "1",
-                    title: "Upload Files",
-                    description: "Select or drag and drop your files"
+                    title: t('convertCompress.step1'),
+                    description: t('convertCompress.step1Desc')
                   },
                   {
                     step: "2",
-                    title: "Convert & Compress",
-                    description: "We transform and optimize your files"
+                    title: t('convertCompress.step2'),
+                    description: t('convertCompress.step2Desc')
                   },
                   {
                     step: "3",
-                    title: "Download",
-                    description: "Get your converted and compressed files"
+                    title: t('convertCompress.step3'),
+                    description: t('convertCompress.step3Desc')
                   }
                 ].map((item, index) => (
                   <div key={item.step} className="text-center">
@@ -480,14 +482,14 @@ const ConvertThenCompress = () => {
               {/* Section Header */}
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-3">
-                  {!selectedFiles.length ? "Upload Your Files" : showFormatSelector ? "Choose Output Format" : "Processing Results"}
+                  {!selectedFiles.length ? t('convertCompress.uploadTitle') : showFormatSelector ? t('convertCompress.chooseFormat') : t('convertCompress.resultsTitle')}
                 </h2>
                 <p className="text-gray-600">
-                  {!selectedFiles.length 
-                    ? "Drag and drop your files or click to browse" 
+                  {!selectedFiles.length
+                    ? t('convertCompress.uploadSubtitle')
                     : showFormatSelector
-                    ? "Select the format you want to convert to"
-                    : "Your files are being converted and compressed"}
+                    ? t('convertCompress.selectFormatSubtitle')
+                    : t('convertCompress.processingSubtitle')}
                 </p>
               </div>
 
@@ -507,7 +509,7 @@ const ConvertThenCompress = () => {
                   <div className="space-y-6">
                     {/* File Info */}
                     <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
-                      <p className="text-sm text-gray-600 mb-2">Selected file{selectedFiles.length > 1 ? 's' : ''}:</p>
+                      <p className="text-sm text-gray-600 mb-2">{selectedFiles.length > 1 ? t('convertCompress.selectedFilesPlural') : t('convertCompress.selectedFiles')}:</p>
                       {selectedFiles.map((file, idx) => (
                         <p key={idx} className="font-semibold text-gray-900">{file.name}</p>
                       ))}
@@ -516,7 +518,7 @@ const ConvertThenCompress = () => {
                     {/* Format Selection */}
                     <div>
                       <label className="block text-lg font-bold text-gray-900 mb-4">
-                        Convert to:
+                        {t('convertCompress.convertToLabel')}
                       </label>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {availableFormats.map((format) => (
@@ -541,13 +543,13 @@ const ConvertThenCompress = () => {
                         onClick={handleStartProcessing}
                         className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-xl font-bold text-lg hover:from-purple-700 hover:to-purple-600 transition-all shadow-lg hover:shadow-xl"
                       >
-                        Convert & Compress to {selectedFormat.toUpperCase()}
+                        {t('convertCompress.processButton')} {selectedFormat.toUpperCase()}
                       </button>
                       <button
                         onClick={handleReset}
                         className="px-6 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all"
                       >
-                        Cancel
+                        {t('convertCompress.cancel')}
                       </button>
                     </div>
                   </div>
@@ -573,29 +575,29 @@ const ConvertThenCompress = () => {
           <div className="container mx-auto">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-                Why Choose SlimFile?
+                {t('convertCompress.whyChoose')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
                   {
                     icon: CheckCircle2,
-                    title: "Perfect Quality",
-                    description: "Maintain excellent quality while converting and compressing"
+                    title: t('convertCompress.quality'),
+                    description: t('convertCompress.qualityDesc')
                   },
                   {
                     icon: CheckCircle2,
-                    title: "Maximum Efficiency",
-                    description: "Get both conversion and compression in one step"
+                    title: t('convertCompress.efficiency'),
+                    description: t('convertCompress.efficiencyDesc')
                   },
                   {
                     icon: CheckCircle2,
-                    title: "Batch Processing",
-                    description: "Process multiple files simultaneously"
+                    title: t('convertCompress.batch'),
+                    description: t('convertCompress.batchDesc')
                   },
                   {
                     icon: CheckCircle2,
-                    title: "No Installation",
-                    description: "Works directly in your browser"
+                    title: t('convertCompress.noInstall'),
+                    description: t('convertCompress.noInstallDesc')
                   }
                 ].map((feature, index) => (
                   <div

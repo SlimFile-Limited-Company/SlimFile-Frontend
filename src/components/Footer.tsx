@@ -16,13 +16,15 @@ import {
   Zap,
   Settings
 } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export const Footer = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const blogCategories = [
     {
-      title: "PDF Guides",
+      title: t('footer.pdfGuides'),
       icon: FileText,
       color: "text-red-600",
       bgColor: "bg-red-50",
@@ -49,7 +51,7 @@ export const Footer = () => {
       ]
     },
     {
-      title: "Image Optimization",
+      title: t('footer.imageOptimization'),
       icon: Image,
       color: "text-green-600",
       bgColor: "bg-green-50",
@@ -70,7 +72,7 @@ export const Footer = () => {
       ]
     },
     {
-      title: "Document & Media",
+      title: t('footer.documentMedia'),
       icon: FileText,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
@@ -91,7 +93,7 @@ export const Footer = () => {
       ]
     },
     {
-      title: "Performance & Strategy",
+      title: t('footer.performanceStrategy'),
       icon: Zap,
       color: "text-purple-600",
       bgColor: "bg-purple-50",
@@ -130,14 +132,14 @@ export const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
               <Zap className="w-5 h-5 mr-2 text-yellow-500" />
-              Compression Tools
+              {t('footer.compressionTools')}
             </h4>
             <div className="grid grid-cols-1 gap-2">
               {[
-                { href: '/compress-pdf-online', label: 'Compress PDF Online', icon: FileText },
-                { href: '/compress-pptx-online', label: 'Compress PPTX Online', icon: FileText },
-                { href: '/compress-images-online', label: 'Compress Images Online', icon: Image },
-                { href: '/compress-pdf-for-email', label: 'Compress PDF for Email', icon: Mail },
+                { href: '/compress-pdf-online', label: t('footer.compressPdf'), icon: FileText },
+                { href: '/compress-pptx-online', label: t('footer.compressPptx'), icon: FileText },
+                { href: '/compress-images-online', label: t('footer.compressImages'), icon: Image },
+                { href: '/compress-pdf-for-email', label: t('footer.compressPdfEmail'), icon: Mail },
               ].map((item) => {
                 const IconComponent = item.icon;
                 return (
@@ -159,13 +161,13 @@ export const Footer = () => {
             <div className="flex items-center justify-between mb-6">
               <h4 className="text-lg font-semibold text-gray-900 flex items-center">
                 <BookOpen className="w-5 h-5 mr-2 text-blue-500" />
-                Our Blog Posts
+                {t('footer.ourBlog')}
               </h4>
               <Link
                 to="/blog"
                 className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center"
               >
-                View All
+                {t('footer.viewAll')}
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Link>
             </div>
@@ -224,107 +226,107 @@ export const Footer = () => {
         <div className="border-t border-gray-200 pt-6 mt-6">
           <h5 className="text-sm font-semibold text-gray-900 mb-3 flex items-center justify-center">
             <Settings className="w-4 h-4 mr-2 text-primary" />
-            Quick Access
+            {t('footer.quickAccess')}
           </h5>
 
           {/* Equal spacing on left and right - balanced on both mobile and desktop */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-4 md:gap-6 px-4 md:px-8 lg:px-0 max-w-6xl mx-auto">
             {/* Product Column */}
             <div>
-              <h6 className="text-sm font-semibold text-gray-900 mb-2">Product</h6>
+              <h6 className="text-sm font-semibold text-gray-900 mb-2">{t('footer.product')}</h6>
               <div className="space-y-1">
                 <button
-                  onClick={() => handleFooterClick('/compress', 'Compress')}
+                  onClick={() => handleFooterClick('/compress', t('footer.compress'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  Compress
+                  {t('footer.compress')}
                 </button>
                 <button
-                  onClick={() => handleFooterClick('/convert-only', 'Convert Only')}
+                  onClick={() => handleFooterClick('/convert-only', t('footer.convertOnly'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  Convert Only
+                  {t('footer.convertOnly')}
                 </button>
                 <button
-                  onClick={() => handleFooterClick('/convert-compress', 'Convert and Compress')}
+                  onClick={() => handleFooterClick('/convert-compress', t('footer.convertCompress'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  Convert and Compress
+                  {t('footer.convertCompress')}
                 </button>
                 <button
-                  onClick={() => handleFooterClick('/slimfile-game', 'Game')}
+                  onClick={() => handleFooterClick('/slimfile-game', t('footer.game'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  Game
+                  {t('footer.game')}
                 </button>
                 <button
-                  onClick={() => handleFooterClick('/features', 'Features')}
+                  onClick={() => handleFooterClick('/features', t('footer.features'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  Features
+                  {t('footer.features')}
                 </button>
                 <button
-                  onClick={() => handleFooterClick('/file-compression-education', 'Why Compression?')}
+                  onClick={() => handleFooterClick('/file-compression-education', t('footer.whyCompression'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  Why Compression?
+                  {t('footer.whyCompression')}
                 </button>
               </div>
             </div>
 
             {/* Company Column */}
             <div>
-              <h6 className="text-sm font-semibold text-gray-900 mb-2">Company</h6>
+              <h6 className="text-sm font-semibold text-gray-900 mb-2">{t('footer.company')}</h6>
               <div className="space-y-1">
                 <button
-                  onClick={() => handleFooterClick('/about', 'About')}
+                  onClick={() => handleFooterClick('/about', t('footer.about'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  About
+                  {t('footer.about')}
                 </button>
-                
+
                 <button
-                  onClick={() => handleFooterClick('/case-studies', 'Case Studies')}
+                  onClick={() => handleFooterClick('/case-studies', t('footer.caseStudies'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  Case Studies
-                </button>
-                <button
-                  onClick={() => handleFooterClick('/global-impact', 'Global Impact')}
-                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-                >
-                  Global Impact
+                  {t('footer.caseStudies')}
                 </button>
                 <button
-                  onClick={() => handleFooterClick('/partnerships', 'Partnerships')}
+                  onClick={() => handleFooterClick('/global-impact', t('footer.globalImpact'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  Partnerships
+                  {t('footer.globalImpact')}
                 </button>
                 <button
-                  onClick={() => handleFooterClick('/sdgs', 'SDGs')}
+                  onClick={() => handleFooterClick('/partnerships', t('footer.partnerships'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  SDGs
+                  {t('footer.partnerships')}
                 </button>
                 <button
-                  onClick={() => handleFooterClick('/blog', 'Our Blogs')}
+                  onClick={() => handleFooterClick('/sdgs', t('footer.sdgs'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  Our Blogs
+                  {t('footer.sdgs')}
                 </button>
                 <button
-                  onClick={() => handleFooterClick('/contact', 'Contact')}
+                  onClick={() => handleFooterClick('/blog', t('footer.ourBlogs'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  Contact
+                  {t('footer.ourBlogs')}
+                </button>
+                <button
+                  onClick={() => handleFooterClick('/contact', t('footer.contact'))}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
+                >
+                  {t('footer.contact')}
                 </button>
               </div>
             </div>
 
             {/* SlimFile API Column */}
             <div>
-              <h6 className="text-sm font-semibold text-gray-900 mb-2">SlimFile API</h6>
+              <h6 className="text-sm font-semibold text-gray-900 mb-2">{t('footer.slimfileApi')}</h6>
               <div className="space-y-1">
                 <a
                   href="https://api.slim-file.com/"
@@ -332,7 +334,7 @@ export const Footer = () => {
                   rel="noopener noreferrer"
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  API Dashboard
+                  {t('footer.apiDashboard')}
                 </a>
                 <a
                   href="https://api.slim-file.com/developer-program"
@@ -340,7 +342,7 @@ export const Footer = () => {
                   rel="noopener noreferrer"
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  Developer Program
+                  {t('footer.developerProgram')}
                 </a>
                 <a
                   href="https://api.slim-file.com/pricing"
@@ -348,20 +350,20 @@ export const Footer = () => {
                   rel="noopener noreferrer"
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  API Pricing
+                  {t('footer.apiPricing')}
                 </a>
                 <button
-                  onClick={() => handleFooterClick('/stepsbuild', 'STEPsBuild')}
+                  onClick={() => handleFooterClick('/stepsbuild', t('footer.stepsbuild'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  STEPsBuild
+                  {t('footer.stepsbuild')}
                 </button>
               </div>
             </div>
 
             {/* Resources Column - HELP CENTER REMOVED */}
             <div>
-              <h6 className="text-sm font-semibold text-gray-900 mb-2">Resources</h6>
+              <h6 className="text-sm font-semibold text-gray-900 mb-2">{t('footer.resources')}</h6>
               <div className="space-y-1">
                 <a
                   href="https://api.slim-file.com/"
@@ -369,7 +371,7 @@ export const Footer = () => {
                   rel="noopener noreferrer"
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >
-                  Documentation
+                  {t('footer.documentation')}
                 </a>
                 {/* HELP CENTER REMOVED */}
                 <button
@@ -424,7 +426,7 @@ export const Footer = () => {
         {/* Copyright Section */}
         <div className="mt-8 pt-6 border-t border-gray-200 text-center">
           <p className="text-sm text-gray-600 mb-2">
-            © 2025 SlimFile. Compress • Convert • Simplify
+            {t('footer.copyright')}
           </p>
         </div>
       </div>

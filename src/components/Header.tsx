@@ -5,8 +5,10 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isAuthenticated, logout } from "@/lib/auth";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export const Header = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null);
@@ -93,7 +95,7 @@ export const Header = () => {
                   : "text-gray-600 hover:text-gray-900"
               )}
             >
-              Home
+              {t('header.home')}
               {location.pathname === "/" && (
                 <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
               )}
@@ -228,8 +230,6 @@ export const Header = () => {
             </div>
 
 
-            {/* Language Selector */}
-            <LanguageSelector />
 
             {isAuthenticated() ? (
               <>
@@ -242,7 +242,7 @@ export const Header = () => {
                       : "text-gray-600 hover:text-gray-900"
                   )}
                 >
-                  Dashboard
+                  {t('header.dashboard')}
                   {location.pathname.startsWith("/dashboard") && (
                     <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
                   )}
@@ -262,13 +262,13 @@ export const Header = () => {
                 <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
               )}
             </Link>
-            
+
                 <Button
                   variant="outline"
                   className="ml-4"
                   onClick={logout}
                 >
-                  Logout
+                  {t('header.logout')}
                 </Button>
               </>
             ) : (
@@ -277,11 +277,16 @@ export const Header = () => {
                   variant="default"
                   className="ml-4 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600"
                 >
-                  Login
+                  {t('header.login')}
                 </Button>
               </Link>
             )}
           </nav>
+
+          {/* Desktop right side - Language Selector */}
+          <div className="hidden md:flex items-center">
+            <LanguageSelector />
+          </div>
 
           {/* Mobile menu button and language selector */}
           <div className="md:hidden flex items-center gap-2">
@@ -313,7 +318,7 @@ export const Header = () => {
                 )}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Home
+                {t('header.home')}
               </Link>
 
               <div className="px-4 py-2">
@@ -433,7 +438,7 @@ export const Header = () => {
                     )}
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Dashboard
+                    {t('header.dashboard')}
                   </Link>
                   <div className="px-4 pt-2">
                     <Button
@@ -445,7 +450,7 @@ export const Header = () => {
                       }}
                       className="w-full text-red-600 border-red-300 hover:bg-red-50 hover:text-red-700"
                     >
-                      Logout
+                      {t('header.logout')}
                     </Button>
                   </div>
                 </>
@@ -457,7 +462,7 @@ export const Header = () => {
                       size="sm"
                       className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600"
                     >
-                      Login
+                      {t('header.login')}
                     </Button>
                   </Link>
                 </div>

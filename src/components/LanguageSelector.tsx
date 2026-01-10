@@ -34,8 +34,7 @@ export function LanguageSelector() {
   const handleLanguageChange = (lang: Language) => {
     setLanguage(lang);
     setCurrentLang(lang);
-    // Reload the page to apply translations
-    window.location.reload();
+    // No need to reload - the custom event will trigger re-renders
   };
 
   const currentLangInfo = getLanguageInfo(currentLang);
