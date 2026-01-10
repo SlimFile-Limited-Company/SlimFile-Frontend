@@ -72,7 +72,7 @@ const Home: FC = () => {
             {/* Main Hero Content */}
             <div className="text-center space-y-4 sm:space-y-6">
               {/* Headline - Apple style */}
-              <h1 className="text-5xl sm:text-6xl md:text-7xl font-semibold leading-tight tracking-tight text-gray-900">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal leading-tight tracking-tight text-gray-900">
                Compress. Convert.
                 <br />
                Simplify
