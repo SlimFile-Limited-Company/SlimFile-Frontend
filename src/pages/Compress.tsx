@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { CompressionResult } from "@/components/CompressionResult";
-import { CompressionTimeTravel } from "@/components/CompressionTimeTravel";
 import { toast } from "@/hooks/use-toast";
 import { isAuthenticated } from "@/lib/auth";
-import { Zap, Shield, Clock, ArrowDown, CheckCircle2, Sparkles } from "lucide-react";
+import { Zap, Shield, Clock, ArrowDown, CheckCircle2 } from "lucide-react";
 import { notifyCompressionComplete } from "@/services/pushNotificationService";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -16,8 +15,6 @@ const Compress = () => {
   const [compressedFiles, setCompressedFiles] = useState<(File | null)[]>([]);
   const [compressedSizes, setCompressedSizes] = useState<number[]>([]);
   const [pdfWarnings, setPdfWarnings] = useState<string[]>([]);
-  const [timeTravelMode, setTimeTravelMode] = useState(false);
-  const [timeTravelFile, setTimeTravelFile] = useState<File | null>(null);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
@@ -178,16 +175,6 @@ const Compress = () => {
   };
 
   const handleFilesSelect = (files: File[]) => {
-    // Check if it's a single image file - offer Time Travel mode
-    if (files.length === 1 && files[0].type.startsWith('image/')) {
-      setTimeTravelFile(files[0]);
-      setTimeTravelMode(true);
-      return;
-    }
-
-    // Standard compression flow
-    setTimeTravelMode(false);
-    setTimeTravelFile(null);
     setSelectedFiles(files);
     setCompressedFiles(Array(files.length).fill(null));
     setCompressedSizes(Array(files.length).fill(0));
@@ -203,24 +190,6 @@ const Compress = () => {
     setCompressionProgress([]);
     setPdfWarnings([]);
     setIsCompressing(false);
-    setTimeTravelMode(false);
-    setTimeTravelFile(null);
-  };
-
-  const handleTimeTravelDownload = (blob: Blob, level: number) => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `slimfile_${timeTravelFile?.name || 'compressed.jpg'}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    toast({
-      title: "Download Started!",
-      description: `Downloading your compressed image (Level ${level + 1})`,
-    });
   };
 
   return (
@@ -425,59 +394,27 @@ const Compress = () => {
               </div>
 
               {/* Upload/Result Card - FIXED: Responsive padding */}
-              {timeTravelMode && timeTravelFile ? (
-                <div className="space-y-6">
-                  {/* Time Travel Mode Banner */}
-                  <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl p-6 shadow-lg">
-                    <div className="flex items-center justify-center gap-3">
-                      <Sparkles className="w-6 h-6" />
-                      <h3 className="text-xl font-bold">Time Travel Compression Mode</h3>
-                      <Sparkles className="w-6 h-6" />
-                    </div>
-                    <p className="text-center mt-2 text-purple-100">
-                      Explore compression levels in real-time and pick the perfect balance!
-                    </p>
-                  </div>
+              <div className="relative bg-white rounded-3xl border-2 border-gray-200 shadow-xl p-4 sm:p-6 md:p-8 hover:shadow-2xl transition-all duration-300">
+                {/* Decorative corner accents */}
+                <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-red-500 rounded-tl-3xl"></div>
+                <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-red-500 rounded-br-3xl"></div>
 
-                  {/* Time Travel Component */}
-                  <CompressionTimeTravel
-                    file={timeTravelFile}
-                    onDownload={handleTimeTravelDownload}
+                {!selectedFiles.length ? (
+                  <FileUpload
+                    onFileSelect={handleFilesSelect}
+                    isProcessing={isCompressing}
                   />
-
-                  {/* Exit Button */}
-                  <div className="text-center">
-                    <button
-                      onClick={handleReset}
-                      className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-semibold transition-colors"
-                    >
-                      ← Compress Different Files
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="relative bg-white rounded-3xl border-2 border-gray-200 shadow-xl p-4 sm:p-6 md:p-8 hover:shadow-2xl transition-all duration-300">
-                  {/* Decorative corner accents */}
-                  <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-red-500 rounded-tl-3xl"></div>
-                  <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-red-500 rounded-br-3xl"></div>
-
-                  {!selectedFiles.length ? (
-                    <FileUpload
-                      onFileSelect={handleFilesSelect}
-                      isProcessing={isCompressing}
-                    />
-                  ) : (
-                    <CompressionResult
-                      originalFiles={selectedFiles}
-                      compressedFiles={compressedFiles}
-                      compressedSizes={compressedSizes}
-                      compressionProgress={compressionProgress}
-                      isCompressing={isCompressing}
-                      onReset={handleReset}
-                    />
-                  )}
-                </div>
-              )}
+                ) : (
+                  <CompressionResult
+                    originalFiles={selectedFiles}
+                    compressedFiles={compressedFiles}
+                    compressedSizes={compressedSizes}
+                    compressionProgress={compressionProgress}
+                    isCompressing={isCompressing}
+                    onReset={handleReset}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </section>
