@@ -2,15 +2,29 @@ import { Outlet } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
-import { NotificationPrompt } from "@/components/NotificationPrompt";
 import { registerServiceWorker } from "@/utils/pwa";
 import { useEffect } from "react";
 import { isAuthenticated } from "@/lib/auth";
-import { notifyGreeting, getNotificationPermission } from "@/services/pushNotificationService";
+import { notifyGreeting, getNotificationPermission, requestNotificationPermission } from "@/services/pushNotificationService";
 
 const App = () => {
   useEffect(() => {
     registerServiceWorker();
+
+    // Automatically request notification permission on first load
+    const autoEnableNotifications = async () => {
+      const currentPermission = getNotificationPermission();
+
+      // Only request if permission is 'default' (not yet asked)
+      if (currentPermission === 'default') {
+        // Wait a bit for page to load, then automatically request permission
+        setTimeout(() => {
+          requestNotificationPermission();
+        }, 2000);
+      }
+    };
+
+    autoEnableNotifications();
 
     // Show greeting notification if user is authenticated and has granted permission
     const showGreetingNotification = async () => {
@@ -50,7 +64,6 @@ const App = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <PWAInstallPrompt />
-      <NotificationPrompt />
       <Header />
       <main className="flex-1">
         <Outlet />
