@@ -245,26 +245,22 @@ export const Header = () => {
               )}
             </div>
 
+            <Link
+              to="/dashboard"
+              className={cn(
+                "text-sm font-medium transition-all duration-300 relative",
+                location.pathname.startsWith("/dashboard")
+                  ? "text-gray-900"
+                  : "text-gray-600 hover:text-gray-900"
+              )}
+            >
+              {t('header.dashboard')}
+              {location.pathname.startsWith("/dashboard") && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
+              )}
+            </Link>
 
-
-            {isAuthenticated() ? (
-              <>
-                <Link
-                  to="/dashboard"
-                  className={cn(
-                    "text-sm font-medium transition-all duration-300 relative",
-                    location.pathname.startsWith("/dashboard")
-                      ? "text-gray-900"
-                      : "text-gray-600 hover:text-gray-900"
-                  )}
-                >
-                  {t('header.dashboard')}
-                  {location.pathname.startsWith("/dashboard") && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-                  )}
-                </Link>
-
-                <Link
+            <Link
               to="/stepsbuild"
               className={cn(
                 "text-sm font-medium transition-all duration-300 relative",
@@ -279,14 +275,14 @@ export const Header = () => {
               )}
             </Link>
 
-                <Button
-                  variant="outline"
-                  className="ml-4"
-                  onClick={logout}
-                >
-                  {t('header.logout')}
-                </Button>
-              </>
+            {isAuthenticated() ? (
+              <Button
+                variant="outline"
+                className="ml-4"
+                onClick={logout}
+              >
+                {t('header.logout')}
+              </Button>
             ) : (
               <Link to="/login">
                 <Button
@@ -492,34 +488,33 @@ export const Header = () => {
                 STEPsBuild
               </Link>
 
+              <Link
+                to="/dashboard"
+                className={cn(
+                  "px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
+                  location.pathname.startsWith("/dashboard")
+                    ? "text-red-600 bg-red-50 border border-red-100"
+                    : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                )}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t('header.dashboard')}
+              </Link>
+
               {isAuthenticated() ? (
-                <>
-                  <Link
-                    to="/dashboard"
-                    className={cn(
-                      "px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
-                      location.pathname.startsWith("/dashboard")
-                        ? "text-red-600 bg-red-50 border border-red-100"
-                        : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                    )}
-                    onClick={() => setMobileMenuOpen(false)}
+                <div className="px-4 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      logout();
+                    }}
+                    className="w-full text-red-600 border-red-300 hover:bg-red-50 hover:text-red-700"
                   >
-                    {t('header.dashboard')}
-                  </Link>
-                  <div className="px-4 pt-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setMobileMenuOpen(false);
-                        logout();
-                      }}
-                      className="w-full text-red-600 border-red-300 hover:bg-red-50 hover:text-red-700"
-                    >
-                      {t('header.logout')}
-                    </Button>
-                  </div>
-                </>
+                    {t('header.logout')}
+                  </Button>
+                </div>
               ) : (
                 <div className="px-4 pt-2">
                   <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
