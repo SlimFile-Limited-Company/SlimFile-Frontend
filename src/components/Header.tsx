@@ -13,6 +13,15 @@ export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [mobileDropdownsOpen, setMobileDropdownsOpen] = useState<{
+    product: boolean;
+    company: boolean;
+    api: boolean;
+  }>({
+    product: false,
+    company: false,
+    api: false,
+  });
 
   const productNavigation = [
     { name: "Compress Only", href: "/compress", badge: "New", external: false },
@@ -58,6 +67,13 @@ export const Header = () => {
       }, 150);
       setDropdownTimeout(timeout);
     }
+  };
+
+  const toggleMobileDropdown = (dropdown: 'product' | 'company' | 'api') => {
+    setMobileDropdownsOpen(prev => ({
+      ...prev,
+      [dropdown]: !prev[dropdown],
+    }));
   };
 
   // Cleanup timeout on unmount
@@ -307,11 +323,11 @@ export const Header = () => {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <nav className="md:hidden py-4 border-t border-gray-200 bg-white transition-all duration-300 overflow-y-auto max-h-[calc(100vh-4rem)] relative z-50 shadow-md">
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-1">
               <Link
                 to="/"
                 className={cn(
-                  "px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
+                  "px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
                   location.pathname === "/"
                     ? "text-red-600 bg-red-50 border border-red-100"
                     : "text-gray-700 hover:text-red-600 hover:bg-red-50"
@@ -321,36 +337,95 @@ export const Header = () => {
                 {t('header.home')}
               </Link>
 
-              <div className="px-4 py-2">
-                <div className="text-sm font-semibold text-gray-900 mb-2">Product</div>
-                <div className="ml-4 space-y-1">
-                  {productNavigation.map((item) => {
-                    const linkContent = (
-                      <div className="flex items-center justify-between">
-                        <span>{item.name}</span>
-                        {item.badge && (
-                          <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full">
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
-                    );
+              {/* Mobile Product Dropdown */}
+              <div className="px-4">
+                <button
+                  onClick={() => toggleMobileDropdown('product')}
+                  className={cn(
+                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
+                    productNavigation.some(item => isActiveRoute(item.href))
+                      ? "text-red-600"
+                      : "text-gray-700 hover:text-red-600"
+                  )}
+                >
+                  <span>Product</span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      mobileDropdownsOpen.product && "transform rotate-180"
+                    )}
+                  />
+                </button>
+                {mobileDropdownsOpen.product && (
+                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
+                    {productNavigation.map((item) => {
+                      const linkContent = (
+                        <div className="flex items-center justify-between">
+                          <span>{item.name}</span>
+                          {item.badge && (
+                            <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full ml-2">
+                              {item.badge}
+                            </span>
+                          )}
+                        </div>
+                      );
 
-                    return item.external ? (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={cn(
-                          "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
-                          "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                        )}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {linkContent}
-                      </a>
-                    ) : (
+                      return item.external ? (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={cn(
+                            "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
+                            "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                          )}
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {linkContent}
+                        </a>
+                      ) : (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          className={cn(
+                            "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
+                            isActiveRoute(item.href)
+                              ? "text-red-600 bg-red-50 border border-red-100"
+                              : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                          )}
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {linkContent}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile Company Dropdown */}
+              <div className="px-4">
+                <button
+                  onClick={() => toggleMobileDropdown('company')}
+                  className={cn(
+                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
+                    companyNavigation.some(item => isActiveRoute(item.href))
+                      ? "text-red-600"
+                      : "text-gray-700 hover:text-red-600"
+                  )}
+                >
+                  <span>Company</span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      mobileDropdownsOpen.company && "transform rotate-180"
+                    )}
+                  />
+                </button>
+                {mobileDropdownsOpen.company && (
+                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
+                    {companyNavigation.map((item) => (
                       <Link
                         key={item.name}
                         to={item.href}
@@ -362,61 +437,52 @@ export const Header = () => {
                         )}
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        {linkContent}
+                        {item.name}
                       </Link>
-                    );
-                  })}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              {/* Mobile Company Section */}
-              <div className="px-4 py-2">
-                <div className="text-sm font-semibold text-gray-900 mb-2">Company</div>
-                <div className="ml-4 space-y-1">
-                  {companyNavigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={cn(
-                        "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
-                        isActiveRoute(item.href)
-                          ? "text-red-600 bg-red-50 border border-red-100"
-                          : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                      )}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              {/* Mobile SlimFile API Section */}
-              <div className="px-4 py-2">
-                <div className="text-sm font-semibold text-gray-900 mb-2">SlimFile API</div>
-                <div className="ml-4 space-y-1">
-                  {apiNavigation.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={cn(
-                        "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
-                        "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                      )}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {item.name}
-                    </a>
-                  ))}
-                </div>
+              {/* Mobile SlimFile API Dropdown */}
+              <div className="px-4">
+                <button
+                  onClick={() => toggleMobileDropdown('api')}
+                  className="w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium text-gray-700 hover:text-red-600 transition-all duration-300 rounded-lg"
+                >
+                  <span>API</span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      mobileDropdownsOpen.api && "transform rotate-180"
+                    )}
+                  />
+                </button>
+                {mobileDropdownsOpen.api && (
+                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
+                    {apiNavigation.map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
+                          "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                        )}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {item.name}
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <Link
                 to="/stepsbuild"
                 className={cn(
-                  "px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
+                  "px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
                   location.pathname === "/stepsbuild"
                     ? "text-red-600 bg-red-50 border border-red-100"
                     : "text-gray-700 hover:text-red-600 hover:bg-red-50"
@@ -431,7 +497,7 @@ export const Header = () => {
                   <Link
                     to="/dashboard"
                     className={cn(
-                      "px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
+                      "px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
                       location.pathname.startsWith("/dashboard")
                         ? "text-red-600 bg-red-50 border border-red-100"
                         : "text-gray-700 hover:text-red-600 hover:bg-red-50"
