@@ -404,16 +404,16 @@ export const Footer = () => {
             <div className="flex items-center">
               <div className="flex items-center space-x-4">
                 <a href="https://www.linkedin.com/company/slimfile-inc" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-blue-600">
-                  <img src="https://img.icons8.com/ios-filled/50/000000/linkedin.png" alt="LinkedIn" className="w-6 h-6" />
+                  <img src="https://img.icons8.com/ios_filled/1200/linkedin-circled.jpg" alt="LinkedIn" className="w-6 h-6" />
                 </a>
                 <a href="https://www.instagram.com/slimfile_inc" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-pink-600">
-                  <img src="https://img.icons8.com/ios-filled/50/000000/instagram.png" alt="Instagram" className="w-6 h-6" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/CIS-A2K_Instagram_Icon_%28Black%29.svg/2048px-CIS-A2K_Instagram_Icon_%28Black%29.svg.png" alt="Instagram" className="w-6 h-6" />
                 </a>
                 <a href="https://x.com/slimfile_inc?s=11" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-black">
-                  <img src="https://img.icons8.com/ios-filled/50/000000/twitterx.png" alt="X" className="w-6 h-6" />
+                  <img src="https://i.pinimg.com/736x/bd/bd/bb/bdbdbb7f668c3efcaeebe69468f434f7.jpg" alt="X" className="w-6 h-6" />
                 </a>
                 <a href="https://www.tiktok.com/@slimfile_inc?_t=ZM-8yF3RexQsLg&_r=1" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-black">
-                  <img src="https://img.icons8.com/ios-filled/50/000000/tiktok.png" alt="TikTok" className="w-6 h-6" />
+                  <img src="https://crystalpng.com/wp-content/uploads/2023/05/tiktok-logo-png.png" alt="TikTok" className="w-6 h-6" />
                 </a>
                 <a href="https://www.trustpilot.com/review/slim-file.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-green-600">
                   <img src="https://img.icons8.com/ios-filled/50/000000/star--v1.png" alt="Trustpilot" className="w-6 h-6" />
