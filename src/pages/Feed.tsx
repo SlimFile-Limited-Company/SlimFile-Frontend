@@ -274,21 +274,11 @@ export const Feed = () => {
           className="text-center mb-12"
         >
           <div className="flex items-center justify-center gap-3 mb-4">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-            >
-              <Sparkles className="w-8 h-8 text-red-600" />
-            </motion.div>
+            
             <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
               Community Feed
             </h1>
-            <motion.div
-              animate={{ rotate: -360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-            >
-              <Sparkles className="w-8 h-8 text-orange-600" />
-            </motion.div>
+            
           </div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Watch as users around the world compress and convert their files in real-time. See the impact we're making together!
