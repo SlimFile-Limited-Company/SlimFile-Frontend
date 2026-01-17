@@ -54,6 +54,18 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
     return `${Math.floor(seconds / 86400)}d ago`;
   };
 
+  const getFileTypeLabel = (fileType: string) => {
+    if (fileType.includes('image')) return 'Image';
+    if (fileType.includes('audio')) return 'Audio';
+    if (fileType.includes('video')) return 'Video';
+    if (fileType.includes('pdf')) return 'PDF';
+    if (fileType.includes('zip') || fileType.includes('archive')) return 'Archive';
+    if (fileType.includes('word') || fileType.includes('document')) return 'Document';
+    if (fileType.includes('sheet') || fileType.includes('excel')) return 'Spreadsheet';
+    if (fileType.includes('presentation') || fileType.includes('powerpoint')) return 'Presentation';
+    return 'File';
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -67,21 +79,18 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
 
       {/* Content */}
       <div className="relative z-10">
-        {/* Header with user info */}
+        {/* Header - Anonymous */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3 flex-1">
+            {/* Anonymous avatar */}
             <div className="relative">
-              {activity.userPicture ? (
-                <img
-                  src={activity.userPicture}
-                  alt={activity.userName}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-red-200"
-                />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center text-white font-bold text-lg">
-                  {activity.userName.charAt(0).toUpperCase()}
-                </div>
-              )}
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                className="w-12 h-12 rounded-full bg-gradient-to-br from-red-400 via-orange-400 to-red-600 flex items-center justify-center text-white font-bold text-lg"
+              >
+                👤
+              </motion.div>
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
@@ -89,7 +98,7 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
               />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-gray-900 truncate">{activity.userName}</h3>
+              <h3 className="font-semibold text-gray-900">A user</h3>
               <p className="text-sm text-gray-500">{timeAgo(activity.createdAt)}</p>
             </div>
           </div>
@@ -106,17 +115,11 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
           </motion.div>
         </div>
 
-        {/* File info */}
-        <div className="mb-4 p-3 rounded-lg bg-gray-100/50 border border-gray-200">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600">
-              {getFileIcon(activity.fileType)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">{activity.filename}</p>
-              <p className="text-xs text-gray-500">{activity.fileType}</p>
-            </div>
-          </div>
+        {/* Anonymous activity description */}
+        <div className="mb-4 p-4 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+          <p className="text-sm font-medium text-gray-900 leading-relaxed">
+            A user compressed a <span className="font-bold text-blue-600">{formatBytes(activity.originalSize)}</span> {getFileTypeLabel(activity.fileType)} to <span className="font-bold text-green-600">{formatBytes(activity.compressedSize)}</span> <span className="font-bold text-red-600">({activity.compressionRatio}% saved)</span>
+          </p>
         </div>
 
         {/* Stats grid */}
