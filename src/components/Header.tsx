@@ -18,6 +18,7 @@ export const Header = () => {
     { name: "Compress Only", href: "/compress", badge: "New", external: false },
     { name: "Convert Only", href: "/convert-only", badge: "New", external: false },
     { name: "Convert and Compress", href: "/convert-compress", badge: "New", external: false },
+    { name: "Community Feed", href: "/feed", badge: "Live", external: false },
     { name: "Game", href: "/slimfile-game", badge: "New", external: false },
   ];
 
