@@ -1,4 +1,4 @@
-# SlimFile - File Compression Service
+# SlimFile - File Compression and Conversion Service
 
 A modern, full-stack file compression service that compresses images and PDFs with Google OAuth authentication. Built with React, TypeScript, Node.js, and MongoDB.
 
