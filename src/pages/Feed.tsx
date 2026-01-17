@@ -176,20 +176,29 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
 
 export const Feed = () => {
   const [activities, setActivities] = useState<FeedActivity[]>([]);
+  const [stats, setStats] = useState<any>(null);
   const [socket, setSocket] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'compress' | 'convert'>('all');
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
-  // Fetch initial feed data
+  // Fetch initial feed data and stats
   useEffect(() => {
     const fetchFeed = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/feed`);
-        if (!response.ok) throw new Error('Failed to fetch feed');
-        const data = await response.json();
-        setActivities(data);
+        const [feedResponse, statsResponse] = await Promise.all([
+          fetch(`${API_BASE_URL}/feed?limit=100`),
+          fetch(`${API_BASE_URL}/feed/stats`)
+        ]);
+
+        if (!feedResponse.ok || !statsResponse.ok) throw new Error('Failed to fetch feed');
+        
+        const feedData = await feedResponse.json();
+        const statsData = await statsResponse.json();
+        
+        setActivities(feedData);
+        setStats(statsData);
       } catch (error) {
         console.error('Error fetching feed:', error);
       } finally {
@@ -286,11 +295,53 @@ export const Feed = () => {
           </p>
         </motion.div>
 
+        {/* Global Stats */}
+        {stats && !isLoading && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12"
+          >
+            <motion.div
+              whileHover={{ y: -5 }}
+              className="p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200"
+            >
+              <p className="text-sm text-blue-600 font-semibold mb-2">Total Activities</p>
+              <p className="text-3xl font-bold text-blue-900">{stats.totalActivities}</p>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ y: -5 }}
+              className="p-6 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 border border-green-200"
+            >
+              <p className="text-sm text-green-600 font-semibold mb-2">Total Space Saved</p>
+              <p className="text-3xl font-bold text-green-900">{formatBytes(stats.totalSpaceSaved)}</p>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ y: -5 }}
+              className="p-6 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200"
+            >
+              <p className="text-sm text-purple-600 font-semibold mb-2">Avg Compression</p>
+              <p className="text-3xl font-bold text-purple-900">{stats.avgCompressionRatio}%</p>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ y: -5 }}
+              className="p-6 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200"
+            >
+              <p className="text-sm text-orange-600 font-semibold mb-2">Active Users</p>
+              <p className="text-3xl font-bold text-orange-900">{stats.uniqueUsers}</p>
+            </motion.div>
+          </motion.div>
+        )}
+
         {/* Filter buttons */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
           className="flex flex-wrap justify-center gap-3 mb-12"
         >
           {(['all', 'compress', 'convert'] as const).map((filterOption) => (
