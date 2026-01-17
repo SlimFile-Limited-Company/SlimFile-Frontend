@@ -84,13 +84,11 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
           <div className="flex items-center gap-3 flex-1">
             {/* Anonymous avatar */}
             <div className="relative">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                className="w-12 h-12 rounded-full bg-gradient-to-br from-red-400 via-orange-400 to-red-600 flex items-center justify-center text-white font-bold text-lg"
-              >
-                👤
-              </motion.div>
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                </svg>
+              </div>
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
