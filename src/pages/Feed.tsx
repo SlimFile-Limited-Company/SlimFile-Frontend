@@ -286,7 +286,7 @@ export const Feed = () => {
           </p>
         </motion.div>
 
-        {/* Global Stats */}
+        {/* Global Stats */} 
         
 
         {/* Filter buttons */}

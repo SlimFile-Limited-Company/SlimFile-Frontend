@@ -64,6 +64,7 @@ import BlogHowToCompressLargeVideosBeforeUploading from './pages/blog/HowToCompr
 import OurBlogs from './pages/OurBlogs';
 import StepsBuild from './pages/StepsBuild';
 import Feed from './pages/Feed';
+import Portals from './pages/Portals';
 
 // Register service worker for PWA functionality
 if ('serviceWorker' in navigator) {
@@ -155,6 +156,7 @@ ReactDOM.createRoot(root).render(
           <Route path="global-impact" element={<GlobalImpact />} />
           <Route path="stepsbuild" element={<StepsBuild />} />
           <Route path="feed" element={<Feed />} />
+          <Route path="portals" element={<Portals />} />
         </Route>
       </Routes>
         </BrowserRouter>
