@@ -53,7 +53,8 @@ const Portals = () => {
 
   // Initialize socket connection
   useEffect(() => {
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:4000';
+    // Derive socket URL from API base URL (same pattern as Feed.tsx)
+    const socketUrl = API_BASE_URL.replace('/api', '');
     const newSocket = io(socketUrl, {
       transports: ['websocket', 'polling']
     });
