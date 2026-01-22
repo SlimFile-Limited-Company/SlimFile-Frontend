@@ -65,6 +65,9 @@ import OurBlogs from './pages/OurBlogs';
 import StepsBuild from './pages/StepsBuild';
 import Feed from './pages/Feed';
 import Portals from './pages/Portals';
+import UniversityLogin from './pages/UniversityLogin';
+import UniversityDashboard from './pages/UniversityDashboard';
+import { ProtectedUniversityRoute } from './components/ProtectedUniversityRoute';
 
 // Register service worker for PWA functionality
 if ('serviceWorker' in navigator) {
@@ -156,7 +159,17 @@ ReactDOM.createRoot(root).render(
           <Route path="global-impact" element={<GlobalImpact />} />
           <Route path="stepsbuild" element={<StepsBuild />} />
           <Route path="feed" element={<Feed />} />
-          <Route path="portals" element={<Portals />} />
+          <Route path="university/login" element={<UniversityLogin />} />
+          <Route path="university/dashboard" element={
+            <ProtectedUniversityRoute>
+              <UniversityDashboard />
+            </ProtectedUniversityRoute>
+          } />
+          <Route path="portals" element={
+            <ProtectedUniversityRoute>
+              <Portals />
+            </ProtectedUniversityRoute>
+          } />
         </Route>
       </Routes>
         </BrowserRouter>
