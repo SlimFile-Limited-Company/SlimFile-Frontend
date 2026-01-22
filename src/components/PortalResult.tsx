@@ -206,8 +206,20 @@ export const PortalResult = ({
     );
   }
 
-  // Completed state
-  if (compressedBlob && stats) {
+  // Completed state - show if we have the blob (stats are optional)
+  if (compressedBlob) {
+    // Use default stats if not provided
+    const displayStats = stats || {
+      totalFiles: totalFiles,
+      compressedFiles: totalFiles,
+      skippedFiles: 0,
+      failedFiles: 0,
+      originalSize: 0,
+      compressedSize: compressedBlob.size,
+      spaceSaved: 0,
+      compressionRatio: 0
+    };
+
     return (
       <div className="w-full max-w-3xl mx-auto space-y-6">
         {/* Confetti Canvas */}
@@ -254,10 +266,10 @@ export const PortalResult = ({
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
                 <FileText className="w-6 h-6 text-blue-600" />
               </div>
-              <p className="text-3xl font-bold text-gray-900">{stats.totalFiles}</p>
+              <p className="text-3xl font-bold text-gray-900">{displayStats.totalFiles}</p>
               <p className="text-sm text-gray-500">Files Processed</p>
               <div className="mt-2 text-xs text-gray-400">
-                {stats.compressedFiles} compressed, {stats.skippedFiles} passed through
+                {displayStats.compressedFiles} compressed, {displayStats.skippedFiles} passed through
               </div>
             </CardContent>
           </Card>
@@ -267,10 +279,10 @@ export const PortalResult = ({
               <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-3">
                 <TrendingDown className="w-6 h-6 text-red-600" />
               </div>
-              <p className="text-3xl font-bold text-red-600">{stats.compressionRatio}%</p>
+              <p className="text-3xl font-bold text-red-600">{displayStats.compressionRatio}%</p>
               <p className="text-sm text-gray-500">Size Reduction</p>
               <div className="mt-2 text-xs text-gray-400">
-                {formatFileSize(stats.originalSize)} → {formatFileSize(stats.compressedSize)}
+                {formatFileSize(displayStats.originalSize)} → {formatFileSize(displayStats.compressedSize)}
               </div>
             </CardContent>
           </Card>
@@ -280,7 +292,7 @@ export const PortalResult = ({
               <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3">
                 <Archive className="w-6 h-6 text-green-600" />
               </div>
-              <p className="text-3xl font-bold text-green-600">{formatFileSize(stats.spaceSaved)}</p>
+              <p className="text-3xl font-bold text-green-600">{formatFileSize(displayStats.spaceSaved)}</p>
               <p className="text-sm text-gray-500">Space Saved</p>
               <div className="mt-2 text-xs text-gray-400">
                 ZIP size: {formatFileSize(compressedBlob.size)}
@@ -306,7 +318,7 @@ export const PortalResult = ({
                   <div className="h-8 bg-gray-200 rounded-lg relative overflow-hidden">
                     <div className="absolute inset-0 bg-gray-400 rounded-lg" />
                     <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-white">
-                      {formatFileSize(stats.originalSize)}
+                      {formatFileSize(displayStats.originalSize)}
                     </div>
                   </div>
                 </div>
@@ -316,10 +328,10 @@ export const PortalResult = ({
                   <div className="h-8 bg-gray-200 rounded-lg relative overflow-hidden">
                     <div
                       className="absolute inset-y-0 left-0 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg transition-all duration-1000"
-                      style={{ width: `${100 - stats.compressionRatio}%` }}
+                      style={{ width: `${100 - displayStats.compressionRatio}%` }}
                     />
                     <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-white">
-                      {formatFileSize(stats.compressedSize)}
+                      {formatFileSize(displayStats.compressedSize)}
                     </div>
                   </div>
                 </div>
