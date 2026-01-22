@@ -106,9 +106,9 @@ export default function DashboardLayout() {
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64 pt-20">
+      <div className="lg:pl-64 pt-16">
         {/* Mobile menu button */}
-        <div className="sticky top-20 z-40 lg:hidden bg-white border-b border-gray-200 px-4 py-3">
+        <div className="sticky top-16 z-40 lg:hidden bg-white border-b border-gray-200 px-4 py-3">
           <button
             onClick={() => setSidebarOpen(true)}
             className="flex items-center gap-2 text-gray-700"
