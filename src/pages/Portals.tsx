@@ -81,16 +81,49 @@ const Portals = () => {
     const sessionId = `session_${Date.now()}`;
     formData.append('sessionId', sessionId);
 
-    try {
-      // Simulate initial progress while uploading
-      let uploadProgress = 0;
-      const progressInterval = setInterval(() => {
-        uploadProgress += Math.random() * 5;
-        if (uploadProgress < 30) {
-          setProgress(Math.floor(uploadProgress));
-        }
-      }, 200);
+    // Simulate smooth progress if socket isn't working
+    let simulatedProgress = 0;
+    let socketActive = false;
 
+    const progressInterval = setInterval(() => {
+      if (!socketActive) {
+        // Smooth progress simulation: start slow, accelerate, then slow down near end
+        const increment = simulatedProgress < 20 ? 0.5 :
+                         simulatedProgress < 70 ? 1.5 :
+                         simulatedProgress < 95 ? 0.5 : 0.1;
+
+        simulatedProgress = Math.min(95, simulatedProgress + increment);
+        setProgress(Math.floor(simulatedProgress));
+
+        // Estimate current file based on progress
+        const estimatedFileIndex = Math.floor((simulatedProgress / 100) * files.length);
+        setFileIndex(estimatedFileIndex);
+        if (files[estimatedFileIndex]) {
+          setCurrentFile(files[estimatedFileIndex].name);
+        }
+      }
+    }, 100);
+
+    // Listen for socket progress updates
+    const handleSocketProgress = (data: any) => {
+      if (data.sessionId === sessionId) {
+        socketActive = true;
+        if (data.status === 'processing') {
+          setProgress(data.percentComplete);
+          setCurrentFile(data.currentFile);
+          setFileIndex(data.fileIndex);
+          setTotalFiles(data.totalFiles);
+        } else if (data.status === 'complete') {
+          setProgress(100);
+        }
+      }
+    };
+
+    if (socket) {
+      socket.on('portalProgress', handleSocketProgress);
+    }
+
+    try {
       const response = await fetch(`${API_BASE_URL}/portals/compress`, {
         method: 'POST',
         headers: getUniversityAuthHeaders(),
@@ -131,6 +164,10 @@ const Portals = () => {
         variant: "destructive"
       });
     } finally {
+      clearInterval(progressInterval);
+      if (socket) {
+        socket.off('portalProgress', handleSocketProgress);
+      }
       setIsCompressing(false);
     }
   };
