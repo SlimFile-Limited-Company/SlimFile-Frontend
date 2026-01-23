@@ -134,6 +134,14 @@ const Portals = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+
+        // Handle file limit error with helpful message
+        if (errorData.maxFiles) {
+          throw new Error(
+            `Too many files! Please compress ${errorData.maxFiles} files at a time. You uploaded ${errorData.receivedFiles} files. Split into ${Math.ceil(errorData.receivedFiles / errorData.maxFiles)} batches.`
+          );
+        }
+
         throw new Error(errorData.error || 'Compression failed');
       }
 
