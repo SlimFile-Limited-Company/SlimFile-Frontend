@@ -134,37 +134,52 @@ const Portals = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-
-        // Handle file limit error with helpful message
-        if (errorData.maxFiles) {
-          throw new Error(
-            `Too many files! Please compress ${errorData.maxFiles} files at a time. You uploaded ${errorData.receivedFiles} files. Split into ${Math.ceil(errorData.receivedFiles / errorData.maxFiles)} batches.`
-          );
-        }
-
         throw new Error(errorData.error || 'Compression failed');
       }
 
-      // Get stats from header
-      const statsHeader = response.headers.get('X-Compression-Stats');
-      if (statsHeader) {
-        try {
-          const parsedStats = JSON.parse(statsHeader);
-          setStats(parsedStats);
-        } catch (e) {
-          console.error('Failed to parse stats header:', e);
+      // Get JSON response with S3 download URL
+      const data = await response.json();
+
+      if (data.downloadUrl) {
+        // S3 download URL - trigger download
+        setStats(data.stats);
+        setProgress(100);
+        setStep('result');
+
+        // Trigger download from S3
+        const link = document.createElement('a');
+        link.href = data.downloadUrl;
+        link.download = `slimfile_compressed_${Date.now()}.zip`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast({
+          title: "Compression Complete!",
+          description: `${files.length} files have been compressed and are ready for download.`,
+        });
+      } else {
+        // Fallback: direct blob response (if S3 fails and backend streams directly)
+        const statsHeader = response.headers.get('X-Compression-Stats');
+        if (statsHeader) {
+          try {
+            const parsedStats = JSON.parse(statsHeader);
+            setStats(parsedStats);
+          } catch (e) {
+            console.error('Failed to parse stats header:', e);
+          }
         }
+
+        const blob = await response.blob();
+        setCompressedBlob(blob);
+        setProgress(100);
+        setStep('result');
+
+        toast({
+          title: "Compression Complete!",
+          description: `${files.length} files have been compressed.`,
+        });
       }
-
-      const blob = await response.blob();
-      setCompressedBlob(blob);
-      setProgress(100);
-      setStep('result');
-
-      toast({
-        title: "Compression Complete!",
-        description: `${files.length} files have been compressed.`,
-      });
     } catch (err: any) {
       toast({
         title: "Compression Failed",

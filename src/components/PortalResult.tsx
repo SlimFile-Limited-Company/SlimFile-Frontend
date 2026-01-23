@@ -52,12 +52,12 @@ export const PortalResult = ({
 
   // Play sound and trigger confetti when compression is complete
   useEffect(() => {
-    if (!isCompressing && compressedBlob && stats && !hasPlayedSound) {
+    if (!isCompressing && stats && !hasPlayedSound) {
       playSuccessSound();
       setHasPlayedSound(true);
       triggerConfetti();
     }
-  }, [isCompressing, compressedBlob, stats, hasPlayedSound]);
+  }, [isCompressing, stats, hasPlayedSound]);
 
   // Confetti animation
   const triggerConfetti = () => {
@@ -206,16 +206,16 @@ export const PortalResult = ({
     );
   }
 
-  // Completed state - show if we have the blob (stats are optional)
-  if (compressedBlob) {
-    // Use default stats if not provided
+  // Completed state - show if we have stats OR blob
+  if (stats || compressedBlob) {
+    // Use stats if available, otherwise create default stats
     const displayStats = stats || {
       totalFiles: totalFiles,
       compressedFiles: totalFiles,
       skippedFiles: 0,
       failedFiles: 0,
       originalSize: 0,
-      compressedSize: compressedBlob.size,
+      compressedSize: compressedBlob?.size || 0,
       spaceSaved: 0,
       compressionRatio: 0
     };
@@ -295,7 +295,7 @@ export const PortalResult = ({
               <p className="text-3xl font-bold text-green-600">{formatFileSize(displayStats.spaceSaved)}</p>
               <p className="text-sm text-gray-500">Space Saved</p>
               <div className="mt-2 text-xs text-gray-400">
-                ZIP size: {formatFileSize(compressedBlob.size)}
+                ZIP size: {formatFileSize(compressedBlob?.size || displayStats.compressedSize)}
               </div>
             </CardContent>
           </Card>
@@ -347,32 +347,41 @@ export const PortalResult = ({
           transition={{ duration: 0.5, delay: 0.5 }}
           className="flex flex-col sm:flex-row gap-4"
         >
-          <Button
-            onClick={handleDownload}
-            disabled={isDownloading}
-            className="flex-1 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white py-6 text-lg font-semibold"
-          >
-            {isDownloading ? (
-              <>
-                <motion.div
-                  className="h-5 w-5 border-2 border-white border-r-transparent rounded-full mr-2"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                />
-                Downloading...
-              </>
-            ) : (
-              <>
-                <Download className="w-5 h-5 mr-2" />
-                Download Compressed ZIP
-              </>
-            )}
-          </Button>
+          {compressedBlob ? (
+            <Button
+              onClick={handleDownload}
+              disabled={isDownloading}
+              className="flex-1 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white py-6 text-lg font-semibold"
+            >
+              {isDownloading ? (
+                <>
+                  <motion.div
+                    className="h-5 w-5 border-2 border-white border-r-transparent rounded-full mr-2"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                  Downloading...
+                </>
+              ) : (
+                <>
+                  <Download className="w-5 h-5 mr-2" />
+                  Download Compressed ZIP
+                </>
+              )}
+            </Button>
+          ) : (
+            <Card className="flex-1 bg-green-50 border border-green-200">
+              <CardContent className="p-4 flex items-center justify-center gap-2">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+                <span className="text-green-700 font-medium">Download started automatically</span>
+              </CardContent>
+            </Card>
+          )}
 
           <Button
             onClick={handleReset}
             variant="outline"
-            className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 py-6 text-lg"
+            className={`${compressedBlob ? 'flex-1' : 'w-full'} border-gray-300 text-gray-700 hover:bg-gray-50 py-6 text-lg`}
           >
             <RotateCcw className="w-5 h-5 mr-2" />
             Compress Another Folder
