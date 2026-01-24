@@ -262,7 +262,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.stepsbuild': 'STEPsBuild',
     'footer.resources': 'Resources',
     'footer.documentation': 'Documentation',
-    'footer.copyright': '© 2025 SlimFile. Compress • Convert • Simplify',
+    'footer.copyright': '© 2026 SlimFile. Compress • Convert • Simplify',
 
     // FileUpload
     'fileUpload.supportText': 'Support for PDF, Images, PPTX, DOCX, and XLSX files up to 200MB',
