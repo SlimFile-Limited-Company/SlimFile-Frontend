@@ -422,7 +422,7 @@ export const CompressionResult = ({
                     ) : (
                       <>
                         <Download className="h-4 w-4 mr-2" />
-                        {isAuthenticated() ? 'Download Compressed File' : 'Login to Download'}
+                        {isAuthenticated() ? 'Download' : 'Login to Download'}
                       </>
                     )}
                   </Button>
