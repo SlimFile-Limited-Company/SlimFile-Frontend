@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { FolderUpload } from "@/components/FolderUpload";
 import { PortalResult } from "@/components/PortalResult";
 import { toast } from "@/hooks/use-toast";
-import { GraduationCap, Folder, Shield, Zap } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Folder, Shield, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { io, Socket } from "socket.io-client";
-import { getUniversityAuthHeaders, getUniversityData } from "@/lib/universityAuth";
+import { isAuthenticated } from "@/lib/auth";
+import { useNavigate } from "react-router-dom";
 
 interface CompressionStats {
   totalFiles: number;
@@ -29,9 +29,28 @@ const Portals = () => {
   const [compressedBlob, setCompressedBlob] = useState<Blob | null>(null);
   const [stats, setStats] = useState<CompressionStats | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const navigate = useNavigate();
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
-  const universityData = getUniversityData();
+
+  // Check if user is authenticated
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      toast({
+        title: "Authentication Required",
+        description: "Please login to use folder compression.",
+        variant: "destructive"
+      });
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  // Get auth headers for API calls
+  const getAuthHeaders = (): HeadersInit => {
+    const token = localStorage.getItem('jwt');
+    if (!token) return {};
+    return { 'Authorization': `Bearer ${token}` };
+  };
 
   // Initialize socket connection
   useEffect(() => {
@@ -126,7 +145,7 @@ const Portals = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/portals/compress`, {
         method: 'POST',
-        headers: getUniversityAuthHeaders(),
+        headers: getAuthHeaders(),
         body: formData
       });
 
@@ -137,49 +156,27 @@ const Portals = () => {
         throw new Error(errorData.error || 'Compression failed');
       }
 
-      // Get JSON response with S3 download URL
-      const data = await response.json();
-
-      if (data.downloadUrl) {
-        // S3 download URL - trigger download
-        setStats(data.stats);
-        setProgress(100);
-        setStep('result');
-
-        // Trigger download from S3
-        const link = document.createElement('a');
-        link.href = data.downloadUrl;
-        link.download = `slimfile_compressed_${Date.now()}.zip`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        toast({
-          title: "Compression Complete!",
-          description: `${files.length} files have been compressed and are ready for download.`,
-        });
-      } else {
-        // Fallback: direct blob response (if S3 fails and backend streams directly)
-        const statsHeader = response.headers.get('X-Compression-Stats');
-        if (statsHeader) {
-          try {
-            const parsedStats = JSON.parse(statsHeader);
-            setStats(parsedStats);
-          } catch (e) {
-            console.error('Failed to parse stats header:', e);
-          }
+      // Get stats from response header
+      const statsHeader = response.headers.get('X-Compression-Stats');
+      if (statsHeader) {
+        try {
+          const parsedStats = JSON.parse(statsHeader);
+          setStats(parsedStats);
+        } catch (e) {
+          console.error('Failed to parse stats header:', e);
         }
-
-        const blob = await response.blob();
-        setCompressedBlob(blob);
-        setProgress(100);
-        setStep('result');
-
-        toast({
-          title: "Compression Complete!",
-          description: `${files.length} files have been compressed.`,
-        });
       }
+
+      // Get blob directly (same pattern as normal compression)
+      const blob = await response.blob();
+      setCompressedBlob(blob);
+      setProgress(100);
+      setStep('result');
+
+      toast({
+        title: "Compression Complete!",
+        description: `${files.length} files have been compressed.`,
+      });
     } catch (err: any) {
       toast({
         title: "Compression Failed",
@@ -226,8 +223,8 @@ const Portals = () => {
                 transition={{ duration: 0.6 }}
               >
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-full text-sm font-medium mb-6">
-                  <GraduationCap className="w-4 h-4" />
-                  University Portal
+                  <Folder className="w-4 h-4" />
+                  Folder Compression
                 </div>
 
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
@@ -271,23 +268,6 @@ const Portals = () => {
         <section className="py-12 px-4 sm:px-6 lg:px-8">
           <div className="container mx-auto">
             <div className="max-w-4xl mx-auto">
-              {/* University Info */}
-              {universityData && (
-                <div className="text-center mb-8">
-                  <Card className="inline-block bg-gradient-to-r from-red-50 to-orange-50 border border-red-200">
-                    <CardContent className="py-3 px-6 flex items-center gap-3">
-                      <GraduationCap className="w-5 h-5 text-red-600" />
-                      <span className="font-medium text-gray-900">{universityData.name}</span>
-                      {universityData.totalFilesCompressed > 0 && (
-                        <span className="text-sm text-gray-500">
-                          | {universityData.totalFilesCompressed} files compressed | {formatFileSize(universityData.totalSpaceSaved)} saved
-                        </span>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-
               {/* Step Content */}
               <div className="relative bg-white rounded-3xl border-2 border-gray-200 shadow-xl p-6 sm:p-8">
                 {/* Decorative corners */}
