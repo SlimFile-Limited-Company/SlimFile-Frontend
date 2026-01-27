@@ -40,6 +40,17 @@ export const PortalResult = ({
   stats,
   onReset,
 }: PortalResultProps) => {
+  console.log('📦 [PORTAL RESULT] Component received props:', {
+    isCompressing,
+    progress,
+    currentFile,
+    fileIndex,
+    totalFiles,
+    statusMessage,
+    statusMessageLength: statusMessage?.length,
+    hasStatusMessage: !!statusMessage
+  });
+
   const [isDownloading, setIsDownloading] = useState(false);
   const [hasPlayedSound, setHasPlayedSound] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -192,23 +203,31 @@ export const PortalResult = ({
               </div>
 
               {/* Show detailed status message if available */}
+              {console.log('📦 [PORTAL RESULT] Evaluating statusMessage:', statusMessage, 'Truthy?', !!statusMessage)}
               {statusMessage && (
-                <div className="bg-blue-50 rounded-xl p-4 mb-4 border border-blue-200">
-                  <p className="text-sm text-blue-900 font-medium text-center">
-                    {statusMessage}
-                  </p>
-                </div>
+                <>
+                  {console.log('📦 [PORTAL RESULT] ✅ RENDERING STATUS MESSAGE BANNER:', statusMessage)}
+                  <div className="bg-blue-50 rounded-xl p-4 mb-4 border border-blue-200">
+                    <p className="text-sm text-blue-900 font-medium text-center">
+                      {statusMessage}
+                    </p>
+                  </div>
+                </>
               )}
 
+              {console.log('📦 [PORTAL RESULT] Evaluating currentFile fallback. currentFile:', currentFile, 'statusMessage:', statusMessage, 'Will show?', currentFile && !statusMessage)}
               {currentFile && !statusMessage && (
-                <div className="bg-gray-50 rounded-xl p-4">
-                  <div className="flex items-center justify-center gap-2">
-                    <FileText className="w-4 h-4 text-red-500" />
-                    <span className="text-sm text-gray-700 truncate max-w-md">
-                      {currentFile}
-                    </span>
+                <>
+                  {console.log('📦 [PORTAL RESULT] ⚠️ RENDERING CURRENT FILE FALLBACK (no statusMessage):', currentFile)}
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <div className="flex items-center justify-center gap-2">
+                      <FileText className="w-4 h-4 text-red-500" />
+                      <span className="text-sm text-gray-700 truncate max-w-md">
+                        {currentFile}
+                      </span>
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
           </CardContent>

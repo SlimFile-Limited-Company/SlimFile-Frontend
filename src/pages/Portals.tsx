@@ -65,19 +65,30 @@ const Portals = () => {
     });
 
     newSocket.on('portalProgress', (data) => {
-      console.log('Portal progress update:', data);
+      console.log('🔵 [GLOBAL SOCKET] Portal progress update received:', data);
+      console.log('🔵 [GLOBAL SOCKET] Message content:', data.message);
+      console.log('🔵 [GLOBAL SOCKET] Status:', data.status);
 
       // Handle all status types: 'compressing', 'compressed', 'skipped', 'failed', 'complete'
       if (data.status === 'complete') {
+        console.log('🔵 [GLOBAL SOCKET] Setting complete status');
         setProgress(100);
         setStatusMessage('Compression complete!');
       } else {
         // Update progress for all non-complete statuses
+        console.log('🔵 [GLOBAL SOCKET] Updating progress state with:', {
+          progress: data.percentComplete,
+          currentFile: data.currentFile,
+          fileIndex: data.fileIndex,
+          totalFiles: data.totalFiles,
+          statusMessage: data.message
+        });
         setProgress(data.percentComplete || 0);
         setCurrentFile(data.currentFile || '');
         setFileIndex(data.fileIndex || 0);
         setTotalFiles(data.totalFiles || 0);
         setStatusMessage(data.message || '');
+        console.log('🔵 [GLOBAL SOCKET] State updates called');
       }
     });
 
@@ -114,12 +125,14 @@ const Portals = () => {
 
     const progressInterval = setInterval(() => {
       if (!socketActive) {
+        console.log('⚪ [SIMULATED] Running simulated progress (socketActive = false)');
         // Smooth progress simulation: start slow, accelerate, then slow down near end
         const increment = simulatedProgress < 20 ? 0.5 :
                          simulatedProgress < 70 ? 1.5 :
                          simulatedProgress < 95 ? 0.5 : 0.1;
 
         simulatedProgress = Math.min(95, simulatedProgress + increment);
+        console.log('⚪ [SIMULATED] Setting progress to:', Math.floor(simulatedProgress));
         setProgress(Math.floor(simulatedProgress));
 
         // Estimate current file based on progress
@@ -127,27 +140,48 @@ const Portals = () => {
         setFileIndex(estimatedFileIndex);
         if (files[estimatedFileIndex]) {
           setCurrentFile(files[estimatedFileIndex].name);
+          console.log('⚪ [SIMULATED] Setting currentFile to:', files[estimatedFileIndex].name);
         }
+      } else {
+        console.log('🟢 [SIMULATED] Skipping simulated progress (socketActive = true)');
       }
     }, 100);
 
     // Listen for socket progress updates
     const handleSocketProgress = (data: any) => {
+      console.log('🟠 [PER-UPLOAD SOCKET] Received message:', data);
+      console.log('🟠 [PER-UPLOAD SOCKET] Session ID match?', data.sessionId, '===', sessionId, data.sessionId === sessionId);
+
       if (data.sessionId === sessionId) {
+        console.log('🟢 [PER-UPLOAD SOCKET] Session ID matched! Setting socketActive = true');
         socketActive = true;
+        console.log('🟢 [PER-UPLOAD SOCKET] socketActive is now:', socketActive);
+        console.log('🟢 [PER-UPLOAD SOCKET] Message:', data.message);
+        console.log('🟢 [PER-UPLOAD SOCKET] Status:', data.status);
 
         // Handle all status types from backend
         if (data.status === 'complete') {
+          console.log('🟢 [PER-UPLOAD SOCKET] Setting complete status');
           setProgress(100);
           setStatusMessage('Compression complete!');
         } else {
           // Handle: 'compressing', 'compressed', 'skipped', 'failed'
+          console.log('🟢 [PER-UPLOAD SOCKET] Updating state with:', {
+            progress: data.percentComplete,
+            currentFile: data.currentFile,
+            fileIndex: data.fileIndex,
+            totalFiles: data.totalFiles,
+            statusMessage: data.message
+          });
           setProgress(data.percentComplete || 0);
           setCurrentFile(data.currentFile || '');
           setFileIndex(data.fileIndex || 0);
           setTotalFiles(data.totalFiles || 0);
           setStatusMessage(data.message || '');
+          console.log('🟢 [PER-UPLOAD SOCKET] State updates called, statusMessage set to:', data.message);
         }
+      } else {
+        console.log('🔴 [PER-UPLOAD SOCKET] Session ID did NOT match, ignoring this message');
       }
     };
 
@@ -294,17 +328,28 @@ const Portals = () => {
                     transition={{ duration: 0.5 }}
                   >
                     {isCompressing ? (
-                      <PortalResult
-                        isCompressing={true}
-                        progress={progress}
-                        currentFile={currentFile}
-                        fileIndex={fileIndex}
-                        totalFiles={totalFiles}
-                        statusMessage={statusMessage}
-                        compressedBlob={null}
-                        stats={null}
-                        onReset={handleReset}
-                      />
+                      <>
+                        {console.log('🎨 [RENDER] Rendering PortalResult with props:', {
+                          isCompressing: true,
+                          progress,
+                          currentFile,
+                          fileIndex,
+                          totalFiles,
+                          statusMessage,
+                          statusMessageLength: statusMessage?.length
+                        })}
+                        <PortalResult
+                          isCompressing={true}
+                          progress={progress}
+                          currentFile={currentFile}
+                          fileIndex={fileIndex}
+                          totalFiles={totalFiles}
+                          statusMessage={statusMessage}
+                          compressedBlob={null}
+                          stats={null}
+                          onReset={handleReset}
+                        />
+                      </>
                     ) : (
                       <FolderUpload
                         onFilesSelect={handleFilesSelect}
