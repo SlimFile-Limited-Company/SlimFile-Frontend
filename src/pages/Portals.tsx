@@ -190,18 +190,33 @@ const Portals = () => {
     }
 
     try {
+      console.log('📤 [UPLOAD] Starting upload to backend...');
+      console.log('📤 [UPLOAD] API URL:', `${API_BASE_URL}/portals/compress`);
+      console.log('📤 [UPLOAD] File count:', files.length);
+      console.log('📤 [UPLOAD] Session ID:', sessionId);
+
+      const uploadStartTime = Date.now();
+
       const response = await fetch(`${API_BASE_URL}/portals/compress`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: formData
       });
 
+      const uploadDuration = ((Date.now() - uploadStartTime) / 1000).toFixed(2);
+      console.log(`📤 [UPLOAD] Request completed in ${uploadDuration}s`);
+      console.log('📤 [UPLOAD] Response status:', response.status, response.statusText);
+
       clearInterval(progressInterval);
 
       if (!response.ok) {
+        console.error('❌ [UPLOAD] Request failed with status:', response.status);
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Compression failed');
+        console.error('❌ [UPLOAD] Error details:', errorData);
+        throw new Error(errorData.error || `Upload failed with status ${response.status}`);
       }
+
+      console.log('✅ [UPLOAD] Request successful, processing response...');
 
       // Get stats from response header
       const statsHeader = response.headers.get('X-Compression-Stats');
@@ -225,9 +240,14 @@ const Portals = () => {
         description: `${files.length} files have been compressed.`,
       });
     } catch (err: any) {
+      console.error('💥 [UPLOAD] Fatal error occurred:', err);
+      console.error('💥 [UPLOAD] Error name:', err.name);
+      console.error('💥 [UPLOAD] Error message:', err.message);
+      console.error('💥 [UPLOAD] Full error:', err);
+
       toast({
         title: "Compression Failed",
-        description: err.message,
+        description: err.message || 'Unknown error occurred',
         variant: "destructive"
       });
     } finally {
