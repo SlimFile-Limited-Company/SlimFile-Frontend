@@ -96,6 +96,7 @@ const Portals = () => {
     setCurrentFile('');
     setFileIndex(0);
     setTotalFiles(files.length);
+    setStatusMessage('');
     setCompressedBlob(null);
     setStats(null);
 
@@ -134,13 +135,18 @@ const Portals = () => {
     const handleSocketProgress = (data: any) => {
       if (data.sessionId === sessionId) {
         socketActive = true;
-        if (data.status === 'processing') {
-          setProgress(data.percentComplete);
-          setCurrentFile(data.currentFile);
-          setFileIndex(data.fileIndex);
-          setTotalFiles(data.totalFiles);
-        } else if (data.status === 'complete') {
+
+        // Handle all status types from backend
+        if (data.status === 'complete') {
           setProgress(100);
+          setStatusMessage('Compression complete!');
+        } else {
+          // Handle: 'compressing', 'compressed', 'skipped', 'failed'
+          setProgress(data.percentComplete || 0);
+          setCurrentFile(data.currentFile || '');
+          setFileIndex(data.fileIndex || 0);
+          setTotalFiles(data.totalFiles || 0);
+          setStatusMessage(data.message || '');
         }
       }
     };
