@@ -26,6 +26,7 @@ const Portals = () => {
   const [currentFile, setCurrentFile] = useState('');
   const [fileIndex, setFileIndex] = useState(0);
   const [totalFiles, setTotalFiles] = useState(0);
+  const [statusMessage, setStatusMessage] = useState('');
   const [compressedBlob, setCompressedBlob] = useState<Blob | null>(null);
   const [stats, setStats] = useState<CompressionStats | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -64,13 +65,19 @@ const Portals = () => {
     });
 
     newSocket.on('portalProgress', (data) => {
-      if (data.status === 'processing') {
-        setProgress(data.percentComplete);
-        setCurrentFile(data.currentFile);
-        setFileIndex(data.fileIndex);
-        setTotalFiles(data.totalFiles);
-      } else if (data.status === 'complete') {
+      console.log('Portal progress update:', data);
+
+      // Handle all status types: 'compressing', 'compressed', 'skipped', 'failed', 'complete'
+      if (data.status === 'complete') {
         setProgress(100);
+        setStatusMessage('Compression complete!');
+      } else {
+        // Update progress for all non-complete statuses
+        setProgress(data.percentComplete || 0);
+        setCurrentFile(data.currentFile || '');
+        setFileIndex(data.fileIndex || 0);
+        setTotalFiles(data.totalFiles || 0);
+        setStatusMessage(data.message || '');
       }
     });
 
@@ -287,6 +294,7 @@ const Portals = () => {
                         currentFile={currentFile}
                         fileIndex={fileIndex}
                         totalFiles={totalFiles}
+                        statusMessage={statusMessage}
                         compressedBlob={null}
                         stats={null}
                         onReset={handleReset}
@@ -312,6 +320,7 @@ const Portals = () => {
                       currentFile=""
                       fileIndex={totalFiles}
                       totalFiles={totalFiles}
+                      statusMessage=""
                       compressedBlob={compressedBlob}
                       stats={stats}
                       onReset={handleReset}

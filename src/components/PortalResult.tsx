@@ -23,6 +23,7 @@ interface PortalResultProps {
   currentFile: string;
   fileIndex: number;
   totalFiles: number;
+  statusMessage?: string;
   compressedBlob: Blob | null;
   stats: CompressionStats | null;
   onReset: () => void;
@@ -34,6 +35,7 @@ export const PortalResult = ({
   currentFile,
   fileIndex,
   totalFiles,
+  statusMessage,
   compressedBlob,
   stats,
   onReset,
@@ -189,7 +191,16 @@ export const PortalResult = ({
                 <span>{totalFiles - fileIndex} files remaining</span>
               </div>
 
-              {currentFile && (
+              {/* Show detailed status message if available */}
+              {statusMessage && (
+                <div className="bg-blue-50 rounded-xl p-4 mb-4 border border-blue-200">
+                  <p className="text-sm text-blue-900 font-medium text-center">
+                    {statusMessage}
+                  </p>
+                </div>
+              )}
+
+              {currentFile && !statusMessage && (
                 <div className="bg-gray-50 rounded-xl p-4">
                   <div className="flex items-center justify-center gap-2">
                     <FileText className="w-4 h-4 text-red-500" />
