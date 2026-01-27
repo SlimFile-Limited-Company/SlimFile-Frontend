@@ -57,22 +57,32 @@ const ConvertOnly = () => {
   // NEW: Detect available formats based on file type
   const getAvailableFormats = (file: File): string[] => {
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
-    
+
     // Images can convert to: jpg, png, webp, pdf
     if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
       return ['jpg', 'png', 'webp', 'pdf'];
     }
-    
-    // PDF can convert to: jpg, png (returns ZIP)
+
+    // PDF can convert to: jpg, png (images) or docx, pptx, xlsx (office)
     if (ext === 'pdf') {
-      return ['jpg', 'png'];
+      return ['jpg', 'png', 'docx', 'pptx', 'xlsx'];
     }
-    
-    // Office docs can convert to: pdf
-    if (['docx', 'pptx', 'xlsx'].includes(ext)) {
-      return ['pdf'];
+
+    // DOCX can convert to: pdf, pptx, xlsx
+    if (ext === 'docx') {
+      return ['pdf', 'pptx', 'xlsx'];
     }
-    
+
+    // PPTX can convert to: pdf, docx, xlsx
+    if (ext === 'pptx') {
+      return ['pdf', 'docx', 'xlsx'];
+    }
+
+    // XLSX can convert to: pdf, docx, pptx
+    if (ext === 'xlsx') {
+      return ['pdf', 'docx', 'pptx'];
+    }
+
     return ['pdf']; // default
   };
 
@@ -360,15 +370,15 @@ const ConvertOnly = () => {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">DOCX → PDF</span>
+                      <span className="text-gray-700">DOCX ↔ PPTX ↔ XLSX</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">PPTX → PDF</span>
+                      <span className="text-gray-700">DOCX/PPTX/XLSX → PDF</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">XLSX → PDF</span>
+                      <span className="text-gray-700">PDF → DOCX/PPTX/XLSX</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />

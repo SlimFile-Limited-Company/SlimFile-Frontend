@@ -58,22 +58,32 @@ const ConvertThenCompress = () => {
   // NEW: Detect available formats based on file type
   const getAvailableFormats = (file: File): string[] => {
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
-    
+
     // Images can convert to: jpg, png, webp, pdf
     if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
       return ['jpg', 'png', 'webp', 'pdf'];
     }
-    
-    // PDF can convert to: jpg, png (returns ZIP)
+
+    // PDF can convert to: jpg, png (images) or docx, pptx, xlsx (office)
     if (ext === 'pdf') {
-      return ['jpg', 'png'];
+      return ['jpg', 'png', 'docx', 'pptx', 'xlsx'];
     }
-    
-    // Office docs can convert to: pdf
-    if (['docx', 'pptx', 'xlsx'].includes(ext)) {
-      return ['pdf'];
+
+    // DOCX can convert to: pdf, pptx, xlsx
+    if (ext === 'docx') {
+      return ['pdf', 'pptx', 'xlsx'];
     }
-    
+
+    // PPTX can convert to: pdf, docx, xlsx
+    if (ext === 'pptx') {
+      return ['pdf', 'docx', 'xlsx'];
+    }
+
+    // XLSX can convert to: pdf, docx, pptx
+    if (ext === 'xlsx') {
+      return ['pdf', 'docx', 'pptx'];
+    }
+
     return ['pdf']; // default
   };
 
