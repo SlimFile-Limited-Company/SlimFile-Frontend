@@ -119,6 +119,13 @@ const Portals = () => {
     const sessionId = `session_${Date.now()}`;
     formData.append('sessionId', sessionId);
 
+    // Calculate total size for upload status
+    const totalUploadSize = files.reduce((acc, file) => acc + file.size, 0);
+    const totalUploadMB = (totalUploadSize / (1024 * 1024)).toFixed(1);
+
+    // Set initial status message about upload
+    setStatusMessage(`Uploading ${files.length} files (${totalUploadMB} MB) to server...`);
+
     // Simulate smooth progress if socket isn't working
     let simulatedProgress = 0;
     let socketActive = false;
@@ -195,17 +202,45 @@ const Portals = () => {
       console.log('📤 [UPLOAD] File count:', files.length);
       console.log('📤 [UPLOAD] Session ID:', sessionId);
 
+      // Calculate total upload size for diagnostics
+      const totalSize = files.reduce((acc, file) => acc + file.size, 0);
+      const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+      console.log('📤 [UPLOAD] Total upload size:', totalSizeMB, 'MB');
+
       const uploadStartTime = Date.now();
+
+      // Add timeout to prevent indefinite hanging
+      // Timeout: 10 minutes for upload + processing (600,000ms)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        console.error('⏰ [UPLOAD] Request timeout after 10 minutes');
+        controller.abort();
+      }, 10 * 60 * 1000);
+
+      // Add warning if upload takes too long
+      const warningTimeoutId = setTimeout(() => {
+        console.warn('⚠️ [UPLOAD] Upload is taking longer than 2 minutes...');
+        setStatusMessage(`Upload is taking longer than expected... Large folders may take several minutes. (${totalUploadMB} MB uploading)`);
+      }, 2 * 60 * 1000); // 2 minutes
+
+      console.log('📤 [UPLOAD] Sending request with 10-minute timeout...');
 
       const response = await fetch(`${API_BASE_URL}/portals/compress`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: formData
+        body: formData,
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
+      clearTimeout(warningTimeoutId);
 
       const uploadDuration = ((Date.now() - uploadStartTime) / 1000).toFixed(2);
       console.log(`📤 [UPLOAD] Request completed in ${uploadDuration}s`);
       console.log('📤 [UPLOAD] Response status:', response.status, response.statusText);
+
+      // Update status - upload complete, now processing response
+      setStatusMessage(`Upload complete! Processing compressed files...`);
 
       clearInterval(progressInterval);
 
@@ -245,9 +280,23 @@ const Portals = () => {
       console.error('💥 [UPLOAD] Error message:', err.message);
       console.error('💥 [UPLOAD] Full error:', err);
 
+      let errorTitle = "Compression Failed";
+      let errorDescription = err.message || 'Unknown error occurred';
+
+      // Handle specific error types
+      if (err.name === 'AbortError') {
+        console.error('⏰ [UPLOAD] Request was aborted due to timeout');
+        errorTitle = "Request Timeout";
+        errorDescription = `Upload took longer than 10 minutes. This usually happens with very large folders. Try compressing fewer files at once or check your internet connection.`;
+      } else if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')) {
+        console.error('🌐 [UPLOAD] Network error detected');
+        errorTitle = "Network Error";
+        errorDescription = "Unable to reach the server. Please check your internet connection and try again.";
+      }
+
       toast({
-        title: "Compression Failed",
-        description: err.message || 'Unknown error occurred',
+        title: errorTitle,
+        description: errorDescription,
         variant: "destructive"
       });
     } finally {
