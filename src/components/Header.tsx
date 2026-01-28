@@ -17,10 +17,12 @@ export const Header = () => {
     product: boolean;
     company: boolean;
     api: boolean;
+    dashboard: boolean;
   }>({
     product: false,
     company: false,
     api: false,
+    dashboard: false,
   });
 
   const productNavigation = [
@@ -48,6 +50,11 @@ export const Header = () => {
     { name: "API Pricing", href: "https://api.slim-file.com/pricing", external: true },
   ];
 
+  const dashboardNavigation = [
+    { name: "My Dashboard", href: "/dashboard", badge: null },
+    { name: "Global Stats", href: "/global-dashboard", badge: "Live" },
+  ];
+
   const isActiveRoute = (href: string) => {
     return location.pathname === href;
   };
@@ -69,7 +76,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'product' | 'company' | 'api') => {
+  const toggleMobileDropdown = (dropdown: 'product' | 'company' | 'api' | 'dashboard') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -257,36 +264,46 @@ export const Header = () => {
               )}
             </Link>
 
-            <Link
-              to="/dashboard"
-              className={cn(
-                "text-sm font-medium transition-all duration-300 relative",
-                location.pathname.startsWith("/dashboard")
+            {/* Dashboard Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => handleDropdownHover('dashboard')}
+              onMouseLeave={() => handleDropdownHover(null)}
+            >
+              <button className={cn(
+                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 relative",
+                dashboardNavigation.some(item => location.pathname === item.href || (item.href === '/dashboard' && location.pathname.startsWith('/dashboard')))
                   ? "text-gray-900"
                   : "text-gray-600 hover:text-gray-900"
+              )}>
+                <span>{t('header.dashboard')}</span>
+                <ChevronDown className="w-4 h-4" />
+                {dashboardNavigation.some(item => location.pathname === item.href || (item.href === '/dashboard' && location.pathname.startsWith('/dashboard'))) && (
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
+                )}
+              </button>
+              {hoveredDropdown === 'dashboard' && (
+                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
+                  {dashboardNavigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={cn(
+                        "flex items-center justify-between px-4 py-2 text-sm transition-colors duration-200",
+                        (location.pathname === item.href || (item.href === '/dashboard' && location.pathname.startsWith('/dashboard') && item.href === '/dashboard'))
+                          ? "text-red-600 bg-red-50"
+                          : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                      )}
+                    >
+                      <span>{item.name}</span>
+                      {item.badge && (
+                        <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full font-semibold">{item.badge}</span>
+                      )}
+                    </Link>
+                  ))}
+                </div>
               )}
-            >
-              {t('header.dashboard')}
-              {location.pathname.startsWith("/dashboard") && (
-                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-              )}
-            </Link>
-
-            <Link
-              to="/global-dashboard"
-              className={cn(
-                "text-sm font-medium transition-all duration-300 relative flex items-center gap-2",
-                location.pathname === "/global-dashboard"
-                  ? "text-gray-900"
-                  : "text-gray-600 hover:text-gray-900"
-              )}
-            >
-              <span>Global Stats</span>
-              <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full font-semibold">Live</span>
-              {location.pathname === "/global-dashboard" && (
-                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-              )}
-            </Link>
+            </div>
 
             <Link
               to="/stepsbuild"
@@ -526,32 +543,48 @@ export const Header = () => {
                 STEPsBuild
               </Link>
 
-              <Link
-                to="/dashboard"
-                className={cn(
-                  "px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
-                  location.pathname.startsWith("/dashboard")
-                    ? "text-red-600 bg-red-50 border border-red-100"
-                    : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+              {/* Mobile Dashboard Dropdown */}
+              <div className="px-4">
+                <button
+                  onClick={() => toggleMobileDropdown('dashboard')}
+                  className={cn(
+                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
+                    dashboardNavigation.some(item => location.pathname === item.href || (item.href === '/dashboard' && location.pathname.startsWith('/dashboard')))
+                      ? "text-red-600"
+                      : "text-gray-700 hover:text-red-600"
+                  )}
+                >
+                  <span>{t('header.dashboard')}</span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      mobileDropdownsOpen.dashboard && "transform rotate-180"
+                    )}
+                  />
+                </button>
+                {mobileDropdownsOpen.dashboard && (
+                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
+                    {dashboardNavigation.map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={cn(
+                          "flex items-center justify-between px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
+                          (location.pathname === item.href || (item.href === '/dashboard' && location.pathname.startsWith('/dashboard') && item.href === '/dashboard'))
+                            ? "text-red-600 bg-red-50 border border-red-100"
+                            : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                        )}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <span>{item.name}</span>
+                        {item.badge && (
+                          <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full font-semibold">{item.badge}</span>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
                 )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t('header.dashboard')}
-              </Link>
-
-              <Link
-                to="/global-dashboard"
-                className={cn(
-                  "px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg flex items-center justify-between",
-                  location.pathname === "/global-dashboard"
-                    ? "text-red-600 bg-red-50 border border-red-100"
-                    : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span>Global Stats</span>
-                <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full font-semibold">Live</span>
-              </Link>
+              </div>
 
               {isAuthenticated() ? (
                 <div className="px-4 pt-2">
