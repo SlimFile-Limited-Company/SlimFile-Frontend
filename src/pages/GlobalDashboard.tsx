@@ -84,11 +84,26 @@ export const GlobalDashboard = () => {
     };
   }, [queryClient]);
 
-  // Calculate environmental impact
-  const gbSaved = (stats?.totalSpaceSaved || 0) / (1024 * 1024 * 1024);
-  const treesEquivalent = Math.round(gbSaved * 0.1 / 21);
-  const energySaved = Math.round(gbSaved * 7);
-  const co2Reduced = Math.round(gbSaved * 0.1);
+  // Calculate environmental impact (scale based on MB for smaller amounts)
+  const mbSaved = (stats?.totalSpaceSaved || 0) / (1024 * 1024);
+  const gbSaved = mbSaved / 1024;
+
+  // Environmental calculations - using MB-based scaling for more meaningful numbers
+  // 1 GB of storage ≈ 0.2 kg CO2/year, 7 kWh energy
+  const co2Reduced = gbSaved * 0.2; // kg CO2
+  const energySaved = gbSaved * 7; // kWh
+  const treesEquivalent = co2Reduced / 21; // ~21kg CO2 absorbed per tree per year
+
+  // Format numbers - show decimals for small values
+  const formatEnvNumber = (num: number) => {
+    if (num >= 1) return Math.round(num).toLocaleString();
+    if (num >= 0.01) return num.toFixed(2);
+    if (num >= 0.001) return num.toFixed(3);
+    return num > 0 ? '<0.001' : '0';
+  };
+
+  // Cap compression ratio at 100% for display (bad data protection)
+  const displayCompressionRatio = Math.min(stats?.avgCompressionRatio || 0, 100);
 
   if (error) {
     return (
@@ -190,7 +205,7 @@ export const GlobalDashboard = () => {
                 </div>
               ) : (
                 <div className="text-3xl font-bold text-gray-900">
-                  {stats?.avgCompressionRatio || 0}%
+                  {displayCompressionRatio}%
                 </div>
               )}
               <p className="text-sm text-gray-500 mt-1">File size reduction</p>
@@ -238,7 +253,7 @@ export const GlobalDashboard = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-green-700">
-                    {isLoading ? '...' : treesEquivalent.toLocaleString()}
+                    {isLoading ? '...' : formatEnvNumber(treesEquivalent)}
                   </p>
                   <p className="text-sm text-green-600">Trees Worth of CO2 Saved</p>
                 </div>
@@ -254,7 +269,7 @@ export const GlobalDashboard = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-blue-700">
-                    {isLoading ? '...' : energySaved.toLocaleString()}
+                    {isLoading ? '...' : formatEnvNumber(energySaved)}
                   </p>
                   <p className="text-sm text-blue-600">kWh of Energy Saved</p>
                 </div>
@@ -270,7 +285,7 @@ export const GlobalDashboard = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-purple-700">
-                    {isLoading ? '...' : co2Reduced.toLocaleString()}
+                    {isLoading ? '...' : formatEnvNumber(co2Reduced)}
                   </p>
                   <p className="text-sm text-purple-600">kg of CO2 Reduced</p>
                 </div>
