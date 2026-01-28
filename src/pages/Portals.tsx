@@ -56,12 +56,28 @@ const Portals = () => {
   // Initialize socket connection
   useEffect(() => {
     const socketUrl = API_BASE_URL.replace('/api', '');
+    console.log('🔌 [SOCKET INIT] Initializing socket connection to:', socketUrl);
+
     const newSocket = io(socketUrl, {
       transports: ['websocket', 'polling']
     });
 
     newSocket.on('connect', () => {
-      console.log('Socket connected for portal updates');
+      console.log('✅ [SOCKET] Connected successfully! Socket ID:', newSocket.id);
+      console.log('✅ [SOCKET] Transport:', newSocket.io.engine.transport.name);
+    });
+
+    newSocket.on('disconnect', (reason) => {
+      console.warn('⚠️ [SOCKET] Disconnected. Reason:', reason);
+    });
+
+    newSocket.on('connect_error', (error) => {
+      console.error('❌ [SOCKET] Connection error:', error.message);
+    });
+
+    // Debug: Log ALL events received
+    newSocket.onAny((eventName, ...args) => {
+      console.log('🔊 [SOCKET] Received event:', eventName, 'with data:', args);
     });
 
     newSocket.on('portalProgress', (data) => {
