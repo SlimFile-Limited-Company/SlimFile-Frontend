@@ -292,12 +292,6 @@ export const Footer = () => {
                   {t('footer.caseStudies')}
                 </button>
                 <button
-                  onClick={() => handleFooterClick('/global-impact', t('footer.globalImpact'))}
-                  className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
-                >
-                  {t('footer.globalImpact')}
-                </button>
-                <button
                   onClick={() => handleFooterClick('/partnerships', t('footer.partnerships'))}
                   className="block text-sm text-gray-600 hover:text-primary hover:underline transition-colors duration-200 text-left"
                 >

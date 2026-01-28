@@ -8,7 +8,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import App from './App';
 import Login from './pages/Login';
-import GlobalImpact from './pages/GlobalImpact';
 import Dashboard from './pages/Dashboard';
 import DashboardLayout from './components/DashboardLayout';
 import DashboardOverview from './pages/dashboard/Overview';
@@ -154,7 +153,6 @@ ReactDOM.createRoot(root).render(
           <Route path="sdgs" element={<SlimFileSDGs />} />
           <Route path="partnerships" element={<Partnerships />} />
           <Route path="slimfile-game" element={<SlimFileGame />} />
-          <Route path="global-impact" element={<GlobalImpact />} />
           <Route path="global-dashboard" element={<GlobalDashboard />} />
           <Route path="stepsbuild" element={<StepsBuild />} />
           <Route path="feed" element={<Feed />} />

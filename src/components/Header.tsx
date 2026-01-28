@@ -35,7 +35,6 @@ export const Header = () => {
   const companyNavigation = [
     { name: "About", href: "/about" },
     { name: "Case Studies", href: "/case-studies" },
-    { name: "Global Impact", href: "/global-impact" },
     { name: "Partnerships", href: "/partnerships" },
     { name: "SDGs", href: "/sdgs" },
     { name: "Features", href: "/features" },
