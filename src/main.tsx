@@ -65,6 +65,7 @@ import OurBlogs from './pages/OurBlogs';
 import StepsBuild from './pages/StepsBuild';
 import Feed from './pages/Feed';
 import Portals from './pages/Portals';
+import GlobalDashboard from './pages/GlobalDashboard';
 
 // Register service worker for PWA functionality
 if ('serviceWorker' in navigator) {
@@ -154,6 +155,7 @@ ReactDOM.createRoot(root).render(
           <Route path="partnerships" element={<Partnerships />} />
           <Route path="slimfile-game" element={<SlimFileGame />} />
           <Route path="global-impact" element={<GlobalImpact />} />
+          <Route path="global-dashboard" element={<GlobalDashboard />} />
           <Route path="stepsbuild" element={<StepsBuild />} />
           <Route path="feed" element={<Feed />} />
           <Route path="portals" element={

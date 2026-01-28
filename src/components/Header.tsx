@@ -27,7 +27,6 @@ export const Header = () => {
     { name: "Compress Only", href: "/compress", external: false },
     { name: "Convert Only", href: "/convert-only", external: false },
     { name: "Convert and Compress", href: "/convert-compress", external: false },
-    { name: "Compress Folder", href: "/portals", badge: "New", external: false },
     { name: "Game", href: "/slimfile-game", external: false },
   ];
 
@@ -142,11 +141,6 @@ export const Header = () => {
                     const linkContent = (
                       <div className="flex items-center justify-between">
                         <span>{item.name}</span>
-                        {item.badge && (
-                          <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full ml-2">
-                            {item.badge}
-                          </span>
-                        )}
                       </div>
                     );
 
@@ -279,6 +273,22 @@ export const Header = () => {
             </Link>
 
             <Link
+              to="/global-dashboard"
+              className={cn(
+                "text-sm font-medium transition-all duration-300 relative flex items-center gap-2",
+                location.pathname === "/global-dashboard"
+                  ? "text-gray-900"
+                  : "text-gray-600 hover:text-gray-900"
+              )}
+            >
+              <span>Global Stats</span>
+              <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full font-semibold">Live</span>
+              {location.pathname === "/global-dashboard" && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
+              )}
+            </Link>
+
+            <Link
               to="/stepsbuild"
               className={cn(
                 "text-sm font-medium transition-all duration-300 relative",
@@ -376,11 +386,6 @@ export const Header = () => {
                       const linkContent = (
                         <div className="flex items-center justify-between">
                           <span>{item.name}</span>
-                          {item.badge && (
-                            <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full ml-2">
-                              {item.badge}
-                            </span>
-                          )}
                         </div>
                       );
 
@@ -532,6 +537,20 @@ export const Header = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('header.dashboard')}
+              </Link>
+
+              <Link
+                to="/global-dashboard"
+                className={cn(
+                  "px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg flex items-center justify-between",
+                  location.pathname === "/global-dashboard"
+                    ? "text-red-600 bg-red-50 border border-red-100"
+                    : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                )}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <span>Global Stats</span>
+                <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full font-semibold">Live</span>
               </Link>
 
               {isAuthenticated() ? (
