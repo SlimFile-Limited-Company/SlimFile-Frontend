@@ -281,11 +281,15 @@ const WorkspaceDetail = () => {
 
     const unsubDelivered = onMessageDelivered(({ messageId, userId }) => {
       setMessages((prev) =>
-        prev.map((m) =>
-          m._id === messageId && !m.deliveredTo.includes(userId)
-            ? { ...m, deliveredTo: [...m.deliveredTo, userId] }
-            : m
-        )
+        prev.map((m) => {
+          if (m._id === messageId) {
+            const deliveredTo = m.deliveredTo || [];
+            if (!deliveredTo.includes(userId)) {
+              return { ...m, deliveredTo: [...deliveredTo, userId] };
+            }
+          }
+          return m;
+        })
       );
     });
 
@@ -293,12 +297,14 @@ const WorkspaceDetail = () => {
       setMessages((prev) =>
         prev.map((m) => {
           if (m._id === messageId) {
-            const updatedDeliveredTo = m.deliveredTo.includes(userId)
-              ? m.deliveredTo
-              : [...m.deliveredTo, userId];
-            const updatedReadBy = m.readBy.includes(userId)
-              ? m.readBy
-              : [...m.readBy, userId];
+            const deliveredTo = m.deliveredTo || [];
+            const readBy = m.readBy || [];
+            const updatedDeliveredTo = deliveredTo.includes(userId)
+              ? deliveredTo
+              : [...deliveredTo, userId];
+            const updatedReadBy = readBy.includes(userId)
+              ? readBy
+              : [...readBy, userId];
             return { ...m, deliveredTo: updatedDeliveredTo, readBy: updatedReadBy };
           }
           return m;
@@ -329,7 +335,9 @@ const WorkspaceDetail = () => {
 
     // Mark messages as delivered when they appear
     const undeliveredMessages = messages.filter(
-      (m) => m.senderId._id !== currentUserId && !m.deliveredTo.includes(currentUserId)
+      (m) => m.senderId._id !== currentUserId &&
+      m.deliveredTo &&
+      !m.deliveredTo.includes(currentUserId)
     );
 
     undeliveredMessages.forEach((msg) => {
@@ -341,7 +349,9 @@ const WorkspaceDetail = () => {
     // Mark messages as read when page is visible
     if (!document.hidden) {
       const unreadMessages = messages.filter(
-        (m) => m.senderId._id !== currentUserId && !m.readBy.includes(currentUserId)
+        (m) => m.senderId._id !== currentUserId &&
+        m.readBy &&
+        !m.readBy.includes(currentUserId)
       );
 
       unreadMessages.forEach((msg) => {
@@ -355,7 +365,9 @@ const WorkspaceDetail = () => {
     const handleVisibilityChange = () => {
       if (!document.hidden && messages.length > 0) {
         const unreadMessages = messages.filter(
-          (m) => m.senderId._id !== currentUserId && !m.readBy.includes(currentUserId)
+          (m) => m.senderId._id !== currentUserId &&
+          m.readBy &&
+          !m.readBy.includes(currentUserId)
         );
 
         unreadMessages.forEach((msg) => {
@@ -570,8 +582,8 @@ const WorkspaceDetail = () => {
       return null;
     }
 
-    const isRead = message.readBy.length > 0;
-    const isDelivered = message.deliveredTo.length > 0;
+    const isRead = message.readBy && message.readBy.length > 0;
+    const isDelivered = message.deliveredTo && message.deliveredTo.length > 0;
 
     if (isRead) {
       // Blue double check for read
