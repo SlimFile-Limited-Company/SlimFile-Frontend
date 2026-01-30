@@ -327,7 +327,7 @@ export const Header = () => {
               <Button
                 variant="outline"
                 className="ml-4"
-                onClick={logout}
+                onClick={() => logout()}
               >
                 {t('header.logout')}
               </Button>

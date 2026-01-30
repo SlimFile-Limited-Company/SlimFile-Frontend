@@ -16,27 +16,29 @@ const App = () => {
       validateToken(); // This will auto-logout if token is expired
     }
 
-    // Automatically request notification permission and subscribe to push
+    // Automatically enable push notifications for authenticated users
     const autoEnableNotifications = async () => {
       if (!isAuthenticated()) {
-        return; // Only request for authenticated users
+        return; // Only for authenticated users
       }
 
       const currentPermission = getNotificationPermission();
 
-      // Only request if permission is 'default' (not yet asked)
+      // Silently request permission in background
+      // Note: Browser will show its native permission dialog (unavoidable for security)
       if (currentPermission === 'default') {
-        // Wait a bit for page to load, then automatically request permission
-        setTimeout(async () => {
-          const granted = await requestNotificationPermission();
-
-          if (granted) {
-            console.log('✅ Push notifications enabled - user will receive offline notifications');
-          }
-        }, 3000); // Wait 3 seconds after page load
+        // Only ask once per session to avoid being annoying
+        const hasAskedThisSession = sessionStorage.getItem('notificationPermissionAsked');
+        if (!hasAskedThisSession) {
+          // Wait for page to fully load before requesting
+          setTimeout(async () => {
+            await requestNotificationPermission();
+            sessionStorage.setItem('notificationPermissionAsked', 'true');
+          }, 5000); // 5 seconds - less intrusive
+        }
       } else if (currentPermission === 'granted') {
-        // Permission already granted - ensure subscription is active
-        requestNotificationPermission(); // This will subscribe if not already subscribed
+        // Permission already granted - ensure subscription is active (silent)
+        requestNotificationPermission();
       }
     };
 
