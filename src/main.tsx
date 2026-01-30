@@ -65,6 +65,9 @@ import StepsBuild from './pages/StepsBuild';
 import Feed from './pages/Feed';
 import Portals from './pages/Portals';
 import GlobalDashboard from './pages/GlobalDashboard';
+import Workspaces from './pages/Workspaces';
+import WorkspaceDetail from './pages/WorkspaceDetail';
+import WorkspaceInvitations from './pages/WorkspaceInvitations';
 
 // Register service worker for PWA functionality
 if ('serviceWorker' in navigator) {
@@ -159,6 +162,21 @@ ReactDOM.createRoot(root).render(
           <Route path="portals" element={
             <ProtectedRoute>
               <Portals />
+            </ProtectedRoute>
+          } />
+          <Route path="workspaces" element={
+            <ProtectedRoute>
+              <Workspaces />
+            </ProtectedRoute>
+          } />
+          <Route path="workspaces/invitations" element={
+            <ProtectedRoute>
+              <WorkspaceInvitations />
+            </ProtectedRoute>
+          } />
+          <Route path="workspaces/:workspaceId" element={
+            <ProtectedRoute>
+              <WorkspaceDetail />
             </ProtectedRoute>
           } />
         </Route>

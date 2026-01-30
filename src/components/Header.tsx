@@ -263,6 +263,25 @@ export const Header = () => {
               )}
             </Link>
 
+            {/* Workspaces */}
+            {isAuthenticated() && (
+              <Link
+                to="/workspaces"
+                className={cn(
+                  "text-sm font-medium transition-all duration-300 relative flex items-center gap-2",
+                  location.pathname.startsWith("/workspaces")
+                    ? "text-gray-900"
+                    : "text-gray-600 hover:text-gray-900"
+                )}
+              >
+                <span>Workspaces</span>
+                <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-semibold">Team</span>
+                {location.pathname.startsWith("/workspaces") && (
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
+                )}
+              </Link>
+            )}
+
             {/* Dashboard Dropdown */}
             <div
               className="relative"
@@ -528,6 +547,23 @@ export const Header = () => {
                 <span>Feed</span>
                 <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-semibold">Live</span>
               </Link>
+
+              {/* Mobile Workspaces Link */}
+              {isAuthenticated() && (
+                <Link
+                  to="/workspaces"
+                  className={cn(
+                    "px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg flex items-center justify-between",
+                    location.pathname.startsWith("/workspaces")
+                      ? "text-red-600 bg-red-50 border border-red-100"
+                      : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                  )}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>Workspaces</span>
+                  <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-semibold">Team</span>
+                </Link>
+              )}
 
               <Link
                 to="/stepsbuild"

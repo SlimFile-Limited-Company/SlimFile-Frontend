@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, useSearchParams } from 'react-router-dom';
 import { isAuthenticated } from "@/lib/auth";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -13,10 +13,23 @@ declare global {
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [loaded, setLoaded] = useState(false); // For logo animation
+  const inviteToken = searchParams.get('invite');
+
+  // Store invite token for after login
+  useEffect(() => {
+    if (inviteToken) {
+      sessionStorage.setItem('redirectAfterLogin', `/workspaces/invitations?token=${inviteToken}`);
+    }
+  }, [inviteToken]);
 
   // Redirect if already authenticated
   if (isAuthenticated()) {
+    // If there's an invite token, redirect to invitations page
+    if (inviteToken) {
+      return <Navigate to={`/workspaces/invitations?token=${inviteToken}`} replace />;
+    }
     return <Navigate to="/" replace />;
   }
 
