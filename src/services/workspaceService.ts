@@ -58,10 +58,45 @@ export interface WorkspaceDetails {
 // Helper function to get auth headers
 function getAuthHeaders(): HeadersInit {
   const token = localStorage.getItem('jwt');
+
+  if (!token) {
+    console.warn('[WorkspaceService] No JWT token found - user may need to log in');
+  }
+
   return {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`
   };
+}
+
+/**
+ * Handle API errors with better logging
+ */
+async function handleApiError(response: Response, context: string): Promise<never> {
+  const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+
+  console.error(`[WorkspaceService] ${context} failed:`, {
+    status: response.status,
+    statusText: response.statusText,
+    error: error.error,
+    message: error.message
+  });
+
+  // Check for authentication issues
+  if (response.status === 401) {
+    console.error('[WorkspaceService] ⚠️ Authentication error - session may be outdated');
+
+    if (error.message?.includes('outdated') || error.message?.includes('log in again')) {
+      console.warn('[WorkspaceService] 🔄 User should log out and log in again to refresh session');
+    }
+  }
+
+  // Check for permission issues
+  if (response.status === 403) {
+    console.error('[WorkspaceService] ⛔ Permission denied:', error.message);
+  }
+
+  throw new Error(error.message || error.error || `${context} failed`);
 }
 
 // ============================================
@@ -77,8 +112,7 @@ export async function getWorkspaces(): Promise<Workspace[]> {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch workspaces');
+    return handleApiError(response, 'Get workspaces');
   }
 
   const data = await response.json();
