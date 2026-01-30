@@ -18,11 +18,13 @@ export const Header = () => {
     company: boolean;
     api: boolean;
     dashboard: boolean;
+    tools: boolean;
   }>({
     product: false,
     company: false,
     api: false,
     dashboard: false,
+    tools: false,
   });
 
   const productNavigation = [
@@ -54,6 +56,12 @@ export const Header = () => {
     { name: "Global Stats", href: "/global-dashboard", badge: "Live" },
   ];
 
+  const toolsNavigation = [
+    { name: "Feed", href: "/feed", badge: "Live", badgeColor: "bg-green-100 text-green-700" },
+    ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces", badge: "Team", badgeColor: "bg-blue-100 text-blue-700" }] : []),
+    { name: "STEPsBuild", href: "/stepsbuild", badge: null, badgeColor: null },
+  ];
+
   const isActiveRoute = (href: string) => {
     return location.pathname === href;
   };
@@ -75,7 +83,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'product' | 'company' | 'api' | 'dashboard') => {
+  const toggleMobileDropdown = (dropdown: 'product' | 'company' | 'api' | 'dashboard' | 'tools') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -111,16 +119,13 @@ export const Header = () => {
             <Link
               to="/"
               className={cn(
-                "text-sm font-medium transition-all duration-300 relative",
+                "text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full",
                 location.pathname === "/"
-                  ? "text-gray-900"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "text-white bg-red-600 shadow-md font-semibold"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}
             >
               {t('header.home')}
-              {location.pathname === "/" && (
-                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-              )}
             </Link>
 
             {/* Product Dropdown */}
@@ -130,16 +135,13 @@ export const Header = () => {
               onMouseLeave={() => handleDropdownHover(null)}
             >
               <button className={cn(
-                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 relative",
+                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full",
                 productNavigation.some(item => isActiveRoute(item.href))
-                  ? "text-gray-900"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "text-white bg-red-600 shadow-md font-semibold"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}>
                 <span>Product</span>
                 <ChevronDown className="w-4 h-4" />
-                {productNavigation.some(item => isActiveRoute(item.href)) && (
-                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-                )}
               </button>
               {hoveredDropdown === 'product' && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
@@ -187,16 +189,13 @@ export const Header = () => {
               onMouseLeave={() => handleDropdownHover(null)}
             >
               <button className={cn(
-                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 relative",
+                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full",
                 companyNavigation.some(item => isActiveRoute(item.href))
-                  ? "text-gray-900"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "text-white bg-red-600 shadow-md font-semibold"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}>
                 <span>Company</span>
                 <ChevronDown className="w-4 h-4" />
-                {companyNavigation.some(item => isActiveRoute(item.href)) && (
-                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-                )}
               </button>
               {hoveredDropdown === 'company' && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
@@ -222,7 +221,7 @@ export const Header = () => {
               onMouseEnter={() => handleDropdownHover('api')}
               onMouseLeave={() => handleDropdownHover(null)}
             >
-              <button className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 transition-all duration-300 relative">
+              <button className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 px-3 py-1.5 rounded-full">
                 <span>API</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
@@ -246,41 +245,45 @@ export const Header = () => {
               )}
             </div>
 
-            {/* Community Feed */}
-            <Link
-              to="/feed"
-              className={cn(
-                "text-sm font-medium transition-all duration-300 relative flex items-center gap-2",
-                location.pathname === "/feed"
-                  ? "text-gray-900"
-                  : "text-gray-600 hover:text-gray-900"
-              )}
+            {/* Tools Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => handleDropdownHover('tools')}
+              onMouseLeave={() => handleDropdownHover(null)}
             >
-              <span>Feed</span>
-              <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-semibold">Live</span>
-              {location.pathname === "/feed" && (
-                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
+              <button className={cn(
+                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full",
+                toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')))
+                  ? "text-white bg-red-600 shadow-md font-semibold"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              )}>
+                <span>Tools</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              {hoveredDropdown === 'tools' && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
+                  {toolsNavigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={cn(
+                        "flex items-center justify-between px-4 py-2 text-sm transition-colors duration-200",
+                        (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')))
+                          ? "text-red-600 bg-red-50"
+                          : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                      )}
+                    >
+                      <span>{item.name}</span>
+                      {item.badge && (
+                        <span className={cn("text-xs px-2 py-0.5 rounded-full font-semibold", item.badgeColor)}>
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  ))}
+                </div>
               )}
-            </Link>
-
-            {/* Workspaces */}
-            {isAuthenticated() && (
-              <Link
-                to="/workspaces"
-                className={cn(
-                  "text-sm font-medium transition-all duration-300 relative flex items-center gap-2",
-                  location.pathname.startsWith("/workspaces")
-                    ? "text-gray-900"
-                    : "text-gray-600 hover:text-gray-900"
-                )}
-              >
-                <span>Workspaces</span>
-                <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-semibold">Team</span>
-                {location.pathname.startsWith("/workspaces") && (
-                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-                )}
-              </Link>
-            )}
+            </div>
 
             {/* Dashboard Dropdown */}
             <div
@@ -289,16 +292,13 @@ export const Header = () => {
               onMouseLeave={() => handleDropdownHover(null)}
             >
               <button className={cn(
-                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 relative",
+                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full",
                 dashboardNavigation.some(item => location.pathname === item.href || (item.href === '/dashboard' && location.pathname.startsWith('/dashboard')))
-                  ? "text-gray-900"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "text-white bg-red-600 shadow-md font-semibold"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}>
                 <span>{t('header.dashboard')}</span>
                 <ChevronDown className="w-4 h-4" />
-                {dashboardNavigation.some(item => location.pathname === item.href || (item.href === '/dashboard' && location.pathname.startsWith('/dashboard'))) && (
-                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-                )}
               </button>
               {hoveredDropdown === 'dashboard' && (
                 <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
@@ -322,21 +322,6 @@ export const Header = () => {
                 </div>
               )}
             </div>
-
-            <Link
-              to="/stepsbuild"
-              className={cn(
-                "text-sm font-medium transition-all duration-300 relative",
-                location.pathname === "/stepsbuild"
-                  ? "text-gray-900"
-                  : "text-gray-600 hover:text-gray-900"
-              )}
-            >
-              STEPsBuild
-              {location.pathname === "/stepsbuild" && (
-                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-              )}
-            </Link>
 
             {isAuthenticated() ? (
               <Button
@@ -533,50 +518,50 @@ export const Header = () => {
                 )}
               </div>
 
-              {/* Mobile Feed Link */}
-              <Link
-                to="/feed"
-                className={cn(
-                  "px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg flex items-center justify-between",
-                  location.pathname === "/feed"
-                    ? "text-red-600 bg-red-50 border border-red-100"
-                    : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span>Feed</span>
-                <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-semibold">Live</span>
-              </Link>
-
-              {/* Mobile Workspaces Link */}
-              {isAuthenticated() && (
-                <Link
-                  to="/workspaces"
+              {/* Mobile Tools Dropdown */}
+              <div className="px-4">
+                <button
+                  onClick={() => toggleMobileDropdown('tools')}
                   className={cn(
-                    "px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg flex items-center justify-between",
-                    location.pathname.startsWith("/workspaces")
-                      ? "text-red-600 bg-red-50 border border-red-100"
-                      : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
+                    toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')))
+                      ? "text-red-600"
+                      : "text-gray-700 hover:text-red-600"
                   )}
-                  onClick={() => setMobileMenuOpen(false)}
                 >
-                  <span>Workspaces</span>
-                  <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-semibold">Team</span>
-                </Link>
-              )}
-
-              <Link
-                to="/stepsbuild"
-                className={cn(
-                  "px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
-                  location.pathname === "/stepsbuild"
-                    ? "text-red-600 bg-red-50 border border-red-100"
-                    : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                  <span>Tools</span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      mobileDropdownsOpen.tools && "transform rotate-180"
+                    )}
+                  />
+                </button>
+                {mobileDropdownsOpen.tools && (
+                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
+                    {toolsNavigation.map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={cn(
+                          "flex items-center justify-between px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
+                          (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')))
+                            ? "text-red-600 bg-red-50 border border-red-100"
+                            : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                        )}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <span>{item.name}</span>
+                        {item.badge && (
+                          <span className={cn("text-xs px-2 py-0.5 rounded-full font-semibold", item.badgeColor)}>
+                            {item.badge}
+                          </span>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
                 )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                STEPsBuild
-              </Link>
+              </div>
 
               {/* Mobile Dashboard Dropdown */}
               <div className="px-4">
