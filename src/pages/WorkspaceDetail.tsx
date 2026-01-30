@@ -31,7 +31,8 @@ import {
   Mic,
   StopCircle,
   Play,
-  Pause
+  Pause,
+  ArrowDown
 } from 'lucide-react';
 import {
   getWorkspace,
@@ -85,6 +86,7 @@ const WorkspaceDetail = () => {
   const [recordingTime, setRecordingTime] = useState(0);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -163,6 +165,26 @@ const WorkspaceDetail = () => {
       });
     }
   };
+
+  const checkScrollPosition = () => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const isAtBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+      setShowScrollButton(!isAtBottom);
+    }
+  };
+
+  // Add scroll event listener
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', checkScrollPosition);
+      return () => {
+        container.removeEventListener('scroll', checkScrollPosition);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('jwt');
@@ -733,7 +755,7 @@ const WorkspaceDetail = () => {
       {/* Chat Messages Area */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto bg-slate-50 px-6 py-6"
+        className="flex-1 overflow-y-auto bg-slate-50 px-6 py-6 relative"
       >
         {hasMore && (
           <div className="text-center mb-6">
@@ -913,6 +935,20 @@ const WorkspaceDetail = () => {
             );
           })}
         </div>
+
+        {/* Floating Scroll to Bottom Button */}
+        {showScrollButton && (
+          <div className="absolute bottom-6 right-6 z-10">
+            <Button
+              onClick={() => scrollToBottom()}
+              size="icon"
+              className="h-12 w-12 rounded-full bg-blue-600 hover:bg-blue-700 shadow-lg"
+              title="Scroll to bottom"
+            >
+              <ArrowDown className="h-5 w-5" />
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Typing Indicator */}
