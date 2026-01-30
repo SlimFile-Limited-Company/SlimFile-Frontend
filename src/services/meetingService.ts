@@ -224,27 +224,14 @@ class MeetingService {
 
   /**
    * Handle new user joining the meeting
+   * Note: We don't create offers here because the new user will create offers
+   * to all existing participants via handleExistingParticipants.
+   * We'll create the peer connection when we receive their offer in handleOffer.
    */
-  private async handleUserJoined({ userId }: { userId: string }) {
-    console.log('User joined:', userId);
-
-    // Create peer connection
-    const peerConnection = this.createPeerConnection(userId);
-
-    // Create and send offer
-    try {
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
-
-      const socket = getSocket();
-      socket?.emit('meeting:offer', {
-        meetingId: this.currentMeetingId,
-        targetUserId: userId,
-        offer,
-      });
-    } catch (error) {
-      console.error('Error creating offer:', error);
-    }
+  private handleUserJoined({ userId }: { userId: string }) {
+    console.log('User joined:', userId, '- waiting for their offer (no action needed)');
+    // No action needed - the new user will send us an offer
+    // and handleOffer will create the peer connection
   }
 
   /**
