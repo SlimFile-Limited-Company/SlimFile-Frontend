@@ -74,11 +74,25 @@ export default function Login() {
     if (data.token) {
       localStorage.setItem('jwt', data.token);
       console.log('JWT set:', localStorage.getItem('jwt'));
-      
+
+      // Request push notification permission after successful login
+      // This will subscribe the user to receive offline notifications
+      setTimeout(() => {
+        import('@/services/pushNotificationService')
+          .then(({ requestNotificationPermission }) => {
+            requestNotificationPermission().then(granted => {
+              if (granted) {
+                console.log('✅ User subscribed to push notifications');
+              }
+            });
+          })
+          .catch(err => console.error('Failed to setup push notifications:', err));
+      }, 1000);
+
       // Check if there's a redirect path stored
       const redirectPath = sessionStorage.getItem('redirectAfterLogin');
       const redirectTo = redirectPath || '/';
-      
+
       setTimeout(() => {
         window.location.href = redirectTo;
       }, 100);

@@ -446,49 +446,31 @@ function showInvitationNotification(event: NewInvitationEvent): void {
 }
 
 /**
- * Show browser notification for new message - WhatsApp style (always shows)
+ * Show browser notification for new message - With smart batching to prevent spam
  */
 export function showMessageNotification(
   senderName: string,
   messageText: string,
   workspaceId: string,
-  workspaceName?: string
+  workspaceName?: string,
+  senderId?: string
 ): void {
   // Skip if user is currently viewing this workspace and page is visible
   if (currentActiveWorkspaceId === workspaceId && !document.hidden) {
     return;
   }
 
-  // Vibrate for incoming messages (mobile)
-  vibrateDevice(200);
-
-  // Show browser notification
-  if (Notification.permission === 'granted') {
-    const truncatedText = messageText.length > 100
-      ? messageText.substring(0, 100) + '...'
-      : messageText;
-
-    const title = workspaceName ? `${senderName} • ${workspaceName}` : senderName;
-
-    const notification = new Notification(title, {
-      body: truncatedText,
-      icon: '/logo.gif',
-      badge: '/logo.gif',
-      tag: `message-${workspaceId}-${Date.now()}`, // Unique tag for each message
-      renotify: true, // Show each notification even with same tag
-      silent: true, // We play our own sound
-      requireInteraction: false
-    });
-
-    notification.onclick = () => {
-      window.focus();
-      window.location.href = `/workspaces/${workspaceId}`;
-      notification.close();
-    };
-
-    // Auto-close after 4 seconds
-    setTimeout(() => notification.close(), 4000);
-  }
+  // Use batching service to prevent notification spam
+  // First message shows immediately, subsequent messages batched for 5 minutes
+  import('./notificationBatchingService').then(({ addMessageToBatch }) => {
+    addMessageToBatch(
+      workspaceId,
+      workspaceName || 'Workspace',
+      senderId || 'unknown',
+      senderName,
+      messageText
+    );
+  });
 }
 
 // ============================================

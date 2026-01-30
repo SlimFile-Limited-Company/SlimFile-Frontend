@@ -16,16 +16,27 @@ const App = () => {
       validateToken(); // This will auto-logout if token is expired
     }
 
-    // Automatically request notification permission on first load
+    // Automatically request notification permission and subscribe to push
     const autoEnableNotifications = async () => {
+      if (!isAuthenticated()) {
+        return; // Only request for authenticated users
+      }
+
       const currentPermission = getNotificationPermission();
 
       // Only request if permission is 'default' (not yet asked)
       if (currentPermission === 'default') {
         // Wait a bit for page to load, then automatically request permission
-        setTimeout(() => {
-          requestNotificationPermission();
-        }, 2000);
+        setTimeout(async () => {
+          const granted = await requestNotificationPermission();
+
+          if (granted) {
+            console.log('✅ Push notifications enabled - user will receive offline notifications');
+          }
+        }, 3000); // Wait 3 seconds after page load
+      } else if (currentPermission === 'granted') {
+        // Permission already granted - ensure subscription is active
+        requestNotificationPermission(); // This will subscribe if not already subscribed
       }
     };
 
