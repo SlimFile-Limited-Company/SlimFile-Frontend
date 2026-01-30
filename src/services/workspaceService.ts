@@ -43,12 +43,16 @@ export interface Message {
   workspaceId: string;
   senderId: User;
   text: string;
+  type: 'text' | 'audio';
+  audioData?: string | null;
+  audioDuration?: number | null;
   deleted: boolean;
   deliveredTo: string[];
   readBy: string[];
   replyTo?: {
     _id: string;
     text: string;
+    type: 'text' | 'audio';
     senderId: { _id: string; name: string };
     deleted: boolean;
   } | null;
@@ -380,13 +384,15 @@ export async function getMessages(
  */
 export async function sendMessage(
   workspaceId: string,
-  text: string,
-  replyTo?: string
+  text?: string,
+  replyTo?: string,
+  audioData?: string,
+  audioDuration?: number
 ): Promise<Message> {
   const response = await fetch(`${API_BASE_URL}/workspaces/${workspaceId}/messages`, {
     method: 'POST',
     headers: getAuthHeaders(),
-    body: JSON.stringify({ text, replyTo })
+    body: JSON.stringify({ text, replyTo, audioData, audioDuration })
   });
 
   if (!response.ok) {

@@ -27,7 +27,11 @@ import {
   Check,
   CheckCheck,
   Reply,
-  X
+  X,
+  Mic,
+  StopCircle,
+  Play,
+  Pause
 } from 'lucide-react';
 import {
   getWorkspace,
@@ -77,9 +81,14 @@ const WorkspaceDetail = () => {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [membersSheetOpen, setMembersSheetOpen] = useState(false);
   const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const getCurrentUserId = () => {
     try {
@@ -114,8 +123,17 @@ const WorkspaceDetail = () => {
   });
 
   const sendMutation = useMutation({
-    mutationFn: ({ text, replyTo }: { text: string; replyTo?: string }) =>
-      sendMessage(workspaceId!, text, replyTo),
+    mutationFn: ({
+      text,
+      replyTo,
+      audioData,
+      audioDuration,
+    }: {
+      text?: string;
+      replyTo?: string;
+      audioData?: string;
+      audioDuration?: number;
+    }) => sendMessage(workspaceId!, text, replyTo, audioData, audioDuration),
     onError: (error: Error) => {
       toast({
         title: 'Error',
@@ -371,6 +389,90 @@ const WorkspaceDetail = () => {
     // Plain Enter creates a new line (default textarea behavior)
   };
 
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks: Blob[] = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          chunks.push(e.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        setAudioChunks(chunks);
+        stream.getTracks().forEach((track) => track.stop());
+      };
+
+      recorder.start();
+      setMediaRecorder(recorder);
+      setIsRecording(true);
+      setRecordingTime(0);
+
+      // Start timer
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingTime((prev) => prev + 1);
+      }, 1000);
+    } catch (error) {
+      toast({
+        title: 'Microphone Access Denied',
+        description: 'Please allow microphone access to record voice messages',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder && isRecording) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
+      }
+    }
+  };
+
+  const cancelRecording = () => {
+    stopRecording();
+    setAudioChunks([]);
+    setRecordingTime(0);
+  };
+
+  const sendAudioMessage = async () => {
+    if (audioChunks.length === 0) return;
+
+    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+    const reader = new FileReader();
+
+    reader.onloadend = async () => {
+      const base64Audio = reader.result as string;
+      const replyTo = replyToMessage?._id;
+
+      setAudioChunks([]);
+      setRecordingTime(0);
+      setReplyToMessage(null);
+      playSendSound();
+
+      await sendMutation.mutateAsync({
+        audioData: base64Audio,
+        audioDuration: recordingTime,
+        replyTo,
+      });
+
+      setTimeout(() => scrollToBottom(), 50);
+    };
+
+    reader.readAsDataURL(audioBlob);
+  };
+
+  const formatRecordingTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const loadMoreMessages = async () => {
     if (!hasMore || loadingMore || messages.length === 0) return;
 
@@ -465,6 +567,77 @@ const WorkspaceDetail = () => {
         <Check className="inline-block h-3.5 w-3.5 ml-1 text-blue-200 opacity-60" />
       );
     }
+  };
+
+  const AudioPlayer = ({ audioData, duration, isOwnMessage }: { audioData: string; duration: number; isOwnMessage: boolean }) => {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const audioRef = useRef<HTMLAudioElement>(null);
+
+    const togglePlay = () => {
+      if (!audioRef.current) return;
+
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    };
+
+    const handleTimeUpdate = () => {
+      if (audioRef.current) {
+        setCurrentTime(audioRef.current.currentTime);
+      }
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    };
+
+    const formatTime = (seconds: number) => {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    return (
+      <div className="flex items-center gap-3">
+        <button
+          onClick={togglePlay}
+          className={`flex-shrink-0 p-2 rounded-full transition-colors ${
+            isOwnMessage
+              ? 'bg-blue-500 hover:bg-blue-400'
+              : 'bg-slate-200 hover:bg-slate-300'
+          }`}
+        >
+          {isPlaying ? (
+            <Pause className={`h-4 w-4 ${isOwnMessage ? 'text-white' : 'text-slate-700'}`} />
+          ) : (
+            <Play className={`h-4 w-4 ${isOwnMessage ? 'text-white' : 'text-slate-700'}`} />
+          )}
+        </button>
+        <div className="flex-1 min-w-0">
+          <div className={`h-1 rounded-full ${isOwnMessage ? 'bg-blue-400' : 'bg-slate-300'} overflow-hidden`}>
+            <div
+              className={`h-full ${isOwnMessage ? 'bg-white' : 'bg-blue-600'} transition-all`}
+              style={{ width: `${(currentTime / duration) * 100}%` }}
+            />
+          </div>
+          <p className={`text-xs mt-1 ${isOwnMessage ? 'text-blue-100' : 'text-slate-500'}`}>
+            {formatTime(currentTime)} / {formatTime(duration)}
+          </p>
+        </div>
+        <audio
+          ref={audioRef}
+          src={audioData}
+          onTimeUpdate={handleTimeUpdate}
+          onEnded={handleEnded}
+          preload="metadata"
+        />
+      </div>
+    );
   };
 
   if (loadingWorkspace || loadingMessages) {
@@ -681,9 +854,17 @@ const WorkspaceDetail = () => {
                         </div>
                       )}
 
-                      <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
-                        {message.text}
-                      </p>
+                      {message.type === 'audio' && message.audioData ? (
+                        <AudioPlayer
+                          audioData={message.audioData}
+                          duration={message.audioDuration || 0}
+                          isOwnMessage={isOwnMessage}
+                        />
+                      ) : (
+                        <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
+                          {message.text}
+                        </p>
+                      )}
                       <div className="flex items-center gap-1 mt-1.5">
                         <p
                           className={`text-[10px] ${
@@ -787,18 +968,71 @@ const WorkspaceDetail = () => {
         )}
 
         <div className="max-w-4xl mx-auto flex items-end gap-3">
-          <Textarea
-            placeholder="Type a message... (Ctrl+Enter to send)"
-            value={messageText}
-            onChange={handleTyping}
-            onKeyDown={handleKeyPress}
-            className="flex-1 border-slate-200 focus-visible:ring-blue-500 min-h-[40px] max-h-[120px] resize-none"
-            disabled={sendMutation.isPending}
-            rows={1}
-          />
+          {isRecording ? (
+            /* Recording UI */
+            <div className="flex-1 flex items-center gap-3 bg-red-50 border-2 border-red-200 rounded-lg px-4 py-3">
+              <div className="flex items-center gap-2 flex-1">
+                <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse" />
+                <span className="text-sm font-medium text-red-700">Recording</span>
+                <span className="text-sm text-red-600">{formatRecordingTime(recordingTime)}</span>
+              </div>
+              <Button
+                onClick={cancelRecording}
+                variant="ghost"
+                size="sm"
+                className="text-red-600 hover:text-red-700 hover:bg-red-100"
+              >
+                Cancel
+              </Button>
+            </div>
+          ) : audioChunks.length > 0 ? (
+            /* Audio Preview UI */
+            <div className="flex-1 flex items-center gap-3 bg-blue-50 border-2 border-blue-200 rounded-lg px-4 py-3">
+              <Mic className="h-5 w-5 text-blue-600" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-blue-700">Voice message ready</p>
+                <p className="text-xs text-blue-600">{formatRecordingTime(recordingTime)}</p>
+              </div>
+              <Button
+                onClick={cancelRecording}
+                variant="ghost"
+                size="sm"
+                className="text-blue-600 hover:text-blue-700 hover:bg-blue-100"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            /* Normal Text Input */
+            <>
+              <Textarea
+                placeholder="Type a message... (Ctrl+Enter to send)"
+                value={messageText}
+                onChange={handleTyping}
+                onKeyDown={handleKeyPress}
+                className="flex-1 border-slate-200 focus-visible:ring-blue-500 min-h-[40px] max-h-[120px] resize-none"
+                disabled={sendMutation.isPending}
+                rows={1}
+              />
+              <Button
+                onClick={startRecording}
+                size="icon"
+                variant="outline"
+                className="h-10 w-10 flex-shrink-0 border-slate-200 hover:bg-slate-50"
+                title="Record voice message"
+              >
+                <Mic className="h-5 w-5 text-slate-600" />
+              </Button>
+            </>
+          )}
+
           <Button
-            onClick={handleSendMessage}
-            disabled={!messageText.trim() || sendMutation.isPending}
+            onClick={audioChunks.length > 0 ? sendAudioMessage : handleSendMessage}
+            disabled={
+              (audioChunks.length === 0 && !messageText.trim()) ||
+              sendMutation.isPending ||
+              isRecording
+            }
             size="icon"
             className="bg-blue-600 hover:bg-blue-700 h-10 w-10 flex-shrink-0"
           >
