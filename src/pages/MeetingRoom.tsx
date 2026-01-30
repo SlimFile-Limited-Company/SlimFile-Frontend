@@ -36,6 +36,7 @@ export default function MeetingRoom() {
   const [showParticipants, setShowParticipants] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
+  const [isStreamReady, setIsStreamReady] = useState(false);
 
   // Chat states
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -82,6 +83,9 @@ export default function MeetingRoom() {
           // Force play to ensure video starts
           localVideoRef.current.play().catch(e => console.error('Video play error:', e));
         }
+
+        // Signal that stream is ready
+        setIsStreamReady(true);
       } catch (error: any) {
         console.error('Error accessing media devices:', error);
 
@@ -117,11 +121,12 @@ export default function MeetingRoom() {
 
   // Join meeting and set up WebRTC signaling
   useEffect(() => {
-    if (!meetingCode || !localStream.current) {
+    if (!meetingCode || !isStreamReady || !localStream.current) {
+      console.log('Waiting for stream...', { meetingCode, isStreamReady, hasStream: !!localStream.current });
       return;
     }
 
-    console.log('Initializing meeting connection...');
+    console.log('Initializing meeting connection with stream ready...');
 
     // Initialize socket if not already connected
     const socket = getSocket();
@@ -166,7 +171,7 @@ export default function MeetingRoom() {
       console.log('Leaving meeting...');
       meetingService.leaveMeeting();
     };
-  }, [meetingCode, localStream.current]);
+  }, [meetingCode, isStreamReady]);
 
   // Listen for chat messages
   useEffect(() => {
