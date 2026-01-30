@@ -46,6 +46,12 @@ export interface Message {
   deleted: boolean;
   deliveredTo: string[];
   readBy: string[];
+  replyTo?: {
+    _id: string;
+    text: string;
+    senderId: { _id: string; name: string };
+    deleted: boolean;
+  } | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -372,11 +378,15 @@ export async function getMessages(
 /**
  * Send a message to a workspace
  */
-export async function sendMessage(workspaceId: string, text: string): Promise<Message> {
+export async function sendMessage(
+  workspaceId: string,
+  text: string,
+  replyTo?: string
+): Promise<Message> {
   const response = await fetch(`${API_BASE_URL}/workspaces/${workspaceId}/messages`, {
     method: 'POST',
     headers: getAuthHeaders(),
-    body: JSON.stringify({ text })
+    body: JSON.stringify({ text, replyTo })
   });
 
   if (!response.ok) {

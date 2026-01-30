@@ -25,7 +25,9 @@ import {
   MoreVertical,
   Settings,
   Check,
-  CheckCheck
+  CheckCheck,
+  Reply,
+  X
 } from 'lucide-react';
 import {
   getWorkspace,
@@ -74,6 +76,7 @@ const WorkspaceDetail = () => {
   const [typingUsers, setTypingUsers] = useState<Map<string, string>>(new Map());
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [membersSheetOpen, setMembersSheetOpen] = useState(false);
+  const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -111,7 +114,8 @@ const WorkspaceDetail = () => {
   });
 
   const sendMutation = useMutation({
-    mutationFn: (text: string) => sendMessage(workspaceId!, text),
+    mutationFn: ({ text, replyTo }: { text: string; replyTo?: string }) =>
+      sendMessage(workspaceId!, text, replyTo),
     onError: (error: Error) => {
       toast({
         title: 'Error',
@@ -333,11 +337,14 @@ const WorkspaceDetail = () => {
     const text = messageText.trim();
     if (!text) return;
 
+    const replyTo = replyToMessage?._id;
+
     setMessageText('');
+    setReplyToMessage(null);
     sendTypingIndicator(workspaceId!, false);
     playSendSound();
 
-    await sendMutation.mutateAsync(text);
+    await sendMutation.mutateAsync({ text, replyTo });
     setTimeout(() => scrollToBottom(), 50);
   };
 
@@ -642,6 +649,38 @@ const WorkspaceDetail = () => {
                           : 'bg-white text-slate-800 rounded-2xl rounded-bl-md shadow-sm border border-slate-100'
                       }`}
                     >
+                      {/* Show quoted message if this is a reply */}
+                      {message.replyTo && (
+                        <div
+                          className={`mb-2 pb-2 border-l-2 pl-3 ${
+                            isOwnMessage
+                              ? 'border-blue-400 bg-blue-500 bg-opacity-20'
+                              : 'border-slate-300 bg-slate-50'
+                          } rounded-r`}
+                        >
+                          <p
+                            className={`text-[10px] font-medium ${
+                              isOwnMessage ? 'text-blue-200' : 'text-slate-600'
+                            }`}
+                          >
+                            {message.replyTo.senderId.name}
+                          </p>
+                          <p
+                            className={`text-xs ${
+                              message.replyTo.deleted
+                                ? 'italic'
+                                : ''
+                            } ${
+                              isOwnMessage ? 'text-blue-100' : 'text-slate-600'
+                            } truncate`}
+                          >
+                            {message.replyTo.deleted
+                              ? '[Message deleted]'
+                              : message.replyTo.text}
+                          </p>
+                        </div>
+                      )}
+
                       <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
                         {message.text}
                       </p>
@@ -660,14 +699,30 @@ const WorkspaceDetail = () => {
                         {renderMessageStatus(message)}
                       </div>
 
-                      {isOwnMessage && !message.deleted && (
-                        <button
-                          onClick={() => deleteMutation.mutate(message._id)}
-                          className="absolute -left-10 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 p-2 bg-white hover:bg-slate-50 rounded-full shadow-md border border-slate-200"
-                        >
-                          <Trash2 className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600" />
-                        </button>
-                      )}
+                      {/* Reply and Delete buttons */}
+                      <div
+                        className={`absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex gap-1 ${
+                          isOwnMessage ? '-left-20' : '-right-20'
+                        }`}
+                      >
+                        {!message.deleted && (
+                          <button
+                            onClick={() => setReplyToMessage(message)}
+                            className="p-2 bg-white hover:bg-slate-50 rounded-full shadow-md border border-slate-200"
+                            title="Reply to this message"
+                          >
+                            <Reply className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600" />
+                          </button>
+                        )}
+                        {isOwnMessage && !message.deleted && (
+                          <button
+                            onClick={() => deleteMutation.mutate(message._id)}
+                            className="p-2 bg-white hover:bg-slate-50 rounded-full shadow-md border border-slate-200"
+                          >
+                            <Trash2 className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -708,6 +763,29 @@ const WorkspaceDetail = () => {
 
       {/* Message Input */}
       <div className="bg-white border-t border-slate-200 px-6 py-4">
+        {/* Reply Preview */}
+        {replyToMessage && (
+          <div className="max-w-4xl mx-auto mb-3 bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-start gap-3">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <Reply className="h-3.5 w-3.5 text-slate-500" />
+                <p className="text-xs font-medium text-slate-700">
+                  Replying to {replyToMessage.senderId.name}
+                </p>
+              </div>
+              <p className="text-sm text-slate-600 truncate">
+                {replyToMessage.deleted ? '[Message deleted]' : replyToMessage.text}
+              </p>
+            </div>
+            <button
+              onClick={() => setReplyToMessage(null)}
+              className="p-1 hover:bg-slate-200 rounded-full transition-colors flex-shrink-0"
+            >
+              <X className="h-4 w-4 text-slate-500" />
+            </button>
+          </div>
+        )}
+
         <div className="max-w-4xl mx-auto flex items-end gap-3">
           <Textarea
             placeholder="Type a message... (Ctrl+Enter to send)"
