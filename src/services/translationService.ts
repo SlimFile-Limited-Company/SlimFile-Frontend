@@ -39,8 +39,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'header.logout': 'Logout',
 
     // Hero Section
-    'hero.title': 'Compress. Convert. Simplify',
-    'hero.subtitle': 'All your file tools in one place',
+    'hero.title': 'Compress. Convert. Collaborate.',
+    'hero.subtitle': 'Your complete workspace for files and teams',
     'hero.cta': 'Get Started',
     'hero.learnMore': 'Learn More',
 
