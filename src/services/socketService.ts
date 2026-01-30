@@ -253,33 +253,90 @@ export function onNewInvitation(callback: (event: NewInvitationEvent) => void): 
 // NOTIFICATION HELPERS
 // ============================================
 
+// Track current workspace to avoid notifications for messages in active workspace
+let currentActiveWorkspaceId: string | null = null;
+
 /**
- * Play message notification sound (received)
+ * Set the currently active workspace (to avoid self-notifications)
+ */
+export function setActiveWorkspace(workspaceId: string | null): void {
+  currentActiveWorkspaceId = workspaceId;
+}
+
+/**
+ * Request notification permission from user
+ */
+export async function requestNotificationPermission(): Promise<boolean> {
+  if (!('Notification' in window)) {
+    console.log('This browser does not support notifications');
+    return false;
+  }
+
+  if (Notification.permission === 'granted') {
+    return true;
+  }
+
+  if (Notification.permission !== 'denied') {
+    const permission = await Notification.requestPermission();
+    return permission === 'granted';
+  }
+
+  return false;
+}
+
+/**
+ * Check if notifications are enabled
+ */
+export function areNotificationsEnabled(): boolean {
+  return 'Notification' in window && Notification.permission === 'granted';
+}
+
+/**
+ * Vibrate device if supported (for mobile)
+ */
+function vibrateDevice(pattern: number | number[] = 200): void {
+  if ('vibrate' in navigator) {
+    navigator.vibrate(pattern);
+  }
+}
+
+/**
+ * Play message notification sound (received) - WhatsApp style double beep
  */
 function playMessageSound(): void {
   try {
-    // Use Web Audio API for a simple pop sound
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    // First beep
+    const osc1 = audioContext.createOscillator();
+    const gain1 = audioContext.createGain();
+    osc1.connect(gain1);
+    gain1.connect(audioContext.destination);
+    osc1.frequency.value = 880;
+    osc1.type = 'sine';
+    gain1.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gain1.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+    osc1.start(audioContext.currentTime);
+    osc1.stop(audioContext.currentTime + 0.1);
 
-    oscillator.frequency.value = 800;
-    oscillator.type = 'sine';
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.2);
+    // Second beep (slightly delayed)
+    const osc2 = audioContext.createOscillator();
+    const gain2 = audioContext.createGain();
+    osc2.connect(gain2);
+    gain2.connect(audioContext.destination);
+    osc2.frequency.value = 988;
+    osc2.type = 'sine';
+    gain2.gain.setValueAtTime(0.3, audioContext.currentTime + 0.15);
+    gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
+    osc2.start(audioContext.currentTime + 0.15);
+    osc2.stop(audioContext.currentTime + 0.25);
   } catch {
     // Audio not supported
   }
 }
 
 /**
- * Play send message sound
+ * Play send message sound - subtle swoosh
  */
 export function playSendSound(): void {
   try {
@@ -290,28 +347,39 @@ export function playSendSound(): void {
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
-    // Slightly higher pitch for sent messages
-    oscillator.frequency.value = 600;
+    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.1);
     oscillator.type = 'sine';
-    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
 
     oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.15);
+    oscillator.stop(audioContext.currentTime + 0.1);
   } catch {
     // Audio not supported
   }
 }
 
 /**
- * Play notification sound
+ * Play notification sound for invitations
  */
 function playNotificationSound(): void {
   try {
-    const audio = new Audio('/sounds/notification.mp3');
-    audio.volume = 0.5;
-    audio.play().catch(() => {
-      // Ignore if audio play fails
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+    // Play a pleasant notification chime
+    [523.25, 659.25, 783.99].forEach((freq, i) => {
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      const startTime = audioContext.currentTime + (i * 0.1);
+      gain.gain.setValueAtTime(0.2, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
+      osc.start(startTime);
+      osc.stop(startTime + 0.3);
     });
   } catch {
     // Audio not supported
@@ -323,11 +391,15 @@ function playNotificationSound(): void {
  */
 function showInvitationNotification(event: NewInvitationEvent): void {
   if (Notification.permission === 'granted') {
+    vibrateDevice([200, 100, 200]);
+
     const notification = new Notification('Workspace Invitation', {
       body: `${event.inviterName} invited you to join "${event.workspaceName}" as ${event.role}`,
       icon: '/logo.gif',
+      badge: '/logo.gif',
       tag: `invitation-${event.workspaceId}`,
-      requireInteraction: true
+      requireInteraction: true,
+      silent: false
     });
 
     notification.onclick = () => {
@@ -339,23 +411,38 @@ function showInvitationNotification(event: NewInvitationEvent): void {
 }
 
 /**
- * Show browser notification for new message
+ * Show browser notification for new message - WhatsApp style (always shows)
  */
 export function showMessageNotification(
   senderName: string,
   messageText: string,
-  workspaceId: string
+  workspaceId: string,
+  workspaceName?: string
 ): void {
-  if (Notification.permission === 'granted' && document.hidden) {
-    const truncatedText = messageText.length > 50
-      ? messageText.substring(0, 50) + '...'
+  // Skip if user is currently viewing this workspace and page is visible
+  if (currentActiveWorkspaceId === workspaceId && !document.hidden) {
+    return;
+  }
+
+  // Vibrate for incoming messages (mobile)
+  vibrateDevice(200);
+
+  // Show browser notification
+  if (Notification.permission === 'granted') {
+    const truncatedText = messageText.length > 100
+      ? messageText.substring(0, 100) + '...'
       : messageText;
 
-    const notification = new Notification(senderName, {
+    const title = workspaceName ? `${senderName} • ${workspaceName}` : senderName;
+
+    const notification = new Notification(title, {
       body: truncatedText,
       icon: '/logo.gif',
-      tag: `message-${workspaceId}`,
-      silent: true // We play our own sound
+      badge: '/logo.gif',
+      tag: `message-${workspaceId}-${Date.now()}`, // Unique tag for each message
+      renotify: true, // Show each notification even with same tag
+      silent: true, // We play our own sound
+      requireInteraction: false
     });
 
     notification.onclick = () => {
@@ -364,8 +451,8 @@ export function showMessageNotification(
       notification.close();
     };
 
-    // Auto-close after 5 seconds
-    setTimeout(() => notification.close(), 5000);
+    // Auto-close after 4 seconds
+    setTimeout(() => notification.close(), 4000);
   }
 }
 

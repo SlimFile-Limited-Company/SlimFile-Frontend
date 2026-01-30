@@ -44,7 +44,9 @@ import {
   onMemberRemoved,
   showMessageNotification,
   playSendSound,
-  playReceiveSound
+  playReceiveSound,
+  requestNotificationPermission,
+  setActiveWorkspace
 } from '@/services/socketService';
 import InviteMemberDialog from '@/components/workspace/InviteMemberDialog';
 import MemberList from '@/components/workspace/MemberList';
@@ -137,18 +139,25 @@ const WorkspaceDetail = () => {
     }
   };
 
-  // Initialize socket connection
+  // Initialize socket connection and request notification permission
   useEffect(() => {
     const token = localStorage.getItem('jwt');
     if (token && workspaceId) {
       initializeSocket();
       authenticateSocket(token);
       joinWorkspace(workspaceId);
+
+      // Set this as the active workspace (to prevent self-notifications)
+      setActiveWorkspace(workspaceId);
+
+      // Request notification permission for WhatsApp-style notifications
+      requestNotificationPermission();
     }
 
     return () => {
       if (workspaceId) {
         leaveWorkspace(workspaceId);
+        setActiveWorkspace(null);
       }
     };
   }, [workspaceId]);
@@ -170,7 +179,8 @@ const WorkspaceDetail = () => {
         showMessageNotification(
           message.senderId.name,
           message.text,
-          workspaceId
+          workspaceId,
+          workspaceData?.workspace.name
         );
       }
 
