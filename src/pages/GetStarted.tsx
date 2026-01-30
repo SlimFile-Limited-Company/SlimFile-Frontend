@@ -194,14 +194,14 @@ const GetStarted: FC = () => {
                     Create Workspace
                   </h3>
                   <p className="text-gray-600 mb-4 leading-relaxed text-xs sm:text-sm flex-grow">
-                    Collaborate with your team. Share files, chat in real-time, and work together seamlessly.
+                    Collaborate on projects with your team. Communicate in real-time and stay organized together.
                   </p>
 
                   {/* Features */}
                   <ul className="space-y-2 mb-6">
                     {[
                       "Real-time team chat",
-                      "File sharing & collaboration",
+                      "Share links & resources",
                       "Voice messages",
                       "Member management"
                     ].map((item, idx) => (
@@ -249,7 +249,7 @@ const GetStarted: FC = () => {
                   </div>
                   <div>
                     <h3 className="font-bold text-lg text-gray-900 mb-2">Choose Create Workspace if:</h3>
-                    <p className="text-sm sm:text-base">You need to collaborate with a team. Share files, communicate in real-time, and manage projects together.</p>
+                    <p className="text-sm sm:text-base">You need to collaborate on projects with your team. Communicate in real-time, share links and resources, and coordinate work together.</p>
                   </div>
                 </div>
               </div>
