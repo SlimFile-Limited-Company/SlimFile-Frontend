@@ -1018,20 +1018,29 @@ const WorkspaceDetail = () => {
         <div className="max-w-4xl mx-auto flex items-end gap-3">
           {isRecording ? (
             /* Recording UI */
-            <div className="flex-1 flex items-center gap-3 bg-red-50 border-2 border-red-200 rounded-lg px-4 py-3">
+            <div className="flex-1 flex items-center gap-3 bg-blue-50 border-2 border-blue-200 rounded-lg px-4 py-3">
               <div className="flex items-center gap-2 flex-1">
-                <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse" />
-                <span className="text-sm font-medium text-red-700">Recording</span>
-                <span className="text-sm text-red-600">{formatRecordingTime(recordingTime)}</span>
+                <div className="h-3 w-3 bg-blue-500 rounded-full animate-pulse" />
+                <span className="text-sm font-medium text-blue-700">Recording</span>
+                <span className="text-sm text-blue-600">{formatRecordingTime(recordingTime)}</span>
               </div>
-              <Button
-                onClick={cancelRecording}
-                variant="ghost"
-                size="sm"
-                className="text-red-600 hover:text-red-700 hover:bg-red-100"
-              >
-                Cancel
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={cancelRecording}
+                  variant="ghost"
+                  size="sm"
+                  className="text-slate-600 hover:text-slate-700 hover:bg-slate-100"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={stopRecording}
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Stop
+                </Button>
+              </div>
             </div>
           ) : audioChunks.length > 0 ? (
             /* Audio Preview UI */
