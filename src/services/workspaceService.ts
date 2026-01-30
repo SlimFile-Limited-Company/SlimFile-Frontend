@@ -459,6 +459,34 @@ export async function markMessageAsRead(workspaceId: string, messageId: string):
   }
 }
 
+/**
+ * Get unread message counts across all workspaces
+ */
+export async function getUnreadMessageCounts(): Promise<{
+  total: number;
+  byWorkspace: Array<{
+    workspaceId: string;
+    workspaceName: string;
+    count: number;
+  }>;
+}> {
+  const response = await fetch(`${API_BASE_URL}/workspaces/unread-counts`, {
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    // If endpoint doesn't exist yet, return empty counts
+    if (response.status === 404) {
+      console.warn('Unread counts endpoint not available yet');
+      return { total: 0, byWorkspace: [] };
+    }
+    const error = await response.json().catch(() => ({ error: 'Failed to fetch unread counts' }));
+    throw new Error(error.error || 'Failed to fetch unread counts');
+  }
+
+  return response.json();
+}
+
 // ============================================
 // UTILITIES
 // ============================================

@@ -82,6 +82,9 @@ export function initializeSocket(): Socket {
     if (token && !isAuthenticated) {
       authenticateSocket(token);
     }
+
+    // Check for unread messages on reconnect
+    checkUnreadMessages();
   });
 
   socket.on('disconnect', (reason) => {
@@ -489,6 +492,64 @@ export function showMessageNotification(
 }
 
 // ============================================
+// UNREAD MESSAGES NOTIFICATION
+// ============================================
+
+/**
+ * Check for unread messages and show notification
+ * Called when app loads or socket reconnects
+ */
+export async function checkUnreadMessages(): Promise<void> {
+  try {
+    // Dynamically import to avoid circular dependencies
+    const { getUnreadMessageCounts } = await import('./workspaceService');
+
+    const unreadData = await getUnreadMessageCounts();
+
+    // If there are unread messages, show a notification
+    if (unreadData.total > 0) {
+      const workspaceCount = unreadData.byWorkspace.length;
+      const messageText = unreadData.total === 1 ? 'message' : 'messages';
+      const workspaceText = workspaceCount === 1 ? 'workspace' : 'workspaces';
+
+      // Show browser notification
+      if (Notification.permission === 'granted') {
+        const notification = new Notification('SlimFile - New Messages', {
+          body: `You have ${unreadData.total} unread ${messageText} in ${workspaceCount} ${workspaceText}`,
+          icon: '/logo.gif',
+          badge: '/logo.gif',
+          tag: 'unread-messages',
+          requireInteraction: false,
+          silent: false
+        });
+
+        notification.onclick = () => {
+          window.focus();
+          // If only one workspace, go directly to it
+          if (unreadData.byWorkspace.length === 1) {
+            window.location.href = `/workspaces/${unreadData.byWorkspace[0].workspaceId}`;
+          } else {
+            window.location.href = '/workspaces';
+          }
+          notification.close();
+        };
+
+        // Auto-close after 6 seconds
+        setTimeout(() => notification.close(), 6000);
+      }
+
+      // Play notification sound
+      playNotificationSound();
+
+      // Vibrate device
+      vibrateDevice([200, 100, 200]);
+    }
+  } catch (error) {
+    console.error('Failed to check unread messages:', error);
+  }
+}
+
+// ============================================
 // INITIALIZATION HOOK
 // ============================================
 
@@ -501,5 +562,8 @@ export function useSocketInit(): void {
   if (token && !socket) {
     initializeSocket();
     authenticateSocket(token);
+
+    // Check for unread messages when app loads
+    checkUnreadMessages();
   }
 }

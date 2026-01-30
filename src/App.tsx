@@ -4,12 +4,17 @@ import { Footer } from "@/components/Footer";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { registerServiceWorker } from "@/utils/pwa";
 import { useEffect } from "react";
-import { isAuthenticated } from "@/lib/auth";
+import { isAuthenticated, validateToken } from "@/lib/auth";
 import { notifyGreeting, getNotificationPermission, requestNotificationPermission } from "@/services/pushNotificationService";
 
 const App = () => {
   useEffect(() => {
     registerServiceWorker();
+
+    // Validate token on app mount (check if it's expired)
+    if (isAuthenticated()) {
+      validateToken(); // This will auto-logout if token is expired
+    }
 
     // Automatically request notification permission on first load
     const autoEnableNotifications = async () => {
