@@ -18,6 +18,13 @@ import { isAuthenticated, getToken } from '@/lib/auth';
 import { meetingService } from '@/services/meetingService';
 import { initializeSocket, getSocket } from '@/services/socketService';
 
+interface ChatMessage {
+  userId: string;
+  userName: string;
+  message: string;
+  timestamp: string;
+}
+
 export default function MeetingRoom() {
   const { meetingCode } = useParams<{ meetingCode: string }>();
   const navigate = useNavigate();
@@ -29,6 +36,11 @@ export default function MeetingRoom() {
   const [showParticipants, setShowParticipants] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
+
+  // Chat states
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Refs for video elements
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -61,6 +73,8 @@ export default function MeetingRoom() {
         console.log('Media access granted:', stream.getTracks().map(t => t.kind));
 
         localStream.current = stream;
+        // Set stream in meeting service so it can add tracks to peer connections
+        meetingService.setLocalStream(stream);
 
         // Wait for video element to be ready
         if (localVideoRef.current) {
@@ -154,6 +168,26 @@ export default function MeetingRoom() {
     };
   }, [meetingCode, localStream.current]);
 
+  // Listen for chat messages
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleChatMessage = (data: ChatMessage) => {
+      setChatMessages((prev) => [...prev, data]);
+      // Auto-scroll to bottom
+      setTimeout(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    };
+
+    socket.on('meeting:chat-message', handleChatMessage);
+
+    return () => {
+      socket.off('meeting:chat-message', handleChatMessage);
+    };
+  }, []);
+
   const toggleMic = () => {
     if (localStream.current) {
       const audioTrack = localStream.current.getAudioTracks()[0];
@@ -209,6 +243,40 @@ export default function MeetingRoom() {
       localStream.current.getTracks().forEach((track) => track.stop());
     }
     navigate('/meet');
+  };
+
+  const sendChatMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!chatInput.trim() || !meetingCode) return;
+
+    const socket = getSocket();
+    if (!socket) {
+      alert('Not connected to meeting');
+      return;
+    }
+
+    // Get user name from token or use 'Anonymous'
+    const token = getToken();
+    let userName = 'Anonymous';
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        userName = payload.name || 'User';
+      } catch (e) {
+        console.error('Failed to parse token:', e);
+      }
+    }
+
+    // Emit chat message
+    socket.emit('meeting:chat-message', {
+      meetingId: meetingCode,
+      message: chatInput.trim(),
+      userName,
+    });
+
+    // Clear input
+    setChatInput('');
   };
 
   return (
@@ -322,24 +390,48 @@ export default function MeetingRoom() {
               <h3 className="text-white font-semibold">Chat</h3>
               <button
                 onClick={() => setShowChat(false)}
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-white text-2xl leading-none"
               >
                 ×
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto mb-4">
-              <p className="text-gray-500 text-sm text-center py-8">
-                No messages yet. Start the conversation!
-              </p>
+            <div className="flex-1 overflow-y-auto mb-4 space-y-3">
+              {chatMessages.length === 0 ? (
+                <p className="text-gray-500 text-sm text-center py-8">
+                  No messages yet. Start the conversation!
+                </p>
+              ) : (
+                chatMessages.map((msg, index) => (
+                  <div key={index} className="bg-gray-700 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-purple-400 font-semibold text-sm">
+                        {msg.userName}
+                      </span>
+                      <span className="text-gray-500 text-xs">
+                        {new Date(msg.timestamp).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                    </div>
+                    <p className="text-white text-sm break-words">{msg.message}</p>
+                  </div>
+                ))
+              )}
+              <div ref={chatEndRef} />
             </div>
-            <div className="flex gap-2">
+            <form onSubmit={sendChatMessage} className="flex gap-2">
               <input
                 type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
                 placeholder="Type a message..."
                 className="flex-1 bg-gray-700 text-white px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-600"
               />
-              <Button className="bg-purple-600 hover:bg-purple-700">Send</Button>
-            </div>
+              <Button type="submit" className="bg-purple-600 hover:bg-purple-700">
+                Send
+              </Button>
+            </form>
           </div>
         )}
       </div>

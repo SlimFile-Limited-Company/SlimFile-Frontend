@@ -95,10 +95,12 @@ class MeetingService {
 
     // Listen for other participants
     socket.on('meeting:user-joined', this.handleUserJoined.bind(this));
+    socket.on('meeting:existing-participants', this.handleExistingParticipants.bind(this));
     socket.on('meeting:user-left', this.handleUserLeft.bind(this));
     socket.on('meeting:offer', this.handleOffer.bind(this));
     socket.on('meeting:answer', this.handleAnswer.bind(this));
     socket.on('meeting:ice-candidate', this.handleIceCandidate.bind(this));
+    socket.on('meeting:error', this.handleError.bind(this));
   }
 
   /**
@@ -128,10 +130,12 @@ class MeetingService {
     // Remove socket listeners
     if (socket) {
       socket.off('meeting:user-joined');
+      socket.off('meeting:existing-participants');
       socket.off('meeting:user-left');
       socket.off('meeting:offer');
       socket.off('meeting:answer');
       socket.off('meeting:ice-candidate');
+      socket.off('meeting:error');
     }
   }
 
@@ -186,6 +190,36 @@ class MeetingService {
 
     this.peerConnections.set(participantId, peerConnection);
     return peerConnection;
+  }
+
+  /**
+   * Handle existing participants when joining a meeting
+   */
+  private async handleExistingParticipants({
+    participants,
+  }: {
+    participants: Array<{ userId: string; socketId: string }>;
+  }) {
+    console.log('Existing participants:', participants);
+
+    // Create peer connections and send offers to all existing participants
+    for (const participant of participants) {
+      const peerConnection = this.createPeerConnection(participant.userId);
+
+      try {
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+
+        const socket = getSocket();
+        socket?.emit('meeting:offer', {
+          meetingId: this.currentMeetingId,
+          targetUserId: participant.userId,
+          offer,
+        });
+      } catch (error) {
+        console.error('Error creating offer for existing participant:', error);
+      }
+    }
   }
 
   /**
@@ -312,6 +346,14 @@ class MeetingService {
   }
 
   /**
+   * Handle meeting errors from server
+   */
+  private handleError({ message }: { message: string }) {
+    console.error('Meeting error:', message);
+    this.onError?.(message);
+  }
+
+  /**
    * Toggle microphone
    */
   toggleMicrophone(enabled: boolean) {
@@ -377,6 +419,13 @@ class MeetingService {
   }
 
   /**
+   * Set local stream (when obtained externally)
+   */
+  setLocalStream(stream: MediaStream) {
+    this.localStream = stream;
+  }
+
+  /**
    * Get local stream
    */
   getLocalStreamRef(): MediaStream | null {
@@ -395,6 +444,7 @@ class MeetingService {
    */
   onRemoteStreamAdded?: (participantId: string, stream: MediaStream) => void;
   onParticipantLeft?: (participantId: string) => void;
+  onError?: (message: string) => void;
 }
 
 // Export singleton instance

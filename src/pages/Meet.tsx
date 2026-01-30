@@ -50,7 +50,7 @@ export default function Meet() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex items-center justify-center mb-6">
+          <div className="flex items-center justify-center mb-6 mt-8">
             <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 rounded-2xl shadow-lg">
               <Video className="w-12 h-12 text-white" />
             </div>
