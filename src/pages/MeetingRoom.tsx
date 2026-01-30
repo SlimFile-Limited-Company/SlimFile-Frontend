@@ -42,26 +42,56 @@ export default function MeetingRoom() {
   useEffect(() => {
     const initializeMedia = async () => {
       try {
+        console.log('Requesting camera and microphone access...');
+
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+          },
         });
+
+        console.log('Media access granted:', stream.getTracks().map(t => t.kind));
 
         localStream.current = stream;
 
+        // Wait for video element to be ready
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
+          // Force play to ensure video starts
+          localVideoRef.current.play().catch(e => console.error('Video play error:', e));
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error accessing media devices:', error);
-        alert('Unable to access camera/microphone. Please check permissions.');
+
+        let errorMessage = 'Unable to access camera/microphone. ';
+
+        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+          errorMessage += 'Permission denied. Please allow camera and microphone access in your browser settings.';
+        } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+          errorMessage += 'No camera or microphone found on this device.';
+        } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+          errorMessage += 'Camera or microphone is already in use by another application.';
+        } else {
+          errorMessage += error.message || 'Please check your device permissions.';
+        }
+
+        alert(errorMessage);
       }
     };
 
-    initializeMedia();
+    // Add a small delay to ensure component is mounted
+    const timeoutId = setTimeout(() => {
+      initializeMedia();
+    }, 100);
 
     // Cleanup function
     return () => {
+      clearTimeout(timeoutId);
       if (localStream.current) {
         localStream.current.getTracks().forEach((track) => track.stop());
       }
@@ -137,16 +167,14 @@ export default function MeetingRoom() {
           <div className="flex items-center gap-3">
             <Button
               onClick={copyMeetingLink}
-              variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-700"
+              className="bg-gray-700 border border-gray-600 text-white hover:bg-gray-600"
             >
               <Copy className="w-4 h-4 mr-2" />
               Copy Link
             </Button>
             <Button
               onClick={() => setShowParticipants(!showParticipants)}
-              variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-700"
+              className="bg-gray-700 border border-gray-600 text-white hover:bg-gray-600"
             >
               <Users className="w-4 h-4 mr-2" />
               Participants
