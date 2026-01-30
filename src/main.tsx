@@ -68,6 +68,7 @@ import GlobalDashboard from './pages/GlobalDashboard';
 import Workspaces from './pages/Workspaces';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import WorkspaceInvitations from './pages/WorkspaceInvitations';
+import { NotificationProvider } from './components/InAppNotification';
 
 // Register service worker for PWA functionality
 if ('serviceWorker' in navigator) {
@@ -96,11 +97,12 @@ ReactDOM.createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
+        <NotificationProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <Routes>
         <Route path="/login" element={<Login />} />
         {/* New Dashboard with nested routes */}
         <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
@@ -180,8 +182,9 @@ ReactDOM.createRoot(root).render(
             </ProtectedRoute>
           } />
         </Route>
-      </Routes>
-        </BrowserRouter>
+            </Routes>
+          </BrowserRouter>
+        </NotificationProvider>
       </TooltipProvider>
     </QueryClientProvider>
   </StrictMode>

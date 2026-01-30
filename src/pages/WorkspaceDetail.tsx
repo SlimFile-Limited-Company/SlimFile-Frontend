@@ -50,12 +50,14 @@ import {
 } from '@/services/socketService';
 import InviteMemberDialog from '@/components/workspace/InviteMemberDialog';
 import MemberList from '@/components/workspace/MemberList';
+import { useInAppNotification } from '@/components/InAppNotification';
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { showNotification } = useInAppNotification();
 
   const [messageText, setMessageText] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -173,9 +175,20 @@ const WorkspaceDetail = () => {
         return [...prev, message];
       });
 
-      // Play sound and show notification for messages from other users
+      // Play sound and show notifications for messages from other users
       if (message.senderId._id !== currentUserId) {
         playReceiveSound();
+
+        // Show in-app notification (works on all devices including mobile)
+        showNotification({
+          senderName: message.senderId.name,
+          senderPicture: message.senderId.picture,
+          message: message.text,
+          workspaceId: workspaceId,
+          workspaceName: workspaceData?.workspace.name
+        });
+
+        // Also show browser notification if supported
         showMessageNotification(
           message.senderId.name,
           message.text,
