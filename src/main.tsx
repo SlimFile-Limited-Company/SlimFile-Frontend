@@ -68,6 +68,8 @@ import GlobalDashboard from './pages/GlobalDashboard';
 import Workspaces from './pages/Workspaces';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import WorkspaceInvitations from './pages/WorkspaceInvitations';
+import Meet from './pages/Meet';
+import MeetingRoom from './pages/MeetingRoom';
 import { NotificationProvider } from './components/InAppNotification';
 
 // Register service worker for PWA functionality
@@ -176,12 +178,20 @@ ReactDOM.createRoot(root).render(
               <WorkspaceInvitations />
             </ProtectedRoute>
           } />
+          <Route path="meet" element={<Meet />} />
         </Route>
 
         {/* Workspace chat - Full screen without header/footer */}
         <Route path="workspaces/:workspaceId" element={
           <ProtectedRoute>
             <WorkspaceDetail />
+          </ProtectedRoute>
+        } />
+
+        {/* Meeting room - Full screen without header/footer */}
+        <Route path="meet/:meetingCode" element={
+          <ProtectedRoute>
+            <MeetingRoom />
           </ProtectedRoute>
         } />
             </Routes>

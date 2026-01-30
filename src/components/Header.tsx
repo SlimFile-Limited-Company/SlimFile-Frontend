@@ -59,6 +59,7 @@ export const Header = () => {
   const toolsNavigation = [
     { name: "Feed", href: "/feed", badge: "Live", badgeColor: "bg-green-100 text-green-700" },
     ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces", badge: "Team", badgeColor: "bg-blue-100 text-blue-700" }] : []),
+    { name: "Meet", href: "/meet", badge: "New", badgeColor: "bg-purple-100 text-purple-700" },
     { name: "STEPsBuild", href: "/stepsbuild", badge: null, badgeColor: null },
   ];
 
