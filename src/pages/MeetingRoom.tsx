@@ -14,7 +14,9 @@ import {
   Settings,
   MessageSquare,
 } from 'lucide-react';
-import { isAuthenticated } from '@/lib/auth';
+import { isAuthenticated, getToken } from '@/lib/auth';
+import { meetingService } from '@/services/meetingService';
+import { initializeSocket, getSocket } from '@/services/socketService';
 
 export default function MeetingRoom() {
   const { meetingCode } = useParams<{ meetingCode: string }>();
@@ -26,6 +28,7 @@ export default function MeetingRoom() {
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [showParticipants, setShowParticipants] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
 
   // Refs for video elements
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -97,6 +100,59 @@ export default function MeetingRoom() {
       }
     };
   }, []);
+
+  // Join meeting and set up WebRTC signaling
+  useEffect(() => {
+    if (!meetingCode || !localStream.current) {
+      return;
+    }
+
+    console.log('Initializing meeting connection...');
+
+    // Initialize socket if not already connected
+    const socket = getSocket();
+    if (!socket || !socket.connected) {
+      initializeSocket();
+    }
+
+    // Get userId from token
+    const token = getToken();
+    const userId = token ? `user-${Date.now()}` : `guest-${Date.now()}`;
+
+    // Set up meeting service callbacks
+    meetingService.onRemoteStreamAdded = (participantId: string, stream: MediaStream) => {
+      console.log('Remote stream added from:', participantId);
+      setRemoteStreams((prev) => {
+        const newStreams = new Map(prev);
+        newStreams.set(participantId, stream);
+        return newStreams;
+      });
+    };
+
+    meetingService.onParticipantLeft = (participantId: string) => {
+      console.log('Participant left:', participantId);
+      setRemoteStreams((prev) => {
+        const newStreams = new Map(prev);
+        newStreams.delete(participantId);
+        return newStreams;
+      });
+    };
+
+    // Join the meeting
+    try {
+      meetingService.joinMeeting(meetingCode, userId);
+      console.log('Joined meeting:', meetingCode);
+    } catch (error) {
+      console.error('Failed to join meeting:', error);
+      alert('Failed to join meeting. Please try again.');
+    }
+
+    // Cleanup on unmount
+    return () => {
+      console.log('Leaving meeting...');
+      meetingService.leaveMeeting();
+    };
+  }, [meetingCode, localStream.current]);
 
   const toggleMic = () => {
     if (localStream.current) {
@@ -214,13 +270,24 @@ export default function MeetingRoom() {
               )}
             </div>
 
-            {/* Placeholder for remote participants */}
-            <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video flex items-center justify-center border-2 border-dashed border-gray-600">
-              <div className="text-center">
-                <Users className="w-12 h-12 text-gray-600 mx-auto mb-2" />
-                <p className="text-gray-500 text-sm">Waiting for others to join...</p>
+            {/* Remote Participants */}
+            {Array.from(remoteStreams.entries()).map(([participantId, stream]) => (
+              <RemoteVideoCard
+                key={participantId}
+                participantId={participantId}
+                stream={stream}
+              />
+            ))}
+
+            {/* Placeholder if no remote participants */}
+            {remoteStreams.size === 0 && (
+              <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video flex items-center justify-center border-2 border-dashed border-gray-600">
+                <div className="text-center">
+                  <Users className="w-12 h-12 text-gray-600 mx-auto mb-2" />
+                  <p className="text-gray-500 text-sm">Waiting for others to join...</p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -360,6 +427,37 @@ export default function MeetingRoom() {
             Meeting ID: <span className="text-white font-mono">{meetingCode}</span>
           </p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// Remote video card component
+interface RemoteVideoCardProps {
+  participantId: string;
+  stream: MediaStream;
+}
+
+function RemoteVideoCard({ participantId, stream }: RemoteVideoCardProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
+      videoRef.current.play().catch((e) => console.error('Remote video play error:', e));
+    }
+  }, [stream]);
+
+  return (
+    <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video">
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute bottom-3 left-3 bg-black bg-opacity-60 px-3 py-1 rounded-full">
+        <span className="text-white text-sm">{participantId.substring(0, 8)}</span>
       </div>
     </div>
   );
