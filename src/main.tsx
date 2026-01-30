@@ -166,19 +166,19 @@ ReactDOM.createRoot(root).render(
               <Portals />
             </ProtectedRoute>
           } />
+          <Route path="workspaces" element={
+            <ProtectedRoute>
+              <Workspaces />
+            </ProtectedRoute>
+          } />
+          <Route path="workspaces/invitations" element={
+            <ProtectedRoute>
+              <WorkspaceInvitations />
+            </ProtectedRoute>
+          } />
         </Route>
 
-        {/* Workspace routes - Full screen without header/footer */}
-        <Route path="workspaces" element={
-          <ProtectedRoute>
-            <Workspaces />
-          </ProtectedRoute>
-        } />
-        <Route path="workspaces/invitations" element={
-          <ProtectedRoute>
-            <WorkspaceInvitations />
-          </ProtectedRoute>
-        } />
+        {/* Workspace chat - Full screen without header/footer */}
         <Route path="workspaces/:workspaceId" element={
           <ProtectedRoute>
             <WorkspaceDetail />
