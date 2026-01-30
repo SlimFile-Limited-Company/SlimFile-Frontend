@@ -97,10 +97,10 @@ ReactDOM.createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <NotificationProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <NotificationProvider>
             <ScrollToTop />
             <Routes>
         <Route path="/login" element={<Login />} />
@@ -185,8 +185,8 @@ ReactDOM.createRoot(root).render(
           </ProtectedRoute>
         } />
             </Routes>
-          </BrowserRouter>
-        </NotificationProvider>
+          </NotificationProvider>
+        </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
   </StrictMode>
