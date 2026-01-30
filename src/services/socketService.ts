@@ -169,17 +169,18 @@ export function sendTypingIndicator(workspaceId: string, isTyping: boolean): voi
  * Subscribe to new messages
  */
 export function onNewMessage(callback: (message: Message) => void): () => void {
-  const handler = (message: Message) => {
-    callback(message);
-    // Play notification sound for new messages
-    playMessageSound();
-  };
-
-  socket?.on('newMessage', handler);
+  socket?.on('newMessage', callback);
 
   return () => {
-    socket?.off('newMessage', handler);
+    socket?.off('newMessage', callback);
   };
+}
+
+/**
+ * Play received message sound (exported for conditional use)
+ */
+export function playReceiveSound(): void {
+  playMessageSound();
 }
 
 /**
@@ -253,15 +254,50 @@ export function onNewInvitation(callback: (event: NewInvitationEvent) => void): 
 // ============================================
 
 /**
- * Play message notification sound
+ * Play message notification sound (received)
  */
 function playMessageSound(): void {
   try {
-    const audio = new Audio('/sounds/message.mp3');
-    audio.volume = 0.3;
-    audio.play().catch(() => {
-      // Ignore if audio play fails (user hasn't interacted with page)
-    });
+    // Use Web Audio API for a simple pop sound
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.value = 800;
+    oscillator.type = 'sine';
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.2);
+  } catch {
+    // Audio not supported
+  }
+}
+
+/**
+ * Play send message sound
+ */
+export function playSendSound(): void {
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Slightly higher pitch for sent messages
+    oscillator.frequency.value = 600;
+    oscillator.type = 'sine';
+    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.15);
   } catch {
     // Audio not supported
   }

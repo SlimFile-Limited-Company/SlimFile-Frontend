@@ -52,7 +52,9 @@ import {
   onUserTyping,
   onMemberJoined,
   onMemberRemoved,
-  showMessageNotification
+  showMessageNotification,
+  playSendSound,
+  playReceiveSound
 } from '@/services/socketService';
 import InviteMemberDialog from '@/components/workspace/InviteMemberDialog';
 import MemberList from '@/components/workspace/MemberList';
@@ -162,8 +164,9 @@ const WorkspaceDetail = () => {
         return [...prev, message];
       });
 
-      // Show notification if from another user and window is not focused
+      // Play sound and show notification for messages from other users
       if (message.senderId._id !== currentUserId) {
+        playReceiveSound();
         showMessageNotification(
           message.senderId.name,
           message.text,
@@ -248,7 +251,16 @@ const WorkspaceDetail = () => {
 
     setMessageText('');
     sendTypingIndicator(workspaceId!, false);
+
+    // Play send sound
+    playSendSound();
+
     await sendMutation.mutateAsync(text);
+
+    // Scroll to bottom after sending
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
   };
 
   // Handle typing indicator
@@ -483,24 +495,25 @@ const WorkspaceDetail = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Typing Indicator */}
-          {typingUsers.size > 0 && (
-            <div className="flex items-center gap-2 mt-4 text-gray-500 text-sm">
-              <div className="flex space-x-1">
-                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                <span
-                  className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                  style={{ animationDelay: '0.1s' }}
-                />
-                <span
-                  className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                  style={{ animationDelay: '0.2s' }}
-                />
-              </div>
-              <span>Someone is typing...</span>
-            </div>
-          )}
         </ScrollArea>
+
+        {/* Typing Indicator - Fixed above input */}
+        {typingUsers.size > 0 && (
+          <div className="px-4 py-2 bg-gray-50 border-t flex items-center gap-2 text-gray-500 text-sm">
+            <div className="flex space-x-1">
+              <span className="w-2 h-2 bg-red-400 rounded-full animate-bounce" />
+              <span
+                className="w-2 h-2 bg-red-400 rounded-full animate-bounce"
+                style={{ animationDelay: '0.1s' }}
+              />
+              <span
+                className="w-2 h-2 bg-red-400 rounded-full animate-bounce"
+                style={{ animationDelay: '0.2s' }}
+              />
+            </div>
+            <span>Someone is typing...</span>
+          </div>
+        )}
 
         {/* Message Input */}
         <div className="bg-white border-t p-4">
