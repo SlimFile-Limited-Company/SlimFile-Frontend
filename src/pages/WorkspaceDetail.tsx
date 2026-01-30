@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Sheet,
@@ -270,10 +271,12 @@ const WorkspaceDetail = () => {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    // Ctrl+Enter or Cmd+Enter sends the message
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       handleSendMessage();
     }
+    // Plain Enter creates a new line (default textarea behavior)
   };
 
   const loadMoreMessages = async () => {
@@ -590,14 +593,15 @@ const WorkspaceDetail = () => {
 
       {/* Message Input */}
       <div className="bg-white border-t border-slate-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center gap-3">
-          <Input
-            placeholder="Type a message..."
+        <div className="max-w-4xl mx-auto flex items-end gap-3">
+          <Textarea
+            placeholder="Type a message... (Ctrl+Enter to send)"
             value={messageText}
             onChange={handleTyping}
-            onKeyPress={handleKeyPress}
-            className="flex-1 border-slate-200 focus-visible:ring-blue-500"
+            onKeyDown={handleKeyPress}
+            className="flex-1 border-slate-200 focus-visible:ring-blue-500 min-h-[40px] max-h-[120px] resize-none"
             disabled={sendMutation.isPending}
+            rows={1}
           />
           <Button
             onClick={handleSendMessage}
