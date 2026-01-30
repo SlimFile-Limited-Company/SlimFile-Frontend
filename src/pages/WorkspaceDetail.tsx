@@ -1063,7 +1063,7 @@ const WorkspaceDetail = () => {
             /* Normal Text Input */
             <>
               <Textarea
-                placeholder="Type a message... (Ctrl+Enter to send)"
+                placeholder="Type a message"
                 value={messageText}
                 onChange={handleTyping}
                 onKeyDown={handleKeyPress}
