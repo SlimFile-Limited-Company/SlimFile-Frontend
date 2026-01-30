@@ -44,7 +44,8 @@ export interface Message {
   senderId: User;
   text: string;
   type: 'text' | 'audio';
-  audioData?: string | null;
+  audioData?: string | null; // Deprecated: old base64 format
+  audioUrl?: string | null; // New: file URL
   audioDuration?: number | null;
   deleted: boolean;
   deliveredTo: string[];

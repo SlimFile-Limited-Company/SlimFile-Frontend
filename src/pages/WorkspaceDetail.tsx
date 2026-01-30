@@ -888,9 +888,11 @@ const WorkspaceDetail = () => {
                         </div>
                       )}
 
-                      {message.type === 'audio' && message.audioData ? (
+                      {message.type === 'audio' && (message.audioUrl || message.audioData) ? (
                         <AudioPlayer
-                          audioData={message.audioData}
+                          audioData={message.audioUrl
+                            ? `${import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'https://slimfile-fb.onrender.com'}${message.audioUrl}`
+                            : message.audioData || ''}
                           duration={message.audioDuration || 0}
                           isOwnMessage={isOwnMessage}
                         />
