@@ -44,6 +44,8 @@ export interface Message {
   senderId: User;
   text: string;
   deleted: boolean;
+  deliveredTo: string[];
+  readBy: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -401,6 +403,42 @@ export async function deleteMessage(workspaceId: string, messageId: string): Pro
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.error || 'Failed to delete message');
+  }
+}
+
+/**
+ * Mark a message as delivered
+ */
+export async function markMessageAsDelivered(workspaceId: string, messageId: string): Promise<void> {
+  const response = await fetch(
+    `${API_BASE_URL}/workspaces/${workspaceId}/messages/${messageId}/delivered`,
+    {
+      method: 'POST',
+      headers: getAuthHeaders()
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to mark message as delivered');
+  }
+}
+
+/**
+ * Mark a message as read
+ */
+export async function markMessageAsRead(workspaceId: string, messageId: string): Promise<void> {
+  const response = await fetch(
+    `${API_BASE_URL}/workspaces/${workspaceId}/messages/${messageId}/read`,
+    {
+      method: 'POST',
+      headers: getAuthHeaders()
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to mark message as read');
   }
 }
 

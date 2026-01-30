@@ -37,6 +37,18 @@ export interface MessageDeletedEvent {
   messageId: string;
 }
 
+export interface MessageDeliveredEvent {
+  messageId: string;
+  userId: string;
+  deliveredToCount: number;
+}
+
+export interface MessageReadEvent {
+  messageId: string;
+  userId: string;
+  readByCount: number;
+}
+
 // Singleton socket instance
 let socket: Socket | null = null;
 let isAuthenticated = false;
@@ -200,6 +212,26 @@ export function onUserTyping(callback: (event: TypingEvent) => void): () => void
   socket?.on('userTyping', callback);
   return () => {
     socket?.off('userTyping', callback);
+  };
+}
+
+/**
+ * Subscribe to message delivered events
+ */
+export function onMessageDelivered(callback: (event: MessageDeliveredEvent) => void): () => void {
+  socket?.on('messageDelivered', callback);
+  return () => {
+    socket?.off('messageDelivered', callback);
+  };
+}
+
+/**
+ * Subscribe to message read events
+ */
+export function onMessageRead(callback: (event: MessageReadEvent) => void): () => void {
+  socket?.on('messageRead', callback);
+  return () => {
+    socket?.off('messageRead', callback);
   };
 }
 

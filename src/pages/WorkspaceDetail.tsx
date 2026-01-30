@@ -23,13 +23,17 @@ import {
   Trash2,
   ChevronUp,
   MoreVertical,
-  Settings
+  Settings,
+  Check,
+  CheckCheck
 } from 'lucide-react';
 import {
   getWorkspace,
   getMessages,
   sendMessage,
   deleteMessage,
+  markMessageAsDelivered,
+  markMessageAsRead,
   Message,
   formatMessageTime
 } from '@/services/workspaceService';
@@ -42,6 +46,8 @@ import {
   onNewMessage,
   onMessageDeleted,
   onUserTyping,
+  onMessageDelivered,
+  onMessageRead,
   onMemberJoined,
   onMemberRemoved,
   showMessageNotification,
@@ -229,12 +235,41 @@ const WorkspaceDetail = () => {
       }
     });
 
+    const unsubDelivered = onMessageDelivered(({ messageId, userId }) => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m._id === messageId && !m.deliveredTo.includes(userId)
+            ? { ...m, deliveredTo: [...m.deliveredTo, userId] }
+            : m
+        )
+      );
+    });
+
+    const unsubRead = onMessageRead(({ messageId, userId }) => {
+      setMessages((prev) =>
+        prev.map((m) => {
+          if (m._id === messageId) {
+            const updatedDeliveredTo = m.deliveredTo.includes(userId)
+              ? m.deliveredTo
+              : [...m.deliveredTo, userId];
+            const updatedReadBy = m.readBy.includes(userId)
+              ? m.readBy
+              : [...m.readBy, userId];
+            return { ...m, deliveredTo: updatedDeliveredTo, readBy: updatedReadBy };
+          }
+          return m;
+        })
+      );
+    });
+
     return () => {
       unsubMessage();
       unsubDelete();
       unsubTyping();
       unsubMemberJoined();
       unsubMemberRemoved();
+      unsubDelivered();
+      unsubRead();
     };
   }, [workspaceId, workspaceData, currentUserId, queryClient, navigate, toast]);
 
@@ -243,6 +278,56 @@ const WorkspaceDetail = () => {
       setTimeout(() => scrollToBottom(false), 100);
     }
   }, [loadingMessages]);
+
+  // Mark messages as delivered and read
+  useEffect(() => {
+    if (!workspaceId || !currentUserId || messages.length === 0) return;
+
+    // Mark messages as delivered when they appear
+    const undeliveredMessages = messages.filter(
+      (m) => m.senderId._id !== currentUserId && !m.deliveredTo.includes(currentUserId)
+    );
+
+    undeliveredMessages.forEach((msg) => {
+      markMessageAsDelivered(workspaceId, msg._id).catch((err) =>
+        console.error('Failed to mark as delivered:', err)
+      );
+    });
+
+    // Mark messages as read when page is visible
+    if (!document.hidden) {
+      const unreadMessages = messages.filter(
+        (m) => m.senderId._id !== currentUserId && !m.readBy.includes(currentUserId)
+      );
+
+      unreadMessages.forEach((msg) => {
+        markMessageAsRead(workspaceId, msg._id).catch((err) =>
+          console.error('Failed to mark as read:', err)
+        );
+      });
+    }
+
+    // Listen for visibility changes to mark messages as read
+    const handleVisibilityChange = () => {
+      if (!document.hidden && messages.length > 0) {
+        const unreadMessages = messages.filter(
+          (m) => m.senderId._id !== currentUserId && !m.readBy.includes(currentUserId)
+        );
+
+        unreadMessages.forEach((msg) => {
+          markMessageAsRead(workspaceId, msg._id).catch((err) =>
+            console.error('Failed to mark as read:', err)
+          );
+        });
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [messages, workspaceId, currentUserId]);
 
   const handleSendMessage = async () => {
     const text = messageText.trim();
@@ -346,6 +431,33 @@ const WorkspaceDetail = () => {
     if (names.length === 1) return `${names[0]} is typing...`;
     if (names.length === 2) return `${names[0]} and ${names[1]} are typing...`;
     return `${names[0]} and ${names.length - 1} others are typing...`;
+  };
+
+  const renderMessageStatus = (message: Message) => {
+    // Only show status for own messages
+    if (message.senderId._id !== currentUserId || message.deleted) {
+      return null;
+    }
+
+    const isRead = message.readBy.length > 0;
+    const isDelivered = message.deliveredTo.length > 0;
+
+    if (isRead) {
+      // Blue double check for read
+      return (
+        <CheckCheck className="inline-block h-3.5 w-3.5 ml-1 text-blue-300" />
+      );
+    } else if (isDelivered) {
+      // Gray double check for delivered
+      return (
+        <CheckCheck className="inline-block h-3.5 w-3.5 ml-1 text-blue-200 opacity-60" />
+      );
+    } else {
+      // Single check for sent
+      return (
+        <Check className="inline-block h-3.5 w-3.5 ml-1 text-blue-200 opacity-60" />
+      );
+    }
   };
 
   if (loadingWorkspace || loadingMessages) {
@@ -533,17 +645,20 @@ const WorkspaceDetail = () => {
                       <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
                         {message.text}
                       </p>
-                      <p
-                        className={`text-[10px] mt-1.5 ${
-                          message.deleted
-                            ? 'text-slate-400'
-                            : isOwnMessage
-                            ? 'text-blue-200'
-                            : 'text-slate-400'
-                        }`}
-                      >
-                        {formatMessageTime(message.createdAt)}
-                      </p>
+                      <div className="flex items-center gap-1 mt-1.5">
+                        <p
+                          className={`text-[10px] ${
+                            message.deleted
+                              ? 'text-slate-400'
+                              : isOwnMessage
+                              ? 'text-blue-200'
+                              : 'text-slate-400'
+                          }`}
+                        >
+                          {formatMessageTime(message.createdAt)}
+                        </p>
+                        {renderMessageStatus(message)}
+                      </div>
 
                       {isOwnMessage && !message.deleted && (
                         <button
