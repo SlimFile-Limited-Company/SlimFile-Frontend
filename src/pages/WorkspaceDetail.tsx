@@ -374,29 +374,29 @@ const WorkspaceDetail = () => {
 
   return (
     <div className="h-screen flex flex-col bg-white">
-      {/* Modern Header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      {/* Modern Header - Mobile Optimized */}
+      <div className="bg-white border-b border-slate-200 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+        <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate('/workspaces')}
-            className="hover:bg-slate-100"
+            className="hover:bg-slate-100 flex-shrink-0"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-xs sm:text-sm flex-shrink-0">
               {getInitials(workspace.name)}
             </div>
-            <div>
-              <h1 className="font-semibold text-slate-900">{workspace.name}</h1>
-              <p className="text-xs text-slate-500">{members.length} {members.length === 1 ? 'member' : 'members'}</p>
+            <div className="min-w-0 flex-1">
+              <h1 className="font-semibold text-slate-900 text-sm sm:text-base truncate">{workspace.name}</h1>
+              <p className="text-xs text-slate-500 hidden sm:block">{members.length} {members.length === 1 ? 'member' : 'members'}</p>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
           {currentUserRole === 'owner' && (
             <Button
               variant="ghost"
@@ -404,16 +404,16 @@ const WorkspaceDetail = () => {
               onClick={() => setInviteDialogOpen(true)}
               className="hover:bg-slate-100"
             >
-              <UserPlus className="h-4 w-4 mr-2" />
-              Invite
+              <UserPlus className="h-4 w-4" />
+              <span className="ml-2 hidden sm:inline">Invite</span>
             </Button>
           )}
 
           <Sheet open={membersSheetOpen} onOpenChange={setMembersSheetOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="sm" className="hover:bg-slate-100">
-                <Users className="h-4 w-4 mr-2" />
-                Members
+                <Users className="h-4 w-4" />
+                <span className="ml-2 hidden sm:inline">Members</span>
               </Button>
             </SheetTrigger>
             <SheetContent>
