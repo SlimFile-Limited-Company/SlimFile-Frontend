@@ -82,7 +82,7 @@ class MeetingService {
   /**
    * Join a meeting room
    */
-  joinMeeting(meetingId: string, userId: string) {
+  joinMeeting(meetingId: string, userId: string, userName?: string) {
     this.currentMeetingId = meetingId;
     const socket = getSocket();
 
@@ -91,7 +91,7 @@ class MeetingService {
     }
 
     // Emit join meeting event
-    socket.emit('meeting:join', { meetingId, userId });
+    socket.emit('meeting:join', { meetingId, userId, userName });
 
     // Listen for other participants
     socket.on('meeting:user-joined', this.handleUserJoined.bind(this));
@@ -198,9 +198,14 @@ class MeetingService {
   private async handleExistingParticipants({
     participants,
   }: {
-    participants: Array<{ userId: string; socketId: string }>;
+    participants: Array<{ userId: string; userName?: string; socketId: string }>;
   }) {
     console.log('Existing participants:', participants);
+
+    // Notify about participants (so UI can add them to participant list)
+    participants.forEach(participant => {
+      this.onParticipantMetadata?.(participant.userId, participant.userName || 'User');
+    });
 
     // Create peer connections and send offers to all existing participants
     for (const participant of participants) {
@@ -431,6 +436,7 @@ class MeetingService {
    */
   onRemoteStreamAdded?: (participantId: string, stream: MediaStream) => void;
   onParticipantLeft?: (participantId: string) => void;
+  onParticipantMetadata?: (participantId: string, userName: string) => void;
   onError?: (message: string) => void;
 }
 
