@@ -145,9 +145,22 @@ export class NotificationService {
             }
           });
         }
+      } else if (res.status === 401 || res.status === 403) {
+        // Authorization failed - token might be expired, but don't spam console
+        console.warn('Unable to fetch notifications: Authorization failed. Please log in again.');
+      } else if (res.status === 500) {
+        // Server error - backend endpoint may not be implemented yet
+        console.warn('Notification service unavailable (500). This feature may not be implemented on the backend yet.');
+      } else {
+        console.warn(`Failed to fetch notifications: HTTP ${res.status}`);
       }
     } catch (error) {
-      console.error('Failed to check server notifications:', error);
+      // Network error or other issue - fail silently to avoid console spam
+      if (error instanceof Error && error.message.includes('Failed to fetch')) {
+        console.warn('Unable to reach notification server. Skipping notification check.');
+      } else {
+        console.error('Failed to check server notifications:', error);
+      }
     }
   }
 }

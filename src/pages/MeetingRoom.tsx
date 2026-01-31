@@ -643,6 +643,23 @@ export default function MeetingRoom() {
   };
 
   const sendReaction = (emoji: string) => {
+    console.log('Sending reaction:', emoji, 'User:', currentUserName);
+
+    // Add reaction to local state immediately
+    const newReaction: Reaction = {
+      userId: currentUserId,
+      userName: currentUserName || 'You',
+      emoji,
+      timestamp: Date.now(),
+    };
+    setReactions((prev) => [...prev, newReaction]);
+
+    // Remove reaction after 3 seconds
+    setTimeout(() => {
+      setReactions((prev) => prev.filter((r) => r.timestamp !== newReaction.timestamp));
+    }, 3000);
+
+    // Also emit to server for other participants
     const socket = getSocket();
     if (socket && meetingCode) {
       socket.emit('meeting:reaction', {
@@ -651,7 +668,10 @@ export default function MeetingRoom() {
         userName: currentUserName,
         emoji,
       });
+    } else {
+      console.warn('Cannot send reaction - socket or meetingCode missing');
     }
+
     setShowReactions(false);
   };
 
