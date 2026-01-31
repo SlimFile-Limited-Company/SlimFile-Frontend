@@ -818,9 +818,9 @@ export default function MeetingRoom() {
   };
 
   return (
-    <div className="h-screen bg-gray-900 flex flex-col overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="bg-gray-800 border-b border-gray-700 px-4 py-3 flex-shrink-0">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-700 border-b border-gray-600 px-4 py-3 flex-shrink-0 shadow-lg">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div>
@@ -872,7 +872,7 @@ export default function MeetingRoom() {
       {/* Main Content Area */}
       <div className="flex-1 flex relative overflow-hidden min-h-0">
         {/* Video Grid */}
-        <div className="flex-1 p-4 flex items-center justify-center overflow-hidden">
+        <div className="flex-1 p-6 flex items-center justify-center overflow-y-auto overflow-x-hidden">
           {(() => {
             const totalParticipants = remoteStreams.size + 1; // +1 for self
             const remoteCount = remoteStreams.size;
@@ -913,8 +913,8 @@ export default function MeetingRoom() {
                   </div>
 
                   {/* Small PiP - You (bottom-right corner) */}
-                  <div className="absolute bottom-4 right-4 w-64 md:w-80 rounded-lg overflow-hidden shadow-2xl border-2 border-gray-700 z-10">
-                    <div className="relative bg-gray-800 aspect-video">
+                  <div className="absolute bottom-6 right-6 w-72 md:w-80 rounded-xl overflow-hidden shadow-2xl border-2 border-gray-600 z-10 hover:scale-105 transition-transform">
+                    <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video">
                       <video
                         ref={localVideoRef}
                         autoPlay
@@ -923,25 +923,25 @@ export default function MeetingRoom() {
                         className="w-full h-full object-cover transform scale-x-[-1]"
                       />
                       {!isCameraOn && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
-                          <div className="bg-gray-700 rounded-full p-4">
-                            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-lg font-semibold">
+                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-full p-4 shadow-xl">
+                            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-white text-lg font-bold shadow-lg">
                               {currentUserName.charAt(0).toUpperCase()}
                             </div>
                           </div>
                         </div>
                       )}
-                      <div className="absolute bottom-2 left-2 bg-black bg-opacity-60 px-2 py-1 rounded-full">
-                        <span className="text-white text-xs font-medium">You ({currentUserName})</span>
+                      <div className="absolute bottom-2 left-2 bg-black bg-opacity-75 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-700">
+                        <span className="text-white text-xs font-semibold">{currentUserName} (You)</span>
                       </div>
                       {!isMicOn && (
-                        <div className="absolute top-2 right-2 bg-red-600 rounded-full p-1.5">
-                          <MicOff className="w-3 h-3 text-white" />
+                        <div className="absolute top-2 right-2 bg-red-600 rounded-full p-1.5 shadow-lg">
+                          <MicOff className="w-3.5 h-3.5 text-white" />
                         </div>
                       )}
                       {isHandRaised && (
-                        <div className="absolute top-2 left-2 bg-yellow-500 rounded-full p-1.5 animate-bounce">
-                          <Hand className="w-3 h-3 text-white" />
+                        <div className="absolute top-2 left-2 bg-yellow-500 rounded-full p-1.5 animate-bounce shadow-lg">
+                          <Hand className="w-3.5 h-3.5 text-white" />
                         </div>
                       )}
                     </div>
@@ -1041,9 +1041,9 @@ export default function MeetingRoom() {
             if (totalParticipants === 1) {
               return (
                 <div className={gridClass}>
-                  <div className="w-full max-w-4xl">
+                  <div className="w-full max-w-5xl px-4">
                     {/* Your Video - Large centered */}
-                    <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video shadow-2xl">
+                    <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl overflow-hidden aspect-video shadow-2xl border border-gray-700">
                       <video
                         ref={localVideoRef}
                         autoPlay
@@ -1052,32 +1052,33 @@ export default function MeetingRoom() {
                         className="w-full h-full object-cover transform scale-x-[-1]"
                       />
                       {!isCameraOn && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
-                          <div className="bg-gray-700 rounded-full p-8">
-                            <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-semibold">
+                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-full p-10 shadow-xl">
+                            <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
                               {currentUserName.charAt(0).toUpperCase()}
                             </div>
                           </div>
                         </div>
                       )}
-                      <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 px-4 py-2 rounded-full flex items-center gap-2">
-                        <span className="text-white text-base font-medium">{currentUserName} (You)</span>
-                        {!isMicOn && <MicOff className="w-4 h-4 text-red-500" />}
+                      <div className="absolute bottom-4 left-4 bg-black bg-opacity-75 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 shadow-lg border border-gray-700">
+                        <span className="text-white text-base font-semibold">{currentUserName}</span>
+                        <span className="text-gray-400 text-sm">(You)</span>
+                        {!isMicOn && <MicOff className="w-4 h-4 text-red-400" />}
                       </div>
                       {isHandRaised && (
-                        <div className="absolute top-4 left-4 bg-yellow-500 rounded-full p-2 animate-bounce">
+                        <div className="absolute top-4 left-4 bg-yellow-500 rounded-full p-3 animate-bounce shadow-lg">
                           <Hand className="w-5 h-5 text-white" />
                         </div>
                       )}
                     </div>
 
-                    {/* Waiting message below video */}
-                    <div className="text-center mt-6">
-                      <div className="inline-flex items-center gap-3 bg-gray-800 px-6 py-3 rounded-full border border-gray-700">
-                        <Users className="w-5 h-5 text-gray-400" />
-                        <p className="text-gray-300 text-sm">Waiting for others to join...</p>
+                    {/* Waiting message below video - with bottom padding to avoid controls */}
+                    <div className="text-center mt-8 mb-24">
+                      <div className="inline-flex items-center gap-3 bg-gradient-to-r from-gray-800 to-gray-700 px-8 py-4 rounded-full border border-gray-600 shadow-lg">
+                        <Users className="w-6 h-6 text-purple-400" />
+                        <p className="text-white text-base font-medium">Waiting for others to join...</p>
                       </div>
-                      <p className="text-gray-500 text-xs mt-3">Share the meeting link to invite people</p>
+                      <p className="text-gray-400 text-sm mt-4 font-medium">Share the meeting link to invite people</p>
                     </div>
                   </div>
                 </div>
@@ -1088,7 +1089,7 @@ export default function MeetingRoom() {
             return (
               <div className={gridClass}>
                 {/* Local Video */}
-                <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video">
+                <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden aspect-video border border-gray-700 shadow-lg hover:shadow-xl transition-shadow">
                   <video
                     ref={localVideoRef}
                     autoPlay
@@ -1097,20 +1098,21 @@ export default function MeetingRoom() {
                     className="w-full h-full object-cover transform scale-x-[-1]"
                   />
                   {!isCameraOn && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
-                      <div className="bg-gray-700 rounded-full p-6">
-                        <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white text-xl font-semibold">
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+                      <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-full p-6 shadow-xl">
+                        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
                           {currentUserName.charAt(0).toUpperCase()}
                         </div>
                       </div>
                     </div>
                   )}
-                  <div className="absolute bottom-3 left-3 bg-black bg-opacity-60 px-3 py-1 rounded-full flex items-center gap-2">
-                    <span className="text-white text-sm font-medium">You ({currentUserName})</span>
-                    {!isMicOn && <MicOff className="w-3 h-3 text-red-500" />}
+                  <div className="absolute bottom-3 left-3 bg-black bg-opacity-75 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-2 shadow-md border border-gray-700">
+                    <span className="text-white text-sm font-semibold">{currentUserName}</span>
+                    <span className="text-gray-400 text-xs">(You)</span>
+                    {!isMicOn && <MicOff className="w-3.5 h-3.5 text-red-400" />}
                   </div>
                   {isHandRaised && (
-                    <div className="absolute top-3 left-3 bg-yellow-500 rounded-full p-2 animate-bounce">
+                    <div className="absolute top-3 left-3 bg-yellow-500 rounded-full p-2 animate-bounce shadow-lg">
                       <Hand className="w-4 h-4 text-white" />
                     </div>
                   )}
@@ -1309,7 +1311,7 @@ export default function MeetingRoom() {
       </div>
 
       {/* Controls Bar */}
-      <div className="bg-gray-800 border-t border-gray-700 px-4 py-4 flex-shrink-0">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-700 border-t border-gray-600 px-4 py-5 flex-shrink-0 shadow-2xl">
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
           {/* Microphone */}
           <Button
@@ -1376,18 +1378,26 @@ export default function MeetingRoom() {
           <div className="relative">
             <Button
               onClick={() => setShowReactions(!showReactions)}
-              className="rounded-full w-12 h-12 p-0 bg-gray-700 hover:bg-gray-600"
+              className={`rounded-full w-12 h-12 p-0 ${
+                showReactions
+                  ? 'bg-purple-600 hover:bg-purple-700'
+                  : 'bg-gray-700 hover:bg-gray-600'
+              }`}
               title="Send reaction"
             >
               <Smile className="w-5 h-5 text-white" />
             </Button>
             {showReactions && (
-              <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 bg-gray-800 border border-gray-600 rounded-lg p-2 shadow-xl flex gap-2 z-50">
+              <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-gray-800 to-gray-700 border-2 border-purple-500 rounded-xl p-3 shadow-2xl flex gap-3 z-[100]">
                 {['👍', '❤️', '😂', '😮', '👏', '🎉'].map((emoji) => (
                   <button
                     key={emoji}
-                    onClick={() => sendReaction(emoji)}
-                    className="text-3xl hover:scale-125 transition-transform"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      sendReaction(emoji);
+                    }}
+                    className="text-3xl hover:scale-125 transition-transform bg-gray-700 hover:bg-gray-600 rounded-lg p-2 active:scale-95"
+                    type="button"
                   >
                     {emoji}
                   </button>
@@ -1664,7 +1674,7 @@ function RemoteVideoCard({
   const displayName = participant?.userName || participantId.substring(0, 12);
 
   return (
-    <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video group">
+    <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden aspect-video border border-gray-700 shadow-lg hover:shadow-xl transition-all group hover:border-purple-500">
       <video
         ref={videoRef}
         autoPlay
@@ -1674,9 +1684,9 @@ function RemoteVideoCard({
 
       {/* Camera off indicator */}
       {participant?.isCameraOff && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
-          <div className="bg-gray-700 rounded-full p-6">
-            <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white text-xl font-semibold">
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+          <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-full p-6 shadow-xl">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
               {displayName.charAt(0).toUpperCase()}
             </div>
           </div>
@@ -1684,16 +1694,16 @@ function RemoteVideoCard({
       )}
 
       {/* Name badge */}
-      <div className="absolute bottom-3 left-3 bg-black bg-opacity-60 px-3 py-1 rounded-full flex items-center gap-2">
-        <span className="text-white text-sm">{displayName}</span>
+      <div className="absolute bottom-3 left-3 bg-black bg-opacity-75 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-2 shadow-md border border-gray-700">
+        <span className="text-white text-sm font-semibold">{displayName}</span>
         {participant?.isMuted && (
-          <MicOff className="w-3 h-3 text-red-500" />
+          <MicOff className="w-3.5 h-3.5 text-red-400" />
         )}
       </div>
 
       {/* Hand raised indicator */}
       {participant?.isHandRaised && (
-        <div className="absolute top-3 left-3 bg-yellow-500 rounded-full p-2 animate-bounce">
+        <div className="absolute top-3 left-3 bg-yellow-500 rounded-full p-2 animate-bounce shadow-lg">
           <Hand className="w-4 h-4 text-white" />
         </div>
       )}
@@ -1702,8 +1712,8 @@ function RemoteVideoCard({
       {onPin && (
         <button
           onClick={onPin}
-          className={`absolute top-3 right-3 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity ${
-            isPinned ? 'bg-purple-600' : 'bg-black bg-opacity-60 hover:bg-opacity-80'
+          className={`absolute top-3 right-3 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all shadow-lg ${
+            isPinned ? 'bg-gradient-to-br from-purple-500 to-purple-700' : 'bg-black bg-opacity-75 backdrop-blur-sm hover:bg-opacity-90'
           }`}
         >
           <Pin className={`w-4 h-4 ${isPinned ? 'text-white' : 'text-gray-300'}`} />
