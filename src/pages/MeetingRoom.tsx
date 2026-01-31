@@ -602,6 +602,20 @@ export default function MeetingRoom() {
       isTyping: false,
     });
 
+    // Add message to local chat immediately
+    const newMessage: ChatMessage = {
+      userId: currentUserId,
+      userName: currentUserName || 'Anonymous',
+      message: chatInput.trim(),
+      timestamp: new Date().toISOString(),
+    };
+    setChatMessages((prev) => [...prev, newMessage]);
+
+    // Auto-scroll to bottom
+    setTimeout(() => {
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+
     // Emit chat message
     socket.emit('meeting:chat-message', {
       meetingId: meetingCode,
