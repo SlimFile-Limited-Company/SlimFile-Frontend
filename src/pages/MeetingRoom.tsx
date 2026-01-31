@@ -255,7 +255,7 @@ export default function MeetingRoom() {
     };
 
     meetingService.onParticipantMetadata = (participantId: string, userName: string) => {
-      console.log('Participant metadata received:', participantId, userName);
+      console.log(`👤 Participant metadata received: "${userName}" (ID: ${participantId})`);
       setParticipants((prev) => {
         const newParticipants = new Map(prev);
         newParticipants.set(participantId, {
@@ -265,6 +265,7 @@ export default function MeetingRoom() {
           isMuted: false,
           isCameraOff: false,
         });
+        console.log(`   ✅ Added to participants map. Total participants: ${newParticipants.size}`);
         return newParticipants;
       });
     };
@@ -389,6 +390,8 @@ export default function MeetingRoom() {
     };
 
     const handleParticipantJoined = (data: { userId: string; userName: string }) => {
+      console.log(`👤 Participant joined event: "${data.userName}" (ID: ${data.userId})`);
+
       setParticipants((prev) => {
         const newParticipants = new Map(prev);
         newParticipants.set(data.userId, {
@@ -398,6 +401,7 @@ export default function MeetingRoom() {
           isMuted: false,
           isCameraOff: false,
         });
+        console.log(`   ✅ Added to participants map. Total participants: ${newParticipants.size}`);
         return newParticipants;
       });
 
@@ -1141,16 +1145,22 @@ export default function MeetingRoom() {
                 </div>
 
                 {/* Remote Participants */}
-                {Array.from(remoteStreams.entries()).map(([participantId, stream]) => (
-                  <RemoteVideoCard
-                    key={participantId}
-                    participantId={participantId}
-                    stream={stream}
-                    participant={participants.get(participantId)}
-                    isPinned={pinnedParticipant === participantId}
-                    onPin={() => pinParticipant(participantId)}
-                  />
-                ))}
+                {Array.from(remoteStreams.entries()).map(([participantId, stream]) => {
+                  const participant = participants.get(participantId);
+                  if (!participant) {
+                    console.warn(`⚠️  No participant data found for ${participantId}. Available participants:`, Array.from(participants.keys()));
+                  }
+                  return (
+                    <RemoteVideoCard
+                      key={participantId}
+                      participantId={participantId}
+                      stream={stream}
+                      participant={participant}
+                      isPinned={pinnedParticipant === participantId}
+                      onPin={() => pinParticipant(participantId)}
+                    />
+                  );
+                })}
               </div>
             );
           })()}
