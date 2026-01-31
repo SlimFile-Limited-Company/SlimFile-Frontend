@@ -898,20 +898,22 @@ export default function MeetingRoom() {
             const remoteCount = remoteStreams.size;
 
             // Calculate grid class based on participant count
-            let gridClass = 'grid gap-4 w-full h-full';
+            let gridClass = 'grid gap-3 w-full';
             if (totalParticipants === 1) {
               gridClass = 'flex flex-col items-center justify-center w-full h-full'; // Centered view when alone
             } else if (totalParticipants === 2) {
               // Google Meet style: 2 people = large view with small PiP
               gridClass = 'relative w-full h-full';
             } else if (totalParticipants <= 4) {
-              gridClass += ' grid-cols-1 md:grid-cols-2 auto-rows-fr max-w-7xl mx-auto'; // 2x2 grid
+              gridClass += ' grid-cols-2 max-w-6xl mx-auto'; // 2x2 grid - fixed columns
+            } else if (totalParticipants <= 6) {
+              gridClass += ' grid-cols-2 sm:grid-cols-3 max-w-6xl mx-auto'; // 2-3 columns
             } else if (totalParticipants <= 9) {
-              gridClass += ' grid-cols-2 md:grid-cols-3 auto-rows-fr max-w-7xl mx-auto'; // 3x3 grid
-            } else if (totalParticipants <= 16) {
-              gridClass += ' grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-fr max-w-7xl mx-auto'; // 4x4 grid
+              gridClass += ' grid-cols-2 sm:grid-cols-3 max-w-7xl mx-auto'; // 3x3 grid
+            } else if (totalParticipants <= 12) {
+              gridClass += ' grid-cols-3 sm:grid-cols-4 max-w-7xl mx-auto'; // 4x3 grid
             } else {
-              gridClass += ' grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 auto-rows-fr max-w-7xl mx-auto'; // 5 columns for many
+              gridClass += ' grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 max-w-7xl mx-auto'; // 5 columns for many
             }
 
             // 2-PERSON LAYOUT: Google Meet style (1 large + 1 small PiP)
@@ -933,14 +935,14 @@ export default function MeetingRoom() {
                   </div>
 
                   {/* Small PiP - You (bottom-right corner) */}
-                  <div className="absolute bottom-6 right-6 w-72 md:w-80 rounded-xl overflow-hidden shadow-2xl border-2 border-gray-600 z-10 hover:scale-105 transition-transform">
+                  <div className="absolute bottom-6 right-6 w-48 sm:w-64 md:w-72 rounded-xl overflow-hidden shadow-2xl border-2 border-gray-600 z-10 hover:scale-105 transition-transform">
                     <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video">
                       <video
                         ref={localVideoRef}
                         autoPlay
                         playsInline
                         muted
-                        className="w-full h-full object-cover transform scale-x-[-1]"
+                        className="w-full h-full object-contain transform scale-x-[-1]"
                       />
                       {!isCameraOn && (
                         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
@@ -1069,7 +1071,7 @@ export default function MeetingRoom() {
                         autoPlay
                         playsInline
                         muted
-                        className="w-full h-full object-cover transform scale-x-[-1]"
+                        className="w-full h-full object-contain transform scale-x-[-1]"
                       />
                       {!isCameraOn && (
                         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
@@ -1115,7 +1117,7 @@ export default function MeetingRoom() {
                     autoPlay
                     playsInline
                     muted
-                    className="w-full h-full object-cover transform scale-x-[-1]"
+                    className="w-full h-full object-contain transform scale-x-[-1]"
                   />
                   {!isCameraOn && (
                     <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
@@ -1699,7 +1701,7 @@ function RemoteVideoCard({
         ref={videoRef}
         autoPlay
         playsInline
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain"
       />
 
       {/* Camera off indicator */}
