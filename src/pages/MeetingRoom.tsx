@@ -804,9 +804,9 @@ export default function MeetingRoom() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col">
+    <div className="h-screen bg-gray-900 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="bg-gray-800 border-b border-gray-700 px-4 py-3">
+      <div className="bg-gray-800 border-b border-gray-700 px-4 py-3 flex-shrink-0">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div>
@@ -856,9 +856,9 @@ export default function MeetingRoom() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex relative">
+      <div className="flex-1 flex relative overflow-hidden min-h-0">
         {/* Video Grid */}
-        <div className="flex-1 p-4 flex items-center justify-center overflow-auto">
+        <div className="flex-1 p-4 flex items-center justify-center overflow-hidden">
           {(() => {
             const totalParticipants = remoteStreams.size + 1; // +1 for self
             const remoteCount = remoteStreams.size;
@@ -943,9 +943,9 @@ export default function MeetingRoom() {
               const speakerParticipant = speakerId ? participants.get(speakerId) : undefined;
 
               return (
-                <div className="w-full h-full flex flex-col gap-4">
+                <div className="w-full h-full flex flex-col gap-4 overflow-hidden">
                   {/* Large speaker view */}
-                  <div className="flex-1 max-h-[calc(100%-120px)]">
+                  <div className="flex-1 min-h-0">
                     {speakerStream && speakerId ? (
                       <RemoteVideoCard
                         participantId={speakerId}
@@ -1023,7 +1023,7 @@ export default function MeetingRoom() {
 
             // GRID VIEW: Standard grid for 1, 3+ participants
             return (
-              <div className={gridClass}>
+              <div className={gridClass} style={{ maxHeight: '100%' }}>
                 {/* Local Video */}
                 <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video">
                   <video
@@ -1257,7 +1257,7 @@ export default function MeetingRoom() {
       </div>
 
       {/* Controls Bar */}
-      <div className="bg-gray-800 border-t border-gray-700 px-4 py-4">
+      <div className="bg-gray-800 border-t border-gray-700 px-4 py-4 flex-shrink-0">
         <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
           {/* Microphone */}
           <Button
