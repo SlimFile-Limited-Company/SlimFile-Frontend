@@ -878,20 +878,20 @@ export default function MeetingRoom() {
             const remoteCount = remoteStreams.size;
 
             // Calculate grid class based on participant count
-            let gridClass = 'grid gap-4 max-w-7xl w-full';
+            let gridClass = 'grid gap-4 w-full h-full';
             if (totalParticipants === 1) {
-              gridClass += ' grid-cols-1 max-w-4xl'; // Just you - larger view
+              gridClass = 'flex flex-col items-center justify-center w-full h-full'; // Centered view when alone
             } else if (totalParticipants === 2) {
               // Google Meet style: 2 people = large view with small PiP
-              gridClass = 'relative w-full h-full max-w-7xl';
+              gridClass = 'relative w-full h-full';
             } else if (totalParticipants <= 4) {
-              gridClass += ' grid-cols-1 md:grid-cols-2'; // 2x2 grid
+              gridClass += ' grid-cols-1 md:grid-cols-2 auto-rows-fr max-w-7xl mx-auto'; // 2x2 grid
             } else if (totalParticipants <= 9) {
-              gridClass += ' grid-cols-2 md:grid-cols-3'; // 3x3 grid
+              gridClass += ' grid-cols-2 md:grid-cols-3 auto-rows-fr max-w-7xl mx-auto'; // 3x3 grid
             } else if (totalParticipants <= 16) {
-              gridClass += ' grid-cols-2 md:grid-cols-3 lg:grid-cols-4'; // 4x4 grid
+              gridClass += ' grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-fr max-w-7xl mx-auto'; // 4x4 grid
             } else {
-              gridClass += ' grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'; // 5 columns for many
+              gridClass += ' grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 auto-rows-fr max-w-7xl mx-auto'; // 5 columns for many
             }
 
             // 2-PERSON LAYOUT: Google Meet style (1 large + 1 small PiP)
@@ -1036,8 +1036,57 @@ export default function MeetingRoom() {
             }
 
             // GRID VIEW: Standard grid for 1, 3+ participants
+
+            // SOLO VIEW: Just you - Google Meet style centered view
+            if (totalParticipants === 1) {
+              return (
+                <div className={gridClass}>
+                  <div className="w-full max-w-4xl">
+                    {/* Your Video - Large centered */}
+                    <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video shadow-2xl">
+                      <video
+                        ref={localVideoRef}
+                        autoPlay
+                        playsInline
+                        muted
+                        className="w-full h-full object-cover transform scale-x-[-1]"
+                      />
+                      {!isCameraOn && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+                          <div className="bg-gray-700 rounded-full p-8">
+                            <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-semibold">
+                              {currentUserName.charAt(0).toUpperCase()}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 px-4 py-2 rounded-full flex items-center gap-2">
+                        <span className="text-white text-base font-medium">{currentUserName} (You)</span>
+                        {!isMicOn && <MicOff className="w-4 h-4 text-red-500" />}
+                      </div>
+                      {isHandRaised && (
+                        <div className="absolute top-4 left-4 bg-yellow-500 rounded-full p-2 animate-bounce">
+                          <Hand className="w-5 h-5 text-white" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Waiting message below video */}
+                    <div className="text-center mt-6">
+                      <div className="inline-flex items-center gap-3 bg-gray-800 px-6 py-3 rounded-full border border-gray-700">
+                        <Users className="w-5 h-5 text-gray-400" />
+                        <p className="text-gray-300 text-sm">Waiting for others to join...</p>
+                      </div>
+                      <p className="text-gray-500 text-xs mt-3">Share the meeting link to invite people</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            // GRID VIEW: 3+ participants
             return (
-              <div className={gridClass} style={{ maxHeight: '100%' }}>
+              <div className={gridClass}>
                 {/* Local Video */}
                 <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video">
                   <video
@@ -1078,17 +1127,6 @@ export default function MeetingRoom() {
                     onPin={() => pinParticipant(participantId)}
                   />
                 ))}
-
-                {/* Placeholder if no remote participants */}
-                {remoteStreams.size === 0 && (
-                  <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video flex items-center justify-center border-2 border-dashed border-gray-600">
-                    <div className="text-center">
-                      <Users className="w-12 h-12 text-gray-600 mx-auto mb-2" />
-                      <p className="text-gray-500 text-sm">Waiting for others to join...</p>
-                      <p className="text-gray-600 text-xs mt-1">Share the meeting link to invite people</p>
-                    </div>
-                  </div>
-                )}
               </div>
             );
           })()}
