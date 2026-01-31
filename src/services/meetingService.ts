@@ -143,25 +143,40 @@ class MeetingService {
    * Create peer connection for a participant
    */
   private createPeerConnection(participantId: string): RTCPeerConnection {
+    console.log(`🔗 Creating peer connection for ${participantId}`);
+
     const peerConnection = new RTCPeerConnection({
       iceServers: ICE_SERVERS,
     });
 
     // Add local stream tracks
     if (this.localStream) {
-      this.localStream.getTracks().forEach((track) => {
-        peerConnection.addTrack(track, this.localStream!);
+      const tracks = this.localStream.getTracks();
+      console.log(`📹 Adding ${tracks.length} local tracks to peer connection:`, tracks.map(t => `${t.kind} (enabled: ${t.enabled})`));
+
+      tracks.forEach((track) => {
+        const sender = peerConnection.addTrack(track, this.localStream!);
+        console.log(`  ✅ Added ${track.kind} track:`, track.label);
       });
+    } else {
+      console.warn(`⚠️  No local stream available when creating peer connection for ${participantId}`);
     }
 
     // Handle incoming tracks
     peerConnection.ontrack = (event) => {
-      console.log('Received remote track from', participantId);
-      const [remoteStream] = event.streams;
-      this.remoteStreams.set(participantId, remoteStream);
+      console.log(`📥 Received remote ${event.track.kind} track from ${participantId}`);
+      console.log(`   Streams received:`, event.streams.length);
 
-      // Notify listeners about new stream
-      this.onRemoteStreamAdded?.(participantId, remoteStream);
+      const [remoteStream] = event.streams;
+      if (remoteStream) {
+        console.log(`   Remote stream tracks:`, remoteStream.getTracks().map(t => `${t.kind} (${t.label})`));
+        this.remoteStreams.set(participantId, remoteStream);
+
+        // Notify listeners about new stream
+        this.onRemoteStreamAdded?.(participantId, remoteStream);
+      } else {
+        console.error(`   ❌ No remote stream in ontrack event!`);
+      }
     };
 
     // Handle ICE candidates
@@ -179,16 +194,38 @@ class MeetingService {
     // Handle connection state changes
     peerConnection.onconnectionstatechange = () => {
       console.log(
-        `Connection state with ${participantId}:`,
-        peerConnection.connectionState
+        `🔌 Connection state with ${participantId}: ${peerConnection.connectionState}`
       );
 
-      if (peerConnection.connectionState === 'failed') {
-        console.error('Connection failed with', participantId);
+      if (peerConnection.connectionState === 'connected') {
+        console.log(`✅ Successfully connected to ${participantId}`);
+      } else if (peerConnection.connectionState === 'failed') {
+        console.error(`❌ Connection failed with ${participantId}`);
       }
     };
 
+    // Handle ICE connection state changes
+    peerConnection.oniceconnectionstatechange = () => {
+      console.log(
+        `🧊 ICE connection state with ${participantId}: ${peerConnection.iceConnectionState}`
+      );
+
+      if (peerConnection.iceConnectionState === 'connected') {
+        console.log(`✅ ICE connected to ${participantId}`);
+      } else if (peerConnection.iceConnectionState === 'failed') {
+        console.error(`❌ ICE connection failed with ${participantId}`);
+      }
+    };
+
+    // Handle ICE gathering state
+    peerConnection.onicegatheringstatechange = () => {
+      console.log(
+        `🧊 ICE gathering state with ${participantId}: ${peerConnection.iceGatheringState}`
+      );
+    };
+
     this.peerConnections.set(participantId, peerConnection);
+    console.log(`✅ Peer connection created and stored for ${participantId}`);
     return peerConnection;
   }
 
@@ -200,7 +237,14 @@ class MeetingService {
   }: {
     participants: Array<{ userId: string; userName?: string; socketId: string }>;
   }) {
-    console.log('Existing participants:', participants);
+    console.log(`👥 Found ${participants.length} existing participants:`, participants.map(p => p.userName || p.userId));
+
+    if (!this.localStream) {
+      console.error('❌ Cannot create peer connections - local stream not set!');
+      return;
+    }
+
+    console.log('✅ Local stream is available with tracks:', this.localStream.getTracks().map(t => `${t.kind} (enabled: ${t.enabled})`));
 
     // Notify about participants (so UI can add them to participant list)
     participants.forEach(participant => {
@@ -209,11 +253,14 @@ class MeetingService {
 
     // Create peer connections and send offers to all existing participants
     for (const participant of participants) {
+      console.log(`📤 Creating offer for ${participant.userName || participant.userId}`);
       const peerConnection = this.createPeerConnection(participant.userId);
 
       try {
         const offer = await peerConnection.createOffer();
         await peerConnection.setLocalDescription(offer);
+
+        console.log(`   ✅ Offer created, sending to server...`);
 
         const socket = getSocket();
         socket?.emit('meeting:offer', {
@@ -221,8 +268,10 @@ class MeetingService {
           targetUserId: participant.userId,
           offer,
         });
+
+        console.log(`   ✅ Offer sent to ${participant.userName || participant.userId}`);
       } catch (error) {
-        console.error('Error creating offer for existing participant:', error);
+        console.error(`   ❌ Error creating offer for ${participant.userName}:`, error);
       }
     }
   }
@@ -269,29 +318,40 @@ class MeetingService {
     fromUserId: string;
     offer: RTCSessionDescriptionInit;
   }) {
-    console.log('Received offer from:', fromUserId);
+    console.log(`📥 Received offer from: ${fromUserId}`);
+
+    if (!this.localStream) {
+      console.error(`❌ Cannot handle offer - local stream not set!`);
+      return;
+    }
 
     // Create peer connection if doesn't exist
     let peerConnection = this.peerConnections.get(fromUserId);
     if (!peerConnection) {
+      console.log(`   Creating new peer connection for ${fromUserId}`);
       peerConnection = this.createPeerConnection(fromUserId);
     }
 
     try {
+      console.log(`   Setting remote description...`);
       await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
 
       // Create and send answer
+      console.log(`   Creating answer...`);
       const answer = await peerConnection.createAnswer();
       await peerConnection.setLocalDescription(answer);
 
+      console.log(`   Sending answer to ${fromUserId}`);
       const socket = getSocket();
       socket?.emit('meeting:answer', {
         meetingId: this.currentMeetingId,
         targetUserId: fromUserId,
         answer,
       });
+
+      console.log(`   ✅ Answer sent successfully`);
     } catch (error) {
-      console.error('Error handling offer:', error);
+      console.error(`   ❌ Error handling offer from ${fromUserId}:`, error);
     }
   }
 
@@ -305,15 +365,21 @@ class MeetingService {
     fromUserId: string;
     answer: RTCSessionDescriptionInit;
   }) {
-    console.log('Received answer from:', fromUserId);
+    console.log(`📥 Received answer from: ${fromUserId}`);
 
     const peerConnection = this.peerConnections.get(fromUserId);
     if (peerConnection) {
       try {
+        console.log(`   Setting remote description...`);
         await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        console.log(`   ✅ Answer processed successfully`);
+        console.log(`   Connection state: ${peerConnection.connectionState}`);
+        console.log(`   ICE connection state: ${peerConnection.iceConnectionState}`);
       } catch (error) {
-        console.error('Error handling answer:', error);
+        console.error(`   ❌ Error handling answer from ${fromUserId}:`, error);
       }
+    } else {
+      console.error(`   ❌ No peer connection found for ${fromUserId}`);
     }
   }
 
