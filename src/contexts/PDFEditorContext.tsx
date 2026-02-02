@@ -163,7 +163,7 @@ export const PDFEditorProvider = ({ children }: PDFEditorProviderProps) => {
       const pdfjsLib = await import('pdfjs-dist');
 
       // Configure worker - use unpkg CDN with specific version
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs`;
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@5.4.624/build/pdf.worker.min.mjs`;
 
       // Load PDF to get page count
       const arrayBuffer = await file.arrayBuffer();
