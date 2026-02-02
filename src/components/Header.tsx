@@ -61,7 +61,6 @@ export const Header = () => {
     ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces", badge: "Team", badgeColor: "bg-blue-100 text-blue-700" }] : []),
     { name: "Meet", href: "/meet", badge: "New", badgeColor: "bg-purple-100 text-purple-700" },
     { name: "STEPsBuild", href: "/stepsbuild", badge: null, badgeColor: null },
-    { name: "PDF Editor", href: "/pdf-editor", badge: "Pro", badgeColor: "bg-red-100 text-red-700" },
   ];
 
   const isActiveRoute = (href: string) => {
