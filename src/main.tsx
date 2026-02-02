@@ -70,6 +70,7 @@ import WorkspaceDetail from './pages/WorkspaceDetail';
 import WorkspaceInvitations from './pages/WorkspaceInvitations';
 import Meet from './pages/Meet';
 import MeetingRoom from './pages/MeetingRoom';
+import PDFEditor from './pages/PDFEditor';
 import { NotificationProvider } from './components/InAppNotification';
 
 // Register service worker for PWA functionality
@@ -179,6 +180,7 @@ ReactDOM.createRoot(root).render(
             </ProtectedRoute>
           } />
           <Route path="meet" element={<Meet />} />
+          <Route path="pdf-editor" element={<PDFEditor />} />
         </Route>
 
         {/* Workspace chat - Full screen without header/footer */}

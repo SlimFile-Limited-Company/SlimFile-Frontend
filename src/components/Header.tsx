@@ -61,6 +61,7 @@ export const Header = () => {
     ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces", badge: "Team", badgeColor: "bg-blue-100 text-blue-700" }] : []),
     { name: "Meet", href: "/meet", badge: "New", badgeColor: "bg-purple-100 text-purple-700" },
     { name: "STEPsBuild", href: "/stepsbuild", badge: null, badgeColor: null },
+    { name: "PDF Editor", href: "/pdf-editor", badge: "Pro", badgeColor: "bg-red-100 text-red-700" },
   ];
 
   const isActiveRoute = (href: string) => {
@@ -246,7 +247,7 @@ export const Header = () => {
               )}
             </div>
 
-            {/* Tools Dropdown */}
+            {/* SlimFile Suites Dropdown */}
             <div
               className="relative"
               onMouseEnter={() => handleDropdownHover('tools')}
@@ -258,7 +259,7 @@ export const Header = () => {
                   ? "text-white bg-red-600 shadow-md font-semibold"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}>
-                <span>Tools</span>
+                <span>SlimFile Suites</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
               {hoveredDropdown === 'tools' && (
@@ -519,7 +520,7 @@ export const Header = () => {
                 )}
               </div>
 
-              {/* Mobile Tools Dropdown */}
+              {/* Mobile SlimFile Suites Dropdown */}
               <div className="px-4">
                 <button
                   onClick={() => toggleMobileDropdown('tools')}
@@ -530,7 +531,7 @@ export const Header = () => {
                       : "text-gray-700 hover:text-red-600"
                   )}
                 >
-                  <span>Tools</span>
+                  <span>SlimFile Suites</span>
                   <ChevronDown
                     className={cn(
                       "w-4 h-4 transition-transform duration-200",
