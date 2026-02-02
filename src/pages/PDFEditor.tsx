@@ -155,7 +155,7 @@ function PDFEditorContent() {
   }, [undo, redo, setEditState]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-16">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-red-600 via-purple-600 to-blue-600 py-12 px-4 shadow-lg">
         <div className="max-w-7xl mx-auto">
@@ -187,7 +187,20 @@ function PDFEditorContent() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
-        {!documentState.fileName ? (
+        {isLoading ? (
+          /* Loading State */
+          <div className="bg-white rounded-2xl shadow-2xl p-12 text-center">
+            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-red-500 to-purple-600 mb-6 animate-pulse">
+              <FileUp className="w-12 h-12 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Loading PDF...
+            </h2>
+            <p className="text-gray-600">
+              Please wait while we prepare your document
+            </p>
+          </div>
+        ) : !documentState.fileName ? (
           /* Upload Section */
           <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-dashed border-gray-300 hover:border-red-500 transition-all">
             <div
@@ -218,7 +231,8 @@ function PDFEditorContent() {
 
               <Button
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all"
+                disabled={isLoading}
+                className="bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <FileUp className="w-5 h-5 mr-2" />
                 Select PDF File

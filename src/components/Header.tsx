@@ -254,7 +254,7 @@ export const Header = () => {
               onMouseLeave={() => handleDropdownHover(null)}
             >
               <button className={cn(
-                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full",
+                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
                 toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')))
                   ? "text-white bg-red-600 shadow-md font-semibold"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
@@ -525,7 +525,7 @@ export const Header = () => {
                 <button
                   onClick={() => toggleMobileDropdown('tools')}
                   className={cn(
-                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
+                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg whitespace-nowrap",
                     toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')))
                       ? "text-red-600"
                       : "text-gray-700 hover:text-red-600"
