@@ -4,7 +4,7 @@ import { usePDFEditor } from '@/contexts/PDFEditorContext';
 import AnnotationLayer from './AnnotationLayer';
 
 // Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@5.4.624/build/pdf.worker.min.mjs`;
 
 interface PDFCanvasProps {
   className?: string;
@@ -65,36 +65,48 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
         const canvas = canvasRef.current!;
         const context = canvas.getContext('2d')!;
 
+        // Get device pixel ratio for high-DPI displays (Retina, etc.)
+        const dpr = window.devicePixelRatio || 1;
+
         // Calculate scale based on zoom and fitMode
         let scale = viewState.zoom;
         const viewport = page.getViewport({ scale: 1.0 });
 
         if (viewState.fitMode === 'width') {
-          // Fit to available width (canvas parent width)
-          const containerWidth = canvas.parentElement?.clientWidth || 800;
-          scale = (containerWidth - 64) / viewport.width; // 64px padding
+          // Fit to available width - use container width for better calculation
+          const containerWidth = containerRef.current?.clientWidth || window.innerWidth * 0.7;
+          scale = (containerWidth * 0.95) / viewport.width; // Use 95% of container width
         } else if (viewState.fitMode === 'page') {
           // Fit entire page to viewport
-          const containerWidth = canvas.parentElement?.clientWidth || 800;
-          const containerHeight = canvas.parentElement?.clientHeight || 600;
-          const scaleX = (containerWidth - 64) / viewport.width;
-          const scaleY = (containerHeight - 64) / viewport.height;
+          const containerWidth = containerRef.current?.clientWidth || window.innerWidth * 0.7;
+          const containerHeight = containerRef.current?.clientHeight || window.innerHeight * 0.8;
+          const scaleX = (containerWidth * 0.95) / viewport.width;
+          const scaleY = (containerHeight * 0.95) / viewport.height;
           scale = Math.min(scaleX, scaleY);
         }
 
-        const scaledViewport = page.getViewport({ scale });
+        // Ensure minimum scale for readability (1.2 = 120% minimum size)
+        scale = Math.max(scale, 1.2);
 
-        // Set canvas dimensions
+        // Apply device pixel ratio for crisp rendering on high-DPI screens
+        const outputScale = dpr * scale;
+        const scaledViewport = page.getViewport({ scale: outputScale });
+
+        // Set actual canvas dimensions (higher resolution)
         canvas.width = scaledViewport.width;
         canvas.height = scaledViewport.height;
 
-        // Update dimensions for annotation layer
+        // Set CSS dimensions (display size)
+        canvas.style.width = `${scaledViewport.width / dpr}px`;
+        canvas.style.height = `${scaledViewport.height / dpr}px`;
+
+        // Update dimensions for annotation layer (use display size)
         setCanvasDimensions({
-          width: scaledViewport.width,
-          height: scaledViewport.height,
+          width: scaledViewport.width / dpr,
+          height: scaledViewport.height / dpr,
         });
 
-        // Render PDF page
+        // Render PDF page with high quality
         const renderContext = {
           canvasContext: context,
           viewport: scaledViewport,
