@@ -258,7 +258,7 @@ export const Header = () => {
                   ? "text-white bg-red-600 shadow-md font-semibold"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}>
-                <span>SlimFile Suites</span>
+                <span>Tools</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
               {hoveredDropdown === 'tools' && (
@@ -530,7 +530,7 @@ export const Header = () => {
                       : "text-gray-700 hover:text-red-600"
                   )}
                 >
-                  <span>SlimFile Suites</span>
+                  <span>Tools</span>
                   <ChevronDown
                     className={cn(
                       "w-4 h-4 transition-transform duration-200",
