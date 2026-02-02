@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { fabric } from 'fabric';
+import * as fabric from 'fabric';
 import { usePDFEditor } from '@/contexts/PDFEditorContext';
 import StampDialog, { StampType } from './dialogs/StampDialog';
 import ShapeDialog, { ShapeType } from './dialogs/ShapeDialog';
