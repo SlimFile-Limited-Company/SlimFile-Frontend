@@ -5,12 +5,32 @@
 
 import { getSocket } from './socketService';
 
-// Free STUN servers for NAT traversal
-const ICE_SERVERS = [
+// ICE servers for NAT traversal
+// STUN servers help discover public IP, TURN servers relay traffic when direct connection fails
+const ICE_SERVERS: RTCIceServer[] = [
+  // Google STUN servers
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
   { urls: 'stun:stun2.l.google.com:19302' },
-  { urls: 'stun:stun.services.mozilla.com' },
+  { urls: 'stun:stun3.l.google.com:19302' },
+  { urls: 'stun:stun4.l.google.com:19302' },
+
+  // OpenRelay free TURN server (https://www.metered.ca/tools/openrelay/)
+  {
+    urls: 'turn:openrelay.metered.ca:80',
+    username: 'openrelayproject',
+    credential: 'openrelayproject',
+  },
+  {
+    urls: 'turn:openrelay.metered.ca:443',
+    username: 'openrelayproject',
+    credential: 'openrelayproject',
+  },
+  {
+    urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+    username: 'openrelayproject',
+    credential: 'openrelayproject',
+  },
 ];
 
 export interface Participant {
@@ -236,6 +256,8 @@ class MeetingService {
         console.log(`✅ Successfully connected to ${participantId}`);
       } else if (peerConnection.connectionState === 'failed') {
         console.error(`❌ Connection failed with ${participantId}`);
+        // Attempt ICE restart
+        this.attemptIceRestart(participantId);
       }
     };
 
@@ -249,6 +271,17 @@ class MeetingService {
         console.log(`✅ ICE connected to ${participantId}`);
       } else if (peerConnection.iceConnectionState === 'failed') {
         console.error(`❌ ICE connection failed with ${participantId}`);
+        // Attempt ICE restart
+        this.attemptIceRestart(participantId);
+      } else if (peerConnection.iceConnectionState === 'disconnected') {
+        console.warn(`⚠️ ICE disconnected from ${participantId}, waiting for recovery...`);
+        // Give it a few seconds to recover before attempting restart
+        setTimeout(() => {
+          if (peerConnection.iceConnectionState === 'disconnected' ||
+              peerConnection.iceConnectionState === 'failed') {
+            this.attemptIceRestart(participantId);
+          }
+        }, 5000);
       }
     };
 
@@ -508,6 +541,38 @@ class MeetingService {
           sender.replaceTrack(videoTrack);
         }
       });
+    }
+  }
+
+  /**
+   * Attempt ICE restart when connection fails
+   */
+  private async attemptIceRestart(participantId: string) {
+    const peerConnection = this.peerConnections.get(participantId);
+    if (!peerConnection) {
+      console.error(`❌ Cannot restart ICE - no peer connection for ${participantId}`);
+      return;
+    }
+
+    console.log(`🔄 Attempting ICE restart for ${participantId}...`);
+
+    try {
+      // Create a new offer with ICE restart flag
+      const offer = await peerConnection.createOffer({ iceRestart: true });
+      await peerConnection.setLocalDescription(offer);
+
+      // Send the new offer to the remote peer
+      const socket = getSocket();
+      socket?.emit('meeting:offer', {
+        meetingId: this.currentMeetingId,
+        targetUserId: participantId,
+        offer,
+      });
+
+      console.log(`✅ ICE restart offer sent to ${participantId}`);
+    } catch (error) {
+      console.error(`❌ ICE restart failed for ${participantId}:`, error);
+      this.onError?.(`Connection to ${participantId} failed. Please try rejoining the meeting.`);
     }
   }
 
