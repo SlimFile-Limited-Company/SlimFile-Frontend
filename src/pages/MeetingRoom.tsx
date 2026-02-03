@@ -184,9 +184,19 @@ export default function MeetingRoom() {
     console.log('Initializing meeting connection with stream ready...');
 
     // Initialize socket if not already connected
-    const socket = getSocket();
+    let socket = getSocket();
     if (!socket || !socket.connected) {
-      initializeSocket();
+      console.log('🔌 Initializing socket connection...');
+      socket = initializeSocket();
+
+      // Authenticate with token if available
+      const token = getToken();
+      if (token) {
+        console.log('🔐 Authenticating socket...');
+        socket.emit('authenticate', token);
+      }
+    } else {
+      console.log('✅ Socket already connected:', socket.id);
     }
 
     // Get userId and userName from token
@@ -223,10 +233,18 @@ export default function MeetingRoom() {
 
     // Set up meeting service callbacks
     meetingService.onRemoteStreamAdded = (participantId: string, stream: MediaStream) => {
-      console.log('Remote stream added from:', participantId);
+      const tracks = stream.getTracks();
+      const videoTracks = stream.getVideoTracks();
+      const audioTracks = stream.getAudioTracks();
+      console.log(`📹 Remote stream added from: ${participantId}`);
+      console.log(`   Total tracks: ${tracks.length} (${videoTracks.length} video, ${audioTracks.length} audio)`);
+      console.log(`   Video tracks:`, videoTracks.map(t => `${t.label} (enabled: ${t.enabled}, readyState: ${t.readyState})`));
+      console.log(`   Audio tracks:`, audioTracks.map(t => `${t.label} (enabled: ${t.enabled}, readyState: ${t.readyState})`));
+
       setRemoteStreams((prev) => {
         const newStreams = new Map(prev);
         newStreams.set(participantId, stream);
+        console.log(`   ✅ Remote streams map updated. Total remote streams: ${newStreams.size}`);
         return newStreams;
       });
     };
@@ -1695,12 +1713,59 @@ function RemoteVideoCard({
   onPin
 }: RemoteVideoCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasVideoTrack, setHasVideoTrack] = useState(false);
 
   useEffect(() => {
-    if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
-      videoRef.current.play().catch((e) => console.error('Remote video play error:', e));
-    }
+    const video = videoRef.current;
+    if (!video || !stream) return;
+
+    // Function to update video element
+    const updateVideo = () => {
+      video.srcObject = stream;
+      video.play().catch((e) => console.error('Remote video play error:', e));
+
+      // Check if stream has video track
+      const videoTracks = stream.getVideoTracks();
+      setHasVideoTrack(videoTracks.length > 0 && videoTracks[0].enabled);
+    };
+
+    // Initial setup
+    updateVideo();
+
+    // Listen for track additions (video track may arrive after audio)
+    const handleTrackAdded = (event: MediaStreamTrackEvent) => {
+      console.log(`Track added to remote stream: ${event.track.kind}`);
+      updateVideo();
+    };
+
+    const handleTrackRemoved = (event: MediaStreamTrackEvent) => {
+      console.log(`Track removed from remote stream: ${event.track.kind}`);
+      const videoTracks = stream.getVideoTracks();
+      setHasVideoTrack(videoTracks.length > 0 && videoTracks[0].enabled);
+    };
+
+    stream.addEventListener('addtrack', handleTrackAdded);
+    stream.addEventListener('removetrack', handleTrackRemoved);
+
+    // Also listen for track enabled/disabled changes
+    stream.getTracks().forEach(track => {
+      track.onended = () => {
+        console.log(`Track ended: ${track.kind}`);
+        updateVideo();
+      };
+      track.onmute = () => {
+        console.log(`Track muted: ${track.kind}`);
+      };
+      track.onunmute = () => {
+        console.log(`Track unmuted: ${track.kind}`);
+        updateVideo();
+      };
+    });
+
+    return () => {
+      stream.removeEventListener('addtrack', handleTrackAdded);
+      stream.removeEventListener('removetrack', handleTrackRemoved);
+    };
   }, [stream]);
 
   const displayName = participant?.userName || participantId.substring(0, 12);
@@ -1714,8 +1779,8 @@ function RemoteVideoCard({
         className="w-full h-full object-contain"
       />
 
-      {/* Camera off indicator */}
-      {participant?.isCameraOff && (
+      {/* Camera off indicator - show when camera is off OR no video track received */}
+      {(participant?.isCameraOff || !hasVideoTrack) && (
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
           <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-full p-6 shadow-xl">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">

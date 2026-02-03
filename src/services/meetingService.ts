@@ -90,10 +90,7 @@ class MeetingService {
       throw new Error('Socket connection not available');
     }
 
-    // Emit join meeting event
-    socket.emit('meeting:join', { meetingId, userId, userName });
-
-    // Listen for other participants
+    // Set up listeners BEFORE emitting join to ensure we don't miss any responses
     socket.on('meeting:user-joined', this.handleUserJoined.bind(this));
     socket.on('meeting:existing-participants', this.handleExistingParticipants.bind(this));
     socket.on('meeting:user-left', this.handleUserLeft.bind(this));
@@ -101,6 +98,22 @@ class MeetingService {
     socket.on('meeting:answer', this.handleAnswer.bind(this));
     socket.on('meeting:ice-candidate', this.handleIceCandidate.bind(this));
     socket.on('meeting:error', this.handleError.bind(this));
+
+    // Wait for socket to be connected before emitting
+    const emitJoin = () => {
+      console.log(`📡 Emitting meeting:join for meeting ${meetingId} as ${userName} (${userId})`);
+      socket.emit('meeting:join', { meetingId, userId, userName });
+    };
+
+    if (socket.connected) {
+      emitJoin();
+    } else {
+      console.log('⏳ Waiting for socket connection before joining meeting...');
+      socket.once('connect', () => {
+        console.log('✅ Socket connected, now joining meeting');
+        emitJoin();
+      });
+    }
   }
 
   /**
@@ -165,18 +178,40 @@ class MeetingService {
     // Handle incoming tracks
     peerConnection.ontrack = (event) => {
       console.log(`📥 Received remote ${event.track.kind} track from ${participantId}`);
+      console.log(`   Track info: label="${event.track.label}", enabled=${event.track.enabled}, readyState=${event.track.readyState}`);
       console.log(`   Streams received:`, event.streams.length);
 
-      const [remoteStream] = event.streams;
-      if (remoteStream) {
-        console.log(`   Remote stream tracks:`, remoteStream.getTracks().map(t => `${t.kind} (${t.label})`));
-        this.remoteStreams.set(participantId, remoteStream);
+      let remoteStream = event.streams[0];
 
-        // Notify listeners about new stream
-        this.onRemoteStreamAdded?.(participantId, remoteStream);
-      } else {
-        console.error(`   ❌ No remote stream in ontrack event!`);
+      // If no stream provided, create one and add the track
+      if (!remoteStream) {
+        console.log(`   ⚠️ No stream in event, creating new MediaStream for track`);
+        remoteStream = this.remoteStreams.get(participantId) || new MediaStream();
+        remoteStream.addTrack(event.track);
       }
+
+      console.log(`   Remote stream tracks:`, remoteStream.getTracks().map(t => `${t.kind} (${t.label}, enabled: ${t.enabled})`));
+
+      // Store the stream
+      this.remoteStreams.set(participantId, remoteStream);
+
+      // Notify listeners about new/updated stream
+      this.onRemoteStreamAdded?.(participantId, remoteStream);
+
+      // Also listen for track ending
+      event.track.onended = () => {
+        console.log(`   ⚠️ Track ${event.track.kind} from ${participantId} ended`);
+      };
+
+      event.track.onmute = () => {
+        console.log(`   🔇 Track ${event.track.kind} from ${participantId} muted`);
+      };
+
+      event.track.onunmute = () => {
+        console.log(`   🔊 Track ${event.track.kind} from ${participantId} unmuted`);
+        // Re-notify when track unmutes to ensure video displays
+        this.onRemoteStreamAdded?.(participantId, remoteStream);
+      };
     };
 
     // Handle ICE candidates
