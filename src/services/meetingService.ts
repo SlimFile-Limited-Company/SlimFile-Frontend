@@ -11,37 +11,43 @@ const ICE_SERVERS: RTCIceServer[] = [
   // Google STUN servers (primary)
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
-  { urls: 'stun:stun2.l.google.com:19302' },
-  { urls: 'stun:stun3.l.google.com:19302' },
-  { urls: 'stun:stun4.l.google.com:19302' },
 
-  // Numb Viagenie - Free public TURN server (reliable)
+  // OpenRelay - Free TURN (try first, most reliable)
   {
-    urls: 'turn:numb.viagenie.ca',
+    urls: [
+      'turn:openrelay.metered.ca:80',
+      'turn:openrelay.metered.ca:443',
+      'turn:openrelay.metered.ca:443?transport=tcp'
+    ],
+    username: 'openrelayproject',
+    credential: 'openrelayproject',
+  },
+
+  // Numb Viagenie - Free TURN with explicit ports
+  {
+    urls: [
+      'turn:numb.viagenie.ca:3478',
+      'turn:numb.viagenie.ca:3478?transport=tcp'
+    ],
     username: 'webrtc@live.com',
     credential: 'muazkh',
   },
 
-  // Alternative TURN: OpenRelay (Metered)
+  // Metered TURN (free tier - 50GB/month)
   {
-    urls: 'turn:openrelay.metered.ca:80',
-    username: 'openrelayproject',
-    credential: 'openrelayproject',
-  },
-  {
-    urls: 'turn:openrelay.metered.ca:443',
-    username: 'openrelayproject',
-    credential: 'openrelayproject',
-  },
-  {
-    urls: 'turn:openrelay.metered.ca:443?transport=tcp',
-    username: 'openrelayproject',
-    credential: 'openrelayproject',
+    urls: [
+      'turn:a.relay.metered.ca:80',
+      'turn:a.relay.metered.ca:80?transport=tcp',
+      'turn:a.relay.metered.ca:443',
+      'turn:a.relay.metered.ca:443?transport=tcp'
+    ],
+    username: 'e88a3b4bbef7dbb950e296a1',
+    credential: 'D+6OPaAYKiZoI2XO',
   },
 
-  // Backup STUN servers
+  // Additional backup STUN
+  { urls: 'stun:stun2.l.google.com:19302' },
   { urls: 'stun:stunserver.stunprotocol.org:3478' },
-  { urls: 'stun:stun.stunprotocol.org:3478' },
 ];
 
 export interface Participant {
