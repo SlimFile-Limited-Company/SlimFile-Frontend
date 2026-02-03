@@ -15,36 +15,34 @@ const ICE_SERVERS: RTCIceServer[] = [
   { urls: 'stun:stun3.l.google.com:19302' },
   { urls: 'stun:stun4.l.google.com:19302' },
 
-  // Metered.ca free TURN servers (more reliable)
+  // Twilio STUN/TURN servers (free tier)
   {
-    urls: 'turn:a.relay.metered.ca:80',
-    username: 'e8dd65b92f6930a3c492f076',
-    credential: 'SFGmLF/C7GQ0cxrk',
+    urls: 'stun:global.stun.twilio.com:3478',
   },
   {
-    urls: 'turn:a.relay.metered.ca:80?transport=tcp',
-    username: 'e8dd65b92f6930a3c492f076',
-    credential: 'SFGmLF/C7GQ0cxrk',
+    urls: 'turn:global.turn.twilio.com:3478?transport=udp',
+    username: 'f4b4035eaa76f4a55de5f4351567653ee4ff6fa97b50b6b334fcc1be9c27212d',
+    credential: 'w1uxM55V9yVoqyVFjt+mxDBV0F87AUCemaYVQGxsPLw=',
   },
   {
-    urls: 'turn:a.relay.metered.ca:443',
-    username: 'e8dd65b92f6930a3c492f076',
-    credential: 'SFGmLF/C7GQ0cxrk',
+    urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
+    username: 'f4b4035eaa76f4a55de5f4351567653ee4ff6fa97b50b6b334fcc1be9c27212d',
+    credential: 'w1uxM55V9yVoqyVFjt+mxDBV0F87AUCemaYVQGxsPLw=',
   },
   {
-    urls: 'turn:a.relay.metered.ca:443?transport=tcp',
-    username: 'e8dd65b92f6930a3c492f076',
-    credential: 'SFGmLF/C7GQ0cxrk',
-  },
-  {
-    urls: 'turns:a.relay.metered.ca:443?transport=tcp',
-    username: 'e8dd65b92f6930a3c492f076',
-    credential: 'SFGmLF/C7GQ0cxrk',
+    urls: 'turn:global.turn.twilio.com:443?transport=tcp',
+    username: 'f4b4035eaa76f4a55de5f4351567653ee4ff6fa97b50b6b334fcc1be9c27212d',
+    credential: 'w1uxM55V9yVoqyVFjt+mxDBV0F87AUCemaYVQGxsPLw=',
   },
 
-  // OpenRelay backup TURN server
+  // OpenRelay free TURN server
   {
-    urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+    urls: 'turn:openrelay.metered.ca:80',
+    username: 'openrelayproject',
+    credential: 'openrelayproject',
+  },
+  {
+    urls: 'turn:openrelay.metered.ca:443',
     username: 'openrelayproject',
     credential: 'openrelayproject',
   },
@@ -68,6 +66,7 @@ class MeetingService {
   private localStream: MediaStream | null = null;
   private remoteStreams: Map<string, MediaStream> = new Map();
   private currentMeetingId: string | null = null;
+  private iceRestartInProgress: Map<string, boolean> = new Map();
 
   /**
    * Initialize local media (camera and microphone)
@@ -466,6 +465,19 @@ class MeetingService {
     const peerConnection = this.peerConnections.get(fromUserId);
     if (peerConnection) {
       try {
+        // Check signaling state to avoid setting answer in wrong state
+        const signalingState = peerConnection.signalingState;
+        console.log(`   Current signaling state: ${signalingState}`);
+
+        if (signalingState === 'stable') {
+          console.warn(`   ⚠️ Ignoring answer - already in stable state (likely offer collision)`);
+          return;
+        }
+
+        if (signalingState !== 'have-local-offer') {
+          console.warn(`   ⚠️ Unexpected signaling state: ${signalingState}`);
+        }
+
         console.log(`   Setting remote description...`);
         await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
         console.log(`   ✅ Answer processed successfully`);
@@ -576,13 +588,26 @@ class MeetingService {
    * Attempt ICE restart when connection fails
    */
   private async attemptIceRestart(participantId: string) {
+    // Prevent multiple simultaneous ICE restarts
+    if (this.iceRestartInProgress.get(participantId)) {
+      console.log(`⏭️ ICE restart already in progress for ${participantId}, skipping...`);
+      return;
+    }
+
     const peerConnection = this.peerConnections.get(participantId);
     if (!peerConnection) {
       console.error(`❌ Cannot restart ICE - no peer connection for ${participantId}`);
       return;
     }
 
+    // Check signaling state - don't restart if we're already negotiating
+    if (peerConnection.signalingState !== 'stable') {
+      console.log(`⏭️ Skipping ICE restart - signaling state is ${peerConnection.signalingState}`);
+      return;
+    }
+
     console.log(`🔄 Attempting ICE restart for ${participantId}...`);
+    this.iceRestartInProgress.set(participantId, true);
 
     try {
       // Create a new offer with ICE restart flag
@@ -598,8 +623,14 @@ class MeetingService {
       });
 
       console.log(`✅ ICE restart offer sent to ${participantId}`);
+
+      // Clear the flag after a delay
+      setTimeout(() => {
+        this.iceRestartInProgress.set(participantId, false);
+      }, 3000);
     } catch (error) {
       console.error(`❌ ICE restart failed for ${participantId}:`, error);
+      this.iceRestartInProgress.set(participantId, false);
       this.onError?.(`Connection to ${participantId} failed. Please try rejoining the meeting.`);
     }
   }
