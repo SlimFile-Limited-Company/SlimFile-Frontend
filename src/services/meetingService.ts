@@ -15,17 +15,34 @@ const ICE_SERVERS: RTCIceServer[] = [
   { urls: 'stun:stun3.l.google.com:19302' },
   { urls: 'stun:stun4.l.google.com:19302' },
 
-  // OpenRelay free TURN server (https://www.metered.ca/tools/openrelay/)
+  // Metered.ca free TURN servers (more reliable)
   {
-    urls: 'turn:openrelay.metered.ca:80',
-    username: 'openrelayproject',
-    credential: 'openrelayproject',
+    urls: 'turn:a.relay.metered.ca:80',
+    username: 'e8dd65b92f6930a3c492f076',
+    credential: 'SFGmLF/C7GQ0cxrk',
   },
   {
-    urls: 'turn:openrelay.metered.ca:443',
-    username: 'openrelayproject',
-    credential: 'openrelayproject',
+    urls: 'turn:a.relay.metered.ca:80?transport=tcp',
+    username: 'e8dd65b92f6930a3c492f076',
+    credential: 'SFGmLF/C7GQ0cxrk',
   },
+  {
+    urls: 'turn:a.relay.metered.ca:443',
+    username: 'e8dd65b92f6930a3c492f076',
+    credential: 'SFGmLF/C7GQ0cxrk',
+  },
+  {
+    urls: 'turn:a.relay.metered.ca:443?transport=tcp',
+    username: 'e8dd65b92f6930a3c492f076',
+    credential: 'SFGmLF/C7GQ0cxrk',
+  },
+  {
+    urls: 'turns:a.relay.metered.ca:443?transport=tcp',
+    username: 'e8dd65b92f6930a3c492f076',
+    credential: 'SFGmLF/C7GQ0cxrk',
+  },
+
+  // OpenRelay backup TURN server
   {
     urls: 'turn:openrelay.metered.ca:443?transport=tcp',
     username: 'openrelayproject',
@@ -180,6 +197,9 @@ class MeetingService {
 
     const peerConnection = new RTCPeerConnection({
       iceServers: ICE_SERVERS,
+      iceCandidatePoolSize: 10, // Pre-gather ICE candidates for faster connection
+      bundlePolicy: 'max-bundle', // Bundle all media on one connection
+      rtcpMuxPolicy: 'require', // Multiplex RTP and RTCP on same port
     });
 
     // Add local stream tracks
@@ -237,12 +257,20 @@ class MeetingService {
     // Handle ICE candidates
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
+        // Log candidate type for debugging
+        const candidateType = event.candidate.candidate.includes('typ relay') ? 'relay (TURN)' :
+                              event.candidate.candidate.includes('typ srflx') ? 'srflx (STUN)' :
+                              event.candidate.candidate.includes('typ host') ? 'host (local)' : 'unknown';
+        console.log(`🧊 ICE candidate for ${participantId}: ${candidateType}`);
+
         const socket = getSocket();
         socket?.emit('meeting:ice-candidate', {
           meetingId: this.currentMeetingId,
           targetUserId: participantId,
           candidate: event.candidate,
         });
+      } else {
+        console.log(`🧊 ICE candidate gathering complete for ${participantId}`);
       }
     };
 
