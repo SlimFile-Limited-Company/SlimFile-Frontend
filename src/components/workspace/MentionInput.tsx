@@ -73,8 +73,8 @@ export function MentionInput({
       mentionPosition + mentionQuery.length + 1
     );
 
-    // Format: @[Display Name](userId)
-    const mention = `@[${member.user.name}](${member.user._id})`;
+    // Format: @Display Name (clean, readable format)
+    const mention = `@${member.user.name}`;
     const newValue = beforeMention + mention + ' ' + afterMention;
 
     onChange(newValue);
