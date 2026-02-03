@@ -7,12 +7,16 @@ import { getSocket } from './socketService';
 
 // ICE servers for NAT traversal
 // STUN servers help discover public IP, TURN servers relay traffic when direct connection fails
+// NOTE: Free TURN servers have quotas and may stop working. Consider setting up your own for production.
 const ICE_SERVERS: RTCIceServer[] = [
-  // Google STUN servers (primary)
+  // Google STUN servers
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
 
-  // OpenRelay - Free TURN (try first, most reliable)
+  // TODO: Replace with your own TURN server for production use
+  // Free TURN servers below have quotas and may stop working without notice
+
+  // OpenRelay (Free, community-run)
   {
     urls: [
       'turn:openrelay.metered.ca:80',
@@ -23,29 +27,22 @@ const ICE_SERVERS: RTCIceServer[] = [
     credential: 'openrelayproject',
   },
 
-  // Numb Viagenie - Free TURN with explicit ports
+  // Numb Viagenie (Public test server)
   {
-    urls: [
-      'turn:numb.viagenie.ca:3478',
-      'turn:numb.viagenie.ca:3478?transport=tcp'
-    ],
+    urls: 'turn:numb.viagenie.ca',
     username: 'webrtc@live.com',
     credential: 'muazkh',
   },
 
-  // Metered TURN (free tier - 50GB/month)
-  {
-    urls: [
-      'turn:a.relay.metered.ca:80',
-      'turn:a.relay.metered.ca:80?transport=tcp',
-      'turn:a.relay.metered.ca:443',
-      'turn:a.relay.metered.ca:443?transport=tcp'
-    ],
-    username: 'e88a3b4bbef7dbb950e296a1',
-    credential: 'D+6OPaAYKiZoI2XO',
-  },
+  // Xirsys (Free tier - 500MB/month) - Sign up at xirsys.com for fresh credentials
+  // Uncomment and add your credentials:
+  // {
+  //   urls: 'turn:YOUR_SERVER.xirsys.com:80?transport=udp',
+  //   username: 'YOUR_USERNAME',
+  //   credential: 'YOUR_CREDENTIAL',
+  // },
 
-  // Additional backup STUN
+  // Additional STUN fallbacks
   { urls: 'stun:stun2.l.google.com:19302' },
   { urls: 'stun:stunserver.stunprotocol.org:3478' },
 ];
