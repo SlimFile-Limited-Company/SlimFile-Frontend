@@ -131,7 +131,7 @@ export function MentionInput({
   };
 
   return (
-    <div className="relative">
+    <div className="relative flex-1">
       <Textarea
         ref={textareaRef}
         value={value}
@@ -139,7 +139,7 @@ export function MentionInput({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-        className="min-h-[40px] max-h-[120px] resize-none"
+        className="min-h-[40px] max-h-[120px] resize-none w-full"
       />
 
       {showSuggestions && filteredMembers.length > 0 && (

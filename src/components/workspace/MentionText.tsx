@@ -4,9 +4,10 @@ interface MentionTextProps {
   text: string;
   currentUserId: string;
   className?: string;
+  isOwnMessage?: boolean;
 }
 
-export function MentionText({ text, currentUserId, className = '' }: MentionTextProps) {
+export function MentionText({ text, currentUserId, className = '', isOwnMessage = false }: MentionTextProps) {
   // Parse mentions: @[Display Name](userId)
   const mentionRegex = /@\[([^\]]+)\]\(([a-f0-9]{24})\)/g;
   const parts: Array<{ type: 'text' | 'mention'; content: string; userId?: string; name?: string }> = [];
@@ -56,7 +57,11 @@ export function MentionText({ text, currentUserId, className = '' }: MentionText
           ) : (
             <span
               className={`font-semibold ${
-                part.userId === currentUserId
+                isOwnMessage
+                  ? part.userId === currentUserId
+                    ? 'text-white bg-white/20 px-1 rounded'
+                    : 'text-white underline'
+                  : part.userId === currentUserId
                   ? 'text-blue-600 bg-blue-100 px-1 rounded'
                   : 'text-blue-600'
               }`}

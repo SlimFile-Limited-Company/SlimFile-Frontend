@@ -913,6 +913,7 @@ const WorkspaceDetail = () => {
                         <MentionText
                           text={message.text}
                           currentUserId={currentUserId}
+                          isOwnMessage={isOwnMessage}
                           className="text-sm whitespace-pre-wrap break-words leading-relaxed"
                         />
                       )}
