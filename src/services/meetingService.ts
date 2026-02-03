@@ -8,34 +8,21 @@ import { getSocket } from './socketService';
 // ICE servers for NAT traversal
 // STUN servers help discover public IP, TURN servers relay traffic when direct connection fails
 const ICE_SERVERS: RTCIceServer[] = [
-  // Google STUN servers
+  // Google STUN servers (primary)
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
   { urls: 'stun:stun2.l.google.com:19302' },
   { urls: 'stun:stun3.l.google.com:19302' },
   { urls: 'stun:stun4.l.google.com:19302' },
 
-  // Twilio STUN/TURN servers (free tier)
+  // Numb Viagenie - Free public TURN server (reliable)
   {
-    urls: 'stun:global.stun.twilio.com:3478',
-  },
-  {
-    urls: 'turn:global.turn.twilio.com:3478?transport=udp',
-    username: 'f4b4035eaa76f4a55de5f4351567653ee4ff6fa97b50b6b334fcc1be9c27212d',
-    credential: 'w1uxM55V9yVoqyVFjt+mxDBV0F87AUCemaYVQGxsPLw=',
-  },
-  {
-    urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
-    username: 'f4b4035eaa76f4a55de5f4351567653ee4ff6fa97b50b6b334fcc1be9c27212d',
-    credential: 'w1uxM55V9yVoqyVFjt+mxDBV0F87AUCemaYVQGxsPLw=',
-  },
-  {
-    urls: 'turn:global.turn.twilio.com:443?transport=tcp',
-    username: 'f4b4035eaa76f4a55de5f4351567653ee4ff6fa97b50b6b334fcc1be9c27212d',
-    credential: 'w1uxM55V9yVoqyVFjt+mxDBV0F87AUCemaYVQGxsPLw=',
+    urls: 'turn:numb.viagenie.ca',
+    username: 'webrtc@live.com',
+    credential: 'muazkh',
   },
 
-  // OpenRelay free TURN server
+  // Alternative TURN: OpenRelay (Metered)
   {
     urls: 'turn:openrelay.metered.ca:80',
     username: 'openrelayproject',
@@ -46,6 +33,15 @@ const ICE_SERVERS: RTCIceServer[] = [
     username: 'openrelayproject',
     credential: 'openrelayproject',
   },
+  {
+    urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+    username: 'openrelayproject',
+    credential: 'openrelayproject',
+  },
+
+  // Backup STUN servers
+  { urls: 'stun:stunserver.stunprotocol.org:3478' },
+  { urls: 'stun:stun.stunprotocol.org:3478' },
 ];
 
 export interface Participant {
