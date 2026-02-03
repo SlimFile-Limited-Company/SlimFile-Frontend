@@ -49,6 +49,14 @@ export interface MessageReadEvent {
   readByCount: number;
 }
 
+export interface MentionedEvent {
+  messageId: string;
+  workspaceId: string;
+  senderId: string;
+  senderName: string;
+  messagePreview: string;
+}
+
 // Singleton socket instance
 let socket: Socket | null = null;
 let isAuthenticated = false;
@@ -235,6 +243,26 @@ export function onMessageRead(callback: (event: MessageReadEvent) => void): () =
   socket?.on('messageRead', callback);
   return () => {
     socket?.off('messageRead', callback);
+  };
+}
+
+/**
+ * Subscribe to mention events
+ */
+export function onMentioned(callback: (event: MentionedEvent) => void): () => void {
+  const handler = (event: MentionedEvent) => {
+    callback(event);
+
+    // Play notification sound
+    playNotificationSound();
+
+    // Vibrate device
+    vibrateDevice([200, 100, 200]);
+  };
+
+  socket?.on('mentioned', handler);
+  return () => {
+    socket?.off('mentioned', handler);
   };
 }
 

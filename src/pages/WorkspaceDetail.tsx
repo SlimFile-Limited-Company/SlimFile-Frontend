@@ -3,8 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { MentionInput } from '@/components/workspace/MentionInput';
+import { MentionText } from '@/components/workspace/MentionText';
 import {
   Sheet,
   SheetContent,
@@ -55,6 +56,7 @@ import {
   onUserTyping,
   onMessageDelivered,
   onMessageRead,
+  onMentioned,
   onMemberJoined,
   onMemberRemoved,
   showMessageNotification,
@@ -312,6 +314,16 @@ const WorkspaceDetail = () => {
       );
     });
 
+    const unsubMention = onMentioned((event) => {
+      if (!document.hidden) {
+        showNotification({
+          senderName: event.senderName,
+          message: `mentioned you: ${event.messagePreview}`,
+          workspaceId: event.workspaceId
+        });
+      }
+    });
+
     return () => {
       unsubMessage();
       unsubDelete();
@@ -320,6 +332,7 @@ const WorkspaceDetail = () => {
       unsubMemberRemoved();
       unsubDelivered();
       unsubRead();
+      unsubMention();
     };
   }, [workspaceId, workspaceData, currentUserId, queryClient, navigate, toast]);
 
@@ -897,9 +910,11 @@ const WorkspaceDetail = () => {
                           isOwnMessage={isOwnMessage}
                         />
                       ) : (
-                        <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
-                          {message.text}
-                        </p>
+                        <MentionText
+                          text={message.text}
+                          currentUserId={currentUserId}
+                          className="text-sm whitespace-pre-wrap break-words leading-relaxed"
+                        />
                       )}
                       <div className="flex items-center gap-1 mt-1.5">
                         <p
@@ -1062,16 +1077,24 @@ const WorkspaceDetail = () => {
               </Button>
             </div>
           ) : (
-            /* Normal Text Input */
+            /* Normal Text Input with Mentions */
             <>
-              <Textarea
-                placeholder="Type a message"
+              <MentionInput
+                placeholder="Type a message (use @ to mention)"
                 value={messageText}
-                onChange={handleTyping}
+                onChange={(value) => {
+                  setMessageText(value);
+                  if (typingTimeoutRef.current) {
+                    clearTimeout(typingTimeoutRef.current);
+                  }
+                  sendTypingIndicator(workspaceId!, true);
+                  typingTimeoutRef.current = setTimeout(() => {
+                    sendTypingIndicator(workspaceId!, false);
+                  }, 3000);
+                }}
                 onKeyDown={handleKeyPress}
-                className="flex-1 border-slate-200 focus-visible:ring-blue-500 min-h-[40px] max-h-[120px] resize-none"
+                members={workspaceData?.members || []}
                 disabled={sendMutation.isPending}
-                rows={1}
               />
               <Button
                 onClick={startRecording}
