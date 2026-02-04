@@ -450,13 +450,21 @@ const WorkspaceDetail = () => {
     sendTypingIndicator(workspaceId!, false);
     playSendSound();
 
-    // Use file upload if there are files
-    if (filesToSend.length > 0) {
-      await sendMessageWithAttachments(workspaceId!, text || undefined, replyTo, filesToSend);
-    } else {
-      await sendMutation.mutateAsync({ text, replyTo });
+    try {
+      // Use file upload if there are files
+      if (filesToSend.length > 0) {
+        await sendMessageWithAttachments(workspaceId!, text || undefined, replyTo, filesToSend);
+      } else {
+        await sendMutation.mutateAsync({ text, replyTo });
+      }
+      setTimeout(() => scrollToBottom(), 50);
+    } catch (error) {
+      toast({
+        title: 'Failed to send message',
+        description: (error as Error).message || 'Please try again',
+        variant: 'destructive',
+      });
     }
-    setTimeout(() => scrollToBottom(), 50);
   };
 
   const handleEditMessage = async (messageId: string, newText: string) => {

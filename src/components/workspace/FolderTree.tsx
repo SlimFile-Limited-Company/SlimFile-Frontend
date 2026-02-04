@@ -10,6 +10,7 @@ import {
   DragStartEvent,
   DragEndEvent,
   DragOverEvent,
+  useDroppable,
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -84,14 +85,20 @@ function FolderItem({
   onFolderDelete,
   onFolderCreate
 }: FolderItemProps) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: folder._id,
+  });
+
   const paddingLeft = depth * 16;
   const hasContent = workspaces.length > 0 || childFolders.length > 0;
 
   return (
-    <div>
+    <div ref={setNodeRef}>
       {/* Folder header */}
       <div
-        className="flex items-center gap-1 py-2 px-2 hover:bg-slate-100 rounded-lg group cursor-pointer"
+        className={`flex items-center gap-1 py-2 px-2 rounded-lg group cursor-pointer transition-colors ${
+          isOver ? 'bg-blue-100 ring-2 ring-blue-400' : 'hover:bg-slate-100'
+        }`}
         style={{ paddingLeft: `${paddingLeft}px` }}
       >
         <button
@@ -219,6 +226,23 @@ function FolderItem({
   );
 }
 
+function RootDropZone({ children, isOver }: { children: React.ReactNode; isOver: boolean }) {
+  const { setNodeRef } = useDroppable({
+    id: 'root',
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`min-h-[50px] rounded-lg transition-colors ${
+        isOver ? 'bg-slate-100 ring-2 ring-slate-300' : ''
+      }`}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function FolderTree({
   folders,
   workspacesByFolder,
@@ -233,7 +257,7 @@ export function FolderTree({
   expandedFolders
 }: FolderTreeProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [overId, setOverId] = useState<string | null>(null);
+  const [overFolderId, setOverFolderId] = useState<string | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -250,25 +274,22 @@ export function FolderTree({
   const rootFolders = folders.filter(f => !f.parentFolderId);
   const rootWorkspaces = workspacesByFolder['root'] || [];
 
-  // All workspace IDs for drag context
-  const allWorkspaceIds = Object.values(workspacesByFolder).flat().map(w => w._id);
-
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
   };
 
   const handleDragOver = (event: DragOverEvent) => {
-    setOverId(event.over?.id as string | null);
+    setOverFolderId(event.over?.id as string | null);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
-    setOverId(null);
+    setOverFolderId(null);
 
     if (!over || active.id === over.id) return;
 
-    // Find what was dragged and where
+    // Find what was dragged
     const draggedWorkspace = Object.values(workspacesByFolder)
       .flat()
       .find(w => w._id === active.id);
@@ -277,12 +298,16 @@ export function FolderTree({
       // Determine target folder
       let targetFolderId: string | null = null;
 
+      // Check if dropped on root zone
+      if (over.id === 'root') {
+        targetFolderId = null;
+      }
       // Check if dropped on a folder
-      const targetFolder = folders.find(f => f._id === over.id);
-      if (targetFolder) {
-        targetFolderId = targetFolder._id;
-      } else {
-        // Dropped on another workspace - find its folder
+      else if (folders.find(f => f._id === over.id)) {
+        targetFolderId = over.id as string;
+      }
+      // Dropped on another workspace - find its folder
+      else {
         const targetWorkspace = Object.entries(workspacesByFolder).find(
           ([_, workspaces]) => workspaces.some(w => w._id === over.id)
         );
@@ -345,28 +370,30 @@ export function FolderTree({
         })}
 
         {/* Root level workspaces (not in any folder) */}
-        {rootWorkspaces.length > 0 && (
-          <div className="pt-2 border-t border-slate-200 mt-2">
-            <div className="text-xs font-medium text-slate-500 px-2 mb-2">
-              Workspaces
+        <RootDropZone isOver={overFolderId === 'root'}>
+          {rootWorkspaces.length > 0 && (
+            <div className="pt-2 border-t border-slate-200 mt-2">
+              <div className="text-xs font-medium text-slate-500 px-2 mb-2">
+                Workspaces
+              </div>
+              <SortableContext
+                items={rootWorkspaces.map(w => w._id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {rootWorkspaces.map((workspace) => (
+                  <WorkspaceCard
+                    key={workspace._id}
+                    workspace={workspace}
+                    onClick={() => onWorkspaceClick(workspace._id)}
+                    onRename={() => onWorkspaceRename(workspace)}
+                    onDelete={() => onWorkspaceDelete(workspace._id)}
+                    depth={0}
+                  />
+                ))}
+              </SortableContext>
             </div>
-            <SortableContext
-              items={rootWorkspaces.map(w => w._id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {rootWorkspaces.map((workspace) => (
-                <WorkspaceCard
-                  key={workspace._id}
-                  workspace={workspace}
-                  onClick={() => onWorkspaceClick(workspace._id)}
-                  onRename={() => onWorkspaceRename(workspace)}
-                  onDelete={() => onWorkspaceDelete(workspace._id)}
-                  depth={0}
-                />
-              ))}
-            </SortableContext>
-          </div>
-        )}
+          )}
+        </RootDropZone>
 
         {/* Empty state */}
         {rootFolders.length === 0 && rootWorkspaces.length === 0 && (

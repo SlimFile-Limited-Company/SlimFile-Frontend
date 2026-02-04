@@ -39,6 +39,7 @@ import {
   Eye,
   Mail,
   Loader2,
+  Folder,
   FolderOpen,
   FolderPlus,
   LayoutGrid,
@@ -451,81 +452,187 @@ const Workspaces = () => {
               expandedFolders={expandedFolders}
             />
           </Card>
-        ) : workspaces && workspaces.length > 0 ? (
-          /* Grid View */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {workspaces.map((workspace) => (
-              <Card
-                key={workspace._id}
-                className="hover:shadow-lg transition-shadow cursor-pointer group"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1" onClick={() => navigate(`/workspaces/${workspace._id}`)}>
-                      <CardTitle className="text-lg group-hover:text-red-600 transition-colors">
-                        {workspace.name}
-                      </CardTitle>
-                      {workspace.description && (
-                        <CardDescription className="mt-1 line-clamp-2">
-                          {workspace.description}
-                        </CardDescription>
-                      )}
-                    </div>
-                    <Badge className={`ml-2 flex items-center gap-1 ${getRoleBadgeColor(workspace.role || 'viewer')}`}>
-                      {getRoleIcon(workspace.role || 'viewer')}
-                      {workspace.role}
-                    </Badge>
+        ) : foldersData ? (
+          /* Grid View with Folders */
+          <div className="space-y-8">
+            {/* Folders */}
+            {foldersData.folders.filter(f => !f.parentFolderId).map((folder) => {
+              const folderWorkspaces = foldersData.workspacesByFolder[folder._id] || [];
+              const isExpanded = expandedFolders.has(folder._id);
+
+              return (
+                <div key={folder._id}>
+                  {/* Folder Header */}
+                  <div
+                    className="flex items-center gap-3 mb-4 cursor-pointer group"
+                    onClick={() => handleFolderToggle(folder._id)}
+                  >
+                    {isExpanded ? (
+                      <FolderOpen className="h-6 w-6" style={{ color: folder.color || '#64748b' }} />
+                    ) : (
+                      <Folder className="h-6 w-6" style={{ color: folder.color || '#64748b' }} />
+                    )}
+                    <h2 className="text-xl font-semibold text-gray-800">{folder.name}</h2>
+                    <span className="text-sm text-gray-500">({folderWorkspaces.length})</span>
+                    <div className="flex-1" />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setFolderToRename(folder);
+                      }}
+                      className="opacity-0 group-hover:opacity-100"
+                    >
+                      <Edit3 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setFolderToDelete(folder._id);
+                        setDeleteFolderDialogOpen(true);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                </CardHeader>
+
+                  {/* Folder Workspaces */}
+                  {isExpanded && folderWorkspaces.length > 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ml-4">
+                      {folderWorkspaces.map((workspace) => (
+                        <Card
+                          key={workspace._id}
+                          className="hover:shadow-lg transition-shadow cursor-pointer group"
+                        >
+                          <CardHeader className="pb-3">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1" onClick={() => navigate(`/workspaces/${workspace._id}`)}>
+                                <CardTitle className="text-lg group-hover:text-red-600 transition-colors">
+                                  {workspace.name}
+                                </CardTitle>
+                                {workspace.description && (
+                                  <CardDescription className="mt-1 line-clamp-2">
+                                    {workspace.description}
+                                  </CardDescription>
+                                )}
+                              </div>
+                              <Badge className={`ml-2 flex items-center gap-1 ${getRoleBadgeColor(workspace.role || 'viewer')}`}>
+                                {getRoleIcon(workspace.role || 'viewer')}
+                                {workspace.role}
+                              </Badge>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="flex items-center justify-between text-sm text-gray-500">
+                              <span className="flex items-center gap-1">
+                                <Calendar className="h-4 w-4" />
+                                {new Date(workspace.createdAt).toLocaleDateString()}
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <Button variant="ghost" size="sm" onClick={() => navigate(`/workspaces/${workspace._id}`)}>
+                                  <MessageSquare className="h-4 w-4" />
+                                </Button>
+                                {workspace.role === 'owner' && (
+                                  <>
+                                    <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setWorkspaceToRename(workspace); }}>
+                                      <Edit3 className="h-4 w-4" />
+                                    </Button>
+                                    <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setWorkspaceToDelete(workspace as Workspace); setDeleteDialogOpen(true); }} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                  {isExpanded && folderWorkspaces.length === 0 && (
+                    <p className="text-sm text-gray-500 ml-9 mb-4">No workspaces in this folder</p>
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Root Workspaces (not in any folder) */}
+            {(foldersData.workspacesByFolder['root']?.length > 0) && (
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">Workspaces</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {foldersData.workspacesByFolder['root'].map((workspace) => (
+                    <Card
+                      key={workspace._id}
+                      className="hover:shadow-lg transition-shadow cursor-pointer group"
+                    >
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1" onClick={() => navigate(`/workspaces/${workspace._id}`)}>
+                            <CardTitle className="text-lg group-hover:text-red-600 transition-colors">
+                              {workspace.name}
+                            </CardTitle>
+                            {workspace.description && (
+                              <CardDescription className="mt-1 line-clamp-2">
+                                {workspace.description}
+                              </CardDescription>
+                            )}
+                          </div>
+                          <Badge className={`ml-2 flex items-center gap-1 ${getRoleBadgeColor(workspace.role || 'viewer')}`}>
+                            {getRoleIcon(workspace.role || 'viewer')}
+                            {workspace.role}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-4 w-4" />
+                            {new Date(workspace.createdAt).toLocaleDateString()}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => navigate(`/workspaces/${workspace._id}`)}>
+                              <MessageSquare className="h-4 w-4" />
+                            </Button>
+                            {workspace.role === 'owner' && (
+                              <>
+                                <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setWorkspaceToRename(workspace); }}>
+                                  <Edit3 className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setWorkspaceToDelete(workspace as Workspace); setDeleteDialogOpen(true); }} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Empty state */}
+            {foldersData.folders.length === 0 && (!foldersData.workspacesByFolder['root'] || foldersData.workspacesByFolder['root'].length === 0) && (
+              <Card className="text-center py-12">
                 <CardContent>
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <div className="flex items-center gap-4">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        {new Date(workspace.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => navigate(`/workspaces/${workspace._id}`)}
-                      >
-                        <MessageSquare className="h-4 w-4" />
-                      </Button>
-
-                      {workspace.role === 'owner' && (
-                        <>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setWorkspaceToRename(workspace as WorkspaceWithFolder);
-                            }}
-                          >
-                            <Edit3 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setWorkspaceToDelete(workspace);
-                              setDeleteDialogOpen(true);
-                            }}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </div>
+                  <FolderOpen className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No workspaces yet</h3>
+                  <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                    Create your first workspace to start collaborating with your team.
+                  </p>
+                  <Button onClick={() => setCreateDialogOpen(true)} className="bg-red-600 hover:bg-red-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Your First Workspace
+                  </Button>
                 </CardContent>
               </Card>
-            ))}
+            )}
           </div>
         ) : (
           <Card className="text-center py-12">
