@@ -1213,7 +1213,7 @@ const WorkspaceDetail = () => {
                 onKeyDown={handleKeyPress}
                 members={workspaceData?.members || []}
                 disabled={sendMutation.isPending}
-                className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                className={`flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 ${messageText ? 'text-left' : 'text-center'}`}
               />
               <Button
                 onClick={startRecording}
