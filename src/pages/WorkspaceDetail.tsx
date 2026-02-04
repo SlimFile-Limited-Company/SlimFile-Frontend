@@ -1187,7 +1187,7 @@ const WorkspaceDetail = () => {
             </div>
           ) : (
             /* Normal Text Input with Mentions and File Upload */
-            <div className="flex items-center gap-1 sm:gap-2 flex-1 bg-slate-50 border border-slate-200 rounded-full px-2 py-1">
+            <div className="flex items-center gap-1 sm:gap-2 flex-1 bg-slate-50 border border-slate-200 rounded-full px-2 py-1 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-200 transition-colors">
               <FileUploadInput
                 onFilesSelected={setSelectedFiles}
                 selectedFiles={selectedFiles}
@@ -1213,7 +1213,7 @@ const WorkspaceDetail = () => {
                 onKeyDown={handleKeyPress}
                 members={workspaceData?.members || []}
                 disabled={sendMutation.isPending}
-                className="flex-1 bg-transparent border-none focus:ring-0"
+                className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0"
               />
               <Button
                 onClick={startRecording}
