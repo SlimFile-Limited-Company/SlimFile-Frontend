@@ -33,16 +33,24 @@ import {
   StopCircle,
   Play,
   Pause,
-  ArrowDown
+  ArrowDown,
+  Edit2,
+  Palette
 } from 'lucide-react';
 import {
   getWorkspace,
   getMessages,
   sendMessage,
+  sendMessageWithAttachments,
+  editMessage,
   deleteMessage,
   markMessageAsDelivered,
   markMessageAsRead,
+  getChatSettings,
+  updateWallpaper,
   Message,
+  ChatSettings,
+  WallpaperPreset,
   formatMessageTime
 } from '@/services/workspaceService';
 import {
@@ -53,6 +61,7 @@ import {
   sendTypingIndicator,
   onNewMessage,
   onMessageDeleted,
+  onMessageEdited,
   onUserTyping,
   onMessageDelivered,
   onMessageRead,
@@ -68,6 +77,10 @@ import {
 import InviteMemberDialog from '@/components/workspace/InviteMemberDialog';
 import MemberList from '@/components/workspace/MemberList';
 import { useInAppNotification } from '@/components/InAppNotification';
+import { FileAttachmentsList } from '@/components/workspace/FileAttachment';
+import { FileUploadInput } from '@/components/workspace/FileUploadInput';
+import { EditMessageDialog } from '@/components/workspace/EditMessageDialog';
+import { WallpaperSettings, getWallpaperStyle } from '@/components/workspace/WallpaperSettings';
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
@@ -89,6 +102,11 @@ const WorkspaceDetail = () => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [chatSettings, setChatSettings] = useState<ChatSettings | null>(null);
+  const [wallpaperPresets, setWallpaperPresets] = useState<WallpaperPreset[]>([]);
+  const [editingMessage, setEditingMessage] = useState<Message | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -243,6 +261,14 @@ const WorkspaceDetail = () => {
       );
     });
 
+    const unsubEdited = onMessageEdited((editedMessage) => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m._id === editedMessage._id ? editedMessage : m
+        )
+      );
+    });
+
     const unsubTyping = onUserTyping(({ userId, isTyping }) => {
       setTypingUsers((prev) => {
         const next = new Map(prev);
@@ -327,6 +353,7 @@ const WorkspaceDetail = () => {
     return () => {
       unsubMessage();
       unsubDelete();
+      unsubEdited();
       unsubTyping();
       unsubMemberJoined();
       unsubMemberRemoved();
@@ -398,19 +425,52 @@ const WorkspaceDetail = () => {
     };
   }, [messages, workspaceId, currentUserId]);
 
+  // Fetch chat settings (wallpaper)
+  useEffect(() => {
+    if (!workspaceId) return;
+
+    getChatSettings(workspaceId)
+      .then((data) => {
+        setChatSettings(data.settings);
+        setWallpaperPresets(data.presets);
+      })
+      .catch((err) => console.error('Failed to load chat settings:', err));
+  }, [workspaceId]);
+
   const handleSendMessage = async () => {
     const text = messageText.trim();
-    if (!text) return;
+    if (!text && selectedFiles.length === 0) return;
 
     const replyTo = replyToMessage?._id;
+    const filesToSend = [...selectedFiles];
 
     setMessageText('');
     setReplyToMessage(null);
+    setSelectedFiles([]);
     sendTypingIndicator(workspaceId!, false);
     playSendSound();
 
-    await sendMutation.mutateAsync({ text, replyTo });
+    // Use file upload if there are files
+    if (filesToSend.length > 0) {
+      await sendMessageWithAttachments(workspaceId!, text || undefined, replyTo, filesToSend);
+    } else {
+      await sendMutation.mutateAsync({ text, replyTo });
+    }
     setTimeout(() => scrollToBottom(), 50);
+  };
+
+  const handleEditMessage = async (messageId: string, newText: string) => {
+    await editMessage(workspaceId!, messageId, newText);
+  };
+
+  const handleUpdateWallpaper = async (
+    type: 'preset' | 'color' | 'custom',
+    value?: string,
+    file?: File
+  ) => {
+    const result = await updateWallpaper(workspaceId!, type, value, file);
+    setChatSettings(result.settings);
+    setWallpaperPresets(result.presets);
   };
 
   const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -751,6 +811,18 @@ const WorkspaceDetail = () => {
             </Button>
           )}
 
+          <WallpaperSettings
+            workspaceId={workspaceId!}
+            currentSettings={chatSettings}
+            presets={wallpaperPresets}
+            onUpdateWallpaper={handleUpdateWallpaper}
+            trigger={
+              <Button variant="ghost" size="icon" className="hover:bg-slate-100 h-8 w-8">
+                <Palette className="h-4 w-4" />
+              </Button>
+            }
+          />
+
           <Sheet open={membersSheetOpen} onOpenChange={setMembersSheetOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="sm" className="hover:bg-slate-100">
@@ -780,7 +852,8 @@ const WorkspaceDetail = () => {
       {/* Chat Messages Area */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto bg-slate-50 px-6 py-6 relative"
+        className="flex-1 overflow-y-auto px-6 py-6 relative"
+        style={getWallpaperStyle(chatSettings, wallpaperPresets)}
       >
         {hasMore && (
           <div className="text-center mb-6">
@@ -917,6 +990,17 @@ const WorkspaceDetail = () => {
                           className="text-sm whitespace-pre-wrap break-words leading-relaxed"
                         />
                       )}
+
+                      {/* Display attachments */}
+                      {message.attachments && message.attachments.length > 0 && (
+                        <div className="mt-2">
+                          <FileAttachmentsList
+                            attachments={message.attachments}
+                            isOwnMessage={isOwnMessage}
+                          />
+                        </div>
+                      )}
+
                       <div className="flex items-center gap-1 mt-1.5">
                         <p
                           className={`text-[10px] ${
@@ -928,14 +1012,17 @@ const WorkspaceDetail = () => {
                           }`}
                         >
                           {formatMessageTime(message.createdAt)}
+                          {message.editedAt && (
+                            <span className="ml-1 italic">(edited)</span>
+                          )}
                         </p>
                         {renderMessageStatus(message)}
                       </div>
 
-                      {/* Reply and Delete buttons */}
+                      {/* Reply, Edit and Delete buttons */}
                       <div
                         className={`absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex gap-1 ${
-                          isOwnMessage ? '-left-20' : '-right-20'
+                          isOwnMessage ? '-left-24' : '-right-24'
                         }`}
                       >
                         {!message.deleted && (
@@ -947,10 +1034,23 @@ const WorkspaceDetail = () => {
                             <Reply className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600" />
                           </button>
                         )}
+                        {isOwnMessage && !message.deleted && message.type === 'text' && (
+                          <button
+                            onClick={() => {
+                              setEditingMessage(message);
+                              setIsEditDialogOpen(true);
+                            }}
+                            className="p-2 bg-white hover:bg-slate-50 rounded-full shadow-md border border-slate-200"
+                            title="Edit message"
+                          >
+                            <Edit2 className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600" />
+                          </button>
+                        )}
                         {isOwnMessage && !message.deleted && (
                           <button
                             onClick={() => deleteMutation.mutate(message._id)}
                             className="p-2 bg-white hover:bg-slate-50 rounded-full shadow-md border border-slate-200"
+                            title="Delete message"
                           >
                             <Trash2 className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600" />
                           </button>
@@ -1078,8 +1178,17 @@ const WorkspaceDetail = () => {
               </Button>
             </div>
           ) : (
-            /* Normal Text Input with Mentions */
+            /* Normal Text Input with Mentions and File Upload */
             <>
+              <FileUploadInput
+                onFilesSelected={setSelectedFiles}
+                selectedFiles={selectedFiles}
+                onRemoveFile={(index) => {
+                  setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+                }}
+                onClearFiles={() => setSelectedFiles([])}
+                disabled={sendMutation.isPending}
+              />
               <MentionInput
                 placeholder="Type a message (use @ to mention)"
                 value={messageText}
@@ -1112,7 +1221,7 @@ const WorkspaceDetail = () => {
           <Button
             onClick={audioChunks.length > 0 ? sendAudioMessage : handleSendMessage}
             disabled={
-              (audioChunks.length === 0 && !messageText.trim()) ||
+              (audioChunks.length === 0 && !messageText.trim() && selectedFiles.length === 0) ||
               sendMutation.isPending ||
               isRecording
             }
@@ -1133,6 +1242,17 @@ const WorkspaceDetail = () => {
         workspaceName={workspace.name}
         open={inviteDialogOpen}
         onOpenChange={setInviteDialogOpen}
+      />
+
+      <EditMessageDialog
+        message={editingMessage}
+        isOpen={isEditDialogOpen}
+        onClose={() => {
+          setIsEditDialogOpen(false);
+          setEditingMessage(null);
+        }}
+        onSave={handleEditMessage}
+        members={workspaceData?.members}
       />
     </div>
   );

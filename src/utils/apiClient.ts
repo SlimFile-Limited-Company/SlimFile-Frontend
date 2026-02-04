@@ -154,3 +154,64 @@ export async function apiDelete<T = any>(
   const text = await response.text();
   return text ? JSON.parse(text) : ({} as T);
 }
+
+/**
+ * Compress a file using the SlimFile compression API
+ * Returns a new File object with the compressed data
+ */
+export interface CompressResult {
+  file: File;
+  originalSize: number;
+  compressedSize: number;
+  spaceSaved: number;
+  compressionRatio: number;
+}
+
+export async function compressFile(file: File): Promise<CompressResult> {
+  const token = localStorage.getItem('jwt');
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/compress`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+    body: formData
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Compression failed' }));
+    throw new Error(error.error || 'Failed to compress file');
+  }
+
+  // Get the compressed file as blob
+  const blob = await response.blob();
+
+  // Extract filename from Content-Disposition header or use original
+  const contentDisposition = response.headers.get('Content-Disposition');
+  let filename = file.name;
+  if (contentDisposition) {
+    const match = contentDisposition.match(/filename="?([^";\n]+)"?/);
+    if (match) {
+      filename = match[1];
+    }
+  }
+
+  // Create a new File object with the compressed data
+  const compressedFile = new File([blob], filename, { type: blob.type || file.type });
+
+  const originalSize = file.size;
+  const compressedSize = compressedFile.size;
+  const spaceSaved = originalSize - compressedSize;
+  const compressionRatio = originalSize > 0 ? Math.round((spaceSaved / originalSize) * 100) : 0;
+
+  return {
+    file: compressedFile,
+    originalSize,
+    compressedSize,
+    spaceSaved,
+    compressionRatio
+  };
+}

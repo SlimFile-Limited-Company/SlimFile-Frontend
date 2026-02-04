@@ -37,6 +37,10 @@ export interface MessageDeletedEvent {
   messageId: string;
 }
 
+export interface MessageEditedEvent extends Message {
+  // Message includes editedAt field after edit
+}
+
 export interface MessageDeliveredEvent {
   messageId: string;
   userId: string;
@@ -213,6 +217,16 @@ export function onMessageDeleted(callback: (event: MessageDeletedEvent) => void)
   socket?.on('messageDeleted', callback);
   return () => {
     socket?.off('messageDeleted', callback);
+  };
+}
+
+/**
+ * Subscribe to message edit events
+ */
+export function onMessageEdited(callback: (message: Message) => void): () => void {
+  socket?.on('messageEdited', callback);
+  return () => {
+    socket?.off('messageEdited', callback);
   };
 }
 

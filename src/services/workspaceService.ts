@@ -38,6 +38,18 @@ export interface WorkspaceInvitation {
   createdAt: string;
 }
 
+export interface MessageAttachment {
+  cloudinaryId: string;
+  url: string;
+  thumbnailUrl?: string | null;
+  type: 'image' | 'video' | 'audio' | 'document';
+  mimeType: string;
+  filename: string;
+  size: number;
+  dimensions?: { width: number; height: number };
+  duration?: number | null;
+}
+
 export interface Message {
   _id: string;
   workspaceId: string;
@@ -47,7 +59,9 @@ export interface Message {
   audioData?: string | null; // Deprecated: old base64 format
   audioUrl?: string | null; // New: file URL
   audioDuration?: number | null;
+  attachments?: MessageAttachment[];
   deleted: boolean;
+  editedAt?: string | null;
   deliveredTo: string[];
   readBy: string[];
   replyTo?: {
@@ -59,6 +73,36 @@ export interface Message {
   } | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface WorkspaceFolder {
+  _id: string;
+  name: string;
+  userId: string;
+  parentFolderId: string | null;
+  order: number;
+  color?: string | null;
+  isExpanded?: boolean;
+}
+
+export interface WallpaperPreset {
+  id: string;
+  name: string;
+  type: 'gradient' | 'pattern' | 'solid';
+  value: string;
+}
+
+export interface ChatSettings {
+  wallpaper: {
+    type: 'preset' | 'color' | 'custom';
+    value: string;
+    cloudinaryId?: string | null;
+  };
+}
+
+export interface WorkspaceWithFolder extends Workspace {
+  orderInFolder?: number;
+  membershipId?: string;
 }
 
 export interface WorkspaceDetails {
@@ -524,4 +568,262 @@ export function formatMessageTime(dateString: string): string {
   if (diffDays < 7) return `${diffDays}d ago`;
 
   return date.toLocaleDateString();
+}
+
+// ============================================
+// MESSAGE ATTACHMENTS & EDIT
+// ============================================
+
+/**
+ * Send a message with file attachments
+ */
+export async function sendMessageWithAttachments(
+  workspaceId: string,
+  text?: string,
+  replyTo?: string,
+  files?: File[],
+  audioData?: string,
+  audioDuration?: number
+): Promise<Message> {
+  const token = localStorage.getItem('jwt');
+
+  // If we have files, use FormData
+  if (files && files.length > 0) {
+    const formData = new FormData();
+    if (text) formData.append('text', text);
+    if (replyTo) formData.append('replyTo', replyTo);
+    if (audioData) formData.append('audioData', audioData);
+    if (audioDuration) formData.append('audioDuration', audioDuration.toString());
+    files.forEach(file => formData.append('files', file));
+
+    const response = await fetch(`${API_BASE_URL}/workspaces/${workspaceId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to send message');
+    }
+
+    const data = await response.json();
+    return data.message;
+  }
+
+  // No files, use JSON
+  return sendMessage(workspaceId, text, replyTo, audioData, audioDuration);
+}
+
+/**
+ * Edit a message
+ */
+export async function editMessage(
+  workspaceId: string,
+  messageId: string,
+  text: string
+): Promise<Message> {
+  const response = await fetch(
+    `${API_BASE_URL}/workspaces/${workspaceId}/messages/${messageId}`,
+    {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ text })
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to edit message');
+  }
+
+  const data = await response.json();
+  return data.message;
+}
+
+// ============================================
+// CHAT SETTINGS
+// ============================================
+
+/**
+ * Get chat settings for a workspace
+ */
+export async function getChatSettings(workspaceId: string): Promise<{
+  settings: ChatSettings;
+  presets: WallpaperPreset[];
+}> {
+  const response = await fetch(
+    `${API_BASE_URL}/workspaces/${workspaceId}/settings/chat`,
+    { headers: getAuthHeaders() }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch chat settings');
+  }
+
+  return response.json();
+}
+
+/**
+ * Update wallpaper setting
+ */
+export async function updateWallpaper(
+  workspaceId: string,
+  type: 'preset' | 'color' | 'custom',
+  value?: string,
+  file?: File
+): Promise<{ settings: ChatSettings; presets: WallpaperPreset[] }> {
+  const token = localStorage.getItem('jwt');
+
+  const formData = new FormData();
+  formData.append('type', type);
+  if (value) formData.append('value', value);
+  if (file) formData.append('wallpaper', file);
+
+  const response = await fetch(
+    `${API_BASE_URL}/workspaces/${workspaceId}/settings/chat/wallpaper`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update wallpaper');
+  }
+
+  return response.json();
+}
+
+// ============================================
+// FOLDERS
+// ============================================
+
+/**
+ * Get all folders with workspaces
+ */
+export async function getFolders(): Promise<{
+  folders: WorkspaceFolder[];
+  workspacesByFolder: Record<string, WorkspaceWithFolder[]>;
+}> {
+  const response = await fetch(`${API_BASE_URL}/folders`, {
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch folders');
+  }
+
+  const data = await response.json();
+  return {
+    folders: data.folders,
+    workspacesByFolder: data.workspacesByFolder
+  };
+}
+
+/**
+ * Create a new folder
+ */
+export async function createFolder(
+  name: string,
+  parentFolderId?: string,
+  color?: string
+): Promise<WorkspaceFolder> {
+  const response = await fetch(`${API_BASE_URL}/folders`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ name, parentFolderId, color })
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to create folder');
+  }
+
+  const data = await response.json();
+  return data.folder;
+}
+
+/**
+ * Update a folder
+ */
+export async function updateFolder(
+  folderId: string,
+  updates: { name?: string; parentFolderId?: string | null; color?: string | null; order?: number }
+): Promise<WorkspaceFolder> {
+  const response = await fetch(`${API_BASE_URL}/folders/${folderId}`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(updates)
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update folder');
+  }
+
+  const data = await response.json();
+  return data.folder;
+}
+
+/**
+ * Delete a folder
+ */
+export async function deleteFolder(folderId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/folders/${folderId}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to delete folder');
+  }
+}
+
+/**
+ * Move a workspace to a folder
+ */
+export async function moveWorkspaceToFolder(
+  workspaceId: string,
+  folderId: string | null,
+  orderInFolder?: number
+): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/folders/move-workspace`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ workspaceId, folderId, orderInFolder })
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to move workspace');
+  }
+}
+
+/**
+ * Bulk reorder folders and workspaces
+ */
+export async function reorderFoldersAndWorkspaces(
+  folders?: { _id: string; order: number; parentFolderId?: string | null }[],
+  workspaces?: { workspaceId: string; orderInFolder: number; folderId?: string | null }[]
+): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/folders/reorder`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ folders, workspaces })
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to reorder');
+  }
 }

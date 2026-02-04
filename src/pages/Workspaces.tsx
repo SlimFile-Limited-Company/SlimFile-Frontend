@@ -39,17 +39,30 @@ import {
   Eye,
   Mail,
   Loader2,
-  FolderOpen
+  FolderOpen,
+  FolderPlus,
+  LayoutGrid,
+  List
 } from 'lucide-react';
 import {
   getWorkspaces,
   createWorkspace,
   deleteWorkspace,
+  updateWorkspace,
   getPendingInvitations,
+  getFolders,
+  createFolder,
+  updateFolder,
+  deleteFolder,
+  moveWorkspaceToFolder,
   Workspace,
   WorkspaceInvitation,
+  WorkspaceFolder,
+  WorkspaceWithFolder,
   getRoleBadgeColor
 } from '@/services/workspaceService';
+import { FolderTree } from '@/components/workspace/FolderTree';
+import { RenameDialog, CreateFolderDialog } from '@/components/workspace/RenameDialog';
 
 const Workspaces = () => {
   const navigate = useNavigate();
@@ -61,10 +74,26 @@ const Workspaces = () => {
   const [workspaceToDelete, setWorkspaceToDelete] = useState<Workspace | null>(null);
   const [newWorkspace, setNewWorkspace] = useState({ name: '', description: '' });
 
-  // Fetch workspaces
-  const { data: workspaces, isLoading, error } = useQuery({
+  // Folder state
+  const [viewMode, setViewMode] = useState<'grid' | 'tree'>('tree');
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+  const [createFolderDialogOpen, setCreateFolderDialogOpen] = useState(false);
+  const [parentFolderForNew, setParentFolderForNew] = useState<string | undefined>(undefined);
+  const [folderToRename, setFolderToRename] = useState<WorkspaceFolder | null>(null);
+  const [workspaceToRename, setWorkspaceToRename] = useState<WorkspaceWithFolder | null>(null);
+  const [deleteFolderDialogOpen, setDeleteFolderDialogOpen] = useState(false);
+  const [folderToDelete, setFolderToDelete] = useState<string | null>(null);
+
+  // Fetch workspaces (for grid view)
+  const { data: workspaces, isLoading: isLoadingWorkspaces } = useQuery({
     queryKey: ['workspaces'],
     queryFn: getWorkspaces,
+  });
+
+  // Fetch folders with workspaces (for tree view)
+  const { data: foldersData, isLoading: isLoadingFolders } = useQuery({
+    queryKey: ['folders'],
+    queryFn: getFolders,
   });
 
   // Fetch pending invitations
@@ -78,6 +107,7 @@ const Workspaces = () => {
     mutationFn: () => createWorkspace(newWorkspace.name, newWorkspace.description),
     onSuccess: (workspace) => {
       queryClient.invalidateQueries({ queryKey: ['workspaces'] });
+      queryClient.invalidateQueries({ queryKey: ['folders'] });
       setCreateDialogOpen(false);
       setNewWorkspace({ name: '', description: '' });
       toast({
@@ -100,6 +130,7 @@ const Workspaces = () => {
     mutationFn: (id: string) => deleteWorkspace(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workspaces'] });
+      queryClient.invalidateQueries({ queryKey: ['folders'] });
       setDeleteDialogOpen(false);
       setWorkspaceToDelete(null);
       toast({
@@ -134,6 +165,115 @@ const Workspaces = () => {
     }
   };
 
+  // Folder operations
+  const handleCreateFolder = async (name: string, color?: string) => {
+    try {
+      await createFolder(name, parentFolderForNew, color);
+      queryClient.invalidateQueries({ queryKey: ['folders'] });
+      setCreateFolderDialogOpen(false);
+      setParentFolderForNew(undefined);
+      toast({
+        title: 'Folder Created',
+        description: `Folder "${name}" has been created.`,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: (error as Error).message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleRenameFolder = async (newName: string) => {
+    if (!folderToRename) return;
+    try {
+      await updateFolder(folderToRename._id, { name: newName });
+      queryClient.invalidateQueries({ queryKey: ['folders'] });
+      setFolderToRename(null);
+      toast({
+        title: 'Folder Renamed',
+        description: `Folder renamed to "${newName}".`,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: (error as Error).message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDeleteFolder = async () => {
+    if (!folderToDelete) return;
+    try {
+      await deleteFolder(folderToDelete);
+      queryClient.invalidateQueries({ queryKey: ['folders'] });
+      setDeleteFolderDialogOpen(false);
+      setFolderToDelete(null);
+      toast({
+        title: 'Folder Deleted',
+        description: 'Folder has been deleted. Contents moved to parent.',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: (error as Error).message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleRenameWorkspace = async (newName: string) => {
+    if (!workspaceToRename) return;
+    try {
+      await updateWorkspace(workspaceToRename._id, { name: newName });
+      queryClient.invalidateQueries({ queryKey: ['workspaces'] });
+      queryClient.invalidateQueries({ queryKey: ['folders'] });
+      setWorkspaceToRename(null);
+      toast({
+        title: 'Workspace Renamed',
+        description: `Workspace renamed to "${newName}".`,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: (error as Error).message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleMoveWorkspace = async (result: { workspaceId?: string; folderId?: string; targetFolderId: string | null }) => {
+    if (!result.workspaceId) return;
+    try {
+      await moveWorkspaceToFolder(result.workspaceId, result.targetFolderId);
+      queryClient.invalidateQueries({ queryKey: ['folders'] });
+      toast({
+        title: 'Workspace Moved',
+        description: 'Workspace has been moved successfully.',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: (error as Error).message,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleFolderToggle = (folderId: string) => {
+    setExpandedFolders(prev => {
+      const next = new Set(prev);
+      if (next.has(folderId)) {
+        next.delete(folderId);
+      } else {
+        next.add(folderId);
+      }
+      return next;
+    });
+  };
+
   const getRoleIcon = (role: string) => {
     switch (role) {
       case 'owner':
@@ -147,24 +287,12 @@ const Workspaces = () => {
     }
   };
 
+  const isLoading = isLoadingWorkspaces || isLoadingFolders;
+
   if (isLoading) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-red-600" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen pt-20 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900">Error loading workspaces</h2>
-          <p className="text-gray-600 mt-2">{(error as Error).message}</p>
-          <Button onClick={() => window.location.reload()} className="mt-4">
-            Try Again
-          </Button>
-        </div>
       </div>
     );
   }
@@ -193,6 +321,38 @@ const Workspaces = () => {
                 </Button>
               </Link>
             )}
+
+            {/* View mode toggle */}
+            <div className="flex border rounded-lg overflow-hidden">
+              <Button
+                variant={viewMode === 'tree' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('tree')}
+                className={viewMode === 'tree' ? 'bg-slate-900' : ''}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
+                className={viewMode === 'grid' ? 'bg-slate-900' : ''}
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* New Folder button */}
+            <Button
+              variant="outline"
+              onClick={() => {
+                setParentFolderForNew(undefined);
+                setCreateFolderDialogOpen(true);
+              }}
+            >
+              <FolderPlus className="h-4 w-4 mr-2" />
+              New Folder
+            </Button>
 
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
@@ -259,8 +419,40 @@ const Workspaces = () => {
           </div>
         </div>
 
-        {/* Workspaces Grid */}
-        {workspaces && workspaces.length > 0 ? (
+        {/* Content */}
+        {viewMode === 'tree' && foldersData ? (
+          /* Tree View with Folders */
+          <Card className="p-4">
+            <FolderTree
+              folders={foldersData.folders}
+              workspacesByFolder={foldersData.workspacesByFolder}
+              onFolderToggle={handleFolderToggle}
+              onFolderCreate={(parentId) => {
+                setParentFolderForNew(parentId);
+                setCreateFolderDialogOpen(true);
+              }}
+              onFolderRename={setFolderToRename}
+              onFolderDelete={(folderId) => {
+                setFolderToDelete(folderId);
+                setDeleteFolderDialogOpen(true);
+              }}
+              onWorkspaceClick={(id) => navigate(`/workspaces/${id}`)}
+              onWorkspaceRename={setWorkspaceToRename}
+              onWorkspaceDelete={(id) => {
+                const workspace = Object.values(foldersData.workspacesByFolder)
+                  .flat()
+                  .find(w => w._id === id);
+                if (workspace) {
+                  setWorkspaceToDelete(workspace as Workspace);
+                  setDeleteDialogOpen(true);
+                }
+              }}
+              onDragEnd={handleMoveWorkspace}
+              expandedFolders={expandedFolders}
+            />
+          </Card>
+        ) : workspaces && workspaces.length > 0 ? (
+          /* Grid View */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {workspaces.map((workspace) => (
               <Card
@@ -304,18 +496,30 @@ const Workspaces = () => {
                       </Button>
 
                       {workspace.role === 'owner' && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setWorkspaceToDelete(workspace);
-                            setDeleteDialogOpen(true);
-                          }}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setWorkspaceToRename(workspace as WorkspaceWithFolder);
+                            }}
+                          >
+                            <Edit3 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setWorkspaceToDelete(workspace);
+                              setDeleteDialogOpen(true);
+                            }}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
                       )}
                     </div>
                   </div>
@@ -343,7 +547,7 @@ const Workspaces = () => {
           </Card>
         )}
 
-        {/* Delete Confirmation Dialog */}
+        {/* Delete Workspace Confirmation Dialog */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -372,6 +576,63 @@ const Workspaces = () => {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Delete Folder Confirmation Dialog */}
+        <AlertDialog open={deleteFolderDialogOpen} onOpenChange={setDeleteFolderDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Folder</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this folder? The folder contents (subfolders and
+                workspaces) will be moved to the parent folder.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteFolder}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Delete Folder
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Create Folder Dialog */}
+        <CreateFolderDialog
+          isOpen={createFolderDialogOpen}
+          onClose={() => {
+            setCreateFolderDialogOpen(false);
+            setParentFolderForNew(undefined);
+          }}
+          onCreate={handleCreateFolder}
+          parentFolderName={
+            parentFolderForNew
+              ? foldersData?.folders.find(f => f._id === parentFolderForNew)?.name
+              : undefined
+          }
+        />
+
+        {/* Rename Folder Dialog */}
+        <RenameDialog
+          isOpen={!!folderToRename}
+          onClose={() => setFolderToRename(null)}
+          title="Rename Folder"
+          currentName={folderToRename?.name || ''}
+          onRename={handleRenameFolder}
+          placeholder="Enter folder name"
+        />
+
+        {/* Rename Workspace Dialog */}
+        <RenameDialog
+          isOpen={!!workspaceToRename}
+          onClose={() => setWorkspaceToRename(null)}
+          title="Rename Workspace"
+          currentName={workspaceToRename?.name || ''}
+          onRename={handleRenameWorkspace}
+          placeholder="Enter workspace name"
+        />
       </div>
     </div>
   );
