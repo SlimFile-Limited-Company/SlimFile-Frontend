@@ -359,7 +359,7 @@ const Workspaces = () => {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Workspaces</h1>
             <p className="text-gray-600 mt-1">
-              Collaborate with your team on file compression projects and many others
+              Collaborate with your team on shared projects and stay organized
             </p>
           </div>
 
