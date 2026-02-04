@@ -28,6 +28,27 @@ import {
 import { WorkspaceCard } from './WorkspaceCard';
 import type { WorkspaceFolder, WorkspaceWithFolder } from '@/services/workspaceService';
 
+// Helper to highlight matching text
+function HighlightMatch({ text, query }: { text: string; query?: string }) {
+  if (!query || !query.trim()) {
+    return <>{text}</>;
+  }
+
+  const parts = text.split(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
+
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === query.toLowerCase() ? (
+          <span key={i} className="bg-yellow-200 text-yellow-900 rounded px-0.5">{part}</span>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
+
 interface FolderTreeProps {
   folders: WorkspaceFolder[];
   workspacesByFolder: Record<string, WorkspaceWithFolder[]>;
@@ -40,6 +61,7 @@ interface FolderTreeProps {
   onWorkspaceDelete: (workspaceId: string) => void;
   onDragEnd: (result: { workspaceId?: string; folderId?: string; targetFolderId: string | null; newOrder: number }) => void;
   expandedFolders: Set<string>;
+  searchQuery?: string;
 }
 
 interface FolderItemProps {
@@ -62,6 +84,7 @@ interface FolderItemProps {
   onFolderRename: (folder: WorkspaceFolder) => void;
   onFolderDelete: (folderId: string) => void;
   onFolderCreate: (parentFolderId?: string) => void;
+  searchQuery?: string;
 }
 
 function FolderItem({
@@ -83,7 +106,8 @@ function FolderItem({
   onFolderToggle,
   onFolderRename,
   onFolderDelete,
-  onFolderCreate
+  onFolderCreate,
+  searchQuery
 }: FolderItemProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: folder._id,
@@ -128,7 +152,7 @@ function FolderItem({
             />
           )}
           <span className="text-sm font-medium text-slate-700 truncate">
-            {folder.name}
+            <HighlightMatch text={folder.name} query={searchQuery} />
           </span>
           <span className="text-xs text-slate-400">
             ({workspaces.length})
@@ -200,6 +224,7 @@ function FolderItem({
                 onFolderRename={onFolderRename}
                 onFolderDelete={onFolderDelete}
                 onFolderCreate={onFolderCreate}
+                searchQuery={searchQuery}
               />
             );
           })}
@@ -217,6 +242,7 @@ function FolderItem({
                 onRename={() => onWorkspaceRename(workspace)}
                 onDelete={() => onWorkspaceDelete(workspace._id)}
                 depth={depth + 1}
+                searchQuery={searchQuery}
               />
             ))}
           </SortableContext>
@@ -254,7 +280,8 @@ export function FolderTree({
   onWorkspaceRename,
   onWorkspaceDelete,
   onDragEnd,
-  expandedFolders
+  expandedFolders,
+  searchQuery
 }: FolderTreeProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overFolderId, setOverFolderId] = useState<string | null>(null);
@@ -365,6 +392,7 @@ export function FolderTree({
               onFolderRename={onFolderRename}
               onFolderDelete={onFolderDelete}
               onFolderCreate={onFolderCreate}
+              searchQuery={searchQuery}
             />
           );
         })}
@@ -388,6 +416,7 @@ export function FolderTree({
                     onRename={() => onWorkspaceRename(workspace)}
                     onDelete={() => onWorkspaceDelete(workspace._id)}
                     depth={0}
+                    searchQuery={searchQuery}
                   />
                 ))}
               </SortableContext>

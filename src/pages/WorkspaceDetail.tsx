@@ -860,7 +860,7 @@ const WorkspaceDetail = () => {
       {/* Chat Messages Area */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto px-6 py-6 relative"
+        className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-6 relative"
         style={getWallpaperStyle(chatSettings, wallpaperPresets)}
       >
         {hasMore && (
@@ -934,7 +934,7 @@ const WorkspaceDetail = () => {
                     </div>
                   )}
 
-                  <div className={`max-w-[70%] ${isOwnMessage ? 'items-end' : 'items-start'}`}>
+                  <div className={`max-w-[85%] sm:max-w-[70%] ${isOwnMessage ? 'items-end' : 'items-start'}`}>
                     {showName && (
                       <p className="text-xs font-medium text-slate-600 mb-1 ml-1">
                         {message.senderId.name}
@@ -1029,14 +1029,14 @@ const WorkspaceDetail = () => {
 
                       {/* Reply, Edit and Delete buttons */}
                       <div
-                        className={`absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex gap-1 ${
-                          isOwnMessage ? '-left-24' : '-right-24'
+                        className={`absolute -top-8 left-1/2 -translate-x-1/2 sm:top-1/2 sm:-translate-y-1/2 sm:left-auto sm:translate-x-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 flex gap-1 bg-white rounded-full shadow-md border border-slate-200 p-0.5 sm:bg-transparent sm:shadow-none sm:border-none sm:p-0 ${
+                          isOwnMessage ? 'sm:-left-24' : 'sm:-right-24'
                         }`}
                       >
                         {!message.deleted && (
                           <button
                             onClick={() => setReplyToMessage(message)}
-                            className="p-2 bg-white hover:bg-slate-50 rounded-full shadow-md border border-slate-200"
+                            className="p-2 rounded-full hover:bg-slate-100 sm:bg-white sm:shadow-md sm:border sm:border-slate-200"
                             title="Reply to this message"
                           >
                             <Reply className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600" />
@@ -1048,7 +1048,7 @@ const WorkspaceDetail = () => {
                               setEditingMessage(message);
                               setIsEditDialogOpen(true);
                             }}
-                            className="p-2 bg-white hover:bg-slate-50 rounded-full shadow-md border border-slate-200"
+                            className="p-2 rounded-full hover:bg-slate-100 sm:bg-white sm:shadow-md sm:border sm:border-slate-200"
                             title="Edit message"
                           >
                             <Edit2 className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600" />
@@ -1057,7 +1057,7 @@ const WorkspaceDetail = () => {
                         {isOwnMessage && !message.deleted && (
                           <button
                             onClick={() => deleteMutation.mutate(message._id)}
-                            className="p-2 bg-white hover:bg-slate-50 rounded-full shadow-md border border-slate-200"
+                            className="p-2 rounded-full hover:bg-slate-100 sm:bg-white sm:shadow-md sm:border sm:border-slate-200"
                             title="Delete message"
                           >
                             <Trash2 className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600" />
@@ -1091,7 +1091,7 @@ const WorkspaceDetail = () => {
 
       {/* Typing Indicator */}
       {typingUsers.size > 0 && (
-        <div className="px-6 py-2 bg-white border-t border-slate-100 flex items-center gap-3">
+        <div className="px-3 sm:px-6 py-2 bg-white border-t border-slate-100 flex items-center gap-3">
           <div className="flex -space-x-1">
             {Array.from(typingUsers.entries()).slice(0, 3).map(([userId]) => {
               const member = workspaceData.members.find(m => m.user._id === userId);
@@ -1117,10 +1117,10 @@ const WorkspaceDetail = () => {
       )}
 
       {/* Message Input */}
-      <div className="bg-white border-t border-slate-200 px-6 py-4">
+      <div className="bg-white border-t border-slate-200 px-3 sm:px-6 py-3 sm:py-4">
         {/* Reply Preview */}
         {replyToMessage && (
-          <div className="max-w-4xl mx-auto mb-3 bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-start gap-3">
+          <div className="max-w-4xl mx-auto mb-2 sm:mb-3 bg-slate-50 border border-slate-200 rounded-lg p-2 sm:p-3 flex items-start gap-2 sm:gap-3">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <Reply className="h-3.5 w-3.5 text-slate-500" />
@@ -1141,10 +1141,10 @@ const WorkspaceDetail = () => {
           </div>
         )}
 
-        <div className="max-w-4xl mx-auto flex items-end gap-3">
+        <div className="max-w-4xl mx-auto flex items-center gap-2">
           {isRecording ? (
             /* Recording UI */
-            <div className="flex-1 flex items-center gap-3 bg-blue-50 border-2 border-blue-200 rounded-lg px-4 py-3">
+            <div className="flex-1 flex items-center gap-2 sm:gap-3 bg-blue-50 border-2 border-blue-200 rounded-lg px-3 sm:px-4 py-2 sm:py-3">
               <div className="flex items-center gap-2 flex-1">
                 <div className="h-3 w-3 bg-blue-500 rounded-full animate-pulse" />
                 <span className="text-sm font-medium text-blue-700">Recording</span>
@@ -1170,7 +1170,7 @@ const WorkspaceDetail = () => {
             </div>
           ) : audioChunks.length > 0 ? (
             /* Audio Preview UI */
-            <div className="flex-1 flex items-center gap-3 bg-blue-50 border-2 border-blue-200 rounded-lg px-4 py-3">
+            <div className="flex-1 flex items-center gap-2 sm:gap-3 bg-blue-50 border-2 border-blue-200 rounded-lg px-3 sm:px-4 py-2 sm:py-3">
               <Mic className="h-5 w-5 text-blue-600" />
               <div className="flex-1">
                 <p className="text-sm font-medium text-blue-700">Voice message ready</p>
@@ -1187,7 +1187,7 @@ const WorkspaceDetail = () => {
             </div>
           ) : (
             /* Normal Text Input with Mentions and File Upload */
-            <>
+            <div className="flex items-center gap-1 sm:gap-2 flex-1 bg-slate-50 border border-slate-200 rounded-full px-2 py-1">
               <FileUploadInput
                 onFilesSelected={setSelectedFiles}
                 selectedFiles={selectedFiles}
@@ -1213,17 +1213,18 @@ const WorkspaceDetail = () => {
                 onKeyDown={handleKeyPress}
                 members={workspaceData?.members || []}
                 disabled={sendMutation.isPending}
+                className="flex-1 bg-transparent border-none focus:ring-0"
               />
               <Button
                 onClick={startRecording}
                 size="icon"
-                variant="outline"
-                className="h-10 w-10 flex-shrink-0 border-slate-200 hover:bg-slate-50"
+                variant="ghost"
+                className="h-8 w-8 flex-shrink-0 hover:bg-slate-200 rounded-full"
                 title="Record voice message"
               >
-                <Mic className="h-5 w-5 text-slate-600" />
+                <Mic className="h-4 w-4 text-slate-500" />
               </Button>
-            </>
+            </div>
           )}
 
           <Button
@@ -1234,7 +1235,7 @@ const WorkspaceDetail = () => {
               isRecording
             }
             size="icon"
-            className="bg-blue-600 hover:bg-blue-700 h-10 w-10 flex-shrink-0"
+            className="bg-blue-600 hover:bg-blue-700 h-10 w-10 flex-shrink-0 rounded-full"
           >
             {sendMutation.isPending ? (
               <Loader2 className="h-5 w-5 animate-spin" />

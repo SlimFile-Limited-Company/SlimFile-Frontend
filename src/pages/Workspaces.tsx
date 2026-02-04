@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -43,7 +43,9 @@ import {
   FolderOpen,
   FolderPlus,
   LayoutGrid,
-  List
+  List,
+  Search,
+  X
 } from 'lucide-react';
 import {
   getWorkspaces,
@@ -84,6 +86,9 @@ const Workspaces = () => {
   const [workspaceToRename, setWorkspaceToRename] = useState<WorkspaceWithFolder | null>(null);
   const [deleteFolderDialogOpen, setDeleteFolderDialogOpen] = useState(false);
   const [folderToDelete, setFolderToDelete] = useState<string | null>(null);
+
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch workspaces (for grid view)
   const { data: workspaces, isLoading: isLoadingWorkspaces } = useQuery({
@@ -290,6 +295,54 @@ const Workspaces = () => {
 
   const isLoading = isLoadingWorkspaces || isLoadingFolders;
 
+  // Filter folders and workspaces based on search query
+  const filteredData = useMemo(() => {
+    if (!foldersData || !searchQuery.trim()) {
+      return foldersData;
+    }
+
+    const query = searchQuery.toLowerCase().trim();
+
+    // Filter folders that match the query
+    const matchingFolders = foldersData.folders.filter(folder =>
+      folder.name.toLowerCase().includes(query)
+    );
+
+    // Get IDs of matching folders
+    const matchingFolderIds = new Set(matchingFolders.map(f => f._id));
+
+    // Filter workspaces that match the query or are in matching folders
+    const filteredWorkspacesByFolder: Record<string, typeof foldersData.workspacesByFolder[string]> = {};
+
+    Object.entries(foldersData.workspacesByFolder).forEach(([folderId, workspaces]) => {
+      const matchingWorkspaces = workspaces.filter(ws =>
+        ws.name.toLowerCase().includes(query) ||
+        ws.description?.toLowerCase().includes(query) ||
+        matchingFolderIds.has(folderId)
+      );
+
+      if (matchingWorkspaces.length > 0 || matchingFolderIds.has(folderId)) {
+        filteredWorkspacesByFolder[folderId] = matchingWorkspaces.length > 0
+          ? matchingWorkspaces
+          : workspaces;
+      }
+    });
+
+    // Include folders that have matching workspaces
+    const foldersWithMatchingWorkspaces = new Set(
+      Object.keys(filteredWorkspacesByFolder).filter(id => id !== 'root')
+    );
+
+    const finalFolders = foldersData.folders.filter(folder =>
+      matchingFolderIds.has(folder._id) || foldersWithMatchingWorkspaces.has(folder._id)
+    );
+
+    return {
+      folders: finalFolders,
+      workspacesByFolder: filteredWorkspacesByFolder
+    };
+  }, [foldersData, searchQuery]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
@@ -302,7 +355,7 @@ const Workspaces = () => {
     <div className="min-h-screen pt-20 pb-12 bg-gray-50">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Workspaces</h1>
             <p className="text-gray-600 mt-1">
@@ -310,12 +363,12 @@ const Workspaces = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             {invitations && invitations.length > 0 && (
               <Link to="/workspaces/invitations">
-                <Button variant="outline" className="relative">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Invitations
+                <Button variant="outline" size="sm" className="relative">
+                  <Mail className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Invitations</span>
                   <Badge className="absolute -top-2 -right-2 bg-red-600 text-white h-5 w-5 p-0 flex items-center justify-center text-xs">
                     {invitations.length}
                   </Badge>
@@ -346,20 +399,21 @@ const Workspaces = () => {
             {/* New Folder button */}
             <Button
               variant="outline"
+              size="sm"
               onClick={() => {
                 setParentFolderForNew(undefined);
                 setCreateFolderDialogOpen(true);
               }}
             >
-              <FolderPlus className="h-4 w-4 mr-2" />
-              New Folder
+              <FolderPlus className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">New Folder</span>
             </Button>
 
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-red-600 hover:bg-red-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  New Workspace
+                <Button size="sm" className="bg-red-600 hover:bg-red-700">
+                  <Plus className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">New Workspace</span>
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -420,13 +474,36 @@ const Workspaces = () => {
           </div>
         </div>
 
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative w-full sm:max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search workspaces and folders..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Content */}
-        {viewMode === 'tree' && foldersData ? (
+        {viewMode === 'tree' && filteredData ? (
           /* Tree View with Folders */
           <Card className="p-4">
             <FolderTree
-              folders={foldersData.folders}
-              workspacesByFolder={foldersData.workspacesByFolder}
+              folders={filteredData.folders}
+              workspacesByFolder={filteredData.workspacesByFolder}
+              searchQuery={searchQuery}
               onFolderToggle={handleFolderToggle}
               onFolderCreate={(parentId) => {
                 setParentFolderForNew(parentId);
@@ -452,12 +529,12 @@ const Workspaces = () => {
               expandedFolders={expandedFolders}
             />
           </Card>
-        ) : foldersData ? (
+        ) : filteredData ? (
           /* Grid View with Folders */
           <div className="space-y-8">
             {/* Folders */}
-            {foldersData.folders.filter(f => !f.parentFolderId).map((folder) => {
-              const folderWorkspaces = foldersData.workspacesByFolder[folder._id] || [];
+            {filteredData.folders.filter(f => !f.parentFolderId).map((folder) => {
+              const folderWorkspaces = filteredData.workspacesByFolder[folder._id] || [];
               const isExpanded = expandedFolders.has(folder._id);
 
               return (
@@ -561,11 +638,11 @@ const Workspaces = () => {
             })}
 
             {/* Root Workspaces (not in any folder) */}
-            {(foldersData.workspacesByFolder['root']?.length > 0) && (
+            {(filteredData.workspacesByFolder['root']?.length > 0) && (
               <div>
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">Workspaces</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {foldersData.workspacesByFolder['root'].map((workspace) => (
+                  {filteredData.workspacesByFolder['root'].map((workspace) => (
                     <Card
                       key={workspace._id}
                       className="hover:shadow-lg transition-shadow cursor-pointer group"
@@ -618,7 +695,7 @@ const Workspaces = () => {
             )}
 
             {/* Empty state */}
-            {foldersData.folders.length === 0 && (!foldersData.workspacesByFolder['root'] || foldersData.workspacesByFolder['root'].length === 0) && (
+            {filteredData.folders.length === 0 && (!filteredData.workspacesByFolder['root'] || filteredData.workspacesByFolder['root'].length === 0) && (
               <Card className="text-center py-12">
                 <CardContent>
                   <FolderOpen className="h-16 w-16 mx-auto text-gray-300 mb-4" />

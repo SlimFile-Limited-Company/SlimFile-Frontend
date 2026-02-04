@@ -11,6 +11,27 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { getRoleBadgeColor, type WorkspaceWithFolder } from '@/services/workspaceService';
 
+// Helper to highlight matching text
+function HighlightMatch({ text, query }: { text: string; query?: string }) {
+  if (!query || !query.trim()) {
+    return <>{text}</>;
+  }
+
+  const parts = text.split(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
+
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === query.toLowerCase() ? (
+          <span key={i} className="bg-yellow-200 text-yellow-900 rounded px-0.5">{part}</span>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
+
 interface WorkspaceCardProps {
   workspace: WorkspaceWithFolder;
   onClick: () => void;
@@ -18,6 +39,7 @@ interface WorkspaceCardProps {
   onDelete: () => void;
   depth?: number;
   isDragging?: boolean;
+  searchQuery?: string;
 }
 
 export function WorkspaceCard({
@@ -26,7 +48,8 @@ export function WorkspaceCard({
   onRename,
   onDelete,
   depth = 0,
-  isDragging = false
+  isDragging = false,
+  searchQuery
 }: WorkspaceCardProps) {
   const {
     attributes,
@@ -72,7 +95,7 @@ export function WorkspaceCard({
         <div className="flex items-center gap-2">
           <MessageSquare className="h-4 w-4 text-slate-400 flex-shrink-0" />
           <span className="text-sm font-medium text-slate-700 truncate">
-            {workspace.name}
+            <HighlightMatch text={workspace.name} query={searchQuery} />
           </span>
           {workspace.role && (
             <Badge
@@ -85,7 +108,7 @@ export function WorkspaceCard({
         </div>
         {workspace.description && (
           <p className="text-xs text-slate-500 truncate mt-0.5 ml-6">
-            {workspace.description}
+            <HighlightMatch text={workspace.description} query={searchQuery} />
           </p>
         )}
       </div>

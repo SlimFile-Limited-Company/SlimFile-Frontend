@@ -17,6 +17,7 @@ interface MentionInputProps {
   members: WorkspaceMember[];
   placeholder?: string;
   disabled?: boolean;
+  className?: string;
 }
 
 export function MentionInput({
@@ -25,7 +26,8 @@ export function MentionInput({
   onKeyDown,
   members,
   placeholder,
-  disabled
+  disabled,
+  className
 }: MentionInputProps) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [mentionQuery, setMentionQuery] = useState('');
@@ -139,7 +141,7 @@ export function MentionInput({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-        className="min-h-[40px] max-h-[120px] resize-none w-full"
+        className={`min-h-[40px] max-h-[120px] resize-none w-full ${className || ''}`}
       />
 
       {showSuggestions && filteredMembers.length > 0 && (
