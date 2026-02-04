@@ -35,7 +35,7 @@ All colors MUST be HSL.
 
     --border: 0 0% 90%; /* Light border */
     --input: 0 0% 90%;
-    --ring: 0 84% 60%; /* Red-600 */
+    --ring: 217.2 91.2% 59.8%; /* Blue-500 */
 
     --radius: 1rem; /* More rounded corners */
 
@@ -46,7 +46,7 @@ All colors MUST be HSL.
     --sidebar-accent: 0 100% 97%;
     --sidebar-accent-foreground: 0 84% 60%;
     --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 0 84% 60%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {

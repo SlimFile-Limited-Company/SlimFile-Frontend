@@ -64,7 +64,7 @@ const config = {
 					accent: '#fef2f2',
 					'accent-foreground': '#dc2626',
 					border: '#e5e7eb',
-					ring: '#dc2626'
+					ring: '#3b82f6'
 				}
 			},
 			borderRadius: {
