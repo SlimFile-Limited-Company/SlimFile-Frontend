@@ -152,21 +152,21 @@ const MemberList = ({
                 key={member._id}
                 className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
               >
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <Avatar className="h-9 w-9 sm:h-10 sm:w-10 shrink-0">
                     <AvatarImage src={member.user.picture} />
                     <AvatarFallback>{getInitials(member.user.name)}</AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className="font-medium text-gray-900">
+                  <div className="min-w-0">
+                    <p className="font-medium text-gray-900 truncate">
                       {member.user.name}
                       {isSelf && <span className="text-gray-500 ml-1">(You)</span>}
                     </p>
-                    <p className="text-sm text-gray-500">{member.user.email}</p>
+                    <p className="text-sm text-gray-500 truncate">{member.user.email}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                   {isOwner && !isOwnerMember ? (
                     <Select
                       value={member.role}
@@ -175,7 +175,7 @@ const MemberList = ({
                       }
                       disabled={updateRoleMutation.isPending}
                     >
-                      <SelectTrigger className="w-28">
+                      <SelectTrigger className="w-24 sm:w-28">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -223,13 +223,13 @@ const MemberList = ({
                   key={invite._id}
                   className="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-100 rounded-lg"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <div className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 bg-yellow-100 rounded-full flex items-center justify-center">
                       <Mail className="h-5 w-5 text-yellow-600" />
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{invite.inviteeEmail}</p>
-                      <p className="text-sm text-gray-500">
+                    <div className="min-w-0">
+                      <p className="font-medium text-gray-900 truncate">{invite.inviteeEmail}</p>
+                      <p className="text-sm text-gray-500 truncate">
                         Invited as {invite.role} • Expires{' '}
                         {new Date(invite.expiresAt).toLocaleDateString()}
                       </p>
