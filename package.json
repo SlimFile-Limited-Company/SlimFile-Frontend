@@ -76,6 +76,7 @@
     "tailwind-merge": "^2.5.2",
     "tailwind-scrollbar-hide": "^4.0.0",
     "tailwindcss-animate": "^1.0.7",
+    "tesseract.js": "^7.0.0",
     "topojson-client": "^3.1.0",
     "vaul": "^0.9.3",
     "y-webrtc": "^10.3.0",
