@@ -45,7 +45,8 @@ import {
   LayoutGrid,
   List,
   Search,
-  X
+  X,
+  Presentation
 } from 'lucide-react';
 import {
   getWorkspaces,
@@ -610,8 +611,11 @@ const Workspaces = () => {
                                 {new Date(workspace.createdAt).toLocaleDateString()}
                               </span>
                               <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="sm" onClick={() => navigate(`/workspaces/${workspace._id}`)}>
+                                <Button variant="ghost" size="sm" onClick={() => navigate(`/workspaces/${workspace._id}`)} title="Open Chat">
                                   <MessageSquare className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={() => navigate(`/workspaces/${workspace._id}/whiteboards`)} title="Open Whiteboards" className="text-purple-600 hover:text-purple-700 hover:bg-purple-50">
+                                  <Presentation className="h-4 w-4" />
                                 </Button>
                                 {workspace.role === 'owner' && (
                                   <>
@@ -672,8 +676,11 @@ const Workspaces = () => {
                             {new Date(workspace.createdAt).toLocaleDateString()}
                           </span>
                           <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="sm" onClick={() => navigate(`/workspaces/${workspace._id}`)}>
+                            <Button variant="ghost" size="sm" onClick={() => navigate(`/workspaces/${workspace._id}`)} title="Open Chat">
                               <MessageSquare className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => navigate(`/workspaces/${workspace._id}/whiteboards`)} title="Open Whiteboards" className="text-purple-600 hover:text-purple-700 hover:bg-purple-50">
+                              <Presentation className="h-4 w-4" />
                             </Button>
                             {workspace.role === 'owner' && (
                               <>
