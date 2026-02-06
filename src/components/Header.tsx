@@ -59,6 +59,7 @@ export const Header = () => {
   const toolsNavigation = [
     { name: "Feed", href: "/feed", badge: "Live", badgeColor: "bg-green-100 text-green-700" },
     ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces", badge: "Team", badgeColor: "bg-blue-100 text-blue-700" }] : []),
+    ...(isAuthenticated() ? [{ name: "My Whiteboards", href: "/my-whiteboards", badge: "New", badgeColor: "bg-purple-100 text-purple-700" }] : []),
     { name: "Meet", href: "/meet", badge: "New", badgeColor: "bg-purple-100 text-purple-700" },
     { name: "OCR Tool", href: "/ocr-tool", badge: "New", badgeColor: "bg-blue-100 text-blue-700" },
     { name: "STEPsBuild", href: "/stepsbuild", badge: null, badgeColor: null },
@@ -255,7 +256,7 @@ export const Header = () => {
             >
               <button className={cn(
                 "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
-                toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')))
+                toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
                   ? "text-white bg-red-600 shadow-md font-semibold"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}>
@@ -270,7 +271,7 @@ export const Header = () => {
                       to={item.href}
                       className={cn(
                         "flex items-center justify-between px-4 py-2 text-sm transition-colors duration-200",
-                        (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')))
+                        (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
                           ? "text-red-600 bg-red-50"
                           : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                       )}
@@ -526,7 +527,7 @@ export const Header = () => {
                   onClick={() => toggleMobileDropdown('tools')}
                   className={cn(
                     "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg whitespace-nowrap",
-                    toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')))
+                    toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
                       ? "text-red-600"
                       : "text-gray-700 hover:text-red-600"
                   )}
@@ -547,7 +548,7 @@ export const Header = () => {
                         to={item.href}
                         className={cn(
                           "flex items-center justify-between px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
-                          (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')))
+                          (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
                             ? "text-red-600 bg-red-50 border border-red-100"
                             : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                         )}

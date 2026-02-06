@@ -74,6 +74,8 @@ import PDFEditor from './pages/PDFEditor';
 import OCRTool from './pages/OCRTool';
 import Whiteboard from './pages/Whiteboard';
 import WhiteboardCanvas from './pages/WhiteboardCanvas';
+import PersonalWhiteboards from './pages/PersonalWhiteboards';
+import PersonalWhiteboardCanvas from './pages/PersonalWhiteboardCanvas';
 import { NotificationProvider } from './components/InAppNotification';
 
 // Register service worker for PWA functionality
@@ -205,6 +207,20 @@ ReactDOM.createRoot(root).render(
         <Route path="workspaces/:workspaceId/whiteboard/:whiteboardId" element={
           <ProtectedRoute>
             <WhiteboardCanvas />
+          </ProtectedRoute>
+        } />
+
+        {/* Personal whiteboards */}
+        <Route path="my-whiteboards" element={
+          <ProtectedRoute>
+            <PersonalWhiteboards />
+          </ProtectedRoute>
+        } />
+
+        {/* Personal whiteboard canvas */}
+        <Route path="my-whiteboards/:whiteboardId" element={
+          <ProtectedRoute>
+            <PersonalWhiteboardCanvas />
           </ProtectedRoute>
         } />
 
