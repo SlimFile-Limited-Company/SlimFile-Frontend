@@ -18,20 +18,21 @@ export const Header = () => {
     company: boolean;
     api: boolean;
     dashboard: boolean;
-    tools: boolean;
+    connect: boolean;
+    suites: boolean;
   }>({
     product: false,
     company: false,
     api: false,
     dashboard: false,
-    tools: false,
+    connect: false,
+    suites: false,
   });
 
   const productNavigation = [
     { name: "Compress Only", href: "/compress", external: false },
     { name: "Convert Only", href: "/convert-only", external: false },
     { name: "Convert and Compress", href: "/convert-compress", external: false },
-    { name: "Game", href: "/slimfile-game", external: false },
   ];
 
   const companyNavigation = [
@@ -56,13 +57,18 @@ export const Header = () => {
     { name: "Global Stats", href: "/global-dashboard", badge: "Live" },
   ];
 
-  const toolsNavigation = [
+  const connectNavigation = [
     { name: "Feed", href: "/feed", badge: "Live", badgeColor: "bg-green-100 text-green-700" },
     ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces", badge: "Team", badgeColor: "bg-blue-100 text-blue-700" }] : []),
     ...(isAuthenticated() ? [{ name: "My Whiteboards", href: "/my-whiteboards", badge: "New", badgeColor: "bg-purple-100 text-purple-700" }] : []),
     { name: "Meet", href: "/meet", badge: "New", badgeColor: "bg-purple-100 text-purple-700" },
+  ];
+
+  const suitesNavigation = [
+    { name: "Compress", href: "/compress", badge: null, badgeColor: null },
+    { name: "Convert", href: "/convert-only", badge: null, badgeColor: null },
+    { name: "Compress and Convert", href: "/convert-compress", badge: null, badgeColor: null },
     { name: "OCR Tool", href: "/ocr-tool", badge: "New", badgeColor: "bg-blue-100 text-blue-700" },
-    { name: "STEPsBuild", href: "/stepsbuild", badge: null, badgeColor: null },
   ];
 
   const isActiveRoute = (href: string) => {
@@ -86,7 +92,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'product' | 'company' | 'api' | 'dashboard' | 'tools') => {
+  const toggleMobileDropdown = (dropdown: 'product' | 'company' | 'api' | 'dashboard' | 'connect' | 'suites') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -248,30 +254,70 @@ export const Header = () => {
               )}
             </div>
 
-            {/* SlimFile Suites Dropdown */}
+            {/* SlimFile Connect Dropdown */}
             <div
               className="relative"
-              onMouseEnter={() => handleDropdownHover('tools')}
+              onMouseEnter={() => handleDropdownHover('connect')}
               onMouseLeave={() => handleDropdownHover(null)}
             >
               <button className={cn(
                 "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
-                toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
+                connectNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
                   ? "text-white bg-red-600 shadow-md font-semibold"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}>
-                <span>Tools</span>
+                <span>SlimFile Connect</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
-              {hoveredDropdown === 'tools' && (
+              {hoveredDropdown === 'connect' && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
-                  {toolsNavigation.map((item) => (
+                  {connectNavigation.map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}
                       className={cn(
                         "flex items-center justify-between px-4 py-2 text-sm transition-colors duration-200",
                         (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
+                          ? "text-red-600 bg-red-50"
+                          : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                      )}
+                    >
+                      <span>{item.name}</span>
+                      {item.badge && (
+                        <span className={cn("text-xs px-2 py-0.5 rounded-full font-semibold", item.badgeColor)}>
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* SlimFile Suites Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => handleDropdownHover('suites')}
+              onMouseLeave={() => handleDropdownHover(null)}
+            >
+              <button className={cn(
+                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
+                suitesNavigation.some(item => location.pathname === item.href || location.pathname.startsWith(item.href))
+                  ? "text-white bg-red-600 shadow-md font-semibold"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              )}>
+                <span>SlimFile Suites</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              {hoveredDropdown === 'suites' && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
+                  {suitesNavigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={cn(
+                        "flex items-center justify-between px-4 py-2 text-sm transition-colors duration-200",
+                        location.pathname === item.href || location.pathname.startsWith(item.href)
                           ? "text-red-600 bg-red-50"
                           : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                       )}
@@ -521,34 +567,79 @@ export const Header = () => {
                 )}
               </div>
 
-              {/* Mobile SlimFile Suites Dropdown */}
+              {/* Mobile SlimFile Connect Dropdown */}
               <div className="px-4">
                 <button
-                  onClick={() => toggleMobileDropdown('tools')}
+                  onClick={() => toggleMobileDropdown('connect')}
                   className={cn(
                     "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg whitespace-nowrap",
-                    toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
+                    connectNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
                       ? "text-red-600"
                       : "text-gray-700 hover:text-red-600"
                   )}
                 >
-                  <span>Tools</span>
+                  <span>SlimFile Connect</span>
                   <ChevronDown
                     className={cn(
                       "w-4 h-4 transition-transform duration-200",
-                      mobileDropdownsOpen.tools && "transform rotate-180"
+                      mobileDropdownsOpen.connect && "transform rotate-180"
                     )}
                   />
                 </button>
-                {mobileDropdownsOpen.tools && (
+                {mobileDropdownsOpen.connect && (
                   <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
-                    {toolsNavigation.map((item) => (
+                    {connectNavigation.map((item) => (
                       <Link
                         key={item.name}
                         to={item.href}
                         className={cn(
                           "flex items-center justify-between px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
                           (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
+                            ? "text-red-600 bg-red-50 border border-red-100"
+                            : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                        )}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <span>{item.name}</span>
+                        {item.badge && (
+                          <span className={cn("text-xs px-2 py-0.5 rounded-full font-semibold", item.badgeColor)}>
+                            {item.badge}
+                          </span>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile SlimFile Suites Dropdown */}
+              <div className="px-4">
+                <button
+                  onClick={() => toggleMobileDropdown('suites')}
+                  className={cn(
+                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg whitespace-nowrap",
+                    suitesNavigation.some(item => location.pathname === item.href || location.pathname.startsWith(item.href))
+                      ? "text-red-600"
+                      : "text-gray-700 hover:text-red-600"
+                  )}
+                >
+                  <span>SlimFile Suites</span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      mobileDropdownsOpen.suites && "transform rotate-180"
+                    )}
+                  />
+                </button>
+                {mobileDropdownsOpen.suites && (
+                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
+                    {suitesNavigation.map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={cn(
+                          "flex items-center justify-between px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
+                          location.pathname === item.href || location.pathname.startsWith(item.href)
                             ? "text-red-600 bg-red-50 border border-red-100"
                             : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                         )}

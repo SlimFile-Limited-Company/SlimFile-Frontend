@@ -34,7 +34,6 @@ import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import SlimFileSDGs from './pages/SlimFileSDGs';
 import Partnerships from './pages/Partnerships';
-import SlimFileGame from './pages/SlimFileGame';
 import ProtectedRoute from './components/ProtectedRoute';
 import FileCompressionEducation from './pages/FileCompressionEducation';
 import CompressPdfOnline from './pages/CompressPdfOnline';
@@ -61,7 +60,6 @@ import { NotificationService } from './services/notificationService';
 import BlogCompressingPdfForPrintingVsEmailing from './pages/blog/CompressingPdfForPrintingVsEmailing';
 import BlogHowToCompressLargeVideosBeforeUploading from './pages/blog/HowToCompressLargeVideosBeforeUploading';
 import OurBlogs from './pages/OurBlogs';
-import StepsBuild from './pages/StepsBuild';
 import Feed from './pages/Feed';
 import Portals from './pages/Portals';
 import GlobalDashboard from './pages/GlobalDashboard';
@@ -70,7 +68,6 @@ import WorkspaceDetail from './pages/WorkspaceDetail';
 import WorkspaceInvitations from './pages/WorkspaceInvitations';
 import Meet from './pages/Meet';
 import MeetingRoom from './pages/MeetingRoom';
-import PDFEditor from './pages/PDFEditor';
 import OCRTool from './pages/OCRTool';
 import PersonalWhiteboards from './pages/PersonalWhiteboards';
 import PersonalWhiteboardCanvas from './pages/PersonalWhiteboardCanvas';
@@ -163,9 +160,7 @@ ReactDOM.createRoot(root).render(
           <Route path="privacy" element={<PrivacyPolicy />} />
           <Route path="sdgs" element={<SlimFileSDGs />} />
           <Route path="partnerships" element={<Partnerships />} />
-          <Route path="slimfile-game" element={<SlimFileGame />} />
           <Route path="global-dashboard" element={<GlobalDashboard />} />
-          <Route path="stepsbuild" element={<StepsBuild />} />
           <Route path="feed" element={<Feed />} />
           <Route path="portals" element={
             <ProtectedRoute>
@@ -183,7 +178,6 @@ ReactDOM.createRoot(root).render(
             </ProtectedRoute>
           } />
           <Route path="meet" element={<Meet />} />
-          <Route path="pdf-editor" element={<PDFEditor />} />
           <Route path="ocr-tool" element={<OCRTool />} />
         </Route>
 
