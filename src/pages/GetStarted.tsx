@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, FileText, FileImage, Users } from 'lucide-react';
+import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const GetStarted: FC = () => {
@@ -226,6 +226,210 @@ const GetStarted: FC = () => {
                   </Link>
                 </div>
               </div>
+
+              {/* OCR Tool */}
+              <div className="group relative">
+                <div className="relative bg-gradient-to-br from-white to-orange-50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-orange-200 hover:border-orange-300 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl h-full flex flex-col">
+                  {/* Badge */}
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-orange-600 to-amber-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">
+                    New
+                  </div>
+
+                  {/* Icon */}
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <ScanText className="w-6 h-6 text-white" />
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                    OCR Tool
+                  </h3>
+                  <p className="text-gray-600 mb-4 leading-relaxed text-xs sm:text-sm flex-grow">
+                    Extract text from images and scanned documents. Convert pictures to editable text instantly.
+                  </p>
+
+                  {/* Features */}
+                  <ul className="space-y-2 mb-6">
+                    {[
+                      "Scan images & PDFs",
+                      "Extract text accurately",
+                      "Multiple languages",
+                      "Export as text/PDF"
+                    ].map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-gray-700">
+                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500 mt-1 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <Link to="/ocr-tool" className="w-full">
+                    <Button
+                      size="sm"
+                      className="w-full text-sm px-4 py-2 rounded-lg bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold"
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        Get Started
+                        <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Feed */}
+              <div className="group relative">
+                <div className="relative bg-gradient-to-br from-white to-indigo-50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-indigo-200 hover:border-indigo-300 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl h-full flex flex-col">
+                  {/* Badge */}
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">
+                    Live
+                  </div>
+
+                  {/* Icon */}
+                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <Radio className="w-6 h-6 text-white" />
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                    Feed
+                  </h3>
+                  <p className="text-gray-600 mb-4 leading-relaxed text-xs sm:text-sm flex-grow">
+                    Stay updated with real-time activity feed. See what's happening across your workspaces.
+                  </p>
+
+                  {/* Features */}
+                  <ul className="space-y-2 mb-6">
+                    {[
+                      "Real-time updates",
+                      "Activity tracking",
+                      "Workspace insights",
+                      "Team notifications"
+                    ].map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-gray-700">
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <Link to="/feed" className="w-full">
+                    <Button
+                      size="sm"
+                      className="w-full text-sm px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold"
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        Get Started
+                        <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Meet */}
+              <div className="group relative">
+                <div className="relative bg-gradient-to-br from-white to-cyan-50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-cyan-200 hover:border-cyan-300 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl h-full flex flex-col">
+                  {/* Badge */}
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">
+                    New
+                  </div>
+
+                  {/* Icon */}
+                  <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <Video className="w-6 h-6 text-white" />
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                    Meet
+                  </h3>
+                  <p className="text-gray-600 mb-4 leading-relaxed text-xs sm:text-sm flex-grow">
+                    Host video meetings with your team. Connect face-to-face from anywhere in the world.
+                  </p>
+
+                  {/* Features */}
+                  <ul className="space-y-2 mb-6">
+                    {[
+                      "HD video calls",
+                      "Screen sharing",
+                      "Instant meetings",
+                      "No downloads needed"
+                    ].map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-gray-700">
+                        <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <Link to="/meet" className="w-full">
+                    <Button
+                      size="sm"
+                      className="w-full text-sm px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-700 hover:to-cyan-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold"
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        Get Started
+                        <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* My Whiteboards */}
+              <div className="group relative">
+                <div className="relative bg-gradient-to-br from-white to-pink-50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-pink-200 hover:border-pink-300 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl h-full flex flex-col">
+                  {/* Badge */}
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-pink-600 to-rose-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">
+                    New
+                  </div>
+
+                  {/* Icon */}
+                  <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <PenTool className="w-6 h-6 text-white" />
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                    My Whiteboards
+                  </h3>
+                  <p className="text-gray-600 mb-4 leading-relaxed text-xs sm:text-sm flex-grow">
+                    Create and manage personal whiteboards. Brainstorm ideas, sketch concepts, and organize visually.
+                  </p>
+
+                  {/* Features */}
+                  <ul className="space-y-2 mb-6">
+                    {[
+                      "Drawing tools",
+                      "Text & shapes",
+                      "Save & export",
+                      "Multiple boards"
+                    ].map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-gray-700">
+                        <div className="w-1.5 h-1.5 rounded-full bg-pink-500 mt-1 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <Link to="/my-whiteboards" className="w-full">
+                    <Button
+                      size="sm"
+                      className="w-full text-sm px-4 py-2 rounded-lg bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold"
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        Get Started
+                        <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </Button>
+                  </Link>
+                </div>
+              </div>
             </div>
 
             {/* Info Section */}
@@ -250,6 +454,22 @@ const GetStarted: FC = () => {
                   <div>
                     <h3 className="font-bold text-lg text-gray-900 mb-2">Choose Create Workspace if:</h3>
                     <p className="text-sm sm:text-base">You need to collaborate on projects with your team. Communicate in real-time, share links and resources, and coordinate work together.</p>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">Choose OCR Tool if:</h3>
+                    <p className="text-sm sm:text-base">You need to extract text from images or scanned documents. Convert pictures, screenshots, and PDFs into editable text.</p>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">Choose Feed if:</h3>
+                    <p className="text-sm sm:text-base">You want to stay updated with real-time activity across your workspaces. Track team activities and get instant notifications.</p>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">Choose Meet if:</h3>
+                    <p className="text-sm sm:text-base">You need to host video meetings with your team. Connect face-to-face, share screens, and collaborate in real-time.</p>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">Choose My Whiteboards if:</h3>
+                    <p className="text-sm sm:text-base">You want to brainstorm ideas and sketch concepts. Create personal visual boards for planning and organizing your thoughts.</p>
                   </div>
                 </div>
               </div>
