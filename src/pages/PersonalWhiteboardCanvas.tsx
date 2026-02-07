@@ -231,9 +231,7 @@ const PersonalWhiteboardCanvas = () => {
 
   // Load whiteboard data
   useEffect(() => {
-    if (fabricCanvasRef.current) {
-      loadWhiteboard();
-    }
+    loadWhiteboard();
   }, [whiteboardId]);
 
   // Auto-save every 10 seconds

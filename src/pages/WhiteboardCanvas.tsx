@@ -169,7 +169,7 @@ const WhiteboardCanvas = () => {
         clearInterval(autoSaveTimerRef.current);
       }
     };
-  }, []);
+  }, [saveWhiteboard]);
 
   // Update tool settings and event handlers when tool changes
   useEffect(() => {
@@ -363,7 +363,7 @@ const WhiteboardCanvas = () => {
       canvas.off('object:added', handleObjectAdded);
       canvas.off('path:created', handlePathCreated);
     };
-  }, [selectedTool, selectedColor, brushSize, currentUserId, whiteboardId]);
+  }, [selectedTool, selectedColor, brushSize, currentUserId, whiteboardId, saveWhiteboard]);
 
   // Get current user info
   useEffect(() => {
@@ -419,7 +419,7 @@ const WhiteboardCanvas = () => {
     }
   };
 
-  const saveWhiteboard = async (isAutoSave = false) => {
+  const saveWhiteboard = useCallback(async (isAutoSave = false) => {
     const canvas = fabricCanvasRef.current;
     if (!canvas) return;
 
@@ -463,7 +463,7 @@ const WhiteboardCanvas = () => {
     } finally {
       if (!isAutoSave) setIsSaving(false);
     }
-  };
+  }, [workspaceId, whiteboardId, toast]);
 
   const exportCanvas = () => {
     const canvas = fabricCanvasRef.current;
