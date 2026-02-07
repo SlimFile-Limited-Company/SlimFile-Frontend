@@ -205,7 +205,6 @@ const PersonalWhiteboardCanvas = () => {
     if (isLoading) return;
     if (!canvasRef.current || !containerRef.current) return;
 
-    console.log('Initializing canvas...');
     const canvas = new Canvas(canvasRef.current, {
       width: containerRef.current.clientWidth,
       height: window.innerHeight - 120,
@@ -215,7 +214,6 @@ const PersonalWhiteboardCanvas = () => {
     });
 
     fabricCanvasRef.current = canvas;
-    console.log('Canvas initialized:', fabricCanvasRef.current);
     setIsCanvasReady(true);
 
     // Handle window resize
@@ -263,12 +261,9 @@ const PersonalWhiteboardCanvas = () => {
   // Update tool settings and event handlers when tool changes
   useEffect(() => {
     const canvas = fabricCanvasRef.current;
-    console.log('Tool settings useEffect running:', { canvas: !!canvas, isCanvasReady, selectedTool });
     if (!canvas || !isCanvasReady) {
-      console.log('Canvas not ready, skipping event handler setup');
       return;
     }
-    console.log('Setting up event handlers for tool:', selectedTool);
 
     // Remove old event listeners
     canvas.off('mouse:down');
