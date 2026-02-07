@@ -96,6 +96,8 @@ const WhiteboardCanvas = () => {
 
   // Initialize canvas
   useEffect(() => {
+    // Wait for loading to complete before initializing canvas
+    if (isLoading) return;
     if (!canvasRef.current || !containerRef.current) return;
 
     console.log('Initializing workspace canvas...');
@@ -127,7 +129,7 @@ const WhiteboardCanvas = () => {
       canvas.dispose();
       setIsCanvasReady(false);
     };
-  }, []);
+  }, [isLoading]);
 
   // Load whiteboard data
   useEffect(() => {
