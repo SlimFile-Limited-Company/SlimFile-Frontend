@@ -79,6 +79,7 @@ const WhiteboardCanvas = () => {
   const [whiteboard, setWhiteboard] = useState<WhiteboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [selectedTool, setSelectedTool] = useState<DrawingTool>('pen');
   const [selectedColor, setSelectedColor] = useState('#000000');
   const [brushSize, setBrushSize] = useState([3]);
@@ -97,6 +98,7 @@ const WhiteboardCanvas = () => {
   useEffect(() => {
     if (!canvasRef.current || !containerRef.current) return;
 
+    console.log('Initializing workspace canvas...');
     const canvas = new Canvas(canvasRef.current, {
       width: containerRef.current.clientWidth,
       height: window.innerHeight - 120,
@@ -106,6 +108,8 @@ const WhiteboardCanvas = () => {
     });
 
     fabricCanvasRef.current = canvas;
+    console.log('Workspace canvas initialized:', fabricCanvasRef.current);
+    setIsCanvasReady(true);
 
     // Handle window resize
     const handleResize = () => {
@@ -121,6 +125,7 @@ const WhiteboardCanvas = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
       canvas.dispose();
+      setIsCanvasReady(false);
     };
   }, []);
 
@@ -174,7 +179,12 @@ const WhiteboardCanvas = () => {
   // Update tool settings and event handlers when tool changes
   useEffect(() => {
     const canvas = fabricCanvasRef.current;
-    if (!canvas) return;
+    console.log('Workspace tool settings useEffect:', { canvas: !!canvas, isCanvasReady, selectedTool });
+    if (!canvas || !isCanvasReady) {
+      console.log('Workspace canvas not ready, skipping');
+      return;
+    }
+    console.log('Setting up workspace event handlers for:', selectedTool);
 
     // Remove old event listeners
     canvas.off('mouse:down');
@@ -363,7 +373,7 @@ const WhiteboardCanvas = () => {
       canvas.off('object:added', handleObjectAdded);
       canvas.off('path:created', handlePathCreated);
     };
-  }, [selectedTool, selectedColor, brushSize, currentUserId, whiteboardId, saveWhiteboard]);
+  }, [selectedTool, selectedColor, brushSize, currentUserId, whiteboardId, saveWhiteboard, isCanvasReady]);
 
   // Get current user info
   useEffect(() => {

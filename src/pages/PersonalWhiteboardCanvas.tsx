@@ -53,6 +53,7 @@ const PersonalWhiteboardCanvas = () => {
   const [whiteboard, setWhiteboard] = useState<WhiteboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [selectedTool, setSelectedTool] = useState<DrawingTool>('pen');
   const [selectedColor, setSelectedColor] = useState('#000000');
   const [brushSize, setBrushSize] = useState([3]);
@@ -202,6 +203,7 @@ const PersonalWhiteboardCanvas = () => {
   useEffect(() => {
     if (!canvasRef.current || !containerRef.current) return;
 
+    console.log('Initializing canvas...');
     const canvas = new Canvas(canvasRef.current, {
       width: containerRef.current.clientWidth,
       height: window.innerHeight - 120,
@@ -211,6 +213,8 @@ const PersonalWhiteboardCanvas = () => {
     });
 
     fabricCanvasRef.current = canvas;
+    console.log('Canvas initialized:', fabricCanvasRef.current);
+    setIsCanvasReady(true);
 
     // Handle window resize
     const handleResize = () => {
@@ -226,6 +230,7 @@ const PersonalWhiteboardCanvas = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
       canvas.dispose();
+      setIsCanvasReady(false);
     };
   }, []);
 
@@ -256,7 +261,12 @@ const PersonalWhiteboardCanvas = () => {
   // Update tool settings and event handlers when tool changes
   useEffect(() => {
     const canvas = fabricCanvasRef.current;
-    if (!canvas) return;
+    console.log('Tool settings useEffect running:', { canvas: !!canvas, isCanvasReady, selectedTool });
+    if (!canvas || !isCanvasReady) {
+      console.log('Canvas not ready, skipping event handler setup');
+      return;
+    }
+    console.log('Setting up event handlers for tool:', selectedTool);
 
     // Remove old event listeners
     canvas.off('mouse:down');
@@ -408,7 +418,7 @@ const PersonalWhiteboardCanvas = () => {
       canvas.off('object:modified', handleObjectModified);
       canvas.off('path:created', handlePathCreated);
     };
-  }, [selectedTool, selectedColor, brushSize, saveWhiteboard]);
+  }, [selectedTool, selectedColor, brushSize, saveWhiteboard, isCanvasReady]);
 
   const tools: { id: DrawingTool; icon: any; label: string }[] = [
     { id: 'select', icon: MousePointer, label: 'Select' },
