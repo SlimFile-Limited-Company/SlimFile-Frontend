@@ -140,42 +140,46 @@ const PersonalWhiteboards = () => {
     <div className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-purple-50 via-white to-blue-50">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
             <Link to="/dashboard">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
+              <Button variant="ghost" size="sm" className="px-2 sm:px-3">
+                <ArrowLeft className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Back to Dashboard</span>
               </Button>
             </Link>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                <Presentation className="w-8 h-8 text-purple-600" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+                <Presentation className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
                 My Whiteboards
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-sm sm:text-base text-gray-600 mt-1">
                 Personal whiteboards for quick brainstorming and sketching
               </p>
             </div>
-          </div>
 
-          <Button
-            onClick={createWhiteboard}
-            disabled={isCreating}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-          >
-            {isCreating ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Creating...
-              </>
-            ) : (
-              <>
-                <Plus className="w-4 h-4 mr-2" />
-                New Whiteboard
-              </>
-            )}
-          </Button>
+            <Button
+              onClick={createWhiteboard}
+              disabled={isCreating}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 w-full sm:w-auto"
+              size="sm"
+            >
+              {isCreating ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Whiteboard
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
         {/* Whiteboards Grid */}
@@ -246,7 +250,7 @@ const PersonalWhiteboards = () => {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-2 mt-3 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       <Button
                         onClick={(e) => {
                           e.stopPropagation();

@@ -207,7 +207,7 @@ const PersonalWhiteboardCanvas = () => {
 
     const canvas = new Canvas(canvasRef.current, {
       width: containerRef.current.clientWidth,
-      height: window.innerHeight - 120,
+      height: containerRef.current.clientHeight,
       backgroundColor: '#ffffff',
       isDrawingMode: false,
       selection: true,
@@ -220,7 +220,7 @@ const PersonalWhiteboardCanvas = () => {
     const handleResize = () => {
       if (containerRef.current && canvas) {
         canvas.setWidth(containerRef.current.clientWidth);
-        canvas.setHeight(window.innerHeight - 120);
+        canvas.setHeight(containerRef.current.clientHeight);
         canvas.renderAll();
       }
     };
@@ -436,29 +436,64 @@ const PersonalWhiteboardCanvas = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex flex-col">
       {/* Toolbar */}
-      <div className="bg-white border-b shadow-sm">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            {/* Left section */}
-            <div className="flex items-center gap-4">
+      <div className="bg-white border-b shadow-sm flex-shrink-0">
+        <div className="px-2 sm:px-4 py-2 sm:py-3">
+          {/* Top row - Header and actions */}
+          <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
+            <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/my-whiteboards')}
+                className="px-2"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline ml-2">Back</span>
               </Button>
               <div className="hidden md:block">
-                <h2 className="font-semibold text-gray-900">{whiteboard?.name}</h2>
+                <h2 className="font-semibold text-gray-900 text-sm">{whiteboard?.name}</h2>
                 <p className="text-xs text-gray-500">{whiteboard?.description || 'Personal whiteboard'}</p>
               </div>
             </div>
 
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Button variant="outline" size="sm" onClick={clearCanvas} className="px-2 sm:px-3">
+                <Trash2 className="w-4 h-4" />
+                <span className="hidden sm:inline ml-2">Clear</span>
+              </Button>
+
+              <Button variant="outline" size="sm" onClick={exportCanvas} className="px-2 sm:px-3">
+                <Download className="w-4 h-4" />
+                <span className="hidden md:inline ml-2">Export</span>
+              </Button>
+
+              <Button
+                size="sm"
+                onClick={() => saveWhiteboard(false)}
+                disabled={isSaving}
+                className="bg-purple-600 hover:bg-purple-700 px-2 sm:px-3"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="hidden sm:inline ml-2">Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span className="hidden sm:inline ml-2">Save</span>
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+
+          {/* Bottom row - Tools and settings */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
             {/* Tools */}
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-1 flex-wrap">
               {tools.map((tool) => {
                 const Icon = tool.icon;
                 return (
@@ -468,83 +503,51 @@ const PersonalWhiteboardCanvas = () => {
                     size="sm"
                     onClick={() => setSelectedTool(tool.id)}
                     title={tool.label}
-                    className={selectedTool === tool.id ? 'bg-purple-600 hover:bg-purple-700' : ''}
+                    className={`w-8 h-8 p-0 sm:w-9 sm:h-9 ${selectedTool === tool.id ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
                   >
                     <Icon className="w-4 h-4" />
                   </Button>
                 );
               })}
-
-              <div className="w-px h-8 bg-gray-300 mx-2" />
-
-              {/* Color picker */}
-              <div className="flex items-center gap-1">
-                {COLORS.map((color) => (
-                  <button
-                    key={color}
-                    className={`w-7 h-7 rounded border-2 transition-all ${
-                      selectedColor === color ? 'border-purple-600 scale-110 shadow-md' : 'border-gray-300'
-                    }`}
-                    style={{ backgroundColor: color }}
-                    onClick={() => setSelectedColor(color)}
-                  />
-                ))}
-              </div>
-
-              <div className="w-px h-8 bg-gray-300 mx-2" />
-
-              {/* Brush size */}
-              <div className="flex items-center gap-2 min-w-[120px]">
-                <span className="text-xs text-gray-600">Size:</span>
-                <Slider
-                  value={brushSize}
-                  onValueChange={setBrushSize}
-                  min={1}
-                  max={20}
-                  step={1}
-                  className="w-20"
-                />
-                <span className="text-xs text-gray-600 w-6">{brushSize[0]}</span>
-              </div>
             </div>
 
-            {/* Right section */}
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={clearCanvas}>
-                <Trash2 className="w-4 h-4 mr-2" />
-                Clear
-              </Button>
+            <div className="hidden sm:block w-px h-8 bg-gray-300" />
 
-              <Button variant="outline" size="sm" onClick={exportCanvas}>
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
+            {/* Color picker - scrollable on mobile */}
+            <div className="flex items-center gap-1 overflow-x-auto max-w-full pb-1 sm:pb-0">
+              {COLORS.map((color) => (
+                <button
+                  key={color}
+                  className={`w-6 h-6 sm:w-7 sm:h-7 rounded border-2 transition-all flex-shrink-0 ${
+                    selectedColor === color ? 'border-purple-600 scale-110 shadow-md' : 'border-gray-300'
+                  }`}
+                  style={{ backgroundColor: color }}
+                  onClick={() => setSelectedColor(color)}
+                />
+              ))}
+            </div>
 
-              <Button
-                size="sm"
-                onClick={() => saveWhiteboard(false)}
-                disabled={isSaving}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                {isSaving ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-4 h-4 mr-2" />
-                    Save
-                  </>
-                )}
-              </Button>
+            <div className="hidden sm:block w-px h-8 bg-gray-300" />
+
+            {/* Brush size */}
+            <div className="flex items-center gap-2 w-full sm:w-auto sm:min-w-[100px]">
+              <span className="text-xs text-gray-600 flex-shrink-0">Size:</span>
+              <Slider
+                value={brushSize}
+                onValueChange={setBrushSize}
+                min={1}
+                max={20}
+                step={1}
+                className="flex-1 sm:w-16"
+              />
+              <span className="text-xs text-gray-600 w-6 text-right">{brushSize[0]}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Canvas container */}
-      <div ref={containerRef} className="relative w-full bg-white" style={{ height: 'calc(100vh - 120px)' }}>
+      <div ref={containerRef} className="relative flex-1 w-full bg-white overflow-hidden">
         <canvas ref={canvasRef} />
       </div>
     </div>
