@@ -124,7 +124,7 @@ export const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6 absolute left-1/2 transform -translate-x-1/2">
+          <nav className="hidden md:flex items-center space-x-2 absolute left-1/2 transform -translate-x-1/2">
             <Link
               to="/"
               className={cn(
