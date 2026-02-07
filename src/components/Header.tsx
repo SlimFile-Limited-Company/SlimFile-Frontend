@@ -14,26 +14,18 @@ export const Header = () => {
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
   const [mobileDropdownsOpen, setMobileDropdownsOpen] = useState<{
-    product: boolean;
     company: boolean;
     api: boolean;
     dashboard: boolean;
     connect: boolean;
     suites: boolean;
   }>({
-    product: false,
     company: false,
     api: false,
     dashboard: false,
     connect: false,
     suites: false,
   });
-
-  const productNavigation = [
-    { name: "Compress Only", href: "/compress", external: false },
-    { name: "Convert Only", href: "/convert-only", external: false },
-    { name: "Convert and Compress", href: "/convert-compress", external: false },
-  ];
 
   const companyNavigation = [
     { name: "About", href: "/about" },
@@ -92,7 +84,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'product' | 'company' | 'api' | 'dashboard' | 'connect' | 'suites') => {
+  const toggleMobileDropdown = (dropdown: 'company' | 'api' | 'dashboard' | 'connect' | 'suites') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -136,60 +128,6 @@ export const Header = () => {
             >
               {t('header.home')}
             </Link>
-
-            {/* Product Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleDropdownHover('product')}
-              onMouseLeave={() => handleDropdownHover(null)}
-            >
-              <button className={cn(
-                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full",
-                productNavigation.some(item => isActiveRoute(item.href))
-                  ? "text-white bg-red-600 shadow-md font-semibold"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              )}>
-                <span>Product</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              {hoveredDropdown === 'product' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
-                  {productNavigation.map((item) => {
-                    const linkContent = (
-                      <div className="flex items-center justify-between">
-                        <span>{item.name}</span>
-                      </div>
-                    );
-
-                    return item.external ? (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={cn(
-                          "block px-4 py-2 text-sm transition-colors duration-200",
-                          "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                        )}
-                      >
-                        {linkContent}
-                      </a>
-                    ) : (
-                      <Link
-                        key={item.name}
-                        to={item.href}
-                        className={cn(
-                          "block px-4 py-2 text-sm transition-colors duration-200",
-                          isActiveRoute(item.href) ? "text-red-600 bg-red-50" : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                        )}
-                      >
-                        {linkContent}
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
 
             {/* Company Dropdown */}
             <div
@@ -429,68 +367,6 @@ export const Header = () => {
               >
                 {t('header.home')}
               </Link>
-
-              {/* Mobile Product Dropdown */}
-              <div className="px-4">
-                <button
-                  onClick={() => toggleMobileDropdown('product')}
-                  className={cn(
-                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
-                    productNavigation.some(item => isActiveRoute(item.href))
-                      ? "text-red-600"
-                      : "text-gray-700 hover:text-red-600"
-                  )}
-                >
-                  <span>Product</span>
-                  <ChevronDown
-                    className={cn(
-                      "w-4 h-4 transition-transform duration-200",
-                      mobileDropdownsOpen.product && "transform rotate-180"
-                    )}
-                  />
-                </button>
-                {mobileDropdownsOpen.product && (
-                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
-                    {productNavigation.map((item) => {
-                      const linkContent = (
-                        <div className="flex items-center justify-between">
-                          <span>{item.name}</span>
-                        </div>
-                      );
-
-                      return item.external ? (
-                        <a
-                          key={item.name}
-                          href={item.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={cn(
-                            "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
-                            "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                          )}
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          {linkContent}
-                        </a>
-                      ) : (
-                        <Link
-                          key={item.name}
-                          to={item.href}
-                          className={cn(
-                            "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
-                            isActiveRoute(item.href)
-                              ? "text-red-600 bg-red-50 border border-red-100"
-                              : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                          )}
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          {linkContent}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
 
               {/* Mobile Company Dropdown */}
               <div className="px-4">
