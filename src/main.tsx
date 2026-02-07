@@ -72,8 +72,6 @@ import Meet from './pages/Meet';
 import MeetingRoom from './pages/MeetingRoom';
 import PDFEditor from './pages/PDFEditor';
 import OCRTool from './pages/OCRTool';
-import Whiteboard from './pages/Whiteboard';
-import WhiteboardCanvas from './pages/WhiteboardCanvas';
 import PersonalWhiteboards from './pages/PersonalWhiteboards';
 import PersonalWhiteboardCanvas from './pages/PersonalWhiteboardCanvas';
 import { NotificationProvider } from './components/InAppNotification';
@@ -193,20 +191,6 @@ ReactDOM.createRoot(root).render(
         <Route path="workspaces/:workspaceId" element={
           <ProtectedRoute>
             <WorkspaceDetail />
-          </ProtectedRoute>
-        } />
-
-        {/* Whiteboard list for workspace */}
-        <Route path="workspaces/:workspaceId/whiteboards" element={
-          <ProtectedRoute>
-            <Whiteboard />
-          </ProtectedRoute>
-        } />
-
-        {/* Whiteboard canvas - Full screen without header/footer */}
-        <Route path="workspaces/:workspaceId/whiteboard/:whiteboardId" element={
-          <ProtectedRoute>
-            <WhiteboardCanvas />
           </ProtectedRoute>
         } />
 
