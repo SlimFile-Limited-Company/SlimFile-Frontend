@@ -71,6 +71,8 @@ import MeetingRoom from './pages/MeetingRoom';
 import OCRTool from './pages/OCRTool';
 import PersonalWhiteboards from './pages/PersonalWhiteboards';
 import PersonalWhiteboardCanvas from './pages/PersonalWhiteboardCanvas';
+import MyNotes from './pages/MyNotes';
+import NoteEditor from './pages/NoteEditor';
 import { NotificationProvider } from './components/InAppNotification';
 
 // Register service worker for PWA functionality
@@ -199,6 +201,20 @@ ReactDOM.createRoot(root).render(
         <Route path="my-whiteboards/:whiteboardId" element={
           <ProtectedRoute>
             <PersonalWhiteboardCanvas />
+          </ProtectedRoute>
+        } />
+
+        {/* My Notes */}
+        <Route path="my-notes" element={
+          <ProtectedRoute>
+            <MyNotes />
+          </ProtectedRoute>
+        } />
+
+        {/* Note Editor */}
+        <Route path="my-notes/:noteId" element={
+          <ProtectedRoute>
+            <NoteEditor />
           </ProtectedRoute>
         } />
 

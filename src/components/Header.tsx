@@ -52,6 +52,7 @@ export const Header = () => {
   const connectNavigation = [
     { name: "Feed", href: "/feed", badge: "Live", badgeColor: "bg-green-100 text-green-700" },
     ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces", badge: "Team", badgeColor: "bg-blue-100 text-blue-700" }] : []),
+    ...(isAuthenticated() ? [{ name: "My Notes", href: "/my-notes", badge: "New", badgeColor: "bg-blue-100 text-blue-700" }] : []),
     ...(isAuthenticated() ? [{ name: "My Whiteboards", href: "/my-whiteboards", badge: "New", badgeColor: "bg-purple-100 text-purple-700" }] : []),
     { name: "Meet", href: "/meet", badge: "New", badgeColor: "bg-purple-100 text-purple-700" },
   ];
