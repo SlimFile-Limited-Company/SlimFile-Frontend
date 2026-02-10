@@ -71,8 +71,8 @@ import MeetingRoom from './pages/MeetingRoom';
 import OCRTool from './pages/OCRTool';
 import PersonalWhiteboards from './pages/PersonalWhiteboards';
 import PersonalWhiteboardCanvas from './pages/PersonalWhiteboardCanvas';
-import MyNotes from './pages/MyNotes';
-import NoteEditor from './pages/NoteEditor';
+import Documents from './pages/Documents';
+import DocumentEditor from './pages/DocumentEditor';
 import { NotificationProvider } from './components/InAppNotification';
 
 // Register service worker for PWA functionality
@@ -204,17 +204,17 @@ ReactDOM.createRoot(root).render(
           </ProtectedRoute>
         } />
 
-        {/* My Notes */}
-        <Route path="my-notes" element={
+        {/* Documents */}
+        <Route path="documents" element={
           <ProtectedRoute>
-            <MyNotes />
+            <Documents />
           </ProtectedRoute>
         } />
 
-        {/* Note Editor */}
-        <Route path="my-notes/:noteId" element={
+        {/* Document Editor */}
+        <Route path="documents/:documentId" element={
           <ProtectedRoute>
-            <NoteEditor />
+            <DocumentEditor />
           </ProtectedRoute>
         } />
 
