@@ -146,11 +146,11 @@ const Documents = () => {
   );
 
   return (
-    <div className="min-h-screen pt-20 pb-12 bg-gray-50">
+    <div className="min-h-screen pt-16 pb-12 bg-gray-50">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-6">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-3">
             <Link to="/dashboard">
               <Button variant="ghost" size="sm" className="px-2 sm:px-3 hover:bg-white">
                 <ArrowLeft className="w-4 h-4 sm:mr-2" />

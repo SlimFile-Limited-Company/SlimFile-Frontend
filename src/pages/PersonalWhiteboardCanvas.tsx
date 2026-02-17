@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Canvas, FabricObject, PencilBrush, Circle, Rect, Line, IText } from 'fabric';
+import { Canvas, FabricObject, PencilBrush, Circle, Rect, Line, IText, Polygon, Polyline } from 'fabric';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import {
   ArrowLeft,
@@ -17,6 +18,18 @@ import {
   Save,
   Download,
   Loader2,
+  Undo2,
+  Redo2,
+  Triangle,
+  Star,
+  ArrowRight,
+  Diamond,
+  Pen,
+  Copy,
+  ClipboardPaste,
+  Check,
+  X,
+  Pipette,
 } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
@@ -35,9 +48,9 @@ interface WhiteboardData {
   updatedAt: string;
 }
 
-type DrawingTool = 'select' | 'pen' | 'rectangle' | 'circle' | 'line' | 'text' | 'eraser';
+type DrawingTool = 'select' | 'pen' | 'rectangle' | 'circle' | 'line' | 'text' | 'eraser' | 'triangle' | 'star' | 'arrow' | 'diamond' | 'highlighter';
 
-const COLORS = ['#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080', '#FFC0CB'];
+const COLORS = ['#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080', '#FFC0CB', '#8B4513', '#808080'];
 
 const PersonalWhiteboardCanvas = () => {
   const { whiteboardId } = useParams<{ whiteboardId: string }>();
@@ -57,6 +70,12 @@ const PersonalWhiteboardCanvas = () => {
   const [selectedTool, setSelectedTool] = useState<DrawingTool>('pen');
   const [selectedColor, setSelectedColor] = useState('#000000');
   const [brushSize, setBrushSize] = useState([3]);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+  const [fillColor, setFillColor] = useState('transparent');
+  const [showFillPicker, setShowFillPicker] = useState(false);
 
   // Drawing state
   const isDrawingRef = useRef(false);
@@ -64,6 +83,61 @@ const PersonalWhiteboardCanvas = () => {
   const startPointRef = useRef<{ x: number; y: number } | null>(null);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastSaveTimeRef = useRef<number>(Date.now());
+
+  // Undo/Redo state
+  const undoStackRef = useRef<string[]>([]);
+  const redoStackRef = useRef<string[]>([]);
+  const isUndoRedoActionRef = useRef(false);
+
+  // Clipboard
+  const clipboardRef = useRef<FabricObject | null>(null);
+
+  const saveStateForUndo = useCallback(() => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas || isUndoRedoActionRef.current) return;
+    const json = JSON.stringify(canvas.toJSON());
+    undoStackRef.current.push(json);
+    if (undoStackRef.current.length > 50) {
+      undoStackRef.current.shift();
+    }
+    redoStackRef.current = [];
+    setCanUndo(true);
+    setCanRedo(false);
+  }, []);
+
+  const handleUndo = useCallback(() => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas || undoStackRef.current.length === 0) return;
+
+    isUndoRedoActionRef.current = true;
+    const currentState = JSON.stringify(canvas.toJSON());
+    redoStackRef.current.push(currentState);
+
+    const previousState = undoStackRef.current.pop()!;
+    canvas.loadFromJSON(JSON.parse(previousState), () => {
+      canvas.renderAll();
+      isUndoRedoActionRef.current = false;
+      setCanUndo(undoStackRef.current.length > 0);
+      setCanRedo(true);
+    });
+  }, []);
+
+  const handleRedo = useCallback(() => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas || redoStackRef.current.length === 0) return;
+
+    isUndoRedoActionRef.current = true;
+    const currentState = JSON.stringify(canvas.toJSON());
+    undoStackRef.current.push(currentState);
+
+    const nextState = redoStackRef.current.pop()!;
+    canvas.loadFromJSON(JSON.parse(nextState), () => {
+      canvas.renderAll();
+      isUndoRedoActionRef.current = false;
+      setCanUndo(true);
+      setCanRedo(redoStackRef.current.length > 0);
+    });
+  }, []);
 
   const loadWhiteboard = async () => {
     try {
@@ -80,6 +154,7 @@ const PersonalWhiteboardCanvas = () => {
 
       const data = await response.json();
       setWhiteboard(data.whiteboard);
+      setEditName(data.whiteboard.name);
 
       // Load canvas data
       if (data.whiteboard.canvasData && fabricCanvasRef.current) {
@@ -152,6 +227,40 @@ const PersonalWhiteboardCanvas = () => {
     }
   }, [whiteboardId, toast]);
 
+  const saveWhiteboardName = async () => {
+    if (!editName.trim() || editName === whiteboard?.name) {
+      setIsEditingName(false);
+      setEditName(whiteboard?.name || '');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('jwt');
+      const response = await fetch(
+        `${API_BASE_URL}/my-whiteboards/${whiteboardId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name: editName.trim() }),
+        }
+      );
+
+      if (!response.ok) throw new Error('Failed to rename whiteboard');
+
+      setWhiteboard(prev => prev ? { ...prev, name: editName.trim() } : null);
+      setIsEditingName(false);
+      toast({ title: 'Renamed', description: 'Whiteboard renamed successfully' });
+    } catch (error) {
+      console.error('Error renaming whiteboard:', error);
+      toast({ title: 'Error', description: 'Failed to rename whiteboard', variant: 'destructive' });
+      setEditName(whiteboard?.name || '');
+      setIsEditingName(false);
+    }
+  };
+
   const exportCanvas = () => {
     const canvas = fabricCanvasRef.current;
     if (!canvas) return;
@@ -188,6 +297,7 @@ const PersonalWhiteboardCanvas = () => {
 
     if (!confirm('Are you sure you want to clear the entire canvas?')) return;
 
+    saveStateForUndo();
     canvas.clear();
     canvas.backgroundColor = '#ffffff';
     canvas.renderAll();
@@ -199,9 +309,52 @@ const PersonalWhiteboardCanvas = () => {
     });
   };
 
+  const deleteSelected = () => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas) return;
+
+    const activeObjects = canvas.getActiveObjects();
+    if (activeObjects.length === 0) return;
+
+    saveStateForUndo();
+    activeObjects.forEach(obj => canvas.remove(obj));
+    canvas.discardActiveObject();
+    canvas.requestRenderAll();
+    saveWhiteboard(true);
+  };
+
+  const copySelected = () => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas) return;
+
+    const active = canvas.getActiveObject();
+    if (!active) return;
+
+    active.clone().then((cloned: FabricObject) => {
+      clipboardRef.current = cloned;
+      toast({ title: 'Copied', description: 'Object copied to clipboard' });
+    });
+  };
+
+  const pasteFromClipboard = () => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas || !clipboardRef.current) return;
+
+    saveStateForUndo();
+    clipboardRef.current.clone().then((cloned: FabricObject) => {
+      cloned.set({
+        left: (cloned.left || 0) + 20,
+        top: (cloned.top || 0) + 20,
+      });
+      canvas.add(cloned);
+      canvas.setActiveObject(cloned);
+      canvas.requestRenderAll();
+      saveWhiteboard(true);
+    });
+  };
+
   // Initialize canvas
   useEffect(() => {
-    // Wait for loading to complete before initializing canvas
     if (isLoading) return;
     if (!canvasRef.current || !containerRef.current) return;
 
@@ -219,8 +372,8 @@ const PersonalWhiteboardCanvas = () => {
     // Handle window resize
     const handleResize = () => {
       if (containerRef.current && canvas) {
-        canvas.setWidth(containerRef.current.clientWidth);
-        canvas.setHeight(containerRef.current.clientHeight);
+        canvas.width = containerRef.current.clientWidth;
+        canvas.height = containerRef.current.clientHeight;
         canvas.renderAll();
       }
     };
@@ -258,6 +411,50 @@ const PersonalWhiteboardCanvas = () => {
     };
   }, [saveWhiteboard]);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isEditingName) return;
+
+      // Ctrl/Cmd + Z = Undo
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        handleUndo();
+      }
+      // Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y = Redo
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+        e.preventDefault();
+        handleRedo();
+      }
+      // Delete/Backspace = delete selected (only if not editing text)
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedTool === 'select') {
+        const canvas = fabricCanvasRef.current;
+        if (!canvas) return;
+        const active = canvas.getActiveObject();
+        if (active && !(active instanceof IText && (active as IText).isEditing)) {
+          e.preventDefault();
+          deleteSelected();
+        }
+      }
+      // Ctrl/Cmd + C = Copy
+      if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+        copySelected();
+      }
+      // Ctrl/Cmd + V = Paste
+      if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+        pasteFromClipboard();
+      }
+      // Ctrl/Cmd + S = Save
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        saveWhiteboard(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleUndo, handleRedo, selectedTool, isEditingName, saveWhiteboard]);
+
   // Update tool settings and event handlers when tool changes
   useEffect(() => {
     const canvas = fabricCanvasRef.current;
@@ -271,15 +468,29 @@ const PersonalWhiteboardCanvas = () => {
     canvas.off('mouse:up');
     canvas.off('object:modified');
     canvas.off('path:created');
+    canvas.off('object:added');
 
     const handleMouseDown = (event: any) => {
-      if (selectedTool === 'select' || selectedTool === 'pen' || selectedTool === 'eraser') return;
+      if (selectedTool === 'select' || selectedTool === 'pen' || selectedTool === 'highlighter') return;
+
+      // Eraser: click on objects to remove them
+      if (selectedTool === 'eraser') {
+        const target = canvas.findTarget(event.e);
+        if (target) {
+          saveStateForUndo();
+          canvas.remove(target);
+          canvas.requestRenderAll();
+          saveWhiteboard(true);
+        }
+        return;
+      }
 
       isDrawingRef.current = true;
       const pointer = canvas.getScenePoint(event.e);
       startPointRef.current = { x: pointer.x, y: pointer.y };
 
       if (selectedTool === 'text') {
+        saveStateForUndo();
         const text = new IText('Type here...', {
           left: pointer.x,
           top: pointer.y,
@@ -297,8 +508,15 @@ const PersonalWhiteboardCanvas = () => {
     };
 
     const handleMouseMove = (event: any) => {
+      // Eraser hover cursor
+      if (selectedTool === 'eraser') {
+        const target = canvas.findTarget(event.e);
+        canvas.defaultCursor = target ? 'not-allowed' : 'crosshair';
+        return;
+      }
+
       if (!isDrawingRef.current || !startPointRef.current) return;
-      if (selectedTool === 'select' || selectedTool === 'pen' || selectedTool === 'eraser' || selectedTool === 'text') return;
+      if (selectedTool === 'select' || selectedTool === 'pen' || selectedTool === 'highlighter' || selectedTool === 'text') return;
 
       const pointer = canvas.getScenePoint(event.e);
 
@@ -321,25 +539,26 @@ const PersonalWhiteboardCanvas = () => {
             top: Math.min(startY, pointer.y),
             width: Math.abs(width),
             height: Math.abs(height),
-            fill: 'transparent',
+            fill: fillColor,
             stroke: selectedColor,
             strokeWidth: brushSize[0],
           });
           break;
 
-        case 'circle':
+        case 'circle': {
           const radius = Math.sqrt(width * width + height * height) / 2;
           obj = new Circle({
             left: startX,
             top: startY,
             radius: Math.abs(radius),
-            fill: 'transparent',
+            fill: fillColor,
             stroke: selectedColor,
             strokeWidth: brushSize[0],
             originX: 'center',
             originY: 'center',
           });
           break;
+        }
 
         case 'line':
           obj = new Line([startX, startY, pointer.x, pointer.y], {
@@ -347,6 +566,104 @@ const PersonalWhiteboardCanvas = () => {
             strokeWidth: brushSize[0],
           });
           break;
+
+        case 'triangle': {
+          const triWidth = Math.abs(width);
+          const triHeight = Math.abs(height);
+          const triLeft = Math.min(startX, pointer.x);
+          const triTop = Math.min(startY, pointer.y);
+          obj = new Polygon(
+            [
+              { x: triLeft + triWidth / 2, y: triTop },
+              { x: triLeft + triWidth, y: triTop + triHeight },
+              { x: triLeft, y: triTop + triHeight },
+            ],
+            {
+              fill: fillColor,
+              stroke: selectedColor,
+              strokeWidth: brushSize[0],
+            }
+          );
+          break;
+        }
+
+        case 'diamond': {
+          const dw = Math.abs(width);
+          const dh = Math.abs(height);
+          const dl = Math.min(startX, pointer.x);
+          const dt = Math.min(startY, pointer.y);
+          obj = new Polygon(
+            [
+              { x: dl + dw / 2, y: dt },
+              { x: dl + dw, y: dt + dh / 2 },
+              { x: dl + dw / 2, y: dt + dh },
+              { x: dl, y: dt + dh / 2 },
+            ],
+            {
+              fill: fillColor,
+              stroke: selectedColor,
+              strokeWidth: brushSize[0],
+            }
+          );
+          break;
+        }
+
+        case 'star': {
+          const cx = (startX + pointer.x) / 2;
+          const cy = (startY + pointer.y) / 2;
+          const outerR = Math.max(Math.abs(width), Math.abs(height)) / 2;
+          const innerR = outerR * 0.4;
+          const points: { x: number; y: number }[] = [];
+          for (let i = 0; i < 10; i++) {
+            const r = i % 2 === 0 ? outerR : innerR;
+            const angle = (Math.PI / 5) * i - Math.PI / 2;
+            points.push({
+              x: cx + r * Math.cos(angle),
+              y: cy + r * Math.sin(angle),
+            });
+          }
+          obj = new Polygon(points, {
+            fill: fillColor,
+            stroke: selectedColor,
+            strokeWidth: brushSize[0],
+          });
+          break;
+        }
+
+        case 'arrow': {
+          const arrowHeadSize = Math.max(10, brushSize[0] * 4);
+          const angle = Math.atan2(pointer.y - startY, pointer.x - startX);
+          const headX = pointer.x;
+          const headY = pointer.y;
+
+          const line1 = new Line([startX, startY, pointer.x, pointer.y], {
+            stroke: selectedColor,
+            strokeWidth: brushSize[0],
+          });
+
+          const arrowHead = new Polygon(
+            [
+              { x: headX, y: headY },
+              {
+                x: headX - arrowHeadSize * Math.cos(angle - Math.PI / 6),
+                y: headY - arrowHeadSize * Math.sin(angle - Math.PI / 6),
+              },
+              {
+                x: headX - arrowHeadSize * Math.cos(angle + Math.PI / 6),
+                y: headY - arrowHeadSize * Math.sin(angle + Math.PI / 6),
+              },
+            ],
+            {
+              fill: selectedColor,
+              stroke: selectedColor,
+              strokeWidth: 1,
+            }
+          );
+
+          // Use line as preview, add arrowhead on mouseup
+          obj = line1;
+          break;
+        }
       }
 
       if (obj) {
@@ -356,19 +673,50 @@ const PersonalWhiteboardCanvas = () => {
       }
     };
 
-    const handleMouseUp = () => {
+    const handleMouseUp = (event: any) => {
       if (!isDrawingRef.current) return;
       isDrawingRef.current = false;
+
+      // For arrow tool, add the arrowhead on completion
+      if (selectedTool === 'arrow' && startPointRef.current && drawingObjectRef.current) {
+        const pointer = canvas.getScenePoint(event.e);
+        const arrowHeadSize = Math.max(10, brushSize[0] * 4);
+        const angle = Math.atan2(pointer.y - startPointRef.current.y, pointer.x - startPointRef.current.x);
+
+        const arrowHead = new Polygon(
+          [
+            { x: pointer.x, y: pointer.y },
+            {
+              x: pointer.x - arrowHeadSize * Math.cos(angle - Math.PI / 6),
+              y: pointer.y - arrowHeadSize * Math.sin(angle - Math.PI / 6),
+            },
+            {
+              x: pointer.x - arrowHeadSize * Math.cos(angle + Math.PI / 6),
+              y: pointer.y - arrowHeadSize * Math.sin(angle + Math.PI / 6),
+            },
+          ],
+          {
+            fill: selectedColor,
+            stroke: selectedColor,
+            strokeWidth: 1,
+          }
+        );
+        canvas.add(arrowHead);
+      }
+
+      saveStateForUndo();
       drawingObjectRef.current = null;
       startPointRef.current = null;
       saveWhiteboard(true);
     };
 
     const handleObjectModified = () => {
+      saveStateForUndo();
       saveWhiteboard(true);
     };
 
     const handlePathCreated = () => {
+      saveStateForUndo();
       saveWhiteboard(true);
     };
 
@@ -381,13 +729,17 @@ const PersonalWhiteboardCanvas = () => {
       brush.width = brushSize[0];
       canvas.freeDrawingBrush = brush;
       canvas.defaultCursor = 'crosshair';
-    } else if (selectedTool === 'eraser') {
+    } else if (selectedTool === 'highlighter') {
       canvas.isDrawingMode = true;
       canvas.selection = false;
       const brush = new PencilBrush(canvas);
-      brush.color = '#ffffff';
-      brush.width = brushSize[0] * 3;
+      brush.color = selectedColor + '60'; // semi-transparent
+      brush.width = brushSize[0] * 4;
       canvas.freeDrawingBrush = brush;
+      canvas.defaultCursor = 'crosshair';
+    } else if (selectedTool === 'eraser') {
+      canvas.isDrawingMode = false;
+      canvas.selection = false;
       canvas.defaultCursor = 'crosshair';
     } else if (selectedTool === 'select') {
       canvas.isDrawingMode = false;
@@ -415,16 +767,21 @@ const PersonalWhiteboardCanvas = () => {
       canvas.off('object:modified', handleObjectModified);
       canvas.off('path:created', handlePathCreated);
     };
-  }, [selectedTool, selectedColor, brushSize, saveWhiteboard, isCanvasReady]);
+  }, [selectedTool, selectedColor, brushSize, fillColor, saveWhiteboard, saveStateForUndo, isCanvasReady]);
 
   const tools: { id: DrawingTool; icon: any; label: string }[] = [
-    { id: 'select', icon: MousePointer, label: 'Select' },
-    { id: 'pen', icon: Pencil, label: 'Pen' },
+    { id: 'select', icon: MousePointer, label: 'Select (V)' },
+    { id: 'pen', icon: Pencil, label: 'Pen (P)' },
+    { id: 'highlighter', icon: Pen, label: 'Highlighter' },
     { id: 'rectangle', icon: Square, label: 'Rectangle' },
     { id: 'circle', icon: CircleDot, label: 'Circle' },
+    { id: 'triangle', icon: Triangle, label: 'Triangle' },
+    { id: 'diamond', icon: Diamond, label: 'Diamond' },
+    { id: 'star', icon: Star, label: 'Star' },
     { id: 'line', icon: Minus, label: 'Line' },
-    { id: 'text', icon: Type, label: 'Text' },
-    { id: 'eraser', icon: Eraser, label: 'Eraser' },
+    { id: 'arrow', icon: ArrowRight, label: 'Arrow' },
+    { id: 'text', icon: Type, label: 'Text (T)' },
+    { id: 'eraser', icon: Eraser, label: 'Eraser (E)' },
   ];
 
   if (isLoading) {
@@ -442,26 +799,82 @@ const PersonalWhiteboardCanvas = () => {
         <div className="px-2 sm:px-4 py-2 sm:py-3">
           {/* Top row - Header and actions */}
           <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/my-whiteboards')}
-                className="px-2"
+                className="px-2 flex-shrink-0"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span className="hidden sm:inline ml-2">Back</span>
               </Button>
-              <div className="hidden md:block">
-                <h2 className="font-semibold text-gray-900 text-sm">{whiteboard?.name}</h2>
-                <p className="text-xs text-gray-500">{whiteboard?.description || 'Personal whiteboard'}</p>
+
+              {/* Editable Name */}
+              <div className="hidden md:flex items-center gap-1 min-w-0 flex-1">
+                {isEditingName ? (
+                  <div className="flex items-center gap-1">
+                    <Input
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveWhiteboardName();
+                        if (e.key === 'Escape') {
+                          setIsEditingName(false);
+                          setEditName(whiteboard?.name || '');
+                        }
+                      }}
+                      className="h-7 text-sm font-semibold w-48"
+                      autoFocus
+                    />
+                    <Button variant="ghost" size="sm" onClick={saveWhiteboardName} className="h-7 w-7 p-0">
+                      <Check className="w-3 h-3 text-green-600" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => { setIsEditingName(false); setEditName(whiteboard?.name || ''); }} className="h-7 w-7 p-0">
+                      <X className="w-3 h-3 text-red-600" />
+                    </Button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsEditingName(true)}
+                    className="text-left hover:bg-gray-100 rounded px-2 py-1 transition-colors min-w-0"
+                    title="Click to rename"
+                  >
+                    <h2 className="font-semibold text-gray-900 text-sm truncate">{whiteboard?.name}</h2>
+                    <p className="text-xs text-gray-500 truncate">{whiteboard?.description || 'Click to rename'}</p>
+                  </button>
+                )}
               </div>
             </div>
 
-            <div className="flex items-center gap-1 sm:gap-2">
-              <Button variant="outline" size="sm" onClick={clearCanvas} className="px-2 sm:px-3">
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+              {/* Undo/Redo */}
+              <Button variant="outline" size="sm" onClick={handleUndo} disabled={!canUndo} className="px-2" title="Undo (Ctrl+Z)">
+                <Undo2 className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleRedo} disabled={!canRedo} className="px-2" title="Redo (Ctrl+Y)">
+                <Redo2 className="w-4 h-4" />
+              </Button>
+
+              <div className="hidden sm:block w-px h-6 bg-gray-300" />
+
+              {/* Copy/Paste */}
+              <Button variant="outline" size="sm" onClick={copySelected} className="px-2" title="Copy (Ctrl+C)">
+                <Copy className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={pasteFromClipboard} className="px-2" title="Paste (Ctrl+V)">
+                <ClipboardPaste className="w-4 h-4" />
+              </Button>
+
+              <div className="hidden sm:block w-px h-6 bg-gray-300" />
+
+              <Button variant="outline" size="sm" onClick={deleteSelected} className="px-2" title="Delete selected">
                 <Trash2 className="w-4 h-4" />
-                <span className="hidden sm:inline ml-2">Clear</span>
+              </Button>
+
+              <Button variant="outline" size="sm" onClick={clearCanvas} className="px-2 sm:px-3">
+                <Trash2 className="w-4 h-4 text-red-500" />
+                <span className="hidden sm:inline ml-2">Clear All</span>
               </Button>
 
               <Button variant="outline" size="sm" onClick={exportCanvas} className="px-2 sm:px-3">
@@ -513,7 +926,7 @@ const PersonalWhiteboardCanvas = () => {
 
             <div className="hidden sm:block w-px h-8 bg-gray-300" />
 
-            {/* Color picker - scrollable on mobile */}
+            {/* Stroke Color picker */}
             <div className="flex items-center gap-1 overflow-x-auto max-w-full pb-1 sm:pb-0">
               {COLORS.map((color) => (
                 <button
@@ -523,8 +936,43 @@ const PersonalWhiteboardCanvas = () => {
                   }`}
                   style={{ backgroundColor: color }}
                   onClick={() => setSelectedColor(color)}
+                  title={`Stroke: ${color}`}
                 />
               ))}
+            </div>
+
+            <div className="hidden sm:block w-px h-8 bg-gray-300" />
+
+            {/* Fill color toggle */}
+            <div className="relative flex items-center gap-1">
+              <span className="text-xs text-gray-600 flex-shrink-0">Fill:</span>
+              <button
+                onClick={() => setShowFillPicker(!showFillPicker)}
+                className="w-7 h-7 rounded border-2 border-gray-300 flex items-center justify-center"
+                style={{ backgroundColor: fillColor === 'transparent' ? '#ffffff' : fillColor }}
+                title="Fill color"
+              >
+                {fillColor === 'transparent' && <X className="w-3 h-3 text-red-400" />}
+              </button>
+              {showFillPicker && (
+                <div className="absolute top-full left-0 mt-1 bg-white border rounded-lg shadow-lg p-2 z-50 flex flex-wrap gap-1 w-48">
+                  <button
+                    className={`w-7 h-7 rounded border-2 flex items-center justify-center ${fillColor === 'transparent' ? 'border-purple-600' : 'border-gray-300'}`}
+                    onClick={() => { setFillColor('transparent'); setShowFillPicker(false); }}
+                    title="No fill"
+                  >
+                    <X className="w-3 h-3 text-red-400" />
+                  </button>
+                  {COLORS.map((color) => (
+                    <button
+                      key={`fill-${color}`}
+                      className={`w-7 h-7 rounded border-2 flex-shrink-0 ${fillColor === color ? 'border-purple-600 scale-110' : 'border-gray-300'}`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => { setFillColor(color); setShowFillPicker(false); }}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="hidden sm:block w-px h-8 bg-gray-300" />

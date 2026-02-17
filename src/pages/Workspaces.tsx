@@ -614,9 +614,6 @@ const Workspaces = () => {
                                 <Button variant="ghost" size="sm" onClick={() => navigate(`/workspaces/${workspace._id}`)} title="Open Chat">
                                   <MessageSquare className="h-4 w-4" />
                                 </Button>
-                                <Button variant="ghost" size="sm" onClick={() => navigate(`/workspaces/${workspace._id}/whiteboards`)} title="Open Whiteboards" className="text-purple-600 hover:text-purple-700 hover:bg-purple-50">
-                                  <Presentation className="h-4 w-4" />
-                                </Button>
                                 {workspace.role === 'owner' && (
                                   <>
                                     <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setWorkspaceToRename(workspace); }}>
@@ -678,9 +675,6 @@ const Workspaces = () => {
                           <div className="flex items-center gap-2">
                             <Button variant="ghost" size="sm" onClick={() => navigate(`/workspaces/${workspace._id}`)} title="Open Chat">
                               <MessageSquare className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm" onClick={() => navigate(`/workspaces/${workspace._id}/whiteboards`)} title="Open Whiteboards" className="text-purple-600 hover:text-purple-700 hover:bg-purple-50">
-                              <Presentation className="h-4 w-4" />
                             </Button>
                             {workspace.role === 'owner' && (
                               <>

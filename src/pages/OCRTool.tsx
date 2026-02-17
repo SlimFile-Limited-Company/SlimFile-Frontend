@@ -103,45 +103,121 @@ const OCRTool = () => {
     multiple: false,
   });
 
+  const preprocessImage = (imageUrl: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new window.Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d')!;
+
+        // Scale up small images for better recognition (min 1500px wide)
+        const scale = Math.max(1, 1500 / img.width);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+
+        // Draw scaled image
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Get image data for processing
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        // Convert to grayscale and increase contrast
+        for (let i = 0; i < data.length; i += 4) {
+          // Grayscale using luminance formula
+          const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+
+          // Increase contrast (1.5x)
+          const contrast = 1.5;
+          const adjusted = ((gray / 255 - 0.5) * contrast + 0.5) * 255;
+
+          // Clamp and apply threshold for cleaner text
+          const val = Math.max(0, Math.min(255, adjusted));
+
+          // Adaptive binarization: if close to middle, push to black or white
+          const final = val < 140 ? Math.max(0, val * 0.7) : Math.min(255, val * 1.2);
+
+          data[i] = final;
+          data[i + 1] = final;
+          data[i + 2] = final;
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+
+        // Sharpen using convolution (unsharp mask approximation)
+        const sharpCanvas = document.createElement('canvas');
+        sharpCanvas.width = canvas.width;
+        sharpCanvas.height = canvas.height;
+        const sharpCtx = sharpCanvas.getContext('2d')!;
+
+        // Apply slight blur then subtract for sharpening
+        sharpCtx.filter = 'contrast(1.1) brightness(1.05)';
+        sharpCtx.drawImage(canvas, 0, 0);
+
+        resolve(sharpCanvas.toDataURL('image/png'));
+      };
+      img.src = imageUrl;
+    });
+  };
+
   const extractText = async () => {
     if (!selectedFile || !previewUrl) return;
 
     setIsProcessing(true);
     setProgress(0);
-    setProcessingStage('Initializing OCR engine...');
+    setProcessingStage('Preprocessing image...');
 
     try {
+      // Preprocess image for better OCR accuracy
+      const processedImage = await preprocessImage(previewUrl);
+      setProgress(5);
+
+      setProcessingStage('Initializing OCR engine...');
       const worker = await createWorker(selectedLanguage, 1, {
         logger: (m) => {
-          console.log(m);
           if (m.status === 'recognizing text') {
-            setProgress(Math.round(m.progress * 100));
+            setProgress(30 + Math.round(m.progress * 70));
             setProcessingStage(`Recognizing text... ${Math.round(m.progress * 100)}%`);
           } else if (m.status === 'loading tesseract core') {
             setProcessingStage('Loading OCR engine...');
             setProgress(10);
           } else if (m.status === 'initializing tesseract') {
             setProcessingStage('Initializing...');
-            setProgress(20);
+            setProgress(15);
           } else if (m.status === 'loading language traineddata') {
             setProcessingStage(`Loading ${LANGUAGES.find(l => l.code === selectedLanguage)?.name} language data...`);
-            setProgress(30);
+            setProgress(20);
           }
         },
       });
 
+      // Set optimal parameters for text recognition
+      await worker.setParameters({
+        tessedit_pageseg_mode: '3', // Fully automatic page segmentation
+        preserve_interword_spaces: '1',
+        tessedit_char_blacklist: '|~`',
+      });
+
       setProcessingStage('Analyzing image...');
-      const { data: { text, confidence } } = await worker.recognize(previewUrl);
+      const { data: { text, confidence } } = await worker.recognize(processedImage);
 
       await worker.terminate();
 
-      setExtractedText(text);
+      // Post-process: clean up common OCR artifacts
+      const cleanedText = text
+        .replace(/\n{3,}/g, '\n\n') // collapse excessive newlines
+        .replace(/[ \t]{2,}/g, ' ') // collapse excessive spaces
+        .replace(/([a-z])\s*\n\s*([a-z])/g, '$1 $2') // rejoin broken words mid-sentence
+        .trim();
+
+      setExtractedText(cleanedText);
       setProgress(100);
       setProcessingStage('Complete!');
 
       toast({
         title: 'Text extracted successfully!',
-        description: `Confidence: ${confidence.toFixed(1)}% | ${text.split(' ').length} words found`,
+        description: `Confidence: ${confidence.toFixed(1)}% | ${cleanedText.split(/\s+/).filter(w => w).length} words found`,
       });
     } catch (error) {
       console.error('OCR Error:', error);
