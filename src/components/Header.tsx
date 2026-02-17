@@ -103,6 +103,22 @@ export const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
+      {/* GTV Ghana feature banner */}
+      <a
+        href="https://youtu.be/ZZ2v94GbS58?si=aiyW4XkJRtBLpR1X"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-1.5 bg-red-600 px-3 py-0.5 text-white hover:bg-red-700 transition-colors duration-200 group"
+      >
+        <svg className="w-2.5 h-2.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/>
+        </svg>
+        <span className="text-[11px] font-medium tracking-wide">
+          <span className="font-semibold">SlimFile featured on GTV Ghana</span>
+          <span className="hidden sm:inline opacity-80"> — Watch the session</span>
+        </span>
+        <span className="text-[11px] opacity-75 group-hover:translate-x-0.5 transition-transform duration-150">›</span>
+      </a>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">

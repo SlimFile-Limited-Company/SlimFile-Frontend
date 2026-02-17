@@ -476,7 +476,15 @@ const PersonalWhiteboardCanvas = () => {
     canvas.off('object:added');
 
     const handleMouseDown = (event: any) => {
-      if (selectedTool === 'select' || selectedTool === 'pen' || selectedTool === 'highlighter') return;
+      if (selectedTool === 'select') return;
+
+      // For pen/highlighter: save state before free drawing starts
+      if (selectedTool === 'pen' || selectedTool === 'highlighter') {
+        saveStateForUndo();
+        redoStackRef.current = [];
+        setCanRedo(false);
+        return;
+      }
 
       // Eraser: click on objects to remove them
       if (selectedTool === 'eraser') {
@@ -513,6 +521,11 @@ const PersonalWhiteboardCanvas = () => {
         isDrawingRef.current = false;
         canvas.requestRenderAll();
         // Clear redo stack after performing an action
+        redoStackRef.current = [];
+        setCanRedo(false);
+      } else {
+        // For shapes: save state before drawing starts
+        saveStateForUndo();
         redoStackRef.current = [];
         setCanRedo(false);
       }
@@ -715,7 +728,6 @@ const PersonalWhiteboardCanvas = () => {
         canvas.add(arrowHead);
       }
 
-      saveStateForUndo();
       drawingObjectRef.current = null;
       startPointRef.current = null;
       saveWhiteboard(true);
@@ -727,7 +739,6 @@ const PersonalWhiteboardCanvas = () => {
     };
 
     const handlePathCreated = () => {
-      saveStateForUndo();
       saveWhiteboard(true);
     };
 
