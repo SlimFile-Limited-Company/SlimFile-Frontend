@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText } from 'lucide-react';
+import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const GetStarted: FC = () => {
@@ -430,6 +430,56 @@ const GetStarted: FC = () => {
                   </Link>
                 </div>
               </div>
+              {/* My Documents */}
+              <div className="group relative">
+                <div className="relative bg-gradient-to-br from-white to-sky-50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-sky-200 hover:border-sky-300 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl h-full flex flex-col">
+                  {/* Badge */}
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-sky-600 to-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">
+                    New
+                  </div>
+
+                  {/* Icon */}
+                  <div className="w-12 h-12 bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <FileType className="w-6 h-6 text-white" />
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                    My Documents
+                  </h3>
+                  <p className="text-gray-600 mb-4 leading-relaxed text-xs sm:text-sm flex-grow">
+                    Create and edit documents with a professional word processor. Format, style, and export with ease.
+                  </p>
+
+                  {/* Features */}
+                  <ul className="space-y-2 mb-6">
+                    {[
+                      "Rich text formatting",
+                      "Tables & images",
+                      "Import & export DOCX",
+                      "Auto-save & organize"
+                    ].map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-gray-700">
+                        <div className="w-1.5 h-1.5 rounded-full bg-sky-500 mt-1 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <Link to="/documents" className="w-full">
+                    <Button
+                      size="sm"
+                      className="w-full text-sm px-4 py-2 rounded-lg bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold"
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        Get Started
+                        <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </Button>
+                  </Link>
+                </div>
+              </div>
             </div>
 
             {/* Info Section */}
@@ -470,6 +520,10 @@ const GetStarted: FC = () => {
                   <div>
                     <h3 className="font-bold text-lg text-gray-900 mb-2">Choose My Whiteboards if:</h3>
                     <p className="text-sm sm:text-base">You want to brainstorm ideas and sketch concepts. Create personal visual boards for planning and organizing your thoughts.</p>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">Choose My Documents if:</h3>
+                    <p className="text-sm sm:text-base">You need a professional word processor to create, edit, and format documents. Import DOCX files, add tables and images, and export with formatting preserved.</p>
                   </div>
                 </div>
               </div>

@@ -100,9 +100,8 @@ const PersonalWhiteboardCanvas = () => {
     if (undoStackRef.current.length > 50) {
       undoStackRef.current.shift();
     }
-    redoStackRef.current = [];
+    // Only clear redo stack when a new action is performed, not when just changing tools
     setCanUndo(true);
-    setCanRedo(false);
   }, []);
 
   const handleUndo = useCallback(() => {
@@ -321,6 +320,9 @@ const PersonalWhiteboardCanvas = () => {
     canvas.discardActiveObject();
     canvas.requestRenderAll();
     saveWhiteboard(true);
+    // Clear redo stack after performing an action
+    redoStackRef.current = [];
+    setCanRedo(false);
   };
 
   const copySelected = () => {
@@ -330,7 +332,7 @@ const PersonalWhiteboardCanvas = () => {
     const active = canvas.getActiveObject();
     if (!active) return;
 
-    active.clone().then((cloned: FabricObject) => {
+    active.clone().then((cloned: any) => {
       clipboardRef.current = cloned;
       toast({ title: 'Copied', description: 'Object copied to clipboard' });
     });
@@ -341,7 +343,7 @@ const PersonalWhiteboardCanvas = () => {
     if (!canvas || !clipboardRef.current) return;
 
     saveStateForUndo();
-    clipboardRef.current.clone().then((cloned: FabricObject) => {
+    clipboardRef.current.clone().then((cloned: any) => {
       cloned.set({
         left: (cloned.left || 0) + 20,
         top: (cloned.top || 0) + 20,
@@ -350,6 +352,9 @@ const PersonalWhiteboardCanvas = () => {
       canvas.setActiveObject(cloned);
       canvas.requestRenderAll();
       saveWhiteboard(true);
+      // Clear redo stack after performing an action
+      redoStackRef.current = [];
+      setCanRedo(false);
     });
   };
 
@@ -481,6 +486,9 @@ const PersonalWhiteboardCanvas = () => {
           canvas.remove(target);
           canvas.requestRenderAll();
           saveWhiteboard(true);
+          // Clear redo stack after performing an action
+          redoStackRef.current = [];
+          setCanRedo(false);
         }
         return;
       }
@@ -504,6 +512,9 @@ const PersonalWhiteboardCanvas = () => {
         text.selectAll();
         isDrawingRef.current = false;
         canvas.requestRenderAll();
+        // Clear redo stack after performing an action
+        redoStackRef.current = [];
+        setCanRedo(false);
       }
     };
 
