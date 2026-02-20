@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
+import { CookieBanner } from "@/components/CookieBanner";
 import { registerServiceWorker } from "@/utils/pwa";
 import { useEffect } from "react";
 import { isAuthenticated, validateToken } from "@/lib/auth";
@@ -87,6 +88,7 @@ const App = () => {
         <Outlet />
       </main>
       <Footer />
+      <CookieBanner />
     </div>
   );
 };

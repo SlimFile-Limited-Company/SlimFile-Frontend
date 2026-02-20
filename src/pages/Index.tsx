@@ -3,6 +3,7 @@ import { useState } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { CompressionResult } from "@/components/CompressionResult";
 import { toast } from "@/hooks/use-toast";
+import { WelcomeModal } from "@/components/WelcomeModal";
 
 const Index = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -99,6 +100,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen pt-24">
+      <WelcomeModal />
       {/* Hero Section */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto text-center">
