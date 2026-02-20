@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { X, Zap, Users, Lock, ScanText, FileImage, FilePlus2 } from 'lucide-react';
-import { isAuthenticated } from '@/lib/auth';
 
 const FEATURES = [
   { icon: <FileImage className="w-4 h-4" />, text: 'Compress images & PDFs' },
@@ -16,15 +15,8 @@ export const WelcomeModal = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    // Only show for guests, once per session
-    if (isAuthenticated()) return;
-    const seen = sessionStorage.getItem('sf_welcome_seen');
-    if (seen) return;
-
-    const t = setTimeout(() => {
-      setOpen(true);
-      sessionStorage.setItem('sf_welcome_seen', '1');
-    }, 800);
+    // Show for every visitor on every page load
+    const t = setTimeout(() => setOpen(true), 800);
     return () => clearTimeout(t);
   }, []);
 
