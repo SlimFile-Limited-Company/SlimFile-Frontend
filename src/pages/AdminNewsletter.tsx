@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, Send, Save, Trash2, Users, Mail, CheckCircle2 } from 'lucide-react';
+import { Loader2, Send, Save, Trash2, Users, Mail, CheckCircle2, FlaskConical } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -28,6 +28,7 @@ const AdminNewsletter = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [sending, setSending] = useState<string | null>(null);
+  const [testing, setTesting] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -111,6 +112,23 @@ const AdminNewsletter = () => {
       toast({ title: 'Send failed', description: err.message || 'Something went wrong.', variant: 'destructive' });
     } finally {
       setSending(null);
+    }
+  };
+
+  const handleTestSend = async (id: string) => {
+    setTesting(id);
+    try {
+      const res = await fetch(`${API}/admin/newsletter/${id}/test`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast({ title: 'Test email sent!', description: `Check your inbox at ${data.sentTo}` });
+    } catch (err: any) {
+      toast({ title: 'Test failed', description: err.message || 'Something went wrong.', variant: 'destructive' });
+    } finally {
+      setTesting(null);
     }
   };
 
@@ -252,8 +270,18 @@ const AdminNewsletter = () => {
                     <div className="flex items-center gap-2 shrink-0">
                       <Button
                         size="sm"
+                        variant="outline"
+                        onClick={() => handleTestSend(c._id)}
+                        disabled={!!testing || !!sending}
+                        className="rounded-full text-xs px-3 border-gray-200 text-gray-600 hover:text-red-600 hover:border-red-300"
+                        title="Send test email to yourself"
+                      >
+                        {testing === c._id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <><FlaskConical className="w-3.5 h-3.5 mr-1" />Test</>}
+                      </Button>
+                      <Button
+                        size="sm"
                         onClick={() => handleSendNow(c._id)}
-                        disabled={!!sending}
+                        disabled={!!sending || !!testing}
                         className="bg-red-600 hover:bg-red-700 text-white rounded-full text-xs px-4"
                       >
                         {sending === c._id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <><Send className="w-3.5 h-3.5 mr-1" />Send Now</>}
