@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType } from 'lucide-react';
+import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const GetStarted: FC = () => {
@@ -480,6 +480,107 @@ const GetStarted: FC = () => {
                   </Link>
                 </div>
               </div>
+              {/* PDF Merger & Splitter */}
+              <div className="group relative">
+                <div className="relative bg-gradient-to-br from-white to-amber-50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-amber-200 hover:border-amber-300 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl h-full flex flex-col">
+                  {/* Badge */}
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">
+                    New
+                  </div>
+
+                  {/* Icon */}
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <FilePlus2 className="w-6 h-6 text-white" />
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                    PDF Merger & Splitter
+                  </h3>
+                  <p className="text-gray-600 mb-4 leading-relaxed text-xs sm:text-sm flex-grow">
+                    Combine multiple PDFs into one document, or split a PDF into separate pages or custom sections.
+                  </p>
+
+                  {/* Features */}
+                  <ul className="space-y-2 mb-6">
+                    {[
+                      "Merge up to 20 PDFs",
+                      "Split by page ranges",
+                      "Drag to reorder files",
+                      "Instant ZIP download"
+                    ].map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-gray-700">
+                        <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <Link to="/forge" className="w-full">
+                    <Button
+                      size="sm"
+                      className="w-full text-sm px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold"
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        Get Started
+                        <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* PDF Password Protect */}
+              <div className="group relative">
+                <div className="relative bg-gradient-to-br from-white to-violet-50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-violet-200 hover:border-violet-300 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl h-full flex flex-col">
+                  {/* Badge */}
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">
+                    New
+                  </div>
+
+                  {/* Icon */}
+                  <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-violet-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <Lock className="w-6 h-6 text-white" />
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                    PDF Password Protect
+                  </h3>
+                  <p className="text-gray-600 mb-4 leading-relaxed text-xs sm:text-sm flex-grow">
+                    Add a password to any PDF so only you can open it — or remove an existing password instantly.
+                  </p>
+
+                  {/* Features */}
+                  <ul className="space-y-2 mb-6">
+                    {[
+                      "128-bit encryption",
+                      "Remove existing passwords",
+                      "Files never stored",
+                      "Instant download"
+                    ].map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-gray-700">
+                        <div className="w-1.5 h-1.5 rounded-full bg-violet-500 mt-1 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <Link to="/lock" className="w-full">
+                    <Button
+                      size="sm"
+                      className="w-full text-sm px-4 py-2 rounded-lg bg-gradient-to-r from-violet-600 to-violet-500 hover:from-violet-700 hover:to-violet-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold"
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        Get Started
+                        <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </Button>
+                  </Link>
+                </div>
+              </div>
             </div>
 
             {/* Info Section */}
@@ -524,6 +625,14 @@ const GetStarted: FC = () => {
                   <div>
                     <h3 className="font-bold text-lg text-gray-900 mb-2">Choose My Documents if:</h3>
                     <p className="text-sm sm:text-base">You need a professional word processor to create, edit, and format documents. Import DOCX files, add tables and images, and export with formatting preserved.</p>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">Choose PDF Merger & Splitter if:</h3>
+                    <p className="text-sm sm:text-base">You need to combine multiple PDF files into one, or break a large PDF into smaller sections. Useful for reports, contracts, and any multi-document workflow.</p>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">Choose PDF Password Protect if:</h3>
+                    <p className="text-sm sm:text-base">You want to restrict access to a PDF with a password, or remove an existing password from a protected document. Ideal for sensitive files and confidential documents.</p>
                   </div>
                 </div>
               </div>
