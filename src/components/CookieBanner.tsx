@@ -41,7 +41,7 @@ export const CookieBanner = () => {
                 <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
                   SlimFile uses cookies to improve your experience, analyze site traffic, and personalize content.
                   By clicking <span className="font-medium text-gray-700">"Accept"</span>, you agree to our{' '}
-                  <Link to="/privacy-policy" className="text-red-600 hover:underline font-medium">Privacy Policy</Link>.
+                  <Link to="/privacy" className="text-red-600 hover:underline font-medium">Privacy Policy</Link>.
                 </p>
               </div>
             </div>
