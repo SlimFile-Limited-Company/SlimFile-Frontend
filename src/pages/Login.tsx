@@ -186,7 +186,7 @@ export default function Login() {
             fontFamily: "'Inter', system-ui, sans-serif",
           }}
         >
-          SlimFile offers fast, secure, and high-quality file compression for images, PDFs and PPTX right in your browser.
+          Compress, convert, and collaborate — everything in one place.
         </p>
         <div
           id="google-signin-btn"
