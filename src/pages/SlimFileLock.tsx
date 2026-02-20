@@ -4,15 +4,16 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-  Loader2, Download, Trash2, FileText, Lock, LockOpen, Eye, EyeOff,
+  Loader2, FileText, Lock, LockOpen, Eye, EyeOff,
+  Trash2, ShieldCheck, Upload,
 } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
 async function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
+  const a   = document.createElement('a');
+  a.href     = url;
   a.download = filename;
   document.body.appendChild(a);
   a.click();
@@ -20,34 +21,31 @@ async function downloadBlob(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-// ── Shared file drop component ─────────────────────────────────────────────
-function PdfDropZone({ file, onFile, onClear, icon }: {
+// ── Drop zone ──────────────────────────────────────────────────────────────
+function PdfDropZone({ file, onFile, onClear }: {
   file: File | null;
   onFile: (f: File) => void;
   onClear: () => void;
-  icon: React.ReactNode;
 }) {
-  const onDrop = useCallback((accepted: File[]) => {
-    if (accepted[0]) onFile(accepted[0]);
-  }, [onFile]);
-
+  const onDrop = useCallback((accepted: File[]) => { if (accepted[0]) onFile(accepted[0]); }, [onFile]);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: { 'application/pdf': ['.pdf'] },
-    multiple: false,
+    onDrop, accept: { 'application/pdf': ['.pdf'] }, multiple: false,
   });
 
   if (file) {
     return (
-      <div className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-2xl">
-        <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+      <div className="flex items-center gap-3 p-4 bg-gray-50 border border-gray-200 rounded-2xl">
+        <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center shrink-0 shadow-sm">
           <FileText className="w-5 h-5 text-red-500" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-gray-800 truncate">{file.name}</p>
-          <p className="text-xs text-gray-400">{(file.size / 1024).toFixed(0)} KB</p>
+          <p className="text-xs text-gray-400">{(file.size / 1024).toFixed(0)} KB · PDF</p>
         </div>
-        <button onClick={onClear} className="text-gray-400 hover:text-red-500 transition-colors">
+        <button
+          onClick={onClear}
+          className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-all"
+        >
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
@@ -57,23 +55,23 @@ function PdfDropZone({ file, onFile, onClear, icon }: {
   return (
     <div
       {...getRootProps()}
-      className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
-        isDragActive ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-red-400 hover:bg-red-50/30'
+      className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all ${
+        isDragActive ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-red-300 hover:bg-gray-50'
       }`}
     >
       <input {...getInputProps()} />
-      <div className="flex flex-col items-center gap-3">
-        {icon}
-        <div>
-          <p className="font-semibold text-gray-700">{isDragActive ? 'Drop PDF here' : 'Upload a PDF'}</p>
-          <p className="text-sm text-gray-500 mt-0.5">Max 50 MB</p>
-        </div>
+      <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3">
+        <Upload className="w-6 h-6 text-gray-400" />
       </div>
+      <p className="font-semibold text-gray-700 text-sm">
+        {isDragActive ? 'Drop your PDF here' : 'Drop PDF here or click to browse'}
+      </p>
+      <p className="text-xs text-gray-400 mt-1">Maximum file size 50 MB</p>
     </div>
   );
 }
 
-// ── Password input with show/hide ─────────────────────────────────────────
+// ── Password input ─────────────────────────────────────────────────────────
 function PasswordInput({ value, onChange, placeholder }: {
   value: string;
   onChange: (v: string) => void;
@@ -87,7 +85,7 @@ function PasswordInput({ value, onChange, placeholder }: {
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder || 'Enter password'}
-        className="pr-10 border-gray-200 focus:border-red-400 focus:ring-red-400/20"
+        className="pr-10 h-11 border-gray-200 focus:border-red-400 focus:ring-red-400/20 rounded-xl"
       />
       <button
         type="button"
@@ -100,18 +98,20 @@ function PasswordInput({ value, onChange, placeholder }: {
   );
 }
 
-// ── Lock Tab ───────────────────────────────────────────────────────────────
-function LockTab() {
+// ── Protect tab ────────────────────────────────────────────────────────────
+function ProtectTab() {
   const { toast } = useToast();
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile]         = useState<File | null>(null);
   const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
+  const [confirm, setConfirm]   = useState('');
   const [processing, setProcessing] = useState(false);
 
+  const mismatch = password && confirm && password !== confirm;
+
   const handleProtect = async () => {
-    if (!file) return toast({ title: 'No file', description: 'Upload a PDF first.', variant: 'destructive' });
-    if (!password) return toast({ title: 'No password', description: 'Enter a password.', variant: 'destructive' });
-    if (password !== confirm) return toast({ title: 'Passwords do not match', description: 'Both fields must match.', variant: 'destructive' });
+    if (!file)            return toast({ title: 'No file', description: 'Upload a PDF first.', variant: 'destructive' });
+    if (!password)        return toast({ title: 'No password', description: 'Enter a password.', variant: 'destructive' });
+    if (password !== confirm) return toast({ title: 'Passwords do not match', description: 'Both fields must be identical.', variant: 'destructive' });
 
     setProcessing(true);
     try {
@@ -124,12 +124,9 @@ function LockTab() {
         throw new Error(err.error || 'Failed to protect PDF');
       }
       const blob = await res.blob();
-      const name = file.name.replace(/\.pdf$/i, '') + '_locked.pdf';
-      await downloadBlob(blob, name);
-      toast({ title: 'PDF locked!', description: 'Your password-protected PDF is ready.' });
-      setPassword('');
-      setConfirm('');
-      setFile(null);
+      await downloadBlob(blob, file.name.replace(/\.pdf$/i, '') + '_locked.pdf');
+      toast({ title: 'PDF protected!', description: 'Your password-protected PDF has been downloaded.' });
+      setPassword(''); setConfirm(''); setFile(null);
     } catch (err: any) {
       toast({ title: 'Error', description: err.message, variant: 'destructive' });
     } finally {
@@ -138,54 +135,52 @@ function LockTab() {
   };
 
   return (
-    <div className="space-y-4">
-      <PdfDropZone
-        file={file}
-        onFile={setFile}
-        onClear={() => setFile(null)}
-        icon={<Lock className="w-10 h-10 text-gray-400" />}
-      />
+    <div className="space-y-5">
+      <PdfDropZone file={file} onFile={setFile} onClear={() => setFile(null)} />
 
-      <div className="space-y-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Password</label>
-          <PasswordInput value={password} onChange={setPassword} placeholder="Create a password" />
+          <PasswordInput value={password} onChange={setPassword} placeholder="Create a strong password" />
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700">Confirm password</label>
           <PasswordInput value={confirm} onChange={setConfirm} placeholder="Re-enter password" />
+          {mismatch && <p className="text-xs text-red-500">Passwords do not match</p>}
         </div>
       </div>
 
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
-        <p className="text-xs text-amber-700">
-          <span className="font-semibold">Important:</span> Keep your password safe. If you lose it, the PDF cannot be recovered.
+      <div className="flex items-start gap-2.5 bg-amber-50 border border-amber-100 rounded-xl p-3.5">
+        <ShieldCheck className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+        <p className="text-xs text-amber-700 leading-relaxed">
+          <span className="font-semibold">Remember your password.</span>{' '}
+          There is no way to recover a protected PDF without it.
         </p>
       </div>
 
       <Button
         onClick={handleProtect}
-        disabled={processing || !file || !password}
-        className="w-full bg-red-600 hover:bg-red-700 text-white rounded-xl h-11 shadow-md shadow-red-100"
+        disabled={processing || !file || !password || password !== confirm}
+        className="w-full bg-red-600 hover:bg-red-700 text-white rounded-xl h-12 text-sm font-semibold shadow-sm"
       >
         {processing
-          ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Locking…</>
-          : <><Lock className="w-4 h-4 mr-2" />Lock PDF</>}
+          ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Protecting PDF…</>
+          : <><Lock className="w-4 h-4 mr-2" />Lock this PDF</>}
       </Button>
     </div>
   );
 }
 
-// ── Unlock Tab ─────────────────────────────────────────────────────────────
-function UnlockTab() {
+// ── Remove password tab ────────────────────────────────────────────────────
+function RemovePasswordTab() {
   const { toast } = useToast();
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile]         = useState<File | null>(null);
   const [password, setPassword] = useState('');
   const [processing, setProcessing] = useState(false);
 
   const handleUnlock = async () => {
-    if (!file) return toast({ title: 'No file', description: 'Upload a PDF first.', variant: 'destructive' });
-    if (!password) return toast({ title: 'No password', description: 'Enter the PDF password.', variant: 'destructive' });
+    if (!file)     return toast({ title: 'No file', description: 'Upload a PDF first.', variant: 'destructive' });
+    if (!password) return toast({ title: 'No password', description: 'Enter the PDF\'s current password.', variant: 'destructive' });
 
     setProcessing(true);
     try {
@@ -200,9 +195,8 @@ function UnlockTab() {
       const blob = await res.blob();
       const name = file.name.replace(/\.pdf$/i, '').replace(/_locked$/i, '') + '_unlocked.pdf';
       await downloadBlob(blob, name);
-      toast({ title: 'PDF unlocked!', description: 'Password removed successfully.' });
-      setPassword('');
-      setFile(null);
+      toast({ title: 'Password removed!', description: 'Your PDF can now be opened without a password.' });
+      setPassword(''); setFile(null);
     } catch (err: any) {
       toast({ title: 'Error', description: err.message, variant: 'destructive' });
     } finally {
@@ -211,27 +205,22 @@ function UnlockTab() {
   };
 
   return (
-    <div className="space-y-4">
-      <PdfDropZone
-        file={file}
-        onFile={setFile}
-        onClear={() => setFile(null)}
-        icon={<LockOpen className="w-10 h-10 text-gray-400" />}
-      />
+    <div className="space-y-5">
+      <PdfDropZone file={file} onFile={setFile} onClear={() => setFile(null)} />
 
       <div className="space-y-1.5">
-        <label className="text-sm font-medium text-gray-700">PDF Password</label>
-        <PasswordInput value={password} onChange={setPassword} placeholder="Enter the PDF's password" />
+        <label className="text-sm font-medium text-gray-700">Current password</label>
+        <PasswordInput value={password} onChange={setPassword} placeholder="Enter the PDF's existing password" />
       </div>
 
       <Button
         onClick={handleUnlock}
         disabled={processing || !file || !password}
-        className="w-full bg-red-600 hover:bg-red-700 text-white rounded-xl h-11 shadow-md shadow-red-100"
+        className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-xl h-12 text-sm font-semibold shadow-sm"
       >
         {processing
-          ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Unlocking…</>
-          : <><LockOpen className="w-4 h-4 mr-2" />Unlock PDF</>}
+          ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Removing password…</>
+          : <><LockOpen className="w-4 h-4 mr-2" />Remove password</>}
       </Button>
     </div>
   );
@@ -239,55 +228,82 @@ function UnlockTab() {
 
 // ── Page ───────────────────────────────────────────────────────────────────
 const SlimFileLock = () => {
-  const [tab, setTab] = useState<'lock' | 'unlock'>('lock');
+  const [tab, setTab] = useState<'protect' | 'remove'>('protect');
 
   return (
-    <div className="min-h-screen pt-24 pb-12 bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-32 pb-20">
       <div className="max-w-xl mx-auto px-4 sm:px-6">
 
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-red-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-red-200">
-            <Lock className="w-7 h-7 text-white" />
+        {/* Hero */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-1.5 bg-red-50 text-red-600 text-xs font-semibold px-3 py-1 rounded-full mb-5 border border-red-100">
+            <Lock className="w-3 h-3" />
+            SlimFile Lock
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">SlimFile Lock</h1>
-          <p className="text-gray-500 mt-1">Password-protect your PDFs or remove existing passwords.</p>
+          <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-3">
+            PDF Password Protect
+          </h1>
+          <p className="text-gray-500 text-base max-w-sm mx-auto leading-relaxed">
+            Add a password to any PDF so only you can open it — or remove one you no longer need.
+            Files are never stored on our servers.
+          </p>
+        </div>
+
+        {/* Steps */}
+        <div className="flex items-center justify-center gap-3 mb-10 text-xs text-gray-500">
+          {[
+            { step: '1', label: 'Upload your PDF' },
+            { step: '2', label: 'Set a password' },
+            { step: '3', label: 'Download protected file' },
+          ].map(({ step, label }, i) => (
+            <div key={step} className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5">
+                <span className="w-5 h-5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                  {step}
+                </span>
+                <span>{label}</span>
+              </div>
+              {i < 2 && <span className="text-gray-300">›</span>}
+            </div>
+          ))}
         </div>
 
         {/* Tab switcher */}
-        <div className="flex gap-1 bg-white border border-gray-200 rounded-2xl p-1 mb-6 shadow-sm">
+        <div className="flex gap-1 bg-gray-100/80 rounded-2xl p-1 mb-6">
           <button
-            onClick={() => setTab('lock')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all ${
-              tab === 'lock'
-                ? 'bg-red-600 text-white shadow-md shadow-red-200'
-                : 'text-gray-500 hover:text-gray-800'
+            onClick={() => setTab('protect')}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all ${
+              tab === 'protect'
+                ? 'bg-white shadow-sm text-gray-900'
+                : 'text-gray-400 hover:text-gray-600'
             }`}
           >
             <Lock className="w-4 h-4" />
-            Lock PDF
+            Protect PDF
           </button>
           <button
-            onClick={() => setTab('unlock')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all ${
-              tab === 'unlock'
-                ? 'bg-red-600 text-white shadow-md shadow-red-200'
-                : 'text-gray-500 hover:text-gray-800'
+            onClick={() => setTab('remove')}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all ${
+              tab === 'remove'
+                ? 'bg-white shadow-sm text-gray-900'
+                : 'text-gray-400 hover:text-gray-600'
             }`}
           >
             <LockOpen className="w-4 h-4" />
-            Unlock PDF
+            Remove Password
           </button>
         </div>
 
-        {/* Content card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-          {tab === 'lock' ? <LockTab /> : <UnlockTab />}
+        {/* Card */}
+        <div className="bg-white rounded-3xl border border-gray-200/80 p-7 shadow-sm">
+          {tab === 'protect' ? <ProtectTab /> : <RemovePasswordTab />}
         </div>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
-          Files are processed securely on our server and never stored.
-        </p>
+        {/* Footer */}
+        <div className="flex items-center justify-center gap-2 mt-6 text-xs text-gray-400">
+          <ShieldCheck className="w-3.5 h-3.5" />
+          <span>Encrypted in transit · Files are never stored</span>
+        </div>
       </div>
     </div>
   );

@@ -51,7 +51,6 @@ export const Header = () => {
 
   const connectNavigation = [
     { name: "Feed", href: "/feed", badge: "Live", badgeColor: "bg-green-100 text-green-700" },
-    ...(isAuthenticated() ? [{ name: "SlimFile Drive", href: "/drive", badge: "New", badgeColor: "bg-red-100 text-red-700" }] : []),
     ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces", badge: "Team", badgeColor: "bg-blue-100 text-blue-700" }] : []),
     ...(isAuthenticated() ? [{ name: "Documents", href: "/documents", badge: "New", badgeColor: "bg-blue-100 text-blue-700" }] : []),
     ...(isAuthenticated() ? [{ name: "My Whiteboards", href: "/my-whiteboards", badge: "New", badgeColor: "bg-purple-100 text-purple-700" }] : []),
@@ -63,8 +62,8 @@ export const Header = () => {
     { name: "Convert", href: "/convert-only", badge: null, badgeColor: null },
     { name: "Compress and Convert", href: "/convert-compress", badge: null, badgeColor: null },
     { name: "OCR Tool", href: "/ocr-tool", badge: "New", badgeColor: "bg-blue-100 text-blue-700" },
-    { name: "SlimFile Forge", href: "/forge", badge: "New", badgeColor: "bg-orange-100 text-orange-700" },
-    { name: "SlimFile Lock", href: "/lock", badge: "New", badgeColor: "bg-red-100 text-red-700" },
+    { name: "PDF Merger & Splitter", href: "/forge", badge: "New", badgeColor: "bg-orange-100 text-orange-700" },
+    { name: "PDF Password Protect", href: "/lock", badge: "New", badgeColor: "bg-red-100 text-red-700" },
   ];
 
   const isActiveRoute = (href: string) => {
