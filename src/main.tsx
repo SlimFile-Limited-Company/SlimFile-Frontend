@@ -73,6 +73,7 @@ import PersonalWhiteboards from './pages/PersonalWhiteboards';
 import PersonalWhiteboardCanvas from './pages/PersonalWhiteboardCanvas';
 import Documents from './pages/Documents';
 import DocumentEditor from './pages/DocumentEditor';
+import AdminNewsletter from './pages/AdminNewsletter';
 import { NotificationProvider } from './components/InAppNotification';
 
 // Register service worker for PWA functionality
@@ -215,6 +216,13 @@ ReactDOM.createRoot(root).render(
         <Route path="documents/:documentId" element={
           <ProtectedRoute>
             <DocumentEditor />
+          </ProtectedRoute>
+        } />
+
+        {/* Admin newsletter — protected by server-side email check */}
+        <Route path="admin/newsletter" element={
+          <ProtectedRoute>
+            <AdminNewsletter />
           </ProtectedRoute>
         } />
 
