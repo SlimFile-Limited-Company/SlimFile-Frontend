@@ -349,19 +349,13 @@ export const Header = () => {
             )}
           </nav>
 
-          {/* Desktop right side - Language Selector */}
-          <div className="hidden md:flex items-center">
-            <LanguageSelector />
-          </div>
-
-          {/* Mobile menu button and language selector */}
-          <div className="md:hidden flex items-center gap-2">
-            <LanguageSelector />
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="bg-white/95 hover:bg-red-50 border-2 border-red-200 backdrop-blur-md text-red-600 transition-all duration-300 hover:text-red-700 hover:border-red-300"
+              className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             >
               <div className="transition-transform duration-200" style={{ transform: mobileMenuOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}>
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
