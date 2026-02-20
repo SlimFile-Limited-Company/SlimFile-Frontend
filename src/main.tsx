@@ -74,6 +74,7 @@ import PersonalWhiteboardCanvas from './pages/PersonalWhiteboardCanvas';
 import Documents from './pages/Documents';
 import DocumentEditor from './pages/DocumentEditor';
 import AdminNewsletter from './pages/AdminNewsletter';
+import SlimFileDrive from './pages/SlimFileDrive';
 import { NotificationProvider } from './components/InAppNotification';
 
 // Register service worker for PWA functionality
@@ -223,6 +224,13 @@ ReactDOM.createRoot(root).render(
         <Route path="admin/newsletter" element={
           <ProtectedRoute>
             <AdminNewsletter />
+          </ProtectedRoute>
+        } />
+
+        {/* SlimFile Drive */}
+        <Route path="drive" element={
+          <ProtectedRoute>
+            <SlimFileDrive />
           </ProtectedRoute>
         } />
 
