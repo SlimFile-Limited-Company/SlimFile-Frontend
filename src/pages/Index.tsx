@@ -1,14 +1,9 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { FileUpload } from "@/components/FileUpload";
 import { CompressionResult } from "@/components/CompressionResult";
 import { toast } from "@/hooks/use-toast";
 import { WelcomeModal } from "@/components/WelcomeModal";
-import {
-  FileImage, FileText, Zap, Users, ScanText, Radio,
-  Video, PenTool, FileType, FilePlus2, Lock, ArrowRight,
-} from "lucide-react";
 
 const Index = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -203,47 +198,48 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Everything You Need Section */}
+      {/* Features Section */}
       <section className="bg-gray-50 py-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Everything you need, all in one place
+              Why Choose SlimFile?
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              One platform for compressing, converting, collaborating, and managing all your files.
+              Fast, secure, and reliable file compression that works entirely in your browser.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
-            {[
-              { icon: <FileImage className="w-5 h-5" />, label: 'Compress Files', desc: 'Images, PDFs & docs', href: '/compress', color: 'text-blue-500 bg-blue-50' },
-              { icon: <FileText className="w-5 h-5" />, label: 'Convert Formats', desc: 'Any format, no loss', href: '/convert-only', color: 'text-purple-500 bg-purple-50' },
-              { icon: <Zap className="w-5 h-5" />, label: 'Convert & Compress', desc: 'Best of both worlds', href: '/convert-compress', color: 'text-red-500 bg-red-50' },
-              { icon: <Users className="w-5 h-5" />, label: 'Team Workspaces', desc: 'Chat & collaborate', href: '/workspaces', color: 'text-green-500 bg-green-50' },
-              { icon: <ScanText className="w-5 h-5" />, label: 'OCR Tool', desc: 'Extract text from images', href: '/ocr-tool', color: 'text-orange-500 bg-orange-50' },
-              { icon: <Radio className="w-5 h-5" />, label: 'Activity Feed', desc: 'Real-time updates', href: '/feed', color: 'text-indigo-500 bg-indigo-50' },
-              { icon: <Video className="w-5 h-5" />, label: 'Video Meetings', desc: 'HD calls & screen share', href: '/meet', color: 'text-cyan-500 bg-cyan-50' },
-              { icon: <PenTool className="w-5 h-5" />, label: 'Whiteboards', desc: 'Sketch & brainstorm', href: '/my-whiteboards', color: 'text-pink-500 bg-pink-50' },
-              { icon: <FileType className="w-5 h-5" />, label: 'My Documents', desc: 'Write & edit docs', href: '/documents', color: 'text-sky-500 bg-sky-50' },
-              { icon: <FilePlus2 className="w-5 h-5" />, label: 'PDF Merger & Splitter', desc: 'Combine or split PDFs', href: '/forge', color: 'text-amber-500 bg-amber-50' },
-              { icon: <Lock className="w-5 h-5" />, label: 'PDF Password Protect', desc: 'Lock & unlock PDFs', href: '/lock', color: 'text-violet-500 bg-violet-50' },
-            ].map(({ icon, label, desc, href, color }) => (
-              <Link
-                key={label}
-                to={href}
-                className="flex flex-col gap-3 bg-white rounded-2xl p-4 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all group"
-              >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${color}`}>
-                  {icon}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900 leading-tight">{label}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
-                </div>
-                <ArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-500 transition-colors mt-auto" />
-              </Link>
-            ))}
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Lightning Fast</h3>
+              <p className="text-gray-600">Compress files in seconds with our optimized algorithms.</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">100% Secure</h3>
+              <p className="text-gray-600">All processing happens locally. Your files never leave your device.</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Works Online</h3>
+              <p className="text-gray-600">Install as a PWA and compress files with internet connection.</p>
+            </div>
           </div>
         </div>
       </section>
