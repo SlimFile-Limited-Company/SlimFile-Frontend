@@ -136,9 +136,14 @@ const SlimFileDrive = () => {
   const handleDownload = async (file: DriveFile) => {
     setDownloading(file._id);
     try {
-      await downloadWithFilename(file.url, file.filename);
-    } catch {
-      window.open(file.url, '_blank');
+      const res = await fetch(`${API}/drive/${file._id}/download`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Download failed');
+      await downloadWithFilename(data.url, file.filename);
+    } catch (err: any) {
+      toast({ title: 'Download failed', description: err.message, variant: 'destructive' });
     } finally {
       setDownloading(null);
     }
