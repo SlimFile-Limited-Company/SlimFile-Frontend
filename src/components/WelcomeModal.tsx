@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Zap, Users, Lock, ScanText, FileImage, FilePlus2 } from 'lucide-react';
+import {
+  X, Zap, Users, Lock, ScanText, FileImage, FilePlus2,
+  FileText, Radio, Video, PenTool, FileType,
+} from 'lucide-react';
 
 const FEATURES = [
-  { icon: <FileImage className="w-4 h-4" />, text: 'Compress images & PDFs' },
-  { icon: <FilePlus2 className="w-4 h-4" />, text: 'Merge & split PDFs' },
-  { icon: <Users className="w-4 h-4" />, text: 'Team workspaces & chat' },
-  { icon: <ScanText className="w-4 h-4" />, text: 'OCR text extraction' },
-  { icon: <Lock className="w-4 h-4" />, text: 'PDF password protection' },
-  { icon: <Zap className="w-4 h-4" />, text: 'Convert & compress in one go' },
+  { icon: <FileImage className="w-3.5 h-3.5" />, text: 'Compress images & PDFs' },
+  { icon: <FileText className="w-3.5 h-3.5" />, text: 'Convert file formats' },
+  { icon: <Zap className="w-3.5 h-3.5" />, text: 'Convert & compress' },
+  { icon: <Users className="w-3.5 h-3.5" />, text: 'Team workspaces & chat' },
+  { icon: <ScanText className="w-3.5 h-3.5" />, text: 'OCR text extraction' },
+  { icon: <Radio className="w-3.5 h-3.5" />, text: 'Activity feed' },
+  { icon: <Video className="w-3.5 h-3.5" />, text: 'Video meetings' },
+  { icon: <PenTool className="w-3.5 h-3.5" />, text: 'Whiteboards' },
+  { icon: <FileType className="w-3.5 h-3.5" />, text: 'Document editor' },
+  { icon: <FilePlus2 className="w-3.5 h-3.5" />, text: 'PDF merger & splitter' },
+  { icon: <Lock className="w-3.5 h-3.5" />, text: 'PDF password protect' },
 ];
 
 export const WelcomeModal = () => {
@@ -61,11 +69,11 @@ export const WelcomeModal = () => {
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 text-center">
             Everything included — free
           </p>
-          <div className="grid grid-cols-2 gap-2 mb-6">
+          <div className="grid grid-cols-3 gap-1.5 mb-6">
             {FEATURES.map(({ icon, text }) => (
-              <div key={text} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2.5">
+              <div key={text} className="flex flex-col items-center gap-1 bg-gray-50 rounded-xl px-2 py-2.5 text-center">
                 <span className="text-red-500 shrink-0">{icon}</span>
-                <span className="text-xs font-medium text-gray-700 leading-tight">{text}</span>
+                <span className="text-[10px] font-medium text-gray-700 leading-tight">{text}</span>
               </div>
             ))}
           </div>
