@@ -75,6 +75,8 @@ import Documents from './pages/Documents';
 import DocumentEditor from './pages/DocumentEditor';
 import AdminNewsletter from './pages/AdminNewsletter';
 import SlimFileDrive from './pages/SlimFileDrive';
+import SlimFileForge from './pages/SlimFileForge';
+import SlimFileLock from './pages/SlimFileLock';
 import { NotificationProvider } from './components/InAppNotification';
 
 // Register service worker for PWA functionality
@@ -183,6 +185,8 @@ ReactDOM.createRoot(root).render(
           } />
           <Route path="meet" element={<Meet />} />
           <Route path="ocr-tool" element={<OCRTool />} />
+          <Route path="forge" element={<SlimFileForge />} />
+          <Route path="lock" element={<SlimFileLock />} />
         </Route>
 
         {/* Workspace chat - Full screen without header/footer */}

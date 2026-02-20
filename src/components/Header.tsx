@@ -63,6 +63,8 @@ export const Header = () => {
     { name: "Convert", href: "/convert-only", badge: null, badgeColor: null },
     { name: "Compress and Convert", href: "/convert-compress", badge: null, badgeColor: null },
     { name: "OCR Tool", href: "/ocr-tool", badge: "New", badgeColor: "bg-blue-100 text-blue-700" },
+    { name: "SlimFile Forge", href: "/forge", badge: "New", badgeColor: "bg-orange-100 text-orange-700" },
+    { name: "SlimFile Lock", href: "/lock", badge: "New", badgeColor: "bg-red-100 text-red-700" },
   ];
 
   const isActiveRoute = (href: string) => {
