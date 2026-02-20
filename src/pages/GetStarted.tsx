@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 const GetStarted: FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-red-50/30 pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-red-50/30 pt-24">
       {/* Main Content */}
       <main className="relative z-10">
         {/* Hero Section */}

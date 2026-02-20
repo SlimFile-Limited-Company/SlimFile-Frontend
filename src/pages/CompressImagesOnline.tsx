@@ -29,7 +29,7 @@ import {
 
 export default function CompressImagesOnline() {
   return (
-    <div className="min-h-screen pt-16">
+    <div className="min-h-screen pt-24">
       {/* Hero Section */}
       <section id="hero" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 via-white to-blue-50">
         <div className="container mx-auto text-center">

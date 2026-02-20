@@ -6,7 +6,7 @@ interface AboutProps {}
 
 const About: React.FC<AboutProps> = () => {
   return (
-    <div className="min-h-screen pt-16 bg-gray-50">
+    <div className="min-h-screen pt-24 bg-gray-50">
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-100">
         <div className="container mx-auto text-center">

@@ -346,14 +346,14 @@ const Workspaces = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center">
+      <div className="min-h-screen pt-24 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-red-600" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-20 pb-12 bg-gray-50">
+    <div className="min-h-screen pt-24 pb-12 bg-gray-50">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">

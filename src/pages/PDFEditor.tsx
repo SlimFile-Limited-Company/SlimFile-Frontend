@@ -155,7 +155,7 @@ function PDFEditorContent() {
   }, [undo, redo, setEditState]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-24">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-red-600 via-purple-600 to-blue-600 py-12 px-4 shadow-lg">
         <div className="max-w-7xl mx-auto">

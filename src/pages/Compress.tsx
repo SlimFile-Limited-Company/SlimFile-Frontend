@@ -196,7 +196,7 @@ const Compress = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-red-50/30">
 
       {/* Main Content */}
-      <main className="relative pt-20 z-10">
+      <main className="relative pt-24 z-10">
         {/* Enhanced Hero Section */}
         <section className="py-16 px-4 sm:px-6 lg:px-8">
           <div className="container mx-auto">

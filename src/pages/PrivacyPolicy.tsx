@@ -13,7 +13,7 @@ const Section = ({ icon: Icon, title, children, bg }) => (
 
 const PrivacyPolicy = () => {
   return (
-    <div className="min-h-screen pt-16 bg-gray-50">
+    <div className="min-h-screen pt-24 bg-gray-50">
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-primary/10 via-white to-secondary/10 py-16 px-4 sm:px-6 lg:px-8 mb-12">
         <div className="container mx-auto max-w-3xl text-center">

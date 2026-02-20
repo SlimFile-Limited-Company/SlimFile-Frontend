@@ -77,7 +77,7 @@ export default function DashboardLayout() {
       )}
 
       {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:pt-20">
+      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:pt-[88px]">
         <div className="flex flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
           <nav className="flex flex-1 flex-col pt-8">
             <ul role="list" className="space-y-2">
@@ -106,9 +106,9 @@ export default function DashboardLayout() {
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64 pt-16">
+      <div className="lg:pl-64 pt-[88px]">
         {/* Mobile menu button */}
-        <div className="sticky top-16 z-40 lg:hidden bg-white border-b border-gray-200 px-4 py-3">
+        <div className="sticky top-[88px] z-40 lg:hidden bg-white border-b border-gray-200 px-4 py-3">
           <button
             onClick={() => setSidebarOpen(true)}
             className="flex items-center gap-2 text-gray-700"

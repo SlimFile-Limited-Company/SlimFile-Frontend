@@ -50,7 +50,7 @@ const SDGCard = ({ icon: Icon, number, title, objective, children, color = "blue
 
 const SlimFileSDGs = () => {
   return (
-    <div className="min-h-screen bg-white pt-20 pb-16">
+    <div className="min-h-screen bg-white pt-24 pb-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
         {/* Header */}
         <div className="py-12 mb-8">

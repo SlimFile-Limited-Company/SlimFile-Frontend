@@ -16,7 +16,6 @@ import {
   CheckCircle2,
   X,
   Image as ImageIcon,
-  Sparkles,
   Languages
 } from 'lucide-react';
 
@@ -269,7 +268,7 @@ const OCRTool = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 pb-12 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen pt-24 pb-12 bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-12">
@@ -280,48 +279,8 @@ const OCRTool = () => {
             OCR Tool - Extract Text from Images
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Convert images to editable text instantly. Powered by AI, supports 100+ languages,
-            and works completely in your browser for maximum privacy.
+            Upload an image and extract all text from it instantly — works fully in your browser, nothing is uploaded to any server.
           </p>
-        </div>
-
-        {/* Features Banner */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Card className="border-blue-200 bg-blue-50/50">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <Sparkles className="w-8 h-8 text-blue-600" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">AI-Powered</h3>
-                  <p className="text-sm text-gray-600">Advanced OCR technology</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-purple-200 bg-purple-50/50">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <Languages className="w-8 h-8 text-purple-600" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">100+ Languages</h3>
-                  <p className="text-sm text-gray-600">Multi-language support</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-green-200 bg-green-50/50">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="w-8 h-8 text-green-600" />
-                <div>
-                  <h3 className="font-semibold text-gray-900">100% Private</h3>
-                  <p className="text-sm text-gray-600">All processing in browser</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Main Content */}
@@ -422,7 +381,7 @@ const OCRTool = () => {
                         </>
                       ) : (
                         <>
-                          <Sparkles className="w-5 h-5 mr-2" />
+                          <FileText className="w-5 h-5 mr-2" />
                           Extract Text
                         </>
                       )}

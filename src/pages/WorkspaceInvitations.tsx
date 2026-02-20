@@ -129,7 +129,7 @@ const WorkspaceInvitations = () => {
 
   if (isLoading || autoAccepting) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center">
+      <div className="min-h-screen pt-24 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin text-red-600 mx-auto" />
           {autoAccepting && (
@@ -142,7 +142,7 @@ const WorkspaceInvitations = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center">
+      <div className="min-h-screen pt-24 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900">Error loading invitations</h2>
           <p className="text-gray-600 mt-2">{(error as Error).message}</p>
@@ -155,7 +155,7 @@ const WorkspaceInvitations = () => {
   }
 
   return (
-    <div className="min-h-screen pt-20 pb-12 bg-gray-50">
+    <div className="min-h-screen pt-24 pb-12 bg-gray-50">
       <div className="container mx-auto px-4 max-w-3xl">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
