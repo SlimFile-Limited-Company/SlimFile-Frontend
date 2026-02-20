@@ -138,7 +138,7 @@ const Home: FC = () => {
               Everything You Need
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
-              Powerful compression tools for all your file types
+              Compress, convert, and collaborate — everything in one place
             </p>
           </div>
 
