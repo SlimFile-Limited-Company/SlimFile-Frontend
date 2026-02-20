@@ -519,7 +519,7 @@ const DocumentEditor = () => {
         <div className="px-4 sm:px-6 py-3">
           {/* Top Row */}
           <div className="flex items-center justify-between gap-4 mb-3">
-            <div className="flex items-center gap-2 flex-1">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
               <Button
                 variant="ghost"
                 size="sm"
@@ -540,7 +540,7 @@ const DocumentEditor = () => {
               />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <div className="hidden md:flex items-center gap-2 text-xs text-gray-600 mr-2">
                 <span>{wordCount} words</span>
                 <span>•</span>
@@ -562,7 +562,7 @@ const DocumentEditor = () => {
                   asChild
                 >
                   <span className="cursor-pointer">
-                    <Upload className="w-4 h-4 mr-2" />
+                    <Upload className="w-4 h-4 sm:mr-2" />
                     <span className="hidden sm:inline">Import</span>
                   </span>
                 </Button>
@@ -572,10 +572,10 @@ const DocumentEditor = () => {
                 variant="outline"
                 size="sm"
                 onClick={exportToDocx}
-                className="hidden sm:flex border-gray-200 hover:bg-gray-50"
+                className="flex border-gray-200 hover:bg-gray-50"
               >
-                <Download className="w-4 h-4 mr-2" />
-                Export
+                <Download className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Export</span>
               </Button>
 
               <Button
@@ -586,13 +586,13 @@ const DocumentEditor = () => {
               >
                 {isSaving ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span className="hidden sm:inline ml-2">Saving...</span>
+                    <Loader2 className="w-4 h-4 animate-spin sm:mr-2" />
+                    <span className="hidden sm:inline">Saving...</span>
                   </>
                 ) : (
                   <>
-                    <Save className="w-4 h-4" />
-                    <span className="hidden sm:inline ml-2">Save</span>
+                    <Save className="w-4 h-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Save</span>
                   </>
                 )}
               </Button>
