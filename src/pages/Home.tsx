@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType } from "lucide-react";
+import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 
 // Add keyframes for animations
@@ -142,80 +142,59 @@ const Home: FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
             {[
-              {
-                icon: FileImage,
-                title: "Image Compression",
-                description: "Optimize JPEG, PNG, and WebP images while maintaining visual quality.",
-                features: ["Smart algorithms", "Batch processing", "Up to 95% reduction"],
-                gradient: "from-blue-500 to-blue-600"
-              },
-              {
-                icon: FileText,
-                title: "PDF & Presentations",
-                description: "Reduce PDF and PPTX file sizes significantly without losing quality.",
-                features: ["PDF optimization", "PPTX support", "Fast processing"],
-                gradient: "from-red-500 to-red-600"
-              },
-              {
-                icon: FileType,
-                title: "Word Documents",
-                description: "Compress DOCX files through image optimization and metadata removal.",
-                features: ["DOCX support", "XML optimization", "Up to 95% smaller"],
-                gradient: "from-purple-500 to-purple-600",
-                badge: "New"
-              },
-              {
-                icon: FileSpreadsheet,
-                title: "Excel Spreadsheets",
-                description: "Optimize XLSX files by compressing charts and removing unnecessary data.",
-                features: ["XLSX support", "Chart compression", "Fast & safe"],
-                gradient: "from-green-500 to-green-600",
-                badge: "New"
-              }
-            ].map((feature, index) => (
+              { icon: FileImage,      title: "Compress Files",          description: "Shrink images, PDFs, DOCX & XLSX while keeping quality.",     features: ["JPEG, PNG, WebP, PDF", "DOCX & XLSX support", "Up to 95% reduction"],       gradient: "from-blue-500 to-blue-600",    href: "/compress",        badge: "Popular" },
+              { icon: FileText,       title: "Convert Formats",         description: "Transform files between formats — no quality loss.",           features: ["Images, Office to PDF", "PDF to Images ZIP", "No quality loss"],              gradient: "from-purple-500 to-purple-600", href: "/convert-only",   badge: "New" },
+              { icon: Zap,            title: "Convert & Compress",      description: "Convert format AND reduce size in one single step.",           features: ["All conversion features", "Max size reduction", "One-step processing"],       gradient: "from-red-500 to-red-600",      href: "/convert-compress", badge: "Best Value" },
+              { icon: Users,          title: "Team Workspaces",         description: "Collaborate in real-time with your team in shared spaces.",    features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600",  href: "/workspaces",      badge: "Team" },
+              { icon: ScanText,       title: "OCR Tool",                description: "Extract editable text from images and scanned documents.",     features: ["Scan images & PDFs", "Multiple languages", "Export as text/PDF"],            gradient: "from-orange-500 to-orange-600", href: "/ocr-tool",       badge: "New" },
+              { icon: Radio,          title: "Activity Feed",           description: "Stay updated with live activity across all your workspaces.",  features: ["Real-time updates", "Activity tracking", "Team notifications"],              gradient: "from-indigo-500 to-indigo-600", href: "/feed",           badge: "Live" },
+              { icon: Video,          title: "Video Meetings",          description: "Host HD video calls and share your screen instantly.",         features: ["HD video calls", "Screen sharing", "No downloads needed"],                   gradient: "from-cyan-500 to-cyan-600",    href: "/meet",            badge: "New" },
+              { icon: PenTool,        title: "Whiteboards",             description: "Brainstorm ideas and sketch concepts on visual boards.",       features: ["Drawing tools", "Text & shapes", "Multiple boards"],                         gradient: "from-pink-500 to-pink-600",    href: "/my-whiteboards",  badge: "New" },
+              { icon: FileType,       title: "My Documents",            description: "Write and edit documents with a rich text editor.",            features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600",      href: "/documents",       badge: "New" },
+              { icon: FilePlus2,      title: "PDF Merger & Splitter",   description: "Combine multiple PDFs or split one into custom sections.",     features: ["Merge up to 20 PDFs", "Split by page ranges", "Drag to reorder"],           gradient: "from-amber-500 to-orange-500", href: "/forge",           badge: "New" },
+              { icon: Lock,           title: "PDF Password Protect",    description: "Lock PDFs with a password or remove existing ones.",          features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", href: "/lock",           badge: "New" },
+            ].map((feature) => (
               <div key={feature.title} className="group relative">
-                <div className="relative bg-gradient-to-br from-gray-50 to-white p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border-2 border-gray-100 hover:border-red-200 transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2 hover:shadow-lg sm:hover:shadow-xl h-full">
-                  {/* New Badge */}
-                  {feature.badge && (
-                    <div className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3 bg-gradient-to-r from-red-600 to-orange-600 text-white text-xs font-bold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-lg">
-                      {feature.badge}
-                    </div>
-                  )}
+                <div className="relative bg-gradient-to-br from-gray-50 to-white p-4 sm:p-5 rounded-2xl border-2 border-gray-100 hover:border-red-200 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg h-full flex flex-col">
+                  {/* Badge */}
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-600 to-orange-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">
+                    {feature.badge}
+                  </div>
 
                   {/* Icon */}
-                  <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gradient-to-br ${feature.gradient} rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-105 sm:group-hover:scale-110 transition-transform duration-300`}>
-                    <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" />
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1.5">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">
+                  <p className="text-gray-600 mb-4 leading-relaxed text-xs sm:text-sm flex-grow">
                     {feature.description}
                   </p>
 
                   {/* Feature List */}
-                  <ul className="space-y-1 sm:space-y-2 mb-4 sm:mb-6">
+                  <ul className="space-y-1 mb-4">
                     {feature.features.map((item, idx) => (
-                      <li key={idx} className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-600">
-                        <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4 text-red-500 flex-shrink-0" />
+                      <li key={idx} className="flex items-center gap-1.5 text-xs text-gray-600">
+                        <CheckCircle2 className="w-3 h-3 text-red-500 flex-shrink-0" />
                         <span>{item}</span>
                       </li>
                     ))}
                   </ul>
 
                   {/* Link */}
-                  <Link to="/compress">
+                  <Link to={feature.href}>
                     <Button
                       variant="ghost"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg sm:rounded-xl px-0 transition-all duration-300 group-hover:gap-1 sm:group-hover:gap-2 text-sm sm:text-base"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl px-0 transition-all duration-300 text-sm mt-auto"
                     >
                       <span className="flex items-center gap-1">
                         Try Now
-                        <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                       </span>
                     </Button>
                   </Link>
