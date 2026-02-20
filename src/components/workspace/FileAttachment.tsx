@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileText, Download, X, Image as ImageIcon } from 'lucide-react';
+import { FileText, Download, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import type { MessageAttachment } from '@/services/workspaceService';
@@ -15,8 +15,40 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+// Fetch file as blob then trigger download with correct filename.
+// The native <a download> attribute is ignored for cross-origin URLs (Cloudinary),
+// so we must go through a blob to preserve the extension.
+async function downloadWithFilename(url: string, filename: string) {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  const blobUrl = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = blobUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(blobUrl);
+}
+
 export function FileAttachment({ attachment, isOwnMessage = false }: FileAttachmentProps) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isDownloading) return;
+    setIsDownloading(true);
+    try {
+      await downloadWithFilename(attachment.url, attachment.filename);
+    } catch {
+      // fallback: open in new tab
+      window.open(attachment.url, '_blank');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   // Image attachment
   if (attachment.type === 'image') {
@@ -55,16 +87,16 @@ export function FileAttachment({ attachment, isOwnMessage = false }: FileAttachm
               </Button>
               <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center text-white text-sm">
                 <span className="truncate">{attachment.filename}</span>
-                <a
-                  href={attachment.url}
-                  download={attachment.filename}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 hover:underline"
+                <button
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                  className="flex items-center gap-1 hover:underline disabled:opacity-60"
                 >
-                  <Download className="h-4 w-4" />
-                  Download
-                </a>
+                  {isDownloading
+                    ? <Loader2 className="h-4 w-4 animate-spin" />
+                    : <Download className="h-4 w-4" />}
+                  {isDownloading ? 'Downloading...' : 'Download'}
+                </button>
               </div>
             </div>
           </DialogContent>
@@ -75,12 +107,10 @@ export function FileAttachment({ attachment, isOwnMessage = false }: FileAttachm
 
   // Document attachment (PDF, PPTX, DOCX, XLSX)
   return (
-    <a
-      href={attachment.url}
-      download={attachment.filename}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
+    <button
+      onClick={handleDownload}
+      disabled={isDownloading}
+      className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors disabled:opacity-70 ${
         isOwnMessage
           ? 'bg-blue-500/30 hover:bg-blue-500/40'
           : 'bg-slate-100 hover:bg-slate-200'
@@ -89,16 +119,18 @@ export function FileAttachment({ attachment, isOwnMessage = false }: FileAttachm
       <div className={`p-2 rounded-lg ${isOwnMessage ? 'bg-blue-500' : 'bg-red-500'}`}>
         <FileText className="h-6 w-6 text-white" />
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 text-left">
         <div className={`text-sm font-medium truncate ${isOwnMessage ? 'text-white' : 'text-slate-700'}`}>
           {attachment.filename}
         </div>
         <div className={`text-xs ${isOwnMessage ? 'text-blue-100' : 'text-slate-500'}`}>
-          {formatFileSize(attachment.size)}
+          {isDownloading ? 'Downloading...' : formatFileSize(attachment.size)}
         </div>
       </div>
-      <Download className={`h-5 w-5 flex-shrink-0 ${isOwnMessage ? 'text-blue-100' : 'text-slate-400'}`} />
-    </a>
+      {isDownloading
+        ? <Loader2 className={`h-5 w-5 flex-shrink-0 animate-spin ${isOwnMessage ? 'text-blue-100' : 'text-slate-400'}`} />
+        : <Download className={`h-5 w-5 flex-shrink-0 ${isOwnMessage ? 'text-blue-100' : 'text-slate-400'}`} />}
+    </button>
   );
 }
 
@@ -110,13 +142,11 @@ interface FileAttachmentsListProps {
 export function FileAttachmentsList({ attachments, isOwnMessage = false }: FileAttachmentsListProps) {
   if (!attachments || attachments.length === 0) return null;
 
-  // Group attachments by type for better display
   const images = attachments.filter(a => a.type === 'image');
   const others = attachments.filter(a => a.type !== 'image');
 
   return (
     <div className="space-y-2">
-      {/* Display images in a grid */}
       {images.length > 0 && (
         <div className={`grid gap-2 ${images.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
           {images.map((attachment, index) => (
@@ -124,8 +154,6 @@ export function FileAttachmentsList({ attachments, isOwnMessage = false }: FileA
           ))}
         </div>
       )}
-
-      {/* Display other files in a list */}
       {others.map((attachment, index) => (
         <FileAttachment key={`other-${index}`} attachment={attachment} isOwnMessage={isOwnMessage} />
       ))}
