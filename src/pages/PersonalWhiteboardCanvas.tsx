@@ -77,6 +77,9 @@ const PersonalWhiteboardCanvas = () => {
   const [fillColor, setFillColor] = useState('transparent');
   const [showFillPicker, setShowFillPicker] = useState(false);
 
+  // Pending canvas data (fetched before canvas is ready)
+  const pendingCanvasDataRef = useRef<any>(null);
+
   // Drawing state
   const isDrawingRef = useRef(false);
   const drawingObjectRef = useRef<FabricObject | null>(null);
@@ -155,17 +158,14 @@ const PersonalWhiteboardCanvas = () => {
       setWhiteboard(data.whiteboard);
       setEditName(data.whiteboard.name);
 
-      // Load canvas data
-      if (data.whiteboard.canvasData && fabricCanvasRef.current) {
+      // Store canvas data — will be loaded once the canvas is initialized
+      if (data.whiteboard.canvasData) {
         try {
-          const canvasData = typeof data.whiteboard.canvasData === 'string'
+          pendingCanvasDataRef.current = typeof data.whiteboard.canvasData === 'string'
             ? JSON.parse(data.whiteboard.canvasData)
             : data.whiteboard.canvasData;
-          fabricCanvasRef.current.loadFromJSON(canvasData, () => {
-            fabricCanvasRef.current?.renderAll();
-          });
         } catch (error) {
-          console.error('Error loading canvas data:', error);
+          console.error('Error parsing canvas data:', error);
         }
       }
     } catch (error) {
@@ -373,6 +373,14 @@ const PersonalWhiteboardCanvas = () => {
 
     fabricCanvasRef.current = canvas;
     setIsCanvasReady(true);
+
+    // Load any canvas data that was fetched before the canvas was ready
+    if (pendingCanvasDataRef.current) {
+      canvas.loadFromJSON(pendingCanvasDataRef.current, () => {
+        canvas.renderAll();
+      });
+      pendingCanvasDataRef.current = null;
+    }
 
     // Handle window resize
     const handleResize = () => {
