@@ -120,39 +120,45 @@ const Home: FC = () => {
       </section>
 
       {/* Marquee ticker */}
-      <section className="relative py-4 bg-white border-y border-gray-100 overflow-hidden">
-        {/* Left fade */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-r from-white to-transparent" />
-        {/* Right fade */}
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-l from-white to-transparent" />
+      <section className="relative overflow-hidden bg-gray-950 border-y-2 border-red-600/40"
+        style={{ boxShadow: '0 4px 32px 0 rgba(220,38,38,0.10), inset 0 1px 0 rgba(255,255,255,0.04)' }}>
+        {/* Top red accent line */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-80" />
 
-        <div className="flex w-max animate-marquee">
+        {/* Left fade */}
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-28 z-10 bg-gradient-to-r from-gray-950 to-transparent" />
+        {/* Right fade */}
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-28 z-10 bg-gradient-to-l from-gray-950 to-transparent" />
+
+        <div className="flex w-max animate-marquee py-3.5">
           {[...Array(2)].map((_, pass) => (
-            <div key={pass} className="flex items-center gap-3 shrink-0 px-3">
+            <div key={pass} className="flex items-center gap-2.5 shrink-0 px-2.5">
               {[
-                { text: 'Compress Files',        icon: Minimize2,       iconColor: 'text-red-500',    chip: 'bg-red-50 border-red-100' },
-                { text: 'Convert Documents',     icon: RefreshCw,       iconColor: 'text-orange-500', chip: 'bg-orange-50 border-orange-100' },
-                { text: 'Compress & Convert',    icon: Layers,          iconColor: 'text-amber-500',  chip: 'bg-amber-50 border-amber-100' },
-                { text: 'OCR Scanning',          icon: Scan,            iconColor: 'text-yellow-600', chip: 'bg-yellow-50 border-yellow-100' },
-                { text: 'Merge PDFs',            icon: GitMerge,        iconColor: 'text-lime-600',   chip: 'bg-lime-50 border-lime-100' },
-                { text: 'Password Protect PDFs', icon: Lock,            iconColor: 'text-green-600',  chip: 'bg-green-50 border-green-100' },
-                { text: 'Live Feed',             icon: Rss,             iconColor: 'text-teal-500',   chip: 'bg-teal-50 border-teal-100' },
-                { text: 'Team Workspaces',       icon: Users,           iconColor: 'text-cyan-600',   chip: 'bg-cyan-50 border-cyan-100' },
-                { text: 'Rich Text Documents',   icon: FileText,        iconColor: 'text-blue-500',   chip: 'bg-blue-50 border-blue-100' },
-                { text: 'Collaborative Boards',  icon: PenLine,         iconColor: 'text-violet-500', chip: 'bg-violet-50 border-violet-100' },
-                { text: 'Video Meetings',        icon: Video,           iconColor: 'text-purple-500', chip: 'bg-purple-50 border-purple-100' },
-                { text: 'Personal Dashboard',    icon: LayoutDashboard, iconColor: 'text-pink-500',   chip: 'bg-pink-50 border-pink-100' },
+                { text: 'Compress Files',        icon: Minimize2,       iconColor: 'text-red-400',    chip: 'bg-red-500/10 border-red-500/25 text-red-300' },
+                { text: 'Convert Documents',     icon: RefreshCw,       iconColor: 'text-orange-400', chip: 'bg-orange-500/10 border-orange-500/25 text-orange-300' },
+                { text: 'Compress & Convert',    icon: Layers,          iconColor: 'text-amber-400',  chip: 'bg-amber-500/10 border-amber-500/25 text-amber-300' },
+                { text: 'OCR Scanning',          icon: Scan,            iconColor: 'text-yellow-400', chip: 'bg-yellow-500/10 border-yellow-500/25 text-yellow-300' },
+                { text: 'Merge PDFs',            icon: GitMerge,        iconColor: 'text-lime-400',   chip: 'bg-lime-500/10 border-lime-500/25 text-lime-300' },
+                { text: 'Password Protect PDFs', icon: Lock,            iconColor: 'text-green-400',  chip: 'bg-green-500/10 border-green-500/25 text-green-300' },
+                { text: 'Live Feed',             icon: Rss,             iconColor: 'text-teal-400',   chip: 'bg-teal-500/10 border-teal-500/25 text-teal-300' },
+                { text: 'Team Workspaces',       icon: Users,           iconColor: 'text-cyan-400',   chip: 'bg-cyan-500/10 border-cyan-500/25 text-cyan-300' },
+                { text: 'Rich Text Documents',   icon: FileText,        iconColor: 'text-blue-400',   chip: 'bg-blue-500/10 border-blue-500/25 text-blue-300' },
+                { text: 'Collaborative Boards',  icon: PenLine,         iconColor: 'text-violet-400', chip: 'bg-violet-500/10 border-violet-500/25 text-violet-300' },
+                { text: 'Video Meetings',        icon: Video,           iconColor: 'text-purple-400', chip: 'bg-purple-500/10 border-purple-500/25 text-purple-300' },
+                { text: 'Personal Dashboard',    icon: LayoutDashboard, iconColor: 'text-pink-400',   chip: 'bg-pink-500/10 border-pink-500/25 text-pink-300' },
               ].map(({ text, icon: Icon, iconColor, chip }, i) => (
-                <span key={i} className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide text-gray-700 whitespace-nowrap shadow-sm ${chip}`}>
+                <span key={i} className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-[11px] font-semibold tracking-wide whitespace-nowrap ${chip}`}>
                   <Icon className={`w-3.5 h-3.5 shrink-0 ${iconColor}`} strokeWidth={2} />
                   {text}
                 </span>
               ))}
-              {/* Decorative divider between passes */}
-              <span className="w-px h-5 bg-gray-200 mx-2 shrink-0" />
+              <span className="w-px h-4 bg-white/10 mx-3 shrink-0" />
             </div>
           ))}
         </div>
+
+        {/* Bottom red accent line */}
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-60" />
       </section>
 
       {/* Features Section - Redesigned with Office Documents */}
