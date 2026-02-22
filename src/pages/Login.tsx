@@ -17,17 +17,20 @@ export default function Login() {
   const [searchParams] = useSearchParams();
   const [loaded, setLoaded] = useState(false); // For logo animation
   const inviteToken = searchParams.get('invite');
+  const chatToken  = searchParams.get('chat_token');
 
-  // Store invite token for after login
+  // Store tokens for after login
   useEffect(() => {
     if (inviteToken) {
       sessionStorage.setItem('redirectAfterLogin', `/workspaces/invitations?token=${inviteToken}`);
     }
-  }, [inviteToken]);
+    if (chatToken) {
+      sessionStorage.setItem('pendingChatToken', chatToken);
+    }
+  }, [inviteToken, chatToken]);
 
   // Redirect if already authenticated
   if (isAuthenticated()) {
-    // If there's an invite token, redirect to invitations page
     if (inviteToken) {
       return <Navigate to={`/workspaces/invitations?token=${inviteToken}`} replace />;
     }
@@ -87,6 +90,26 @@ export default function Login() {
             // Silent fail - notifications are optional
           });
       }, 2000); // Wait 2 seconds after login
+
+      // If a pending chat invite token exists, accept it first then go to messages
+      const pendingChatToken = sessionStorage.getItem('pendingChatToken');
+      if (pendingChatToken) {
+        sessionStorage.removeItem('pendingChatToken');
+        try {
+          const acceptRes = await fetch(`${API_BASE_URL}/dm/request/accept-after-signup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.token}` },
+            body: JSON.stringify({ token: pendingChatToken }),
+          });
+          const acceptData = await acceptRes.json();
+          if (acceptData.conversationId) {
+            window.location.href = `/messages?c=${acceptData.conversationId}`;
+            return;
+          }
+        } catch {}
+        window.location.href = '/messages';
+        return;
+      }
 
       // Check if there's a redirect path stored (invite tokens etc.)
       const redirectPath = sessionStorage.getItem('redirectAfterLogin');
