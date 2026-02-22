@@ -136,7 +136,7 @@ const Home: FC = () => {
                 { text: 'OCR Scanning',          icon: Scan,            iconColor: 'text-yellow-600', chip: 'bg-yellow-50 border-yellow-100' },
                 { text: 'Merge PDFs',            icon: GitMerge,        iconColor: 'text-lime-600',   chip: 'bg-lime-50 border-lime-100' },
                 { text: 'Password Protect PDFs', icon: Lock,            iconColor: 'text-green-600',  chip: 'bg-green-50 border-green-100' },
-                { text: 'Social Feed',           icon: Rss,             iconColor: 'text-teal-500',   chip: 'bg-teal-50 border-teal-100' },
+                { text: 'Live Feed',             icon: Rss,             iconColor: 'text-teal-500',   chip: 'bg-teal-50 border-teal-100' },
                 { text: 'Team Workspaces',       icon: Users,           iconColor: 'text-cyan-600',   chip: 'bg-cyan-50 border-cyan-100' },
                 { text: 'Rich Text Documents',   icon: FileText,        iconColor: 'text-blue-500',   chip: 'bg-blue-50 border-blue-100' },
                 { text: 'Collaborative Boards',  icon: PenLine,         iconColor: 'text-violet-500', chip: 'bg-violet-50 border-violet-100' },
