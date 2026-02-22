@@ -590,20 +590,16 @@ export default function Messages() {
   const startChatWithUser = async (user: UserMini) => {
     setSearchQ('');
     setUserResults([]);
-    // Check local state first (fast path)
-    const existing = conversations.find(c => c.participants.some(p => p._id === user._id));
-    if (existing) { setActiveConvoId(existing._id); return; }
-    // Ask backend — covers cases where invite was accepted but list not yet refreshed
+    // Fetch fresh conversations from server to catch any accepted invites
     try {
-      const res = await fetch(`${API}/dm/conversation-with/${user._id}`, {
+      const res = await fetch(`${API}/dm/conversations`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
-      if (data.conversationId) {
-        await fetchConversations();
-        setActiveConvoId(data.conversationId);
-        return;
-      }
+      const fresh: Conversation[] = data.conversations || [];
+      setConversations(fresh);
+      const existing = fresh.find(c => c.participants.some(p => p._id === user._id));
+      if (existing) { setActiveConvoId(existing._id); return; }
     } catch {}
     // No accepted connection — open new chat modal to send a request
     setNewChatEmail(user.email);
