@@ -210,11 +210,20 @@ export default function Messages() {
 
   // ── Push notification setup
   useEffect(() => {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !VAPID_PUBLIC_KEY) return;
+    console.log('[Push] Setup starting. VAPID_PUBLIC_KEY present:', !!VAPID_PUBLIC_KEY);
+    console.log('[Push] VAPID key (first 20 chars):', VAPID_PUBLIC_KEY?.slice(0, 20));
+    if (!('serviceWorker' in navigator)) { console.log('[Push] SKIP: no serviceWorker support'); return; }
+    if (!('PushManager' in window)) { console.log('[Push] SKIP: no PushManager support'); return; }
+    if (!VAPID_PUBLIC_KEY) { console.log('[Push] SKIP: VAPID_PUBLIC_KEY is empty'); return; }
+
     navigator.serviceWorker.ready.then(async (reg) => {
+      console.log('[Push] SW ready. Scope:', reg.scope);
       try {
         const expectedKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+        console.log('[Push] Expected key length:', expectedKey.length);
+
         let sub = await reg.pushManager.getSubscription();
+        console.log('[Push] Existing subscription:', sub ? sub.endpoint.slice(0, 60) + '...' : 'none');
 
         // If the existing subscription was created with a different VAPID key
         // (e.g. a dummy key used before real keys were configured), unsubscribe
@@ -223,31 +232,51 @@ export default function Messages() {
           const rawKey = sub.options?.applicationServerKey;
           if (rawKey) {
             const existingKey = new Uint8Array(rawKey as ArrayBuffer);
+            console.log('[Push] Existing key length:', existingKey.length, 'Expected:', expectedKey.length);
             const keyMismatch =
               existingKey.length !== expectedKey.length ||
               existingKey.some((b, i) => b !== expectedKey[i]);
+            console.log('[Push] Key mismatch:', keyMismatch);
             if (keyMismatch) {
+              console.log('[Push] Unsubscribing stale subscription...');
               await sub.unsubscribe();
               sub = null;
+              console.log('[Push] Unsubscribed.');
             }
+          } else {
+            console.log('[Push] No applicationServerKey on existing sub — keeping it');
           }
         }
 
         if (!sub) {
-          sub = await reg.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: expectedKey as unknown as BufferSource,
-          });
+          console.log('[Push] Creating new subscription...');
+          try {
+            sub = await reg.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: expectedKey as unknown as BufferSource,
+            });
+            console.log('[Push] New subscription created:', sub.endpoint.slice(0, 60) + '...');
+          } catch (subErr: any) {
+            console.error('[Push] Failed to subscribe:', subErr.message, subErr);
+            return;
+          }
         }
 
         // Always sync to backend — server upserts so duplicates are harmless
-        await fetch(`${API}/notifications/subscribe`, {
+        console.log('[Push] Sending subscription to backend...');
+        const res = await fetch(`${API}/notifications/subscribe`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
           body: JSON.stringify(sub),
         });
-      } catch {}
-    }).catch(() => {});
+        const data = await res.json();
+        console.log('[Push] Backend response:', res.status, JSON.stringify(data));
+      } catch (err: any) {
+        console.error('[Push] Unexpected error:', err.message, err);
+      }
+    }).catch((err: any) => {
+      console.error('[Push] SW not ready:', err.message);
+    });
   }, []);
 
   // ── Socket setup
