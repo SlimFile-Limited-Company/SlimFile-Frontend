@@ -213,7 +213,7 @@ const AdminNewsletter = () => {
       const url = editingId
         ? `${API}/admin/newsletter/${editingId}`
         : `${API}/admin/newsletter`;
-      const method = editingId ? 'PUT' : 'POST';
+      const method = editingId ? 'PATCH' : 'POST';
 
       const res = await fetch(url, {
         method,
