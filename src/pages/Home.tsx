@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock } from "lucide-react";
+import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 
 // Add keyframes for animations
@@ -109,23 +109,35 @@ const Home: FC = () => {
         </div>
       </section>
 
-      {/* Supported Formats Banner */}
-      <section className="py-6 sm:py-8 md:py-10 px-4 sm:px-6 lg:px-8 bg-gray-50 border-y border-gray-200">
+      {/* Features Quick-Nav */}
+      <section className="py-6 sm:py-8 px-4 sm:px-6 lg:px-8 bg-gray-50 border-y border-gray-200 overflow-x-auto">
         <div className="container mx-auto">
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs sm:text-sm">
-            <span className="font-black text-gray-900 text-base sm:text-lg">Supported formats:</span>
-            <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-300">
-              <FileImage className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              <span className="text-sm sm:text-base font-bold text-gray-900">JPEG, PNG, WebP</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-gray-200 shadow-sm hover:border-gray-300 hover:shadow-md transition-all duration-300">
-              <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              <span className="text-sm sm:text-base font-bold text-gray-900">PDF, PPTX</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-primary shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
-              <FileType className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              <span className="font-black text-sm sm:text-base text-gray-900">DOCX, XLSX</span>
-            </div>
+          <div className="flex items-center justify-start sm:justify-center gap-3 min-w-max sm:min-w-0 sm:flex-wrap mx-auto">
+            {[
+              { label: 'Compress',   icon: Minimize2,       to: '/compress',         color: 'text-red-500',    bg: 'bg-red-50',    border: 'border-red-100' },
+              { label: 'Convert',    icon: RefreshCw,       to: '/convert-only',     color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-100' },
+              { label: 'Both',       icon: Layers,          to: '/convert-compress', color: 'text-amber-500',  bg: 'bg-amber-50',  border: 'border-amber-100' },
+              { label: 'OCR',        icon: Scan,            to: '/ocr-tool',         color: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-100' },
+              { label: 'Merge PDF',  icon: GitMerge,        to: '/forge',            color: 'text-lime-600',   bg: 'bg-lime-50',   border: 'border-lime-100' },
+              { label: 'Lock PDF',   icon: Lock,            to: '/lock',             color: 'text-green-600',  bg: 'bg-green-50',  border: 'border-green-100' },
+              { label: 'Feed',       icon: Rss,             to: '/feed',             color: 'text-teal-500',   bg: 'bg-teal-50',   border: 'border-teal-100' },
+              { label: 'Workspaces', icon: Users,           to: '/workspaces',       color: 'text-cyan-500',   bg: 'bg-cyan-50',   border: 'border-cyan-100' },
+              { label: 'Documents',  icon: FileText,        to: '/documents',        color: 'text-blue-500',   bg: 'bg-blue-50',   border: 'border-blue-100' },
+              { label: 'Boards',     icon: PenLine,         to: '/my-whiteboards',   color: 'text-violet-500', bg: 'bg-violet-50', border: 'border-violet-100' },
+              { label: 'Meet',       icon: Video,           to: '/meet',             color: 'text-purple-500', bg: 'bg-purple-50', border: 'border-purple-100' },
+              { label: 'Dashboard',  icon: LayoutDashboard, to: '/dashboard',        color: 'text-pink-500',   bg: 'bg-pink-50',   border: 'border-pink-100' },
+            ].map(({ label, icon: Icon, to, color, bg, border }) => (
+              <Link
+                key={to}
+                to={to}
+                className={`flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-2xl border ${border} ${bg} hover:scale-105 hover:shadow-md transition-all duration-200 group shrink-0`}
+              >
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center bg-white shadow-sm`}>
+                  <Icon className={`w-[18px] h-[18px] ${color}`} strokeWidth={1.8} />
+                </div>
+                <span className={`text-[10px] font-semibold whitespace-nowrap ${color}`}>{label}</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
