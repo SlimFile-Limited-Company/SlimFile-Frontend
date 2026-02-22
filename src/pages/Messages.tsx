@@ -561,7 +561,7 @@ export default function Messages() {
     return (
       <div
         key={msg._id}
-        className={`flex ${isNewGroup ? 'mt-3' : 'mt-0.5'} ${isMine ? 'justify-end' : 'justify-start'} group`}
+        className={`flex ${isNewGroup ? 'mt-4' : 'mt-2'} ${isMine ? 'justify-end' : 'justify-start'} group`}
         onClick={() => setSelectedMsg(isSelected ? null : msg._id)}
       >
         {/* Avatar (others only) */}
@@ -905,7 +905,7 @@ export default function Messages() {
     }
 
     return (
-      <div className={`flex flex-col flex-1 h-full ${activeConvoId ? 'flex' : 'hidden md:flex'}`}>
+      <div className={`flex flex-col flex-1 h-full pb-16 md:pb-0 ${activeConvoId ? 'flex' : 'hidden md:flex'}`}>
         {/* Chat header */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 bg-white shadow-sm">
           <button onClick={() => setActiveConvoId(null)} className="md:hidden mr-1 p-1 rounded-lg hover:bg-gray-100">
@@ -1066,7 +1066,7 @@ export default function Messages() {
   );
 
   return (
-    <div className="flex h-[calc(100dvh-4rem)] md:h-screen overflow-hidden bg-gray-50 relative">
+    <div className="flex h-screen overflow-hidden bg-gray-50 relative">
       {renderLeftPanel()}
       {renderChatWindow()}
       {showNewChat && renderNewChatModal()}
