@@ -587,18 +587,27 @@ export default function Messages() {
     if (el.scrollTop < 80 && hasMore && !loadingMsgs) loadMoreMessages();
   };
 
-  const startChatWithUser = (user: UserMini) => {
+  const startChatWithUser = async (user: UserMini) => {
     setSearchQ('');
     setUserResults([]);
-    // If a conversation already exists with this user, open it directly
+    // Check local state first (fast path)
     const existing = conversations.find(c => c.participants.some(p => p._id === user._id));
-    if (existing) {
-      setActiveConvoId(existing._id);
-    } else {
-      // No conversation yet — open new chat modal pre-filled with their email
-      setNewChatEmail(user.email);
-      setShowNewChat(true);
-    }
+    if (existing) { setActiveConvoId(existing._id); return; }
+    // Ask backend — covers cases where invite was accepted but list not yet refreshed
+    try {
+      const res = await fetch(`${API}/dm/conversation-with/${user._id}`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      const data = await res.json();
+      if (data.conversationId) {
+        await fetchConversations();
+        setActiveConvoId(data.conversationId);
+        return;
+      }
+    } catch {}
+    // No accepted connection — open new chat modal to send a request
+    setNewChatEmail(user.email);
+    setShowNewChat(true);
   };
 
   // ─── Render helpers ───────────────────────────────────────────────────────
