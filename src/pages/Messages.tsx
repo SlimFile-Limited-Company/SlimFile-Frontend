@@ -203,21 +203,22 @@ export default function Messages() {
     });
     socket.on('dm:request_accepted', ({ conversationId }: any) => {
       toast({ title: 'Chat request accepted!', description: 'You can now chat.' });
-      fetchConversations();
-      setActiveConvoId(conversationId);
+      // Wait for conversations to load before opening the chat window
+      fetchConversations().then(() => setActiveConvoId(conversationId));
     });
     return () => { socket.disconnect(); };
   }, [activeConvoId]);
 
   // ── Load conversations + requests on mount
   useEffect(() => {
-    fetchConversations();
-    fetchRequests();
-    // Handle ?c= and ?tab= from URL
     const c = searchParams.get('c');
     const t = searchParams.get('tab');
-    if (c) { setActiveConvoId(c); }
     if (t === 'requests') setTab('requests');
+    // Wait for conversations to load before activating one from URL
+    fetchConversations().then(() => {
+      if (c) setActiveConvoId(c);
+    });
+    fetchRequests();
   }, []);
 
   // ── Load messages when active conversation changes
@@ -815,6 +816,18 @@ export default function Messages() {
               <MessageCircle className="w-9 h-9 text-red-300" />
             </div>
             <p className="text-base font-semibold text-gray-500">Select a chat to start messaging</p>
+          </div>
+        </div>
+      );
+    }
+
+    // Conversation not yet in list (still loading) — show spinner
+    if (!activeConvo) {
+      return (
+        <div className="flex flex-1 items-center justify-center bg-gray-50">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm text-gray-400">Loading conversation...</p>
           </div>
         </div>
       );
