@@ -969,7 +969,7 @@ export default function Messages() {
     }
 
     return (
-      <div className={`flex flex-col flex-1 h-full pb-16 md:pb-0 ${activeConvoId ? 'flex' : 'hidden md:flex'}`}>
+      <div className={`flex flex-col flex-1 h-full pb-24 md:pb-0 ${activeConvoId ? 'flex' : 'hidden md:flex'}`}>
         {/* Chat header */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 bg-white shadow-sm">
           <button onClick={() => setActiveConvoId(null)} className="md:hidden mr-1 p-1 rounded-lg hover:bg-gray-100">
