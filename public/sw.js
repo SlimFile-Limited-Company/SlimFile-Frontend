@@ -47,6 +47,7 @@ self.addEventListener('fetch', event => {
 
 // ─── Push ─────────────────────────────────────────────────────────────────────
 self.addEventListener('push', event => {
+  console.log('[SW Push] Push event received');
   let data = {
     title: 'SlimFile',
     body:  'You have a new notification',
@@ -55,17 +56,24 @@ self.addEventListener('push', event => {
   };
 
   if (event.data) {
-    try { data = { ...data, ...event.data.json() }; } catch {}
+    try {
+      data = { ...data, ...event.data.json() };
+      console.log('[SW Push] Data parsed:', JSON.stringify(data));
+    } catch (e) {
+      console.error('[SW Push] Failed to parse push data:', e);
+    }
+  } else {
+    console.log('[SW Push] No event.data');
   }
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
-      // ── Tell every open tab about the push so it can show an in-app toast ──
+      console.log('[SW Push] Clients found:', clientList.length);
       clientList.forEach(client =>
         client.postMessage({ type: 'PUSH_RECEIVED', payload: data })
       );
 
-      // ── Always show the OS notification regardless of foreground/background ──
+      console.log('[SW Push] Calling showNotification...');
       return self.registration.showNotification(data.title, {
         body:             data.body,
         icon:             data.icon || '/logo.gif',
@@ -78,7 +86,13 @@ self.addEventListener('push', event => {
           { action: 'open',  title: 'View' },
           { action: 'close', title: 'Dismiss' },
         ],
+      }).then(() => {
+        console.log('[SW Push] showNotification resolved OK');
+      }).catch(err => {
+        console.error('[SW Push] showNotification FAILED:', err);
       });
+    }).catch(err => {
+      console.error('[SW Push] clients.matchAll FAILED:', err);
     })
   );
 });
