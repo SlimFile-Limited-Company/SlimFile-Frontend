@@ -59,6 +59,10 @@ import BlogWhyFileCompressionIsEssentialForRemoteWork from './pages/blog/WhyFile
 import { NotificationService } from './services/notificationService';
 import BlogCompressingPdfForPrintingVsEmailing from './pages/blog/CompressingPdfForPrintingVsEmailing';
 import BlogHowToCompressLargeVideosBeforeUploading from './pages/blog/HowToCompressLargeVideosBeforeUploading';
+import BlogConvertJpgToPdf from './pages/blog/ConvertJpgToPdf';
+import BlogConvertPngToWebp from './pages/blog/ConvertPngToWebp';
+import BlogConvertPdfToWord from './pages/blog/ConvertPdfToWord';
+import BlogConvertPdfToImage from './pages/blog/ConvertPdfToImage';
 import OurBlogs from './pages/OurBlogs';
 import Feed from './pages/Feed';
 import Portals from './pages/Portals';
@@ -166,6 +170,10 @@ ReactDOM.createRoot(root).render(
           <Route path="blog/why-file-compression-is-essential-for-remote-work" element={<BlogWhyFileCompressionIsEssentialForRemoteWork />} />
           <Route path="blog/compressing-pdf-for-printing-vs-emailing" element={<BlogCompressingPdfForPrintingVsEmailing />} />
           <Route path="blog/how-to-compress-large-videos-before-uploading" element={<BlogHowToCompressLargeVideosBeforeUploading />} />
+          <Route path="blog/convert-jpg-to-pdf" element={<BlogConvertJpgToPdf />} />
+          <Route path="blog/convert-png-to-webp" element={<BlogConvertPngToWebp />} />
+          <Route path="blog/convert-pdf-to-word" element={<BlogConvertPdfToWord />} />
+          <Route path="blog/convert-pdf-to-image" element={<BlogConvertPdfToImage />} />
           <Route path="blog" element={<OurBlogs />} />
           <Route path="terms" element={<TermsOfService />} />
           <Route path="privacy" element={<PrivacyPolicy />} />

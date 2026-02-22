@@ -25,7 +25,9 @@ import {
   Eye,
   Share2,
   HardDrive,
-  Monitor
+  Monitor,
+  RefreshCw,
+  Edit
 } from "lucide-react";
 import { useState } from "react";
 
@@ -149,10 +151,70 @@ const blogPosts = [
     gradient: "from-pink-50 to-purple-50",
     iconColor: "text-pink-600",
     bgColor: "bg-pink-100"
+  },
+  {
+    id: 9,
+    title: "How to Convert JPG to PDF",
+    description: "Transform your JPG images into professional PDF documents. Perfect for portfolios, document archiving, and sharing.",
+    href: "/blog/convert-jpg-to-pdf",
+    icon: Image,
+    category: "Conversion",
+    readTime: "6 min read",
+    author: "SlimFile Team",
+    date: "2025-02-15",
+    featured: true,
+    gradient: "from-orange-50 to-red-50",
+    iconColor: "text-orange-600",
+    bgColor: "bg-orange-100"
+  },
+  {
+    id: 10,
+    title: "How to Convert PNG to WebP",
+    description: "Reduce image file sizes by up to 30% while maintaining quality. Optimize images for faster websites and better performance.",
+    href: "/blog/convert-png-to-webp",
+    icon: Zap,
+    category: "Conversion",
+    readTime: "7 min read",
+    author: "SlimFile Team",
+    date: "2025-02-18",
+    featured: true,
+    gradient: "from-purple-50 to-pink-50",
+    iconColor: "text-purple-600",
+    bgColor: "bg-purple-100"
+  },
+  {
+    id: 11,
+    title: "How to Convert PDF to Word (DOCX)",
+    description: "Transform PDF documents into editable Word files while preserving formatting. Edit, update, and customize your documents.",
+    href: "/blog/convert-pdf-to-word",
+    icon: Edit,
+    category: "Conversion",
+    readTime: "8 min read",
+    author: "SlimFile Team",
+    date: "2025-02-20",
+    featured: false,
+    gradient: "from-blue-50 to-indigo-50",
+    iconColor: "text-blue-600",
+    bgColor: "bg-blue-100"
+  },
+  {
+    id: 12,
+    title: "How to Convert PDF to Image (JPG/PNG)",
+    description: "Extract pages from PDF as high-quality images. Perfect for social media, presentations, and sharing content easily.",
+    href: "/blog/convert-pdf-to-image",
+    icon: RefreshCw,
+    category: "Conversion",
+    readTime: "6 min read",
+    author: "SlimFile Team",
+    date: "2025-02-22",
+    featured: false,
+    gradient: "from-green-50 to-teal-50",
+    iconColor: "text-green-600",
+    bgColor: "bg-green-100"
   }
 ];
 
-const categories = ["All", "PDF", "Images", "Presentations", "Mobile", "Web Performance", "Remote Work", "Video"];
+const categories = ["All", "PDF", "Images", "Presentations", "Mobile", "Web Performance", "Remote Work", "Video", "Conversion"];
 
 export default function OurBlogs() {
   const [selectedCategory, setSelectedCategory] = useState("All");
