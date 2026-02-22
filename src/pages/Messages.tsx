@@ -551,15 +551,17 @@ export default function Messages() {
     return <Check className="w-3.5 h-3.5 text-gray-400" />;
   };
 
-  const renderMessage = (msg: DMMessage) => {
+  const renderMessage = (msg: DMMessage, index: number, arr: DMMessage[]) => {
     const isMine = msg.senderId._id === myId;
     const isDeleted = msg.deletedForAll || (msg.deletedAt && isMine);
     const isSelected = selectedMsg === msg._id;
+    const prev = arr[index - 1];
+    const isNewGroup = !prev || prev.senderId._id !== msg.senderId._id;
 
     return (
       <div
         key={msg._id}
-        className={`flex mb-1 ${isMine ? 'justify-end' : 'justify-start'} group`}
+        className={`flex ${isNewGroup ? 'mt-3' : 'mt-0.5'} ${isMine ? 'justify-end' : 'justify-start'} group`}
         onClick={() => setSelectedMsg(isSelected ? null : msg._id)}
       >
         {/* Avatar (others only) */}
