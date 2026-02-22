@@ -1,12 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
-  Home, MessageCircle, Rss, Minimize2, RefreshCw, LayoutDashboard,
+  Home, Rss, Minimize2, RefreshCw, LayoutDashboard,
   GitMerge, Lock, Layers, Users, FileText, PenLine, Video, Scan,
 } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
-function getToken() { return localStorage.getItem('jwt') || ''; }
 
 const HIDDEN_PREFIXES = ['/meet/', '/my-whiteboards/', '/documents/', '/login'];
 function isHiddenRoute(pathname: string) {
@@ -17,7 +15,6 @@ function isHiddenRoute(pathname: string) {
 
 const tabs = [
   { label: 'Home',       icon: Home,            to: '/',                section: null },
-  { label: 'Messages',   icon: MessageCircle,   to: '/messages',        section: 'connect' },
   { label: 'Compress',   icon: Minimize2,       to: '/compress',        section: 'suite' },
   { label: 'Convert',    icon: RefreshCw,       to: '/convert-only',    section: 'suite' },
   { label: 'Both',       icon: Layers,          to: '/convert-compress',section: 'suite' },
@@ -44,25 +41,9 @@ const sectionLabel: Record<string, string> = {
 
 export default function BottomNav() {
   const location  = useLocation();
-  const [dmUnread, setDmUnread] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const pausedRef = useRef(false);
   const rafRef    = useRef(0);
-
-  /* ── Unread badge polling ── */
-  useEffect(() => {
-    if (!getToken()) return;
-    const poll = async () => {
-      try {
-        const res  = await fetch(`${API_BASE}/dm/unread`, { headers: { Authorization: `Bearer ${getToken()}` } });
-        const data = await res.json();
-        setDmUnread((data.unreadMessages || 0) + (data.pendingRequests || 0));
-      } catch {}
-    };
-    poll();
-    const id = setInterval(poll, 5000);
-    return () => clearInterval(id);
-  }, []);
 
   /* ── Very slow auto-scroll (20 px / second) ── */
   useEffect(() => {
@@ -131,7 +112,6 @@ export default function BottomNav() {
           >
             {tabs.map(({ label, icon: Icon, to, section }) => {
               const active = isActive(to);
-              const badge  = to === '/messages' ? dmUnread : 0;
               const pillBg = active
                 ? (section ? sectionColor[section] : 'bg-gray-800 shadow-[0_3px_10px_rgba(0,0,0,0.22)]')
                 : 'bg-gray-50';
@@ -151,11 +131,6 @@ export default function BottomNav() {
                       className={`w-[17px] h-[17px] transition-colors ${active ? 'text-white' : 'text-gray-400'}`}
                       strokeWidth={active ? 2.3 : 1.7}
                     />
-                    {badge > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[8px] font-bold rounded-full min-w-[15px] h-[15px] flex items-center justify-center px-[3px] leading-none border-2 border-white">
-                        {badge > 9 ? '9+' : badge}
-                      </span>
-                    )}
                   </div>
 
                   {/* Label */}
