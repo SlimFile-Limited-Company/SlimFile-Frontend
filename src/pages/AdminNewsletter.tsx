@@ -11,6 +11,8 @@ import {
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
+type TemplateKey = 'classic' | 'minimal' | 'dark' | 'bold' | 'warm';
+
 interface Campaign {
   _id: string;
   subject: string;
@@ -18,102 +20,97 @@ interface Campaign {
   body: string;
   ctaText: string;
   ctaLink: string;
+  template: TemplateKey;
   status: 'draft' | 'sent';
   sentAt?: string;
   recipientCount: number;
   createdAt: string;
 }
 
-const TEMPLATES = [
+// ─── Visual email template definitions ───────────────────────────────────────
+const EMAIL_TEMPLATES: {
+  key: TemplateKey;
+  label: string;
+  desc: string;
+  preview: {
+    headerBg: string;
+    headerText: string;
+    bodyBg: string;
+    bodyText: string;
+    btnBg: string;
+    btnText: string;
+    footerBg: string;
+  };
+}[] = [
   {
-    label: 'Monthly Update',
-    subject: 'SlimFile — Monthly Update 📦',
-    heading: 'Here\'s what\'s new at SlimFile',
-    body: `Hi there,
-
-We've been busy this month making SlimFile faster, smarter, and more powerful for you.
-
-Here's a quick recap of what's new:
-- Improved PDF compression speed by 30%
-- New team workspace features for better collaboration
-- Whiteboard now supports sticky notes and shapes
-- Bug fixes and performance improvements across the platform
-
-Thank you for being part of the SlimFile community. We build this for you!`,
-    ctaText: 'See What\'s New',
-    ctaLink: 'https://www.slim-file.com',
+    key: 'classic',
+    label: 'Classic',
+    desc: 'Red gradient header, white body',
+    preview: {
+      headerBg: 'linear-gradient(135deg,#dc2626,#ef4444)',
+      headerText: '#ffffff',
+      bodyBg: '#ffffff',
+      bodyText: '#374151',
+      btnBg: '#dc2626',
+      btnText: '#ffffff',
+      footerBg: '#f9fafb',
+    },
   },
   {
-    label: 'New Feature Launch',
-    subject: '🚀 Exciting new features just dropped on SlimFile',
-    heading: 'We just launched something big',
-    body: `Hi there,
-
-We're thrilled to announce the launch of new features that will change how you work with files.
-
-What's new:
-- Real-time collaboration on whiteboards and documents
-- OCR text extraction from scanned PDFs and images
-- Video meetings directly inside your workspace
-- Advanced PDF tools: merge, split, and password-protect
-
-These features are available right now — no extra setup needed. Just log in and start exploring.`,
-    ctaText: 'Try It Now',
-    ctaLink: 'https://www.slim-file.com/get-started',
+    key: 'minimal',
+    label: 'Minimal',
+    desc: 'Clean white, red border accent',
+    preview: {
+      headerBg: '#ffffff',
+      headerText: '#111827',
+      bodyBg: '#ffffff',
+      bodyText: '#374151',
+      btnBg: '#ffffff',
+      btnText: '#dc2626',
+      footerBg: '#ffffff',
+    },
   },
   {
-    label: 'Tips & Tricks',
-    subject: '💡 5 SlimFile tips to save you hours every week',
-    heading: 'Work smarter with SlimFile',
-    body: `Hi there,
-
-Here are 5 quick tips to get the most out of SlimFile:
-
-1. Batch compress multiple images at once using our Image Compressor
-2. Use OCR to extract text from scanned documents — no typing needed
-3. Merge PDFs from your workspace in seconds using the PDF Merger
-4. Start a whiteboard session with your team for brainstorming
-5. Password-protect sensitive PDFs before sharing them externally
-
-These features are all free to use. Try them out today!`,
-    ctaText: 'Explore Features',
-    ctaLink: 'https://www.slim-file.com/get-started',
+    key: 'dark',
+    label: 'Dark',
+    desc: 'Dark mode, red CTA',
+    preview: {
+      headerBg: '#1e293b',
+      headerText: '#f1f5f9',
+      bodyBg: '#1e293b',
+      bodyText: '#cbd5e1',
+      btnBg: '#dc2626',
+      btnText: '#ffffff',
+      footerBg: '#0f172a',
+    },
   },
   {
-    label: 'Re-engagement',
-    subject: 'We miss you — here\'s what you\'ve been missing 👋',
-    heading: 'Come back and see what\'s changed',
-    body: `Hi there,
-
-We noticed you haven't logged in to SlimFile in a while, and we wanted to reach out.
-
-A lot has changed since your last visit:
-- New collaboration tools for teams
-- Faster compression with better quality
-- Whiteboards, document editors, and video meetings
-- A completely revamped dashboard
-
-SlimFile is now more than just a file compressor — it's your all-in-one file workspace. Come back and see for yourself.`,
-    ctaText: 'Log Back In',
-    ctaLink: 'https://www.slim-file.com/login',
+    key: 'bold',
+    label: 'Bold',
+    desc: 'Solid red header, large type',
+    preview: {
+      headerBg: '#dc2626',
+      headerText: '#ffffff',
+      bodyBg: '#ffffff',
+      bodyText: '#374151',
+      btnBg: '#111827',
+      btnText: '#ffffff',
+      footerBg: '#dc2626',
+    },
   },
   {
-    label: 'Feature Spotlight',
-    subject: '🔍 Spotlight: Extract text from any image or PDF instantly',
-    heading: 'Meet SlimFile\'s OCR Tool',
-    body: `Hi there,
-
-This month we're shining a spotlight on one of our most powerful (and underused) tools: OCR Text Extraction.
-
-With SlimFile OCR, you can:
-- Extract text from scanned PDFs, photos, and screenshots
-- Copy or download the extracted text instantly
-- Works with handwritten notes, receipts, contracts, and more
-- Completely free to use
-
-Whether you're digitizing paper documents or pulling data from images, SlimFile OCR handles it in seconds.`,
-    ctaText: 'Try OCR Now',
-    ctaLink: 'https://www.slim-file.com/ocr',
+    key: 'warm',
+    label: 'Warm',
+    desc: 'Warm cream, amber tones',
+    preview: {
+      headerBg: '#fffbf5',
+      headerText: '#92400e',
+      bodyBg: '#fffbf5',
+      bodyText: '#44403c',
+      btnBg: '#b45309',
+      btnText: '#ffffff',
+      footerBg: '#fef3e2',
+    },
   },
 ];
 
@@ -123,6 +120,7 @@ const EMPTY_FORM = {
   body: '',
   ctaText: 'Visit SlimFile',
   ctaLink: 'https://www.slim-file.com',
+  template: 'classic' as TemplateKey,
 };
 
 const AdminNewsletter = () => {
@@ -143,6 +141,7 @@ const AdminNewsletter = () => {
   const [form, setForm] = useState(EMPTY_FORM);
 
   const token = localStorage.getItem('jwt');
+  const activeTemplate = EMAIL_TEMPLATES.find(t => t.key === form.template)!;
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -181,6 +180,7 @@ const AdminNewsletter = () => {
       body: c.body,
       ctaText: c.ctaText,
       ctaLink: c.ctaLink,
+      template: c.template || 'classic',
     });
     setEditingId(c._id);
     setShowTemplates(false);
@@ -190,17 +190,6 @@ const AdminNewsletter = () => {
   const handleCancelEdit = () => {
     setEditingId(null);
     setForm(EMPTY_FORM);
-  };
-
-  const applyTemplate = (t: typeof TEMPLATES[number]) => {
-    setForm({
-      subject: t.subject,
-      heading: t.heading,
-      body: t.body,
-      ctaText: t.ctaText,
-      ctaLink: t.ctaLink,
-    });
-    setShowTemplates(false);
   };
 
   const handleSaveDraft = async () => {
@@ -414,51 +403,80 @@ const AdminNewsletter = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {editingId && (
-                      <button
-                        onClick={handleCancelEdit}
-                        className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-800"
-                      >
-                        <X className="w-3.5 h-3.5" /> Cancel edit
-                      </button>
-                    )}
-                    {!editingId && (
-                      <button
-                        onClick={() => setShowTemplates(v => !v)}
-                        className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors ${
-                          showTemplates
-                            ? 'bg-red-600/20 text-red-400 border border-red-500/30'
-                            : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
-                        }`}
-                      >
-                        <LayoutTemplate className="w-3.5 h-3.5" /> Templates
-                      </button>
-                    )}
-                  </div>
+                  {editingId && (
+                    <button
+                      onClick={handleCancelEdit}
+                      className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-800"
+                    >
+                      <X className="w-3.5 h-3.5" /> Cancel edit
+                    </button>
+                  )}
                 </div>
 
-                {/* Templates picker */}
-                {showTemplates && !editingId && (
-                  <div className="px-6 py-4 border-b border-gray-800 bg-gray-800/40">
-                    <p className="text-xs font-medium text-gray-400 mb-3">Choose a template to get started</p>
-                    <div className="grid grid-cols-1 gap-2">
-                      {TEMPLATES.map(t => (
-                        <button
-                          key={t.label}
-                          onClick={() => applyTemplate(t)}
-                          className="flex items-center justify-between text-left px-4 py-3 rounded-xl bg-gray-800 hover:bg-gray-750 hover:border-red-500/30 border border-gray-700 transition-all group"
-                        >
-                          <div>
-                            <p className="text-xs font-semibold text-gray-200 group-hover:text-red-300 transition-colors">{t.label}</p>
-                            <p className="text-[10px] text-gray-500 mt-0.5 truncate max-w-xs">{t.subject}</p>
-                          </div>
-                          <ChevronRight className="w-3.5 h-3.5 text-gray-600 group-hover:text-red-400 shrink-0 transition-colors" />
-                        </button>
-                      ))}
-                    </div>
+                {/* Email style picker */}
+                <div className="px-6 pt-5 pb-2">
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="text-xs font-medium text-gray-400 flex items-center gap-1.5">
+                      <LayoutTemplate className="w-3.5 h-3.5" /> Email Style
+                    </label>
+                    <span className="text-xs text-gray-600">{activeTemplate.desc}</span>
                   </div>
-                )}
+                  <div className="flex gap-2">
+                    {EMAIL_TEMPLATES.map(t => (
+                      <button
+                        key={t.key}
+                        onClick={() => setForm(f => ({ ...f, template: t.key }))}
+                        title={t.desc}
+                        className={`flex-1 rounded-xl overflow-hidden border-2 transition-all ${
+                          form.template === t.key
+                            ? 'border-red-500 shadow-lg shadow-red-900/30'
+                            : 'border-gray-700 hover:border-gray-600'
+                        }`}
+                      >
+                        {/* Mini email mockup */}
+                        <div style={{ background: t.preview.headerBg }} className="px-2 py-2 text-center">
+                          <div
+                            className="text-[7px] font-bold leading-tight truncate"
+                            style={{ color: t.preview.headerText }}
+                          >
+                            {t.key === 'minimal'
+                              ? <span style={{ borderBottom: '1px solid #dc2626', paddingBottom: 1 }}>SlimFile</span>
+                              : 'Heading'}
+                          </div>
+                        </div>
+                        <div style={{ background: t.preview.bodyBg }} className="px-2 py-1.5">
+                          <div className="space-y-0.5 mb-1.5">
+                            <div style={{ background: t.preview.bodyText + '30' }} className="h-1 rounded-full w-full" />
+                            <div style={{ background: t.preview.bodyText + '20' }} className="h-1 rounded-full w-3/4" />
+                          </div>
+                          <div
+                            className="text-center py-0.5 rounded text-[6px] font-bold"
+                            style={{
+                              background: t.preview.btnBg,
+                              color: t.preview.btnText,
+                              border: t.key === 'minimal' ? '1px solid #dc2626' : 'none',
+                            }}
+                          >
+                            CTA
+                          </div>
+                        </div>
+                        <div
+                          style={{ background: t.preview.footerBg }}
+                          className="px-2 py-1 text-center"
+                        >
+                          <div style={{ background: t.preview.bodyText + '20' }} className="h-0.5 rounded-full w-2/3 mx-auto" />
+                        </div>
+                        <div
+                          className={`text-center py-1 text-[8px] font-semibold ${
+                            form.template === t.key ? 'text-red-400 bg-red-500/5' : 'text-gray-500 bg-gray-800/50'
+                          }`}
+                        >
+                          {t.label}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
                 <div className="p-6 space-y-4">
                   <div>
@@ -556,6 +574,11 @@ const AdminNewsletter = () => {
                                 <AlertCircle className="w-3 h-3" /> Draft
                               </span>
                             )}
+                            {c.template && c.template !== 'classic' && (
+                              <span className="text-xs text-gray-600 bg-gray-800 px-2 py-0.5 rounded-full capitalize">
+                                {c.template}
+                              </span>
+                            )}
                           </div>
                           <p className="text-sm font-semibold text-gray-100 truncate">{c.subject}</p>
                           <p className="text-xs text-gray-500 mt-0.5 truncate">{c.heading}</p>
@@ -621,36 +644,51 @@ const AdminNewsletter = () => {
           {/* Right: Info panel */}
           <div className="col-span-2 space-y-4">
 
-            {/* Email preview card */}
+            {/* Email preview — matches selected template */}
             <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-gray-800">
+              <div className="px-5 py-4 border-b border-gray-800 flex items-center justify-between">
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Email Preview</p>
+                <span className="text-xs text-gray-600 capitalize">{activeTemplate.label} style</span>
               </div>
               <div className="p-4">
-                {/* Mini email mockup */}
                 <div className="rounded-xl overflow-hidden border border-gray-700 text-xs shadow-xl">
-                  <div className="bg-gradient-to-br from-red-700 to-red-500 px-4 py-3 text-center">
-                    <div className="w-6 h-6 bg-white/20 rounded-md mx-auto mb-1.5 flex items-center justify-center">
-                      <Zap className="w-3 h-3 text-white" />
+                  {/* Header */}
+                  <div
+                    className="px-4 py-3 text-center"
+                    style={{ background: activeTemplate.preview.headerBg, borderBottom: form.template === 'minimal' ? '2px solid #dc2626' : 'none' }}
+                  >
+                    <div className="w-5 h-5 bg-white/20 rounded-md mx-auto mb-1.5 flex items-center justify-center">
+                      <Zap className="w-2.5 h-2.5" style={{ color: activeTemplate.preview.headerText }} />
                     </div>
-                    <p className="text-white font-bold text-xs leading-tight">
+                    <p className="font-bold text-xs leading-tight" style={{ color: activeTemplate.preview.headerText }}>
                       {form.heading || 'Your email heading'}
                     </p>
                   </div>
-                  <div className="bg-white px-4 py-3">
-                    <p className="text-gray-500 text-[10px] mb-1.5">Hi [Name],</p>
-                    <p className="text-gray-700 text-[10px] leading-relaxed line-clamp-3">
+                  {/* Body */}
+                  <div className="px-4 py-3" style={{ background: activeTemplate.preview.bodyBg }}>
+                    <p className="text-[10px] mb-1.5" style={{ color: activeTemplate.preview.bodyText + 'aa' }}>Hi [Name],</p>
+                    <p className="text-[10px] leading-relaxed line-clamp-3" style={{ color: activeTemplate.preview.bodyText }}>
                       {form.body || 'Your message content will appear here...'}
                     </p>
                     <div className="mt-3 text-center">
-                      <span className="inline-block bg-red-600 text-white text-[10px] font-semibold px-3 py-1 rounded-full">
+                      <span
+                        className="inline-block text-[10px] font-semibold px-3 py-1 rounded-full"
+                        style={{
+                          background: activeTemplate.preview.btnBg,
+                          color: activeTemplate.preview.btnText,
+                          border: form.template === 'minimal' ? '1.5px solid #dc2626' : 'none',
+                          borderRadius: form.template === 'bold' ? '6px' : '50px',
+                        }}
+                      >
                         {form.ctaText || 'Visit SlimFile'}
                       </span>
                     </div>
                   </div>
-                  <div className="bg-gray-50 px-4 py-2 text-center border-t border-gray-100">
-                    <p className="text-[9px] text-gray-400">SlimFile · Compress. Convert. Collaborate.</p>
-                    <p className="text-[9px] text-gray-300 mt-0.5">Unsubscribe</p>
+                  {/* Footer */}
+                  <div className="px-4 py-2 text-center" style={{ background: activeTemplate.preview.footerBg }}>
+                    <p className="text-[9px]" style={{ color: activeTemplate.preview.bodyText + '88' }}>
+                      SlimFile · Compress. Convert. Collaborate.
+                    </p>
                   </div>
                 </div>
               </div>
