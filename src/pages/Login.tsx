@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Navigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, Navigate, useSearchParams, useLocation } from 'react-router-dom';
 import { isAuthenticated } from "@/lib/auth";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -13,6 +13,7 @@ declare global {
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const [loaded, setLoaded] = useState(false); // For logo animation
   const inviteToken = searchParams.get('invite');
@@ -87,9 +88,13 @@ export default function Login() {
           });
       }, 2000); // Wait 2 seconds after login
 
-      // Check if there's a redirect path stored
+      // Check if there's a redirect path stored (invite tokens etc.)
       const redirectPath = sessionStorage.getItem('redirectAfterLogin');
-      const redirectTo = redirectPath || '/';
+      sessionStorage.removeItem('redirectAfterLogin');
+      // ProtectedRoute stores the original URL in location.state.from
+      const fromState = (location.state as any)?.from;
+      const fromPath = fromState ? (fromState.pathname + (fromState.search || '')) : null;
+      const redirectTo = redirectPath || fromPath || '/';
 
       setTimeout(() => {
         window.location.href = redirectTo;
