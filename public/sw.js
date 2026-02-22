@@ -70,6 +70,7 @@ self.addEventListener('push', event => {
         body:             data.body,
         icon:             data.icon || '/logo.gif',
         badge:            '/logo.gif',
+        tag:              data.tag || 'slimfile-push',
         vibrate:          [200, 100, 200],
         data:             data.data || {},
         requireInteraction: false,

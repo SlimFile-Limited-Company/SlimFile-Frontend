@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { showLocalNotification } from '@/services/pushNotificationService';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 const SOCKET_URL = (import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api').replace('/api', '');
@@ -296,6 +297,20 @@ export default function Messages() {
       ).sort((a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime()));
       // Mark delivered
       socket.emit('dm:delivered', { messageId: message._id, conversationId, senderId: message.senderId._id });
+      // Show local notification if message is from someone else and not the open conversation
+      if (message.senderId._id !== myId && conversationId !== activeConvoId) {
+        const body = message.type === 'image' ? '📷 Sent a photo'
+          : message.type === 'voice' ? '🎤 Sent a voice message'
+          : message.type === 'file' ? `📎 ${message.fileName || 'Sent a file'}`
+          : message.text || 'New message';
+        showLocalNotification({
+          title: message.senderId.name,
+          body,
+          icon: '/logo.gif',
+          tag: `dm-${conversationId}`,
+          data: { url: '/messages' },
+        });
+      }
     });
     socket.on('dm:typing', ({ conversationId, isTyping }: { conversationId: string; isTyping: boolean }) => {
       if (conversationId === activeConvoId) setPartnerTyping(isTyping);
@@ -612,7 +627,7 @@ export default function Messages() {
     return (
       <div
         key={msg._id}
-        className={`flex ${isNewGroup ? 'mt-4' : 'mt-2'} ${isMine ? 'justify-end' : 'justify-start'} group`}
+        className={`flex ${isNewGroup ? 'mt-5' : 'mt-3'} ${isMine ? 'justify-end' : 'justify-start'} group`}
         onClick={() => setSelectedMsg(isSelected ? null : msg._id)}
       >
         {/* Avatar (others only) */}
