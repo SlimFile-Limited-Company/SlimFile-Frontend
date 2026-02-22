@@ -63,6 +63,12 @@ import BlogConvertJpgToPdf from './pages/blog/ConvertJpgToPdf';
 import BlogConvertPngToWebp from './pages/blog/ConvertPngToWebp';
 import BlogConvertPdfToWord from './pages/blog/ConvertPdfToWord';
 import BlogConvertPdfToImage from './pages/blog/ConvertPdfToImage';
+import BlogConvertJpgToPng from './pages/blog/ConvertJpgToPng';
+import BlogConvertPngToJpg from './pages/blog/ConvertPngToJpg';
+import BlogConvertWebpToJpg from './pages/blog/ConvertWebpToJpg';
+import BlogConvertDocxToPdf from './pages/blog/ConvertDocxToPdf';
+import BlogConvertPdfToPptx from './pages/blog/ConvertPdfToPptx';
+import BlogConvertPdfToXlsx from './pages/blog/ConvertPdfToXlsx';
 import OurBlogs from './pages/OurBlogs';
 import Feed from './pages/Feed';
 import Portals from './pages/Portals';
@@ -174,6 +180,12 @@ ReactDOM.createRoot(root).render(
           <Route path="blog/convert-png-to-webp" element={<BlogConvertPngToWebp />} />
           <Route path="blog/convert-pdf-to-word" element={<BlogConvertPdfToWord />} />
           <Route path="blog/convert-pdf-to-image" element={<BlogConvertPdfToImage />} />
+          <Route path="blog/convert-jpg-to-png" element={<BlogConvertJpgToPng />} />
+          <Route path="blog/convert-png-to-jpg" element={<BlogConvertPngToJpg />} />
+          <Route path="blog/convert-webp-to-jpg" element={<BlogConvertWebpToJpg />} />
+          <Route path="blog/convert-docx-to-pdf" element={<BlogConvertDocxToPdf />} />
+          <Route path="blog/convert-pdf-to-pptx" element={<BlogConvertPdfToPptx />} />
+          <Route path="blog/convert-pdf-to-xlsx" element={<BlogConvertPdfToXlsx />} />
           <Route path="blog" element={<OurBlogs />} />
           <Route path="terms" element={<TermsOfService />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
