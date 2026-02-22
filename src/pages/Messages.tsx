@@ -598,7 +598,7 @@ export default function Messages() {
       const data = await res.json();
       const fresh: Conversation[] = data.conversations || [];
       setConversations(fresh);
-      const existing = fresh.find(c => c.participants.some(p => p._id === user._id));
+      const existing = fresh.find(c => c.participants.some(p => String(p._id) === String(user._id)));
       if (existing) { setActiveConvoId(existing._id); return; }
     } catch {}
     // No accepted connection — open new chat modal to send a request
