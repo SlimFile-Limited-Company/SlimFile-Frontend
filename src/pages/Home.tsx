@@ -28,6 +28,16 @@ style.textContent = `
   .animation-delay-4000 {
     animation-delay: 4s;
   }
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    animation: marquee 28s linear infinite;
+  }
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
 `;
 document.head.appendChild(style);
 import { Button } from "@/components/ui/button";
@@ -109,36 +119,32 @@ const Home: FC = () => {
         </div>
       </section>
 
-      {/* Features Quick-Nav */}
-      <section className="py-6 sm:py-8 px-4 sm:px-6 lg:px-8 bg-gray-50 border-y border-gray-200 overflow-x-auto">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-start sm:justify-center gap-3 min-w-max sm:min-w-0 sm:flex-wrap mx-auto">
-            {[
-              { label: 'Compress',   icon: Minimize2,       to: '/compress',         color: 'text-red-500',    bg: 'bg-red-50',    border: 'border-red-100' },
-              { label: 'Convert',    icon: RefreshCw,       to: '/convert-only',     color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-100' },
-              { label: 'Both',       icon: Layers,          to: '/convert-compress', color: 'text-amber-500',  bg: 'bg-amber-50',  border: 'border-amber-100' },
-              { label: 'OCR',        icon: Scan,            to: '/ocr-tool',         color: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-100' },
-              { label: 'Merge PDF',  icon: GitMerge,        to: '/forge',            color: 'text-lime-600',   bg: 'bg-lime-50',   border: 'border-lime-100' },
-              { label: 'Lock PDF',   icon: Lock,            to: '/lock',             color: 'text-green-600',  bg: 'bg-green-50',  border: 'border-green-100' },
-              { label: 'Feed',       icon: Rss,             to: '/feed',             color: 'text-teal-500',   bg: 'bg-teal-50',   border: 'border-teal-100' },
-              { label: 'Workspaces', icon: Users,           to: '/workspaces',       color: 'text-cyan-500',   bg: 'bg-cyan-50',   border: 'border-cyan-100' },
-              { label: 'Documents',  icon: FileText,        to: '/documents',        color: 'text-blue-500',   bg: 'bg-blue-50',   border: 'border-blue-100' },
-              { label: 'Boards',     icon: PenLine,         to: '/my-whiteboards',   color: 'text-violet-500', bg: 'bg-violet-50', border: 'border-violet-100' },
-              { label: 'Meet',       icon: Video,           to: '/meet',             color: 'text-purple-500', bg: 'bg-purple-50', border: 'border-purple-100' },
-              { label: 'Dashboard',  icon: LayoutDashboard, to: '/dashboard',        color: 'text-pink-500',   bg: 'bg-pink-50',   border: 'border-pink-100' },
-            ].map(({ label, icon: Icon, to, color, bg, border }) => (
-              <Link
-                key={to}
-                to={to}
-                className={`flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-2xl border ${border} ${bg} hover:scale-105 hover:shadow-md transition-all duration-200 group shrink-0`}
-              >
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center bg-white shadow-sm`}>
-                  <Icon className={`w-[18px] h-[18px] ${color}`} strokeWidth={1.8} />
-                </div>
-                <span className={`text-[10px] font-semibold whitespace-nowrap ${color}`}>{label}</span>
-              </Link>
-            ))}
-          </div>
+      {/* Marquee ticker */}
+      <section className="py-3.5 bg-gray-50 border-y border-gray-200 overflow-hidden">
+        <div className="flex w-max animate-marquee">
+          {[...Array(2)].map((_, pass) => (
+            <div key={pass} className="flex items-center gap-0 shrink-0">
+              {[
+                { text: 'Compress Files',        dot: 'bg-red-400' },
+                { text: 'Convert Documents',     dot: 'bg-orange-400' },
+                { text: 'Compress & Convert',    dot: 'bg-amber-400' },
+                { text: 'OCR Scanning',          dot: 'bg-yellow-500' },
+                { text: 'Merge PDFs',            dot: 'bg-lime-500' },
+                { text: 'Password Protect PDFs', dot: 'bg-green-500' },
+                { text: 'Social Feed',           dot: 'bg-teal-500' },
+                { text: 'Team Workspaces',       dot: 'bg-cyan-500' },
+                { text: 'Rich Text Documents',   dot: 'bg-blue-500' },
+                { text: 'Collaborative Boards',  dot: 'bg-violet-500' },
+                { text: 'Video Meetings',        dot: 'bg-purple-500' },
+                { text: 'Personal Dashboard',    dot: 'bg-pink-500' },
+              ].map(({ text, dot }, i) => (
+                <span key={i} className="flex items-center gap-3 px-5">
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dot}`} />
+                  <span className="text-sm font-medium text-gray-600 whitespace-nowrap">{text}</span>
+                </span>
+              ))}
+            </div>
+          ))}
         </div>
       </section>
 
