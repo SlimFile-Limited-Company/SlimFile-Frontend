@@ -1142,7 +1142,7 @@ export default function Messages() {
         <div
           ref={messagesBoxRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto px-4 py-4 bg-gray-50 space-y-0"
+          className="flex-1 overflow-y-auto px-4 py-4 bg-gray-50"
           style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 0)', backgroundSize: '20px 20px' }}
           onClick={() => setSelectedMsg(null)}
         >
