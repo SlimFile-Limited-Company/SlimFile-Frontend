@@ -216,10 +216,12 @@ export default function Messages() {
     offer: RTCSessionDescriptionInit; callType: 'voice' | 'video';
   } | null>(null);
 
-  const peerRef        = useRef<RTCPeerConnection | null>(null);
-  const localStreamRef = useRef<MediaStream | null>(null);
-  const localVideoRef  = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const peerRef              = useRef<RTCPeerConnection | null>(null);
+  const localStreamRef       = useRef<MediaStream | null>(null);
+  const localVideoRef        = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef       = useRef<HTMLVideoElement>(null);
+  const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
+  const callTimeoutRef       = useRef<ReturnType<typeof setTimeout>>();
 
   const activeConvo = conversations.find(c => c._id === activeConvoId);
   const partner = activeConvo ? getOtherParticipant(activeConvo, myId) : null;
@@ -348,13 +350,23 @@ export default function Messages() {
     });
     socket.on('dm:call_answer', async ({ answer }: any) => {
       if (peerRef.current) {
+        clearTimeout(callTimeoutRef.current);
         await peerRef.current.setRemoteDescription(new RTCSessionDescription(answer));
+        // Flush any ICE candidates that arrived before the answer
+        for (const c of pendingCandidatesRef.current) {
+          try { await peerRef.current.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+        }
+        pendingCandidatesRef.current = [];
         setCallState('in-call');
       }
     });
     socket.on('dm:call_ice_candidate', async ({ candidate }: any) => {
-      if (peerRef.current && candidate) {
+      if (!peerRef.current || !candidate) return;
+      if (peerRef.current.remoteDescription) {
         try { await peerRef.current.addIceCandidate(new RTCIceCandidate(candidate)); } catch {}
+      } else {
+        // Queue until setRemoteDescription is called
+        pendingCandidatesRef.current.push(candidate);
       }
     });
     socket.on('dm:call_reject', () => {
@@ -598,10 +610,12 @@ export default function Messages() {
 
   // ── WebRTC / Call helpers
   const cleanupCall = () => {
+    clearTimeout(callTimeoutRef.current);
     peerRef.current?.close();
     peerRef.current = null;
     localStreamRef.current?.getTracks().forEach(t => t.stop());
     localStreamRef.current = null;
+    pendingCandidatesRef.current = [];
     setCallState('idle');
     setCallMuted(false);
     setCallCamOff(false);
@@ -613,6 +627,10 @@ export default function Messages() {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
+        // Free TURN relay — needed for calls across most real NAT/firewall setups
+        { urls: 'turn:openrelay.metered.ca:80',  username: 'openrelayproject', credential: 'openrelayproject' },
+        { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
+        { urls: 'turns:openrelay.metered.ca:443',username: 'openrelayproject', credential: 'openrelayproject' },
       ],
     });
     pc.onicecandidate = e => {
@@ -650,6 +668,12 @@ export default function Messages() {
         callerName: myInfo?.name || 'Unknown',
         callerPicture: myInfo?.picture,
       });
+      // Auto-cancel after 30s if not answered
+      callTimeoutRef.current = setTimeout(() => {
+        socketRef.current?.emit('dm:call_end', { targetUserId: partner._id });
+        cleanupCall();
+        toast({ title: 'No answer', description: `${partner.name} didn't pick up` });
+      }, 30000);
     } catch {
       cleanupCall();
       toast({ title: 'Could not access microphone/camera', variant: 'destructive' });
@@ -667,6 +691,11 @@ export default function Messages() {
       const pc = createPeer(incomingCall.callerId);
       stream.getTracks().forEach(t => pc.addTrack(t, stream));
       await pc.setRemoteDescription(new RTCSessionDescription(incomingCall.offer));
+      // Flush any ICE candidates that arrived before we set the remote description
+      for (const c of pendingCandidatesRef.current) {
+        try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+      }
+      pendingCandidatesRef.current = [];
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
       socketRef.current?.emit('dm:call_answer', { targetUserId: incomingCall.callerId, answer });
