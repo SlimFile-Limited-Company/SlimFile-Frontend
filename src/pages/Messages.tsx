@@ -829,7 +829,7 @@ export default function Messages() {
       </div>
 
       {/* Conversation list */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto pb-16 md:pb-0">
         {tab === 'chats' && (
           conversations.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center px-6">
@@ -1083,7 +1083,7 @@ export default function Messages() {
 
   // ─── New Chat Modal ───────────────────────────────────────────────────────
   const renderNewChatModal = () => (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-4 pb-20 sm:pb-4 bg-black/50 backdrop-blur-sm"
       onClick={() => setShowNewChat(false)}>
       <div className="bg-white rounded-2xl sm:rounded-2xl w-full sm:max-w-sm p-6 shadow-2xl"
         onClick={e => e.stopPropagation()}>
