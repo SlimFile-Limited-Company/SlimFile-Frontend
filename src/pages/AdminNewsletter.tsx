@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import {
   Loader2, Send, Save, Trash2, Users, Mail,
   CheckCircle2, FlaskConical, BarChart3, Clock,
-  AlertCircle, ChevronRight, Zap,
+  AlertCircle, ChevronRight, Zap, Pencil, X, LayoutTemplate,
 } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
@@ -24,6 +24,107 @@ interface Campaign {
   createdAt: string;
 }
 
+const TEMPLATES = [
+  {
+    label: 'Monthly Update',
+    subject: 'SlimFile — Monthly Update 📦',
+    heading: 'Here\'s what\'s new at SlimFile',
+    body: `Hi there,
+
+We've been busy this month making SlimFile faster, smarter, and more powerful for you.
+
+Here's a quick recap of what's new:
+- Improved PDF compression speed by 30%
+- New team workspace features for better collaboration
+- Whiteboard now supports sticky notes and shapes
+- Bug fixes and performance improvements across the platform
+
+Thank you for being part of the SlimFile community. We build this for you!`,
+    ctaText: 'See What\'s New',
+    ctaLink: 'https://www.slim-file.com',
+  },
+  {
+    label: 'New Feature Launch',
+    subject: '🚀 Exciting new features just dropped on SlimFile',
+    heading: 'We just launched something big',
+    body: `Hi there,
+
+We're thrilled to announce the launch of new features that will change how you work with files.
+
+What's new:
+- Real-time collaboration on whiteboards and documents
+- OCR text extraction from scanned PDFs and images
+- Video meetings directly inside your workspace
+- Advanced PDF tools: merge, split, and password-protect
+
+These features are available right now — no extra setup needed. Just log in and start exploring.`,
+    ctaText: 'Try It Now',
+    ctaLink: 'https://www.slim-file.com/get-started',
+  },
+  {
+    label: 'Tips & Tricks',
+    subject: '💡 5 SlimFile tips to save you hours every week',
+    heading: 'Work smarter with SlimFile',
+    body: `Hi there,
+
+Here are 5 quick tips to get the most out of SlimFile:
+
+1. Batch compress multiple images at once using our Image Compressor
+2. Use OCR to extract text from scanned documents — no typing needed
+3. Merge PDFs from your workspace in seconds using the PDF Merger
+4. Start a whiteboard session with your team for brainstorming
+5. Password-protect sensitive PDFs before sharing them externally
+
+These features are all free to use. Try them out today!`,
+    ctaText: 'Explore Features',
+    ctaLink: 'https://www.slim-file.com/get-started',
+  },
+  {
+    label: 'Re-engagement',
+    subject: 'We miss you — here\'s what you\'ve been missing 👋',
+    heading: 'Come back and see what\'s changed',
+    body: `Hi there,
+
+We noticed you haven't logged in to SlimFile in a while, and we wanted to reach out.
+
+A lot has changed since your last visit:
+- New collaboration tools for teams
+- Faster compression with better quality
+- Whiteboards, document editors, and video meetings
+- A completely revamped dashboard
+
+SlimFile is now more than just a file compressor — it's your all-in-one file workspace. Come back and see for yourself.`,
+    ctaText: 'Log Back In',
+    ctaLink: 'https://www.slim-file.com/login',
+  },
+  {
+    label: 'Feature Spotlight',
+    subject: '🔍 Spotlight: Extract text from any image or PDF instantly',
+    heading: 'Meet SlimFile\'s OCR Tool',
+    body: `Hi there,
+
+This month we're shining a spotlight on one of our most powerful (and underused) tools: OCR Text Extraction.
+
+With SlimFile OCR, you can:
+- Extract text from scanned PDFs, photos, and screenshots
+- Copy or download the extracted text instantly
+- Works with handwritten notes, receipts, contracts, and more
+- Completely free to use
+
+Whether you're digitizing paper documents or pulling data from images, SlimFile OCR handles it in seconds.`,
+    ctaText: 'Try OCR Now',
+    ctaLink: 'https://www.slim-file.com/ocr',
+  },
+];
+
+const EMPTY_FORM = {
+  subject: '',
+  heading: '',
+  body: '',
+  ctaText: 'Visit SlimFile',
+  ctaLink: 'https://www.slim-file.com',
+};
+
 const AdminNewsletter = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -36,14 +137,10 @@ const AdminNewsletter = () => {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'compose' | 'campaigns'>('compose');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [showTemplates, setShowTemplates] = useState(false);
 
-  const [form, setForm] = useState({
-    subject: '',
-    heading: '',
-    body: '',
-    ctaText: 'Visit SlimFile',
-    ctaLink: 'https://www.slim-file.com',
-  });
+  const [form, setForm] = useState(EMPTY_FORM);
 
   const token = localStorage.getItem('jwt');
 
@@ -77,6 +174,35 @@ const AdminNewsletter = () => {
     }
   };
 
+  const handleEditDraft = (c: Campaign) => {
+    setForm({
+      subject: c.subject,
+      heading: c.heading,
+      body: c.body,
+      ctaText: c.ctaText,
+      ctaLink: c.ctaLink,
+    });
+    setEditingId(c._id);
+    setShowTemplates(false);
+    setActiveTab('compose');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setForm(EMPTY_FORM);
+  };
+
+  const applyTemplate = (t: typeof TEMPLATES[number]) => {
+    setForm({
+      subject: t.subject,
+      heading: t.heading,
+      body: t.body,
+      ctaText: t.ctaText,
+      ctaLink: t.ctaLink,
+    });
+    setShowTemplates(false);
+  };
+
   const handleSaveDraft = async () => {
     if (!form.subject || !form.heading || !form.body) {
       toast({ title: 'Missing fields', description: 'Subject, heading and body are required.', variant: 'destructive' });
@@ -84,14 +210,20 @@ const AdminNewsletter = () => {
     }
     setSaving(true);
     try {
-      const res = await fetch(`${API}/admin/newsletter`, {
-        method: 'POST',
+      const url = editingId
+        ? `${API}/admin/newsletter/${editingId}`
+        : `${API}/admin/newsletter`;
+      const method = editingId ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
       if (!res.ok) throw new Error();
-      toast({ title: 'Draft saved!', description: 'Campaign saved and ready to send.' });
-      setForm({ subject: '', heading: '', body: '', ctaText: 'Visit SlimFile', ctaLink: 'https://www.slim-file.com' });
+      toast({ title: editingId ? 'Draft updated!' : 'Draft saved!', description: 'Campaign saved and ready to send.' });
+      setForm(EMPTY_FORM);
+      setEditingId(null);
       fetchCampaigns();
       setActiveTab('campaigns');
     } catch {
@@ -145,6 +277,10 @@ const AdminNewsletter = () => {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
+      if (editingId === id) {
+        setEditingId(null);
+        setForm(EMPTY_FORM);
+      }
       fetchCampaigns();
     } catch {
       toast({ title: 'Error', description: 'Failed to delete.', variant: 'destructive' });
@@ -242,7 +378,7 @@ const AdminNewsletter = () => {
                     : 'text-gray-400 hover:text-gray-200'
                 }`}
               >
-                Compose
+                {editingId ? 'Edit Draft' : 'Compose'}
               </button>
               <button
                 onClick={() => setActiveTab('campaigns')}
@@ -264,15 +400,65 @@ const AdminNewsletter = () => {
             {/* Compose tab */}
             {activeTab === 'compose' && (
               <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-800 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
-                    <Mail className="w-4 h-4 text-red-400" />
+                <div className="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                      <Mail className="w-4 h-4 text-red-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-100">
+                        {editingId ? 'Edit Draft Campaign' : 'New Campaign'}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {editingId ? 'Update and save your draft' : 'Will auto-send on the 1st of every month'}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-100">New Campaign</p>
-                    <p className="text-xs text-gray-500">Will auto-send on the 1st of every month</p>
+                  <div className="flex items-center gap-2">
+                    {editingId && (
+                      <button
+                        onClick={handleCancelEdit}
+                        className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-800"
+                      >
+                        <X className="w-3.5 h-3.5" /> Cancel edit
+                      </button>
+                    )}
+                    {!editingId && (
+                      <button
+                        onClick={() => setShowTemplates(v => !v)}
+                        className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors ${
+                          showTemplates
+                            ? 'bg-red-600/20 text-red-400 border border-red-500/30'
+                            : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                        }`}
+                      >
+                        <LayoutTemplate className="w-3.5 h-3.5" /> Templates
+                      </button>
+                    )}
                   </div>
                 </div>
+
+                {/* Templates picker */}
+                {showTemplates && !editingId && (
+                  <div className="px-6 py-4 border-b border-gray-800 bg-gray-800/40">
+                    <p className="text-xs font-medium text-gray-400 mb-3">Choose a template to get started</p>
+                    <div className="grid grid-cols-1 gap-2">
+                      {TEMPLATES.map(t => (
+                        <button
+                          key={t.label}
+                          onClick={() => applyTemplate(t)}
+                          className="flex items-center justify-between text-left px-4 py-3 rounded-xl bg-gray-800 hover:bg-gray-750 hover:border-red-500/30 border border-gray-700 transition-all group"
+                        >
+                          <div>
+                            <p className="text-xs font-semibold text-gray-200 group-hover:text-red-300 transition-colors">{t.label}</p>
+                            <p className="text-[10px] text-gray-500 mt-0.5 truncate max-w-xs">{t.subject}</p>
+                          </div>
+                          <ChevronRight className="w-3.5 h-3.5 text-gray-600 group-hover:text-red-400 shrink-0 transition-colors" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="p-6 space-y-4">
                   <div>
@@ -332,7 +518,7 @@ const AdminNewsletter = () => {
                     className="bg-red-600 hover:bg-red-700 text-white rounded-xl px-6 shadow-lg shadow-red-900/30"
                   >
                     {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-                    Save Draft
+                    {editingId ? 'Update Draft' : 'Save Draft'}
                   </Button>
                 </div>
               </div>
@@ -382,6 +568,15 @@ const AdminNewsletter = () => {
                         </div>
                         {c.status === 'draft' && (
                           <div className="flex items-center gap-2 shrink-0">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEditDraft(c)}
+                              className="rounded-lg text-xs px-3 bg-transparent border-gray-700 text-gray-400 hover:text-blue-400 hover:border-blue-500/40 hover:bg-blue-500/5"
+                              title="Edit this draft"
+                            >
+                              <Pencil className="w-3.5 h-3.5 mr-1" />Edit
+                            </Button>
                             <Button
                               size="sm"
                               variant="outline"
