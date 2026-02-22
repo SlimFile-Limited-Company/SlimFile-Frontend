@@ -36,7 +36,7 @@ export default function BottomNav() {
           headers: { Authorization: `Bearer ${getToken()}` },
         });
         const data = await res.json();
-        setDmUnread(data.count || 0);
+        setDmUnread((data.unreadMessages || 0) + (data.pendingRequests || 0));
       } catch {}
     };
     poll();
