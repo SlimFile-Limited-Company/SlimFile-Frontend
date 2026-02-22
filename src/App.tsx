@@ -81,7 +81,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col pb-16 md:pb-0">
       <PWAInstallPrompt />
       <Header />
       <main className="flex-1">

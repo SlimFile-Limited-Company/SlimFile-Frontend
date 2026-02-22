@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 type SocketInstance = ReturnType<typeof io>;
 import {
-  Send, ArrowLeft, MoreVertical, Search, Plus, Mic, Paperclip, Image,
-  Check, CheckCheck, X, Smile, Reply, Trash2, Star, Forward, Pencil,
-  BellOff, Bell, ChevronDown, MessageCircle, UserPlus, Clock, AlertCircle,
+  Send, ArrowLeft, Search, Plus, Mic, Paperclip,
+  Check, CheckCheck, X, Smile, Reply, Trash2, Star, Pencil,
+  BellOff, Bell, ChevronDown, MessageCircle, UserPlus, Clock,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,12 +63,6 @@ function getCurrentUserId(): string {
     return payload.id || payload._id || '';
   } catch { return ''; }
 }
-function getCurrentUser(): UserMini | null {
-  try {
-    const payload = JSON.parse(atob(getToken().split('.')[1]));
-    return { _id: payload.id || payload._id, name: payload.name, email: payload.email, picture: payload.picture };
-  } catch { return null; }
-}
 function getOtherParticipant(convo: Conversation, myId: string): UserMini {
   return convo.participants.find(p => p._id !== myId) || convo.participants[0];
 }
@@ -94,13 +88,86 @@ function avatarUrl(user?: UserMini | null): string {
 }
 
 
+// ─── Audio Player ─────────────────────────────────────────────────────────────
+function AudioPlayer({ fileUrl, isMine }: { fileUrl: string; isMine: boolean }) {
+  const [playing, setPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const ref = useRef<HTMLAudioElement>(null);
+
+  const toggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!ref.current) return;
+    if (playing) { ref.current.pause(); setPlaying(false); }
+    else { ref.current.play().catch(() => {}); setPlaying(true); }
+  };
+
+  const seek = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (!ref.current || !duration) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    ref.current.currentTime = ((e.clientX - r.left) / r.width) * duration;
+  };
+
+  const fmt = (s: number) =>
+    !s || isNaN(s) ? '0:00' : `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+
+  const pct = duration ? (currentTime / duration) * 100 : 0;
+  const bars = [3, 5, 8, 6, 10, 7, 4, 9, 6, 8, 5, 10, 7, 4, 9, 6, 5, 8, 4, 6];
+
+  return (
+    <div className="flex items-center gap-2.5 w-[210px] py-0.5" onClick={e => e.stopPropagation()}>
+      <audio
+        ref={ref}
+        src={fileUrl}
+        onTimeUpdate={() => ref.current && setCurrentTime(ref.current.currentTime)}
+        onLoadedMetadata={() => ref.current && setDuration(ref.current.duration)}
+        onEnded={() => setPlaying(false)}
+        className="hidden"
+        preload="metadata"
+      />
+      <button
+        onClick={toggle}
+        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors
+          ${isMine ? 'bg-white/20 hover:bg-white/30 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+      >
+        {playing ? (
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+            <rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" />
+          </svg>
+        ) : (
+          <svg className="w-3 h-3 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        )}
+      </button>
+      <div className="flex-1 flex flex-col gap-1">
+        <div className="flex items-end gap-[2px] h-7 cursor-pointer" onClick={seek}>
+          {bars.map((h, i) => (
+            <div
+              key={i}
+              style={{ height: `${h * 2.4}px` }}
+              className={`flex-1 rounded-full transition-colors
+                ${(i / bars.length) * 100 < pct
+                  ? (isMine ? 'bg-white' : 'bg-gray-600')
+                  : (isMine ? 'bg-white/35' : 'bg-gray-300')}`}
+            />
+          ))}
+        </div>
+        <span className={`text-[9px] font-medium ${isMine ? 'text-white/55' : 'text-gray-400'}`}>
+          {playing ? fmt(currentTime) : fmt(duration)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function Messages() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const myId = getCurrentUserId();
-  const me = getCurrentUser();
 
   // ── Auth guard
   useEffect(() => {
@@ -123,7 +190,6 @@ export default function Messages() {
   const [replyTo, setReplyTo]                 = useState<DMMessage | null>(null);
   const [editingMsg, setEditingMsg]           = useState<DMMessage | null>(null);
   const [selectedMsg, setSelectedMsg]         = useState<string | null>(null);
-  const [showEmojiPicker, setShowEmojiPicker] = useState<string | null>(null);
   const [partnerTyping, setPartnerTyping]     = useState(false);
   const [isRecording, setIsRecording]         = useState(false);
   const [loadingMsgs, setLoadingMsgs]         = useState(false);
@@ -420,7 +486,6 @@ export default function Messages() {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
       body: JSON.stringify({ emoji }),
     }).catch(() => {});
-    setShowEmojiPicker(null);
   };
 
   const starMessage = async (msgId: string) => {
@@ -502,21 +567,14 @@ export default function Messages() {
           <img src={avatarUrl(msg.senderId)} className="w-7 h-7 rounded-full mr-2 mt-auto mb-1 shrink-0" />
         )}
 
-        <div className={`relative max-w-[78%] ${isMine ? 'items-end' : 'items-start'} flex flex-col`}>
-          {/* Reply context */}
-          {msg.replyTo && !isDeleted && (
-            <div className={`text-[10px] px-2 py-1 rounded-t-lg mb-0.5 border-l-2 border-red-400 bg-black/10 max-w-full truncate ${isMine ? 'bg-red-50' : 'bg-gray-100'}`}>
-              <span className="font-semibold text-red-500">{msg.replyTo.senderId._id === myId ? 'You' : partner?.name}</span>
-              <span className="ml-1 text-gray-500 truncate">{msg.replyTo.text || '📎 File'}</span>
-            </div>
-          )}
+        <div className={`relative max-w-[65%] ${isMine ? 'items-end' : 'items-start'} flex flex-col`}>
 
           {/* Bubble */}
           <div className={`rounded-2xl px-3 py-2 shadow-sm text-sm relative
             ${isMine
-              ? 'bg-red-500 text-white rounded-br-sm'
+              ? 'bg-gray-800 text-white rounded-br-sm'
               : 'bg-white text-gray-900 rounded-bl-sm border border-gray-100'}
-            ${isSelected ? 'ring-2 ring-red-400' : ''}
+            ${isSelected ? 'ring-2 ring-offset-1 ring-gray-400' : ''}
           `}>
             {isDeleted ? (
               <span className="italic opacity-60 text-xs">
@@ -524,6 +582,17 @@ export default function Messages() {
               </span>
             ) : (
               <>
+                {/* Reply quote */}
+                {msg.replyTo && (
+                  <div className={`rounded-lg mb-2 px-2 py-1.5 border-l-[3px] border-red-400 ${isMine ? 'bg-white/10' : 'bg-gray-50'}`}>
+                    <p className="text-[10px] font-bold text-red-400 mb-0.5">
+                      {msg.replyTo.senderId._id === myId ? 'You' : partner?.name}
+                    </p>
+                    <p className={`text-[11px] truncate ${isMine ? 'text-white/70' : 'text-gray-500'}`}>
+                      {msg.replyTo.text || (msg.replyTo.type === 'image' ? '📷 Photo' : '📎 File')}
+                    </p>
+                  </div>
+                )}
                 {/* Image */}
                 {msg.type === 'image' && msg.fileUrl && (
                   <img
@@ -535,7 +604,7 @@ export default function Messages() {
                 {/* File */}
                 {msg.type === 'file' && msg.fileUrl && (
                   <a href={msg.fileUrl} target="_blank" rel="noopener noreferrer"
-                    className={`flex items-center gap-2 p-2 rounded-lg mb-1 ${isMine ? 'bg-red-600' : 'bg-gray-50'}`}
+                    className={`flex items-center gap-2 p-2 rounded-lg mb-1 ${isMine ? 'bg-gray-700' : 'bg-gray-50'}`}
                     onClick={e => e.stopPropagation()}
                   >
                     <Paperclip className="w-4 h-4 shrink-0" />
@@ -547,7 +616,7 @@ export default function Messages() {
                 )}
                 {/* Voice */}
                 {msg.type === 'voice' && msg.fileUrl && (
-                  <audio controls src={msg.fileUrl} className="max-w-[220px] h-8" />
+                  <AudioPlayer fileUrl={msg.fileUrl} isMine={isMine} />
                 )}
                 {/* Text */}
                 {msg.text && <p className="leading-relaxed whitespace-pre-wrap break-words">{msg.text}</p>}
@@ -557,7 +626,7 @@ export default function Messages() {
 
             {/* Time + tick */}
             <div className={`flex items-center gap-1 mt-0.5 ${isMine ? 'justify-end' : 'justify-start'}`}>
-              <span className={`text-[10px] ${isMine ? 'text-red-100' : 'text-gray-400'}`}>
+              <span className={`text-[10px] ${isMine ? 'text-white/50' : 'text-gray-400'}`}>
                 {formatTime(msg.createdAt)}
               </span>
               {renderTick(msg)}
@@ -858,7 +927,7 @@ export default function Messages() {
           onScroll={handleScroll}
           className="flex-1 overflow-y-auto px-4 py-4 bg-gray-50 space-y-0"
           style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 0)', backgroundSize: '20px 20px' }}
-          onClick={() => { setSelectedMsg(null); setShowEmojiPicker(null); }}
+          onClick={() => setSelectedMsg(null)}
         >
           {/* Load more */}
           {hasMore && (
@@ -995,7 +1064,7 @@ export default function Messages() {
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50 relative">
+    <div className="flex h-[calc(100dvh-4rem)] md:h-screen overflow-hidden bg-gray-50 relative">
       {renderLeftPanel()}
       {renderChatWindow()}
       {showNewChat && renderNewChatModal()}

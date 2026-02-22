@@ -96,7 +96,7 @@ export const Header = () => {
 
   const [dmUnread, setDmUnread] = useState(0);
 
-  // Poll DM unread count every 30s
+  // Poll DM unread count every 5s
   useEffect(() => {
     if (!isAuthenticated()) return;
     const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
@@ -115,7 +115,7 @@ export const Header = () => {
     };
 
     fetchUnread();
-    const interval = setInterval(fetchUnread, 30000);
+    const interval = setInterval(fetchUnread, 5000);
     return () => clearInterval(interval);
   }, []);
 
