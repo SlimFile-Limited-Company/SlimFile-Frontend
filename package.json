@@ -59,7 +59,6 @@
     "@tiptap/react": "^3.19.0",
     "@tiptap/starter-kit": "^3.19.0",
     "@types/file-saver": "^2.0.7",
-    "@types/socket.io-client": "^1.4.36",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",

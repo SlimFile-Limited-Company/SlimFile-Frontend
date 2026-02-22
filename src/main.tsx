@@ -75,6 +75,7 @@ import Documents from './pages/Documents';
 import DocumentEditor from './pages/DocumentEditor';
 import AdminNewsletter from './pages/AdminNewsletter';
 import SlimFileDrive from './pages/SlimFileDrive';
+import Messages from './pages/Messages';
 import SlimFileForge from './pages/SlimFileForge';
 import SlimFileLock from './pages/SlimFileLock';
 import { NotificationProvider } from './components/InAppNotification';
@@ -242,6 +243,13 @@ ReactDOM.createRoot(root).render(
         <Route path="meet/:meetingCode" element={
           <ProtectedRoute>
             <MeetingRoom />
+          </ProtectedRoute>
+        } />
+
+        {/* Messages - Full screen DM chat without header/footer */}
+        <Route path="messages" element={
+          <ProtectedRoute>
+            <Messages />
           </ProtectedRoute>
         } />
             </Routes>

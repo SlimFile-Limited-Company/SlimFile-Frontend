@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, MessageCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isAuthenticated, logout } from "@/lib/auth";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -93,6 +93,31 @@ export const Header = () => {
       [dropdown]: !prev[dropdown],
     }));
   };
+
+  const [dmUnread, setDmUnread] = useState(0);
+
+  // Poll DM unread count every 30s
+  useEffect(() => {
+    if (!isAuthenticated()) return;
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
+    const token = localStorage.getItem('jwt');
+
+    const fetchUnread = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/dm/unread`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setDmUnread((data.unreadMessages || 0) + (data.pendingRequests || 0));
+        }
+      } catch {}
+    };
+
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -329,6 +354,21 @@ export const Header = () => {
               )}
             </div>
 
+            {isAuthenticated() && (
+              <Link
+                to="/messages"
+                className="relative ml-2 p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-colors"
+                title="Messages"
+              >
+                <MessageCircle className="w-5 h-5" />
+                {dmUnread > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-xs rounded-full min-w-[16px] h-4 px-0.5 flex items-center justify-center font-bold leading-none">
+                    {dmUnread > 9 ? '9+' : dmUnread}
+                  </span>
+                )}
+              </Link>
+            )}
+
             {isAuthenticated() ? (
               <Button
                 variant="outline"
@@ -350,7 +390,21 @@ export const Header = () => {
           </nav>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center gap-1">
+            {isAuthenticated() && (
+              <Link
+                to="/messages"
+                className="relative p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-colors"
+                title="Messages"
+              >
+                <MessageCircle className="w-5 h-5" />
+                {dmUnread > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-xs rounded-full min-w-[16px] h-4 px-0.5 flex items-center justify-center font-bold leading-none">
+                    {dmUnread > 9 ? '9+' : dmUnread}
+                  </span>
+                )}
+              </Link>
+            )}
             <Button
               variant="ghost"
               size="sm"
@@ -588,6 +642,26 @@ export const Header = () => {
                   </div>
                 )}
               </div>
+
+              {isAuthenticated() && (
+                <Link
+                  to="/messages"
+                  className={cn(
+                    "flex items-center justify-between px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
+                    location.pathname === '/messages'
+                      ? "text-red-600 bg-red-50 border border-red-100"
+                      : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                  )}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>Messages</span>
+                  {dmUnread > 0 && (
+                    <span className="bg-red-600 text-white text-xs px-2 py-0.5 rounded-full font-semibold">
+                      {dmUnread > 9 ? '9+' : dmUnread}
+                    </span>
+                  )}
+                </Link>
+              )}
 
               {isAuthenticated() ? (
                 <div className="px-4 pt-2">
