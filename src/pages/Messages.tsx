@@ -222,9 +222,22 @@ export default function Messages() {
   const remoteVideoRef       = useRef<HTMLVideoElement>(null);
   const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
   const callTimeoutRef       = useRef<ReturnType<typeof setTimeout>>();
+  // Keep a stable ref so socket handlers don't capture a stale activeConvoId
+  const activeConvoIdRef     = useRef<string | null>(null);
 
   const activeConvo = conversations.find(c => c._id === activeConvoId);
   const partner = activeConvo ? getOtherParticipant(activeConvo, myId) : null;
+
+  // Keep ref in sync so socket handlers always see the latest activeConvoId
+  useEffect(() => { activeConvoIdRef.current = activeConvoId; }, [activeConvoId]);
+
+  // Attach local stream to the <video> element once the in-call overlay is in the DOM
+  // (localVideoRef is null while callState is 'calling'; it becomes available on 'in-call')
+  useEffect(() => {
+    if (callState === 'in-call' && localStreamRef.current && localVideoRef.current) {
+      localVideoRef.current.srcObject = localStreamRef.current;
+    }
+  }, [callState]);
 
   // ── Push notification setup
   useEffect(() => {
@@ -316,10 +329,10 @@ export default function Messages() {
       socket.emit('dm:delivered', { messageId: message._id, conversationId, senderId: message.senderId._id });
     });
     socket.on('dm:typing', ({ conversationId, isTyping }: { conversationId: string; isTyping: boolean }) => {
-      if (conversationId === activeConvoId) setPartnerTyping(isTyping);
+      if (conversationId === activeConvoIdRef.current) setPartnerTyping(isTyping);
     });
     socket.on('dm:read', ({ conversationId }: { conversationId: string }) => {
-      if (conversationId === activeConvoId) {
+      if (conversationId === activeConvoIdRef.current) {
         setMessages(prev => prev.map(m => m.status !== 'read' && m.senderId._id === myId ? { ...m, status: 'read' } : m));
       }
     });
@@ -379,7 +392,7 @@ export default function Messages() {
     });
 
     return () => { socket.disconnect(); };
-  }, [activeConvoId]);
+  }, []); // ← stable for entire Messages session; activeConvoId accessed via ref
 
   // ── Load conversations + requests on mount
   useEffect(() => {
