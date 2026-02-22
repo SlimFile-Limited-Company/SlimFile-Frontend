@@ -77,6 +77,7 @@ import AdminNewsletter from './pages/AdminNewsletter';
 import SlimFileDrive from './pages/SlimFileDrive';
 import Messages from './pages/Messages';
 import BottomNav from './components/BottomNav';
+import PushListener from './components/PushListener';
 import SlimFileForge from './pages/SlimFileForge';
 import SlimFileLock from './pages/SlimFileLock';
 import { NotificationProvider } from './components/InAppNotification';
@@ -114,6 +115,7 @@ ReactDOM.createRoot(root).render(
           <NotificationProvider>
             <ScrollToTop />
             <BottomNav />
+            <PushListener />
             <Routes>
         <Route path="/login" element={<Login />} />
         {/* New Dashboard with nested routes */}
