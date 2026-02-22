@@ -357,12 +357,18 @@ export const Header = () => {
             {isAuthenticated() && (
               <Link
                 to="/messages"
-                className="relative ml-2 p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-colors"
+                className={cn(
+                  "relative ml-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-medium transition-all duration-200 shadow-sm",
+                  location.pathname === '/messages'
+                    ? "bg-red-50 border-red-200 text-red-600"
+                    : "bg-white border-gray-200 text-gray-600 hover:border-red-200 hover:text-red-600 hover:bg-red-50"
+                )}
                 title="Messages"
               >
-                <MessageCircle className="w-5 h-5" />
+                <MessageCircle className="w-4 h-4" />
+                <span className="hidden lg:inline">Messages</span>
                 {dmUnread > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-xs rounded-full min-w-[16px] h-4 px-0.5 flex items-center justify-center font-bold leading-none">
+                  <span className="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-sm border-2 border-white">
                     {dmUnread > 9 ? '9+' : dmUnread}
                   </span>
                 )}
@@ -372,7 +378,7 @@ export const Header = () => {
             {isAuthenticated() ? (
               <Button
                 variant="outline"
-                className="ml-4"
+                className="ml-3"
                 onClick={() => logout()}
               >
                 {t('header.logout')}
@@ -394,12 +400,17 @@ export const Header = () => {
             {isAuthenticated() && (
               <Link
                 to="/messages"
-                className="relative p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-colors"
+                className={cn(
+                  "relative flex items-center justify-center w-9 h-9 rounded-full border transition-all duration-200 shadow-sm",
+                  location.pathname === '/messages'
+                    ? "bg-red-50 border-red-200 text-red-600"
+                    : "bg-white border-gray-200 text-gray-500 hover:border-red-200 hover:text-red-600 hover:bg-red-50"
+                )}
                 title="Messages"
               >
-                <MessageCircle className="w-5 h-5" />
+                <MessageCircle className="w-4.5 h-4.5" />
                 {dmUnread > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-xs rounded-full min-w-[16px] h-4 px-0.5 flex items-center justify-center font-bold leading-none">
+                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-0.5 border border-white shadow-sm">
                     {dmUnread > 9 ? '9+' : dmUnread}
                   </span>
                 )}
