@@ -587,10 +587,18 @@ export default function Messages() {
     if (el.scrollTop < 80 && hasMore && !loadingMsgs) loadMoreMessages();
   };
 
-  const startChatWithUser = async (user: UserMini) => {
-    setNewChatEmail(user.email);
+  const startChatWithUser = (user: UserMini) => {
     setSearchQ('');
     setUserResults([]);
+    // If a conversation already exists with this user, open it directly
+    const existing = conversations.find(c => c.participants.some(p => p._id === user._id));
+    if (existing) {
+      setActiveConvoId(existing._id);
+    } else {
+      // No conversation yet — open new chat modal pre-filled with their email
+      setNewChatEmail(user.email);
+      setShowNewChat(true);
+    }
   };
 
   // ─── Render helpers ───────────────────────────────────────────────────────
