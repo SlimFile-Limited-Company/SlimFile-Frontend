@@ -213,15 +213,34 @@ export default function Messages() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window) || !VAPID_PUBLIC_KEY) return;
     navigator.serviceWorker.ready.then(async (reg) => {
       try {
-        // Reuse existing browser subscription or create a new one
+        const expectedKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
         let sub = await reg.pushManager.getSubscription();
+
+        // If the existing subscription was created with a different VAPID key
+        // (e.g. a dummy key used before real keys were configured), unsubscribe
+        // so we can create a fresh one with the correct key.
+        if (sub) {
+          const rawKey = sub.options?.applicationServerKey;
+          if (rawKey) {
+            const existingKey = new Uint8Array(rawKey as ArrayBuffer);
+            const keyMismatch =
+              existingKey.length !== expectedKey.length ||
+              existingKey.some((b, i) => b !== expectedKey[i]);
+            if (keyMismatch) {
+              await sub.unsubscribe();
+              sub = null;
+            }
+          }
+        }
+
         if (!sub) {
           sub = await reg.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as unknown as BufferSource,
+            applicationServerKey: expectedKey as unknown as BufferSource,
           });
         }
-        // Always send to backend — the server upserts so duplicates are safe
+
+        // Always sync to backend — server upserts so duplicates are harmless
         await fetch(`${API}/notifications/subscribe`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
