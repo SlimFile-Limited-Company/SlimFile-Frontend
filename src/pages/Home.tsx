@@ -120,29 +120,36 @@ const Home: FC = () => {
       </section>
 
       {/* Marquee ticker */}
-      <section className="py-3.5 bg-gray-50 border-y border-gray-200 overflow-hidden">
+      <section className="relative py-4 bg-white border-y border-gray-100 overflow-hidden">
+        {/* Left fade */}
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-r from-white to-transparent" />
+        {/* Right fade */}
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-l from-white to-transparent" />
+
         <div className="flex w-max animate-marquee">
           {[...Array(2)].map((_, pass) => (
-            <div key={pass} className="flex items-center gap-0 shrink-0">
+            <div key={pass} className="flex items-center gap-3 shrink-0 px-3">
               {[
-                { text: 'Compress Files',        dot: 'bg-red-400' },
-                { text: 'Convert Documents',     dot: 'bg-orange-400' },
-                { text: 'Compress & Convert',    dot: 'bg-amber-400' },
-                { text: 'OCR Scanning',          dot: 'bg-yellow-500' },
-                { text: 'Merge PDFs',            dot: 'bg-lime-500' },
-                { text: 'Password Protect PDFs', dot: 'bg-green-500' },
-                { text: 'Social Feed',           dot: 'bg-teal-500' },
-                { text: 'Team Workspaces',       dot: 'bg-cyan-500' },
-                { text: 'Rich Text Documents',   dot: 'bg-blue-500' },
-                { text: 'Collaborative Boards',  dot: 'bg-violet-500' },
-                { text: 'Video Meetings',        dot: 'bg-purple-500' },
-                { text: 'Personal Dashboard',    dot: 'bg-pink-500' },
-              ].map(({ text, dot }, i) => (
-                <span key={i} className="flex items-center gap-3 px-5">
-                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dot}`} />
-                  <span className="text-sm font-medium text-gray-600 whitespace-nowrap">{text}</span>
+                { text: 'Compress Files',        icon: Minimize2,       iconColor: 'text-red-500',    chip: 'bg-red-50 border-red-100' },
+                { text: 'Convert Documents',     icon: RefreshCw,       iconColor: 'text-orange-500', chip: 'bg-orange-50 border-orange-100' },
+                { text: 'Compress & Convert',    icon: Layers,          iconColor: 'text-amber-500',  chip: 'bg-amber-50 border-amber-100' },
+                { text: 'OCR Scanning',          icon: Scan,            iconColor: 'text-yellow-600', chip: 'bg-yellow-50 border-yellow-100' },
+                { text: 'Merge PDFs',            icon: GitMerge,        iconColor: 'text-lime-600',   chip: 'bg-lime-50 border-lime-100' },
+                { text: 'Password Protect PDFs', icon: Lock,            iconColor: 'text-green-600',  chip: 'bg-green-50 border-green-100' },
+                { text: 'Social Feed',           icon: Rss,             iconColor: 'text-teal-500',   chip: 'bg-teal-50 border-teal-100' },
+                { text: 'Team Workspaces',       icon: Users,           iconColor: 'text-cyan-600',   chip: 'bg-cyan-50 border-cyan-100' },
+                { text: 'Rich Text Documents',   icon: FileText,        iconColor: 'text-blue-500',   chip: 'bg-blue-50 border-blue-100' },
+                { text: 'Collaborative Boards',  icon: PenLine,         iconColor: 'text-violet-500', chip: 'bg-violet-50 border-violet-100' },
+                { text: 'Video Meetings',        icon: Video,           iconColor: 'text-purple-500', chip: 'bg-purple-50 border-purple-100' },
+                { text: 'Personal Dashboard',    icon: LayoutDashboard, iconColor: 'text-pink-500',   chip: 'bg-pink-50 border-pink-100' },
+              ].map(({ text, icon: Icon, iconColor, chip }, i) => (
+                <span key={i} className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide text-gray-700 whitespace-nowrap shadow-sm ${chip}`}>
+                  <Icon className={`w-3.5 h-3.5 shrink-0 ${iconColor}`} strokeWidth={2} />
+                  {text}
                 </span>
               ))}
+              {/* Decorative divider between passes */}
+              <span className="w-px h-5 bg-gray-200 mx-2 shrink-0" />
             </div>
           ))}
         </div>
