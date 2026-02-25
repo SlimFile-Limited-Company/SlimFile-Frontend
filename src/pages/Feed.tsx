@@ -103,36 +103,51 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
         </div>
 
         {/* Main info */}
-        <p className="text-sm text-gray-700 mb-4 leading-relaxed">
-          Compressed a <span className="font-medium text-gray-900">{getFileTypeLabel(activity.fileType)}</span> file from{' '}
-          <span className="font-medium text-gray-900">{formatBytes(activity.originalSize)}</span> to{' '}
-          <span className="font-medium text-green-600">{formatBytes(activity.compressedSize)}</span>
-        </p>
-
-        {/* Stats */}
-        <div className="space-y-2">
-          {/* Compression bar */}
-          <div>
-            <div className="flex items-center justify-between text-xs text-gray-600 mb-1.5">
-              <span>Compression ratio</span>
-              <span className="font-semibold text-blue-600">{activity.compressionRatio}%</span>
+        {activity.operation === 'convert' ? (
+          <>
+            <p className="text-sm text-gray-700 mb-4 leading-relaxed">
+              Converted a <span className="font-medium text-gray-900">{getFileTypeLabel(activity.fileType)}</span> file to{' '}
+              <span className="font-medium text-blue-600">{activity.targetFormat?.toUpperCase()}</span>
+            </p>
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-xs text-gray-600">Original size</span>
+              <span className="text-sm font-semibold text-gray-700">{formatBytes(activity.originalSize)}</span>
             </div>
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${activity.compressionRatio}%` }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-                className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
-              />
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-xs text-gray-600">Output size</span>
+              <span className="text-sm font-semibold text-gray-700">{formatBytes(activity.compressedSize)}</span>
             </div>
-          </div>
-
-          {/* Space saved */}
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-xs text-gray-600">Space saved</span>
-            <span className="text-sm font-semibold text-green-600">{formatBytes(activity.spaceSaved)}</span>
-          </div>
-        </div>
+          </>
+        ) : (
+          <>
+            <p className="text-sm text-gray-700 mb-4 leading-relaxed">
+              {activity.operation === 'convert-compress' ? 'Converted & compressed' : 'Compressed'} a{' '}
+              <span className="font-medium text-gray-900">{getFileTypeLabel(activity.fileType)}</span> file from{' '}
+              <span className="font-medium text-gray-900">{formatBytes(activity.originalSize)}</span> to{' '}
+              <span className="font-medium text-green-600">{formatBytes(activity.compressedSize)}</span>
+            </p>
+            <div className="space-y-2">
+              <div>
+                <div className="flex items-center justify-between text-xs text-gray-600 mb-1.5">
+                  <span>Compression ratio</span>
+                  <span className="font-semibold text-blue-600">{activity.compressionRatio}%</span>
+                </div>
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${activity.compressionRatio}%` }}
+                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                    className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-xs text-gray-600">Space saved</span>
+                <span className="text-sm font-semibold text-green-600">{formatBytes(activity.spaceSaved)}</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </motion.div>
   );
