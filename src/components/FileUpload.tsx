@@ -29,7 +29,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
     'application/vnd.ms-excel': '.xls'
   };
 
-  const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
+  const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
 
   const validateFiles = (files: File[]): File[] => {
     const validFiles: File[] = [];

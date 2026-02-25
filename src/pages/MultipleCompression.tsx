@@ -17,7 +17,7 @@ export default function MultipleCompression() {
   const uploadSectionRef = useRef<HTMLDivElement>(null);
 
   // Constants
-  const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
+  const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
   // Send file to backend for compression
