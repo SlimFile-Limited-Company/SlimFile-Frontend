@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { ConversionCompressionResult } from "@/components/ConversionCompressionResult";
 import { toast } from "@/hooks/use-toast";
-import { isAuthenticated } from "@/lib/auth";
+import { isAuthenticated, getToken } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image, ArrowRight } from "lucide-react";
 import { notifyConversionCompressionComplete } from "@/services/pushNotificationService";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -94,8 +94,10 @@ const ConvertThenCompress = () => {
     formData.append('targetFormat', targetFormat);
     
     try {
+      const token = getToken();
       const response = await fetch(`${API_BASE_URL}/convert-compress`, {
         method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,
       });
       

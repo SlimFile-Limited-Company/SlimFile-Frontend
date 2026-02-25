@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { ConversionResult } from "@/components/ConversionResult";
 import { toast } from "@/hooks/use-toast";
-import { isAuthenticated } from "@/lib/auth";
+import { isAuthenticated, getToken } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image } from "lucide-react";
 import { notifyConversionComplete } from "@/services/pushNotificationService";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -93,8 +93,10 @@ const ConvertOnly = () => {
     formData.append('targetFormat', targetFormat);
     
     try {
+      const token = getToken();
       const response = await fetch(`${API_BASE_URL}/convert`, {
         method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,
       });
       
