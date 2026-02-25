@@ -19,7 +19,7 @@ const PrivacyPolicy = () => {
         <div className="container mx-auto max-w-3xl text-center">
           <Lock className="mx-auto mb-4 w-14 h-14 text-primary" />
           <h1 className="text-5xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
-          <p className="text-xl text-gray-700 mb-6">Last updated: September 2025</p>
+          <p className="text-xl text-gray-700 mb-6">Last updated: February 2026</p>
         </div>
       </div>
       <div className="container mx-auto max-w-3xl px-4">
