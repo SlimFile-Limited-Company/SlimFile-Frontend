@@ -65,7 +65,7 @@ const TermsOfService = () => {
           These Terms are governed by the laws of your jurisdiction, without regard to its conflict of law principles.
         </Section>
         <Section icon={Mail} title="11. Contact" bg="bg-white">
-          If you have any questions about these Terms, please contact us at <a href="mailto:isaac.abakah.slimfile@gmail.com" className="text-primary underline">isaac.abakah.slimfile@gmail.com</a>.
+          If you have any questions about these Terms, please contact us at <a href="mailto:info@slim-file.com" className="text-primary underline">info@slim-file.com</a>.
         </Section>
       </div>
     </div>

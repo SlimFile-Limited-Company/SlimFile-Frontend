@@ -68,7 +68,7 @@ const PrivacyPolicy = () => {
           We may update this Privacy Policy from time to time. Continued use of the Service after changes constitutes acceptance of the new policy.
         </Section>
         <Section icon={Mail} title="10. Contact" bg="bg-gray-100">
-          If you have any questions about this Privacy Policy, please contact us at <a href="mailto:isaac.abakah.slimfile@gmail.com" className="text-primary underline">isaac.abakah.slimfile@gmail.com</a>.
+          If you have any questions about this Privacy Policy, please contact us at <a href="mailto:info@slim-file.com" className="text-primary underline">info@slim-file.com</a>.
         </Section>
       </div>
     </div>
