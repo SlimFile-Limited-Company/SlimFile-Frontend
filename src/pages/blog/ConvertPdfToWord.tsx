@@ -398,7 +398,7 @@ export default function BlogConvertPdfToWord() {
 
               <div className="border border-gray-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Is there a file size limit?</h3>
-                <p className="text-gray-600">SlimFile supports PDF files up to 200MB. For larger files, consider splitting them into smaller parts first.</p>
+                <p className="text-gray-600">SlimFile supports PDF files up to 1GB. For larger files, consider splitting them into smaller parts first.</p>
               </div>
             </div>
 

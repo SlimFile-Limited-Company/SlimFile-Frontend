@@ -134,7 +134,7 @@ export default function MultipleCompression() {
         <SectionContainer className="py-16 flex flex-col items-center" ref={uploadSectionRef}>
           <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-8 w-full max-w-xl flex flex-col items-center">
             <h3 className="text-2xl font-semibold mb-2 text-gray-900">Upload Multiple Files</h3>
-            <p className="text-gray-600 mb-4">Drag & drop files or <span className="text-accent underline cursor-pointer" onClick={() => fileInputRef.current?.click()}>browse</span>. Supports JPEG, PNG, WebP, PDF up to 200MB each.</p>
+            <p className="text-gray-600 mb-4">Drag & drop files or <span className="text-accent underline cursor-pointer" onClick={() => fileInputRef.current?.click()}>browse</span>. Supports JPEG, PNG, WebP, PDF up to 1GB each.</p>
             <input
               ref={fileInputRef}
               type="file"

@@ -49,7 +49,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'upload.dragDrop': 'Drag and drop your files here',
     'upload.or': 'or',
     'upload.browse': 'Browse Files',
-    'upload.support': 'Support for PDF, Images, PPTX, DOCX, and XLSX files up to 200MB',
+    'upload.support': 'Support for PDF, Images, PPTX, DOCX, and XLSX files up to 1GB',
 
     // Compression
     'compress.title': 'Compress Files',
@@ -263,7 +263,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.copyright': '© 2026 SlimFile. Compress • Convert • Simplify',
 
     // FileUpload
-    'fileUpload.supportText': 'Support for PDF, Images, PPTX, DOCX, and XLSX files up to 200MB',
+    'fileUpload.supportText': 'Support for PDF, Images, PPTX, DOCX, and XLSX files up to 1GB',
     'fileUpload.dropFiles': 'Drop your files here or click to browse',
     'fileUpload.dragDropText': 'Drag and drop or click to select up to 10 files',
     'fileUpload.errorMaxFiles': 'You can upload up to 10 files at a time.',
@@ -271,7 +271,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'fileUpload.errorOldPpt': 'Please save your presentation as a .pptx file before uploading.',
     'fileUpload.errorOldDoc': 'Please save your document as a .docx file before uploading.',
     'fileUpload.errorOldXls': 'Please save your spreadsheet as a .xlsx file before uploading.',
-    'fileUpload.errorFileSize': 'Each file must be less than 200MB.',
+    'fileUpload.errorFileSize': 'Each file must be less than 1GB.',
   },
 
   es: {
@@ -296,7 +296,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'upload.dragDrop': 'Arrastra y suelta tus archivos aquí',
     'upload.or': 'o',
     'upload.browse': 'Explorar Archivos',
-    'upload.support': 'Soporte para archivos PDF, Imágenes, PPTX, DOCX y XLSX hasta 200MB',
+    'upload.support': 'Soporte para archivos PDF, Imágenes, PPTX, DOCX y XLSX hasta 1GB',
 
     // Compression
     'compress.title': 'Comprimir Archivos',
@@ -476,7 +476,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.copyright': '© 2025 SlimFile. Comprimir • Convertir • Simplificar',
 
     // FileUpload
-    'fileUpload.supportText': 'Soporte para archivos PDF, Imágenes, PPTX, DOCX y XLSX hasta 200MB',
+    'fileUpload.supportText': 'Soporte para archivos PDF, Imágenes, PPTX, DOCX y XLSX hasta 1GB',
     'fileUpload.dropFiles': 'Suelta tus archivos aquí o haz clic para explorar',
     'fileUpload.dragDropText': 'Arrastra y suelta o haz clic para seleccionar hasta 10 archivos',
     'fileUpload.errorMaxFiles': 'Puedes subir hasta 10 archivos a la vez.',
@@ -484,7 +484,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'fileUpload.errorOldPpt': 'Por favor, guarda tu presentación como archivo .pptx antes de subirla.',
     'fileUpload.errorOldDoc': 'Por favor, guarda tu documento como archivo .docx antes de subirlo.',
     'fileUpload.errorOldXls': 'Por favor, guarda tu hoja de cálculo como archivo .xlsx antes de subirla.',
-    'fileUpload.errorFileSize': 'Cada archivo debe ser menor de 200MB.',
+    'fileUpload.errorFileSize': 'Cada archivo debe ser menor de 1GB.',
   },
 
   fr: {
@@ -509,7 +509,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'upload.dragDrop': 'Glissez-déposez vos fichiers ici',
     'upload.or': 'ou',
     'upload.browse': 'Parcourir les Fichiers',
-    'upload.support': 'Support pour les fichiers PDF, Images, PPTX, DOCX et XLSX jusqu\'à 200MB',
+    'upload.support': 'Support pour les fichiers PDF, Images, PPTX, DOCX et XLSX jusqu\'à 1GB',
 
     // Compression
     'compress.title': 'Compresser les Fichiers',
@@ -689,7 +689,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.copyright': '© 2025 SlimFile. Compresser • Convertir • Simplifier',
 
     // FileUpload
-    'fileUpload.supportText': 'Support pour les fichiers PDF, Images, PPTX, DOCX et XLSX jusqu\'à 200MB',
+    'fileUpload.supportText': 'Support pour les fichiers PDF, Images, PPTX, DOCX et XLSX jusqu\'à 1GB',
     'fileUpload.dropFiles': 'Déposez vos fichiers ici ou cliquez pour parcourir',
     'fileUpload.dragDropText': 'Glissez-déposez ou cliquez pour sélectionner jusqu\'à 10 fichiers',
     'fileUpload.errorMaxFiles': 'Vous pouvez télécharger jusqu\'à 10 fichiers à la fois.',
@@ -697,7 +697,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'fileUpload.errorOldPpt': 'Veuillez enregistrer votre présentation en tant que fichier .pptx avant de la télécharger.',
     'fileUpload.errorOldDoc': 'Veuillez enregistrer votre document en tant que fichier .docx avant de le télécharger.',
     'fileUpload.errorOldXls': 'Veuillez enregistrer votre feuille de calcul en tant que fichier .xlsx avant de la télécharger.',
-    'fileUpload.errorFileSize': 'Chaque fichier doit faire moins de 200MB.',
+    'fileUpload.errorFileSize': 'Chaque fichier doit faire moins de 1GB.',
   },
 
   de: {
@@ -722,7 +722,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'upload.dragDrop': 'Ziehen Sie Ihre Dateien hierher',
     'upload.or': 'oder',
     'upload.browse': 'Dateien Durchsuchen',
-    'upload.support': 'Unterstützung für PDF, Bilder, PPTX, DOCX und XLSX Dateien bis 200MB',
+    'upload.support': 'Unterstützung für PDF, Bilder, PPTX, DOCX und XLSX Dateien bis 1GB',
 
     // Compression
     'compress.title': 'Dateien Komprimieren',
@@ -902,7 +902,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.copyright': '© 2025 SlimFile. Komprimieren • Konvertieren • Vereinfachen',
 
     // FileUpload
-    'fileUpload.supportText': 'Unterstützung für PDF, Bilder, PPTX, DOCX und XLSX Dateien bis 200MB',
+    'fileUpload.supportText': 'Unterstützung für PDF, Bilder, PPTX, DOCX und XLSX Dateien bis 1GB',
     'fileUpload.dropFiles': 'Legen Sie Ihre Dateien hier ab oder klicken Sie zum Durchsuchen',
     'fileUpload.dragDropText': 'Ziehen und ablegen oder klicken Sie, um bis zu 10 Dateien auszuwählen',
     'fileUpload.errorMaxFiles': 'Sie können bis zu 10 Dateien gleichzeitig hochladen.',
@@ -910,7 +910,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'fileUpload.errorOldPpt': 'Bitte speichern Sie Ihre Präsentation als .pptx-Datei, bevor Sie sie hochladen.',
     'fileUpload.errorOldDoc': 'Bitte speichern Sie Ihr Dokument als .docx-Datei, bevor Sie es hochladen.',
     'fileUpload.errorOldXls': 'Bitte speichern Sie Ihre Tabelle als .xlsx-Datei, bevor Sie sie hochladen.',
-    'fileUpload.errorFileSize': 'Jede Datei muss kleiner als 200MB sein.',
+    'fileUpload.errorFileSize': 'Jede Datei muss kleiner als 1GB sein.',
   },
 
   pt: {
@@ -935,7 +935,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'upload.dragDrop': 'Arraste e solte seus arquivos aqui',
     'upload.or': 'ou',
     'upload.browse': 'Procurar Arquivos',
-    'upload.support': 'Suporte para arquivos PDF, Imagens, PPTX, DOCX e XLSX até 200MB',
+    'upload.support': 'Suporte para arquivos PDF, Imagens, PPTX, DOCX e XLSX até 1GB',
 
     // Compression
     'compress.title': 'Comprimir Arquivos',
@@ -1115,7 +1115,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.copyright': '© 2025 SlimFile. Comprimir • Converter • Simplificar',
 
     // FileUpload
-    'fileUpload.supportText': 'Suporte para arquivos PDF, Imagens, PPTX, DOCX e XLSX até 200MB',
+    'fileUpload.supportText': 'Suporte para arquivos PDF, Imagens, PPTX, DOCX e XLSX até 1GB',
     'fileUpload.dropFiles': 'Solte seus arquivos aqui ou clique para procurar',
     'fileUpload.dragDropText': 'Arraste e solte ou clique para selecionar até 10 arquivos',
     'fileUpload.errorMaxFiles': 'Você pode enviar até 10 arquivos de uma vez.',
@@ -1123,7 +1123,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'fileUpload.errorOldPpt': 'Por favor, salve sua apresentação como arquivo .pptx antes de enviar.',
     'fileUpload.errorOldDoc': 'Por favor, salve seu documento como arquivo .docx antes de enviar.',
     'fileUpload.errorOldXls': 'Por favor, salve sua planilha como arquivo .xlsx antes de enviar.',
-    'fileUpload.errorFileSize': 'Cada arquivo deve ter menos de 200MB.',
+    'fileUpload.errorFileSize': 'Cada arquivo deve ter menos de 1GB.',
   },
 
   zh: {
@@ -1148,7 +1148,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'upload.dragDrop': '拖放文件到这里',
     'upload.or': '或',
     'upload.browse': '浏览文件',
-    'upload.support': '支持PDF、图片、PPTX、DOCX和XLSX文件，最大200MB',
+    'upload.support': '支持PDF、图片、PPTX、DOCX和XLSX文件，最大1GB',
 
     // Compression
     'compress.title': '压缩文件',
@@ -1328,7 +1328,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.copyright': '© 2025 SlimFile. 压缩 • 转换 • 简化',
 
     // FileUpload
-    'fileUpload.supportText': '支持PDF、图片、PPTX、DOCX和XLSX文件，最大200MB',
+    'fileUpload.supportText': '支持PDF、图片、PPTX、DOCX和XLSX文件，最大1GB',
     'fileUpload.dropFiles': '将文件拖放到此处或点击浏览',
     'fileUpload.dragDropText': '拖放或点击选择最多10个文件',
     'fileUpload.errorMaxFiles': '您一次最多可以上传10个文件。',
@@ -1336,7 +1336,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'fileUpload.errorOldPpt': '请在上传前将演示文稿另存为.pptx文件。',
     'fileUpload.errorOldDoc': '请在上传前将文档另存为.docx文件。',
     'fileUpload.errorOldXls': '请在上传前将电子表格另存为.xlsx文件。',
-    'fileUpload.errorFileSize': '每个文件必须小于200MB。',
+    'fileUpload.errorFileSize': '每个文件必须小于1GB。',
   },
 
   ja: {
@@ -1361,7 +1361,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'upload.dragDrop': 'ファイルをここにドラッグ＆ドロップ',
     'upload.or': 'または',
     'upload.browse': 'ファイルを参照',
-    'upload.support': 'PDF、画像、PPTX、DOCX、XLSXファイルを最大200MBまでサポート',
+    'upload.support': 'PDF、画像、PPTX、DOCX、XLSXファイルを最大1GBまでサポート',
 
     // Compression
     'compress.title': 'ファイルを圧縮',
@@ -1541,7 +1541,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.copyright': '© 2025 SlimFile. 圧縮 • 変換 • 簡素化',
 
     // FileUpload
-    'fileUpload.supportText': 'PDF、画像、PPTX、DOCX、XLSXファイルを最大200MBまでサポート',
+    'fileUpload.supportText': 'PDF、画像、PPTX、DOCX、XLSXファイルを最大1GBまでサポート',
     'fileUpload.dropFiles': 'ファイルをここにドロップまたはクリックして参照',
     'fileUpload.dragDropText': 'ドラッグ＆ドロップまたはクリックして最大10ファイルを選択',
     'fileUpload.errorMaxFiles': '一度に最大10ファイルまでアップロードできます。',
@@ -1549,7 +1549,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'fileUpload.errorOldPpt': 'アップロード前にプレゼンテーションを.pptxファイルとして保存してください。',
     'fileUpload.errorOldDoc': 'アップロード前にドキュメントを.docxファイルとして保存してください。',
     'fileUpload.errorOldXls': 'アップロード前にスプレッドシートを.xlsxファイルとして保存してください。',
-    'fileUpload.errorFileSize': '各ファイルは200MB未満である必要があります。',
+    'fileUpload.errorFileSize': '各ファイルは1GB未満である必要があります。',
   },
 
   ar: {
@@ -1787,7 +1787,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'upload.dragDrop': 'अपनी फ़ाइलों को यहाँ खींचें और छोड़ें',
     'upload.or': 'या',
     'upload.browse': 'फ़ाइलें ब्राउज़ करें',
-    'upload.support': '200MB तक की PDF, इमेज, PPTX, DOCX और XLSX फ़ाइलों के लिए समर्थन',
+    'upload.support': '1GB तक की PDF, इमेज, PPTX, DOCX और XLSX फ़ाइलों के लिए समर्थन',
 
     // Compression
     'compress.title': 'फ़ाइलें संपीड़ित करें',
@@ -1967,7 +1967,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.copyright': '© 2025 SlimFile. संपीड़ित करें • परिवर्तित करें • सरल बनाएं',
 
     // FileUpload
-    'fileUpload.supportText': '200MB तक की PDF, इमेज, PPTX, DOCX और XLSX फ़ाइलों के लिए समर्थन',
+    'fileUpload.supportText': '1GB तक की PDF, इमेज, PPTX, DOCX और XLSX फ़ाइलों के लिए समर्थन',
     'fileUpload.dropFiles': 'अपनी फ़ाइलें यहाँ छोड़ें या ब्राउज़ करने के लिए क्लिक करें',
     'fileUpload.dragDropText': '10 फ़ाइलों तक चुनने के लिए खींचें और छोड़ें या क्लिक करें',
     'fileUpload.errorMaxFiles': 'आप एक बार में 10 फ़ाइलें तक अपलोड कर सकते हैं।',
@@ -1975,7 +1975,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'fileUpload.errorOldPpt': 'कृपया अपलोड करने से पहले अपनी प्रस्तुति को .pptx फ़ाइल के रूप में सहेजें।',
     'fileUpload.errorOldDoc': 'कृपया अपलोड करने से पहले अपने दस्तावेज़ को .docx फ़ाइल के रूप में सहेजें।',
     'fileUpload.errorOldXls': 'कृपया अपलोड करने से पहले अपनी स्प्रेडशीट को .xlsx फ़ाइल के रूप में सहेजें।',
-    'fileUpload.errorFileSize': 'प्रत्येक फ़ाइल 200MB से कम होनी चाहिए।',
+    'fileUpload.errorFileSize': 'प्रत्येक फ़ाइल 1GB से कम होनी चाहिए।',
   },
 
   ru: {
@@ -2000,7 +2000,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'upload.dragDrop': 'Перетащите файлы сюда',
     'upload.or': 'или',
     'upload.browse': 'Обзор Файлов',
-    'upload.support': 'Поддержка файлов PDF, изображений, PPTX, DOCX и XLSX до 200MB',
+    'upload.support': 'Поддержка файлов PDF, изображений, PPTX, DOCX и XLSX до 1GB',
 
     // Compression
     'compress.title': 'Сжать Файлы',
@@ -2180,7 +2180,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.copyright': '© 2025 SlimFile. Сжимать • Конвертировать • Упрощать',
 
     // FileUpload
-    'fileUpload.supportText': 'Поддержка файлов PDF, изображений, PPTX, DOCX и XLSX до 200MB',
+    'fileUpload.supportText': 'Поддержка файлов PDF, изображений, PPTX, DOCX и XLSX до 1GB',
     'fileUpload.dropFiles': 'Перетащите файлы сюда или нажмите для обзора',
     'fileUpload.dragDropText': 'Перетащите или нажмите для выбора до 10 файлов',
     'fileUpload.errorMaxFiles': 'Вы можете загрузить до 10 файлов за раз.',
@@ -2188,7 +2188,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'fileUpload.errorOldPpt': 'Пожалуйста, сохраните презентацию как файл .pptx перед загрузкой.',
     'fileUpload.errorOldDoc': 'Пожалуйста, сохраните документ как файл .docx перед загрузкой.',
     'fileUpload.errorOldXls': 'Пожалуйста, сохраните таблицу как файл .xlsx перед загрузкой.',
-    'fileUpload.errorFileSize': 'Каждый файл должен быть меньше 200MB.',
+    'fileUpload.errorFileSize': 'Каждый файл должен быть меньше 1GB.',
   },
 };
 

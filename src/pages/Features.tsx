@@ -88,7 +88,7 @@ const features = [
   {
     icon: <Lock className="w-8 h-8" />,
     title: "Large File Support",
-    description: "Compress files up to 200MB each with no daily limits or restrictions.",
+    description: "Compress files up to 1GB each with no daily limits or restrictions.",
     category: "Freedom"
   },
   {
