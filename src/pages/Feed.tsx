@@ -113,10 +113,6 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
               <span className="text-xs text-gray-600">Original size</span>
               <span className="text-sm font-semibold text-gray-700">{formatBytes(activity.originalSize)}</span>
             </div>
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-xs text-gray-600">Output size</span>
-              <span className="text-sm font-semibold text-gray-700">{formatBytes(activity.compressedSize)}</span>
-            </div>
           </>
         ) : (
           <>
