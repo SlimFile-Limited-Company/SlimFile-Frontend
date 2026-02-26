@@ -8,11 +8,11 @@ interface Props {
 
 const getGreeting = () => {
   const hour = new Date().getHours();
-  if (hour >= 0  && hour < 5)  return { greeting: 'Good Night',     emoji: '🌙' };
   if (hour >= 5  && hour < 12) return { greeting: 'Good Morning',   emoji: '☀️' };
   if (hour >= 12 && hour < 17) return { greeting: 'Good Afternoon', emoji: '🌤️' };
   if (hour >= 17 && hour < 21) return { greeting: 'Good Evening',   emoji: '🌆' };
-  return                               { greeting: 'Good Night',     emoji: '🌙' };
+  if (hour >= 21)              return { greeting: 'Good Night',     emoji: '🌙' };
+  return                               { greeting: 'Good Morning',   emoji: '🌅' }; // 12am–4:59am
 };
 
 const DURATION = 5000;
