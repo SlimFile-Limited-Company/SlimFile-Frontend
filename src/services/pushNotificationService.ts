@@ -302,14 +302,20 @@ export async function notifyGreeting(userName: string): Promise<void> {
   let greeting = '';
   let emoji = '';
 
-  if (hour >= 5 && hour < 12) {
+  if (hour >= 0 && hour < 5) {
+    greeting = 'Good Night';
+    emoji = '🌙';
+  } else if (hour >= 5 && hour < 12) {
     greeting = 'Good Morning';
     emoji = '☀️';
   } else if (hour >= 12 && hour < 17) {
     greeting = 'Good Afternoon';
     emoji = '🌤️';
-  } else {
+  } else if (hour >= 17 && hour < 21) {
     greeting = 'Good Evening';
+    emoji = '🌆';
+  } else {
+    greeting = 'Good Night';
     emoji = '🌙';
   }
 
