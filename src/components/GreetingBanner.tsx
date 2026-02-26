@@ -34,7 +34,7 @@ export const GreetingBanner = ({ userName, onDismiss }: Props) => {
     <div
       className="fixed left-1/2 z-[200] w-[340px] max-w-[calc(100vw-24px)]"
       style={{
-        top: '108px',
+        top: '100px',
         transform: `translateX(-50%) translateY(${visible ? '0' : '-24px'})`,
         opacity: visible ? 1 : 0,
         transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease',
