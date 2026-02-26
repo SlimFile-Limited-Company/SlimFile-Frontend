@@ -7,7 +7,7 @@ import { GreetingBanner } from "@/components/GreetingBanner";
 import { registerServiceWorker } from "@/utils/pwa";
 import { useEffect, useState } from "react";
 import { isAuthenticated, validateToken } from "@/lib/auth";
-import { getNotificationPermission, requestNotificationPermission } from "@/services/pushNotificationService";
+import { getNotificationPermission, requestNotificationPermission, notifyGreeting } from "@/services/pushNotificationService";
 
 const App = () => {
   const [greetingUser, setGreetingUser] = useState<string | null>(null);
@@ -63,9 +63,14 @@ const App = () => {
         if (response.ok) {
           const data = await response.json();
           const userName = data.user?.name || 'User';
+          const isMobile = window.matchMedia('(max-width: 768px)').matches;
           setTimeout(() => {
-            setGreetingUser(userName);
             sessionStorage.setItem('greetingShown', new Date().toDateString());
+            if (isMobile) {
+              setGreetingUser(userName);
+            } else {
+              notifyGreeting(userName);
+            }
           }, 500);
         }
       } catch {
