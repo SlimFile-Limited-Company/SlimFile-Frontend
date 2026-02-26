@@ -66,7 +66,7 @@ const App = () => {
           setTimeout(() => {
             setGreetingUser(userName);
             sessionStorage.setItem('greetingShown', new Date().toDateString());
-          }, 1500);
+          }, 500);
         }
       } catch {
         // silently fail

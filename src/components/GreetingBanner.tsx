@@ -15,12 +15,9 @@ const getGreeting = () => {
   return                               { greeting: 'Good Morning',   emoji: '🌅' }; // 12am–4:59am
 };
 
-const DURATION = 5000;
-
 export const GreetingBanner = ({ userName, onDismiss }: Props) => {
-  const [visible, setVisible]   = useState(false);
-  const [progress, setProgress] = useState(100);
-  const { greeting, emoji }     = getGreeting();
+  const [visible, setVisible] = useState(false);
+  const { greeting, emoji }   = getGreeting();
 
   const dismiss = () => {
     setVisible(false);
@@ -30,24 +27,7 @@ export const GreetingBanner = ({ userName, onDismiss }: Props) => {
   useEffect(() => {
     // Small delay so transition fires after mount
     const showTimer = setTimeout(() => setVisible(true), 80);
-
-    // Countdown progress bar
-    const start    = Date.now();
-    const tick     = 40;
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - start;
-      const remaining = Math.max(0, 100 - (elapsed / DURATION) * 100);
-      setProgress(remaining);
-      if (elapsed >= DURATION) {
-        clearInterval(interval);
-        dismiss();
-      }
-    }, tick);
-
-    return () => {
-      clearTimeout(showTimer);
-      clearInterval(interval);
-    };
+    return () => clearTimeout(showTimer);
   }, []);
 
   return (
@@ -62,14 +42,6 @@ export const GreetingBanner = ({ userName, onDismiss }: Props) => {
     >
       {/* Card */}
       <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
-        {/* Progress bar */}
-        <div className="h-[3px] bg-gray-100">
-          <div
-            className="h-full bg-gradient-to-r from-red-600 to-red-400"
-            style={{ width: `${progress}%`, transition: 'width 40ms linear' }}
-          />
-        </div>
-
         <div className="flex items-center gap-3.5 px-4 py-3.5">
           {/* Logo */}
           <img
