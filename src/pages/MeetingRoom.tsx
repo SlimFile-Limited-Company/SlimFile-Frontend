@@ -496,7 +496,7 @@ export default function MeetingRoom() {
       socket.off('meeting:participant-update', handleParticipantUpdate);
       socket.off('meeting:user-typing', handleUserTyping);
     };
-  }, []);
+  }, [isStreamReady]);
 
   const toggleMic = () => {
     if (localStream.current) {
