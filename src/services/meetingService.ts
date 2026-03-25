@@ -7,44 +7,28 @@ import { getSocket } from './socketService';
 
 // ICE servers for NAT traversal
 // STUN servers help discover public IP, TURN servers relay traffic when direct connection fails
-// NOTE: Free TURN servers have quotas and may stop working. Consider setting up your own for production.
 const ICE_SERVERS: RTCIceServer[] = [
-  // Google STUN servers
-  { urls: 'stun:stun.l.google.com:19302' },
-  { urls: 'stun:stun1.l.google.com:19302' },
-
-  // TODO: Replace with your own TURN server for production use
-  // Free TURN servers below have quotas and may stop working without notice
-
-  // OpenRelay (Free, community-run)
+  { urls: 'stun:stun.relay.metered.ca:80' },
   {
-    urls: [
-      'turn:openrelay.metered.ca:80',
-      'turn:openrelay.metered.ca:443',
-      'turn:openrelay.metered.ca:443?transport=tcp'
-    ],
-    username: 'openrelayproject',
-    credential: 'openrelayproject',
+    urls: 'turn:global.relay.metered.ca:80',
+    username: '9754915960b02d61b9cd6ed1',
+    credential: '1OyjGtc9ZsQ9/uu+',
   },
-
-  // Numb Viagenie (Public test server)
   {
-    urls: 'turn:numb.viagenie.ca',
-    username: 'webrtc@live.com',
-    credential: 'muazkh',
+    urls: 'turn:global.relay.metered.ca:80?transport=tcp',
+    username: '9754915960b02d61b9cd6ed1',
+    credential: '1OyjGtc9ZsQ9/uu+',
   },
-
-  // Xirsys (Free tier - 500MB/month) - Sign up at xirsys.com for fresh credentials
-  // Uncomment and add your credentials:
-  // {
-  //   urls: 'turn:YOUR_SERVER.xirsys.com:80?transport=udp',
-  //   username: 'YOUR_USERNAME',
-  //   credential: 'YOUR_CREDENTIAL',
-  // },
-
-  // Additional STUN fallbacks
-  { urls: 'stun:stun2.l.google.com:19302' },
-  { urls: 'stun:stunserver.stunprotocol.org:3478' },
+  {
+    urls: 'turn:global.relay.metered.ca:443',
+    username: '9754915960b02d61b9cd6ed1',
+    credential: '1OyjGtc9ZsQ9/uu+',
+  },
+  {
+    urls: 'turns:global.relay.metered.ca:443?transport=tcp',
+    username: '9754915960b02d61b9cd6ed1',
+    credential: '1OyjGtc9ZsQ9/uu+',
+  },
 ];
 
 export interface Participant {
@@ -101,9 +85,7 @@ class MeetingService {
   async getScreenStream(): Promise<MediaStream> {
     try {
       const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-          cursor: 'always',
-        },
+        video: true,
         audio: false,
       });
 
@@ -206,7 +188,7 @@ class MeetingService {
       console.log(`📹 Adding ${tracks.length} local tracks to peer connection:`, tracks.map(t => `${t.kind} (enabled: ${t.enabled})`));
 
       tracks.forEach((track) => {
-        const sender = peerConnection.addTrack(track, this.localStream!);
+        peerConnection.addTrack(track, this.localStream!);
         console.log(`  ✅ Added ${track.kind} track:`, track.label);
       });
     } else {
