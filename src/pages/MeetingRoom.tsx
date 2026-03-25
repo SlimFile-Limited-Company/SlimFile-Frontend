@@ -1722,11 +1722,16 @@ function RemoteVideoCard({
     // Function to update video element
     const updateVideo = () => {
       video.srcObject = stream;
-      video.play().catch((e) => console.error('Remote video play error:', e));
 
       // Check if stream has video track
       const videoTracks = stream.getVideoTracks();
       setHasVideoTrack(videoTracks.length > 0 && videoTracks[0].enabled);
+
+      video.onloadedmetadata = () => {
+        video.play().catch((e) => {
+          if (e.name !== 'AbortError') console.error('Remote video play error:', e);
+        });
+      };
     };
 
     // Initial setup
