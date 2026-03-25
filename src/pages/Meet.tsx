@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Video, Plus, LogIn } from 'lucide-react';
-import { isAuthenticated } from '@/lib/auth';
 
 export default function Meet() {
   const navigate = useNavigate();
@@ -18,11 +17,6 @@ export default function Meet() {
   };
 
   const handleNewMeeting = () => {
-    if (!isAuthenticated()) {
-      navigate('/login');
-      return;
-    }
-
     const meetingCode = generateMeetingCode();
     navigate(`/meet/${meetingCode}`);
   };
@@ -31,11 +25,6 @@ export default function Meet() {
     e.preventDefault();
 
     if (!joinCode.trim()) {
-      return;
-    }
-
-    if (!isAuthenticated()) {
-      navigate('/login');
       return;
     }
 
@@ -198,21 +187,6 @@ export default function Meet() {
           </div>
         </div>
 
-        {/* Call to Action */}
-        {!isAuthenticated() && (
-          <div className="mt-12 text-center">
-            <p className="text-gray-600 mb-4">
-              Sign in to start hosting and joining meetings
-            </p>
-            <Button
-              onClick={() => navigate('/login')}
-              variant="outline"
-              className="border-2 border-purple-600 text-purple-600 hover:bg-purple-50 px-8 py-6 text-lg rounded-xl"
-            >
-              Sign In to Get Started
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -29,7 +29,7 @@ import {
   Radio,
   Square,
 } from 'lucide-react';
-import { isAuthenticated, getToken } from '@/lib/auth';
+import { getToken } from '@/lib/auth';
 import { meetingService } from '@/services/meetingService';
 import { initializeSocket, getSocket } from '@/services/socketService';
 
@@ -101,13 +101,6 @@ export default function MeetingRoom() {
   // Refs for video elements
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const localStream = useRef<MediaStream | null>(null);
-
-  // Check authentication
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      navigate('/login');
-    }
-  }, [navigate]);
 
   // Initialize local media
   useEffect(() => {

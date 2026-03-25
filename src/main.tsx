@@ -264,11 +264,7 @@ ReactDOM.createRoot(root).render(
         } />
 
         {/* Meeting room - Full screen without header/footer */}
-        <Route path="meet/:meetingCode" element={
-          <ProtectedRoute>
-            <MeetingRoom />
-          </ProtectedRoute>
-        } />
+        <Route path="meet/:meetingCode" element={<MeetingRoom />} />
 
         {/* Messages - Full screen DM chat without header/footer */}
         <Route path="messages" element={
