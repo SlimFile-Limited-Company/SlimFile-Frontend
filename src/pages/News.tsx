@@ -23,6 +23,7 @@ type NewsItem = {
   highlights: string[];
   externalUrl?: string;
   externalCtaLabel?: string;
+  imageUrl?: string;
 };
 
 const newsItems: NewsItem[] = [
@@ -34,9 +35,10 @@ const newsItems: NewsItem[] = [
     dateLabel: "2025",
     category: "Media",
     icon: Tv,
-    imageHint: "Add GTV segment screenshot / poster here",
+    imageHint: "SlimFile on GTV Ghana",
     externalUrl: "https://www.youtube.com/watch?v=ZZ2v94GbS58",
     externalCtaLabel: "Watch on YouTube",
+    imageUrl: "/news/gtv-ghana.png",
     highlights: [
       "TV feature and product walk-through",
       "Story behind SlimFile’s mission",
@@ -127,17 +129,26 @@ export default function News() {
                       {item.category}
                     </div>
 
-                    <div className="text-center px-6">
-                      <div className="flex items-center justify-center mb-3">
-                        <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-white border border-gray-200">
-                          <ImageIcon className="w-6 h-6 text-gray-500" />
+                    {item.imageUrl ? (
+                      <img
+                        src={item.imageUrl}
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="text-center px-6">
+                        <div className="flex items-center justify-center mb-3">
+                          <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-white border border-gray-200">
+                            <ImageIcon className="w-6 h-6 text-gray-500" />
+                          </div>
                         </div>
+                        <p className="text-sm text-gray-600">{item.imageHint}</p>
+                        <p className="text-xs text-gray-500 mt-2">
+                          You can replace this placeholder with your image later.
+                        </p>
                       </div>
-                      <p className="text-sm text-gray-600">{item.imageHint}</p>
-                      <p className="text-xs text-gray-500 mt-2">
-                        You can replace this placeholder with your image later.
-                      </p>
-                    </div>
+                    )}
                   </div>
 
                   <div className="p-6">
