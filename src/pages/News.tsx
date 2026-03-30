@@ -9,6 +9,7 @@ import {
   ArrowRight,
   Image as ImageIcon,
   Upload,
+  ExternalLink,
 } from "lucide-react";
 
 type NewsItem = {
@@ -20,6 +21,8 @@ type NewsItem = {
   icon: React.ComponentType<{ className?: string }>;
   imageHint: string;
   highlights: string[];
+  externalUrl?: string;
+  externalCtaLabel?: string;
 };
 
 const newsItems: NewsItem[] = [
@@ -32,6 +35,8 @@ const newsItems: NewsItem[] = [
     category: "Media",
     icon: Tv,
     imageHint: "Add GTV segment screenshot / poster here",
+    externalUrl: "https://www.youtube.com/watch?v=ZZ2v94GbS58",
+    externalCtaLabel: "Watch on YouTube",
     highlights: [
       "TV feature and product walk-through",
       "Story behind SlimFile’s mission",
@@ -180,6 +185,19 @@ export default function News() {
                     </ul>
 
                     <div className="flex flex-col sm:flex-row gap-3">
+                      {item.externalUrl ? (
+                        <a
+                          href={item.externalUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full"
+                        >
+                          <Button className="w-full justify-center">
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            {item.externalCtaLabel ?? "View"}
+                          </Button>
+                        </a>
+                      ) : null}
                       <Button
                         variant="outline"
                         className="w-full justify-center"

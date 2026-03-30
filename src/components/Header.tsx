@@ -108,7 +108,7 @@ export const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
       {/* GTV Ghana feature banner */}
       <a
-        href="https://youtu.be/ZZ2v94GbS58?si=aiyW4XkJRtBLpR1X"
+        href="https://www.youtube.com/watch?v=ZZ2v94GbS58"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-center gap-2 bg-red-600 px-4 py-1 text-white hover:bg-red-700 transition-colors duration-200 group"
