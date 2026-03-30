@@ -58,21 +58,6 @@ const newsItems: NewsItem[] = [
       "Product feedback and feature requests",
     ],
   },
-  {
-    id: "central-university",
-    title: "SlimFile Acquired by Central University",
-    subtitle:
-      "A major milestone that expands SlimFile’s reach and accelerates innovation and impact.",
-    dateLabel: "2026",
-    category: "Company",
-    icon: Building2,
-    imageHint: "Add acquisition announcement image here",
-    highlights: [
-      "New chapter for the SlimFile team",
-      "Expanded opportunities for product growth",
-      "Long-term commitment to users and performance",
-    ],
-  },
 ];
 
 export default function News() {
