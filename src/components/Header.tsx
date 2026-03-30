@@ -32,6 +32,7 @@ export const Header = () => {
     { name: "Case Studies", href: "/case-studies" },
     { name: "Partnerships", href: "/partnerships" },
     { name: "SDGs", href: "/sdgs" },
+    { name: "News", href: "/news" },
     { name: "Features", href: "/features" },
     { name: "Why Compression?", href: "/file-compression-education" },
     { name: "Our Blogs", href: "/blog" },
