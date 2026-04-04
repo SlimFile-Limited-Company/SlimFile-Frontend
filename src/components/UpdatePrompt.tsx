@@ -31,7 +31,7 @@ export default function UpdatePrompt() {
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-4 bg-gray-900 border border-gray-700 text-white px-5 py-3.5 rounded-2xl shadow-2xl text-sm font-medium animate-in slide-in-from-bottom-4 duration-300 w-[calc(100%-2rem)] max-w-md">
       <div className="flex-1 min-w-0">
         <p className="font-semibold leading-none mb-0.5">New version available</p>
-        <p className="text-gray-400 text-xs font-normal">SlimFile was just updated. Refreshing in 10s…</p>
+        <p className="text-gray-400 text-xs font-normal">SlimFile was just updated. Reload to get the latest.</p>
       </div>
       <div className="flex gap-2 flex-shrink-0">
         <button
