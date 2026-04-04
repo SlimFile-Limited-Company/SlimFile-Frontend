@@ -69,7 +69,7 @@ const Home: FC = () => {
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative pt-24 sm:pt-32 md:pt-40 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="relative pt-32 sm:pt-44 md:pt-56 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto">
             {/* Main Hero Content */}
@@ -101,6 +101,15 @@ const Home: FC = () => {
                     className="text-primary hover:text-primary/80 transition-all duration-200 text-base font-medium"
                   >
                     SlimFile API <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </a>
+                <a href="https://api.slim-file.com/cli" target="_blank" rel="noopener noreferrer">
+                  <Button
+                    variant="link"
+                    size="lg"
+                    className="text-primary hover:text-primary/80 transition-all duration-200 text-base font-medium"
+                  >
+                    SlimFile CLI <ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
                 </a>
               </div>
