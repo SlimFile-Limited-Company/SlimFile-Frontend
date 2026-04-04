@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Video, Plus, LogIn } from 'lucide-react';
+import { Video, Plus, Link2, Shield, Users, Monitor } from 'lucide-react';
 
 export default function Meet() {
   const navigate = useNavigate();
   const [joinCode, setJoinCode] = useState('');
   const [isJoining, setIsJoining] = useState(false);
 
-  // Generate random meeting code
   const generateMeetingCode = () => {
     const segments = Array.from({ length: 3 }, () =>
       Math.random().toString(36).substring(2, 6)
@@ -23,92 +21,95 @@ export default function Meet() {
 
   const handleJoinMeeting = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!joinCode.trim()) {
-      return;
-    }
-
+    if (!joinCode.trim()) return;
     setIsJoining(true);
-    // Navigate to meeting room
     const code = joinCode.trim().toLowerCase().replace(/\s+/g, '-');
     navigate(`/meet/${code}`);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-28 pb-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center mb-6">
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 rounded-2xl shadow-lg">
-              <Video className="w-12 h-12 text-white" />
-            </div>
+    <div className="min-h-screen bg-white">
+      {/* Hero */}
+      <div className="pt-32 pb-16 px-4 text-center">
+        <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="bg-primary/10 p-2.5 rounded-xl">
+            <Video className="w-6 h-6 text-primary" />
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-            SlimFile Meet
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Secure, high-quality video calls for everyone. Connect with your team instantly.
-          </p>
+          <span className="text-sm font-medium text-primary tracking-wide uppercase">SlimFile Meet</span>
         </div>
+        <h1 className="text-5xl sm:text-6xl font-light text-gray-900 mb-4 tracking-tight">
+          Video calls for <span className="font-medium">everyone</span>
+        </h1>
+        <p className="text-lg text-gray-500 max-w-xl mx-auto">
+          Connect instantly. No downloads, no sign-in required.
+        </p>
+      </div>
 
-        {/* Main Actions */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {/* New Meeting Card */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-            <div className="flex items-center mb-4">
-              <div className="bg-purple-100 p-2 rounded-lg">
-                <Plus className="w-6 h-6 text-purple-600" />
-              </div>
-              <h2 className="text-2xl font-semibold text-gray-900 ml-3">
-                New Meeting
-              </h2>
-            </div>
-            <p className="text-gray-600 mb-6">
-              Start an instant meeting and invite participants with a link.
-            </p>
-            <Button
-              onClick={handleNewMeeting}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-6 text-lg rounded-xl"
-            >
-              <Plus className="w-5 h-5 mr-2" />
-              Start New Meeting
-            </Button>
-          </div>
+      {/* Main Actions */}
+      <div className="max-w-3xl mx-auto px-4 pb-20">
+        <div className="grid sm:grid-cols-2 gap-4 mb-16">
 
-          {/* Join Meeting Card */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-            <div className="flex items-center mb-4">
-              <div className="bg-blue-100 p-2 rounded-lg">
-                <LogIn className="w-6 h-6 text-blue-600" />
-              </div>
-              <h2 className="text-2xl font-semibold text-gray-900 ml-3">
-                Join Meeting
-              </h2>
+          {/* New Meeting */}
+          <button
+            onClick={handleNewMeeting}
+            className="group flex flex-col items-start gap-4 bg-primary hover:bg-primary/90 text-white rounded-3xl p-8 text-left transition-all duration-200 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
+          >
+            <div className="bg-white/20 rounded-2xl p-3">
+              <Plus className="w-6 h-6" />
             </div>
-            <p className="text-gray-600 mb-6">
-              Enter a meeting code or link to join an existing meeting.
-            </p>
-            <form onSubmit={handleJoinMeeting}>
+            <div>
+              <div className="text-xl font-semibold mb-1">New meeting</div>
+              <div className="text-white/70 text-sm">Start an instant meeting and share the link</div>
+            </div>
+          </button>
+
+          {/* Join Meeting */}
+          <div className="flex flex-col gap-4 bg-gray-50 rounded-3xl p-8 border border-gray-100">
+            <div className="bg-gray-200/70 rounded-2xl p-3 w-fit">
+              <Link2 className="w-6 h-6 text-gray-600" />
+            </div>
+            <div>
+              <div className="text-xl font-semibold text-gray-900 mb-1">Join a meeting</div>
+              <div className="text-gray-500 text-sm mb-5">Enter a code to join an existing meeting</div>
+            </div>
+            <form onSubmit={handleJoinMeeting} className="mt-auto">
               <input
                 type="text"
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value)}
-                placeholder="Enter meeting code (e.g., abc-def-ghi)"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter code (e.g., abc-def-ghi)"
+                className="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary mb-3"
               />
-              <Button
+              <button
                 type="submit"
                 disabled={!joinCode.trim() || isJoining}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white py-6 text-lg rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-sm font-medium rounded-2xl transition-colors duration-150"
               >
-                <LogIn className="w-5 h-5 mr-2" />
-                {isJoining ? 'Joining...' : 'Join Meeting'}
-              </Button>
+                {isJoining ? 'Joining...' : 'Join'}
+              </button>
             </form>
           </div>
         </div>
 
+        {/* Trust strip */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 text-sm text-gray-400">
+          <div className="flex items-center gap-2">
+            <Shield className="w-4 h-4" />
+            <span>Encrypted</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4" />
+            <span>Multi-participant</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Monitor className="w-4 h-4" />
+            <span>Screen sharing</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Video className="w-4 h-4" />
+            <span>HD video</span>
+          </div>
+        </div>
       </div>
     </div>
   );
