@@ -35,11 +35,11 @@ export default function Meet() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-28 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex items-center justify-center mb-6 mt-8">
+          <div className="flex items-center justify-center mb-6">
             <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 rounded-2xl shadow-lg">
               <Video className="w-12 h-12 text-white" />
             </div>
@@ -53,7 +53,7 @@ export default function Meet() {
         </div>
 
         {/* Main Actions */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
           {/* New Meeting Card */}
           <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
             <div className="flex items-center mb-4">
@@ -110,7 +110,7 @@ export default function Meet() {
         </div>
 
         {/* Features Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 max-w-4xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-lg p-8">
           <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
             Features
           </h3>
