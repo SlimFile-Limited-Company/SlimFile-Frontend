@@ -33,7 +33,6 @@ export const Header = () => {
     { name: "Partnerships", href: "/partnerships" },
     { name: "SDGs", href: "/sdgs" },
     { name: "News", href: "/news" },
-    { name: "Features", href: "/features" },
     { name: "Why Compression?", href: "/file-compression-education" },
     { name: "Our Blogs", href: "/blog" },
     { name: "Contact", href: "/contact" },

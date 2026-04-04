@@ -94,7 +94,7 @@ const Home: FC = () => {
                     Get Started
                   </Button>
                 </Link>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center">
                   <a href="https://api.slim-file.com/" target="_blank" rel="noopener noreferrer">
                     <Button
                       variant="link"
@@ -104,7 +104,6 @@ const Home: FC = () => {
                       SlimFile API <ArrowRight className="w-4 h-4 ml-1" />
                     </Button>
                   </a>
-                  <span className="text-gray-300">|</span>
                   <a href="https://api.slim-file.com/cli" target="_blank" rel="noopener noreferrer">
                     <Button
                       variant="link"
