@@ -121,18 +121,9 @@ const Home: FC = () => {
         </div>
       </section>
 
-      {/* Features Section - Redesigned with Office Documents */}
-      <section className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white">
+      {/* Features Section */}
+      <section className="pt-4 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="container mx-auto">
-          <div className="text-center mb-8 sm:mb-12 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
-              Everything You Need
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
-              Compress, convert, and collaborate — everything in one place
-            </p>
-          </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
             {[
               { icon: FileImage,      title: "Compress Files",          description: "Shrink images, PDFs, DOCX & XLSX while keeping quality.",     features: ["JPEG, PNG, WebP, PDF", "DOCX & XLSX support", "Up to 95% reduction"],       gradient: "from-blue-500 to-blue-600",    href: "/compress",        badge: "Popular" },
@@ -148,7 +139,7 @@ const Home: FC = () => {
               { icon: Lock,           title: "PDF Password Protect",    description: "Lock PDFs with a password or remove existing ones.",          features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", href: "/lock",           badge: "New" },
             ].map((feature) => (
               <div key={feature.title} className="group relative">
-                <div className="relative bg-gradient-to-br from-gray-50 to-white p-4 sm:p-5 rounded-2xl border-2 border-gray-100 hover:border-red-200 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg h-full flex flex-col">
+                <div className="relative bg-white/60 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-gray-200 hover:border-red-200 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
                   {/* Badge */}
                   <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-600 to-orange-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">
                     {feature.badge}
