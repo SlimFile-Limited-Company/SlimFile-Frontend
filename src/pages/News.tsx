@@ -10,6 +10,11 @@ import {
   ExternalLink,
 } from "lucide-react";
 
+type Highlight = {
+  title: string;
+  note: string;
+};
+
 type NewsItem = {
   id: string;
   title: string;
@@ -18,7 +23,7 @@ type NewsItem = {
   category: string;
   icon: React.ComponentType<{ className?: string }>;
   imageHint: string;
-  highlights: string[];
+  highlights: Highlight[];
   externalUrl?: string;
   externalCtaLabel?: string;
   imageUrl?: string;
@@ -38,9 +43,18 @@ const newsItems: NewsItem[] = [
     externalCtaLabel: "Watch on YouTube",
     imageUrl: "/news/gtv-ghana.png",
     highlights: [
-      "TV feature and product walk-through",
-      "Story behind SlimFile’s mission",
-      "How to use SlimFile for everyday workflows",
+      {
+        title: "TV feature and product walk-through",
+        note: "GTV aired a segment on what SlimFile is, who it’s for, and how compression and conversion work in practice.",
+      },
+      {
+        title: "Story behind SlimFile’s mission",
+        note: "We shared why simpler, lighter files matter for students, professionals, and teams across Ghana and beyond.",
+      },
+      {
+        title: "How to use SlimFile for everyday workflows",
+        note: "The discussion covered typical use cases: smaller PDFs, faster uploads, and converting between common formats.",
+      },
     ],
   },
   {
@@ -52,11 +66,20 @@ const newsItems: NewsItem[] = [
     category: "Events",
     icon: Mic,
     imageHint: "SlimFile at the Ghana Youth Tech Summit",
-    imageUrl: "/news/ghana-youth-tech-summit.png",
+    imageUrl: "/news/ghana-youth-tech-summit.jpeg",
     highlights: [
-      "Live demo and community Q&A",
-      "Partnership conversations",
-      "Product feedback and feature requests",
+      {
+        title: "Live demo and community Q&A",
+        note: "Attendees saw SlimFile in action and asked questions about compression, conversion, and file limits.",
+      },
+      {
+        title: "Partnership conversations",
+        note: "We connected with educators, youth leaders, and tech groups interested in bringing SlimFile to more people.",
+      },
+      {
+        title: "Product feedback and feature requests",
+        note: "Summit visitors shared ideas that help shape what we build next—especially for mobile and classroom use.",
+      },
     ],
   },
 ];
@@ -170,11 +193,14 @@ export default function News() {
                       {item.subtitle}
                     </p>
 
-                    <ul className="space-y-2 text-sm text-gray-700">
+                    <ul className="space-y-3 text-sm">
                       {item.highlights.map((h) => (
-                        <li key={h} className="flex items-start gap-2">
-                          <span className="mt-1 inline-block w-1.5 h-1.5 rounded-full bg-red-600" />
-                          <span>{h}</span>
+                        <li key={h.title} className="flex items-start gap-2">
+                          <span className="mt-2 inline-block w-1.5 h-1.5 shrink-0 rounded-full bg-red-600" />
+                          <div>
+                            <p className="font-medium text-gray-900">{h.title}</p>
+                            <p className="text-gray-600 mt-0.5 leading-relaxed">{h.note}</p>
+                          </div>
                         </li>
                       ))}
                     </ul>
@@ -235,13 +261,11 @@ export default function News() {
                     <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
                       {item.highlights.map((h) => (
                         <div
-                          key={h}
+                          key={h.title}
                           className="rounded-xl border border-gray-200 bg-gray-50 p-4"
                         >
-                          <p className="text-sm font-semibold text-gray-900">{h}</p>
-                          <p className="text-xs text-gray-600 mt-1">
-                            Swap in your real images and captions when ready.
-                          </p>
+                          <p className="text-sm font-semibold text-gray-900">{h.title}</p>
+                          <p className="text-sm text-gray-600 mt-2 leading-relaxed">{h.note}</p>
                         </div>
                       ))}
                     </div>
