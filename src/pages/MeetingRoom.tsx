@@ -256,6 +256,14 @@ export default function MeetingRoom() {
     };
   }, []);
 
+  // Re-attach local stream whenever layout switches (remoteStreams.size change unmounts/remounts the video element)
+  useEffect(() => {
+    if (!localStream.current || !localVideoRef.current) return;
+    if (isScreenSharing) return; // screen share handles its own srcObject
+    localVideoRef.current.srcObject = localStream.current;
+    localVideoRef.current.play().catch(() => {});
+  }, [remoteStreams.size, isScreenSharing]);
+
   // Join meeting
   useEffect(() => {
     if (!meetingCode || !isStreamReady || !localStream.current) return;
