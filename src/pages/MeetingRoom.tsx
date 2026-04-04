@@ -48,9 +48,10 @@ interface RemoteVideoCardProps {
   isPinned?: boolean;
   onPin?: () => void;
   compact?: boolean;
+  fill?: boolean;
 }
 
-function RemoteVideoCard({ participantId, stream, participant, isPinned, onPin, compact }: RemoteVideoCardProps) {
+function RemoteVideoCard({ participantId, stream, participant, isPinned, onPin, compact, fill }: RemoteVideoCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasVideo, setHasVideo] = useState(false);
 
@@ -96,8 +97,8 @@ function RemoteVideoCard({ participantId, stream, participant, isPinned, onPin, 
 
   return (
     <div
-      className={`relative bg-[#3C4043] overflow-hidden flex items-center justify-center group cursor-pointer ${compact ? 'rounded-xl' : 'rounded-2xl'} ${isPinned ? 'ring-2 ring-[#1a73e8]' : ''}`}
-      style={{ aspectRatio: '16/9' }}
+      className={`relative bg-[#3C4043] overflow-hidden flex items-center justify-center group cursor-pointer ${compact ? 'rounded-xl' : 'rounded-2xl'} ${isPinned ? 'ring-2 ring-[#1a73e8]' : ''} ${fill ? 'w-full h-full' : ''}`}
+      style={fill ? undefined : { aspectRatio: '16/9' }}
       onClick={onPin}
     >
       <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
@@ -541,14 +542,14 @@ export default function MeetingRoom() {
 
   // ── Video layout ─────────────────────────────────────────────────────────────
   const renderVideos = () => {
-    // Solo
+    // Solo — video fills full area, waiting message overlaid
     if (total === 1) return (
-      <div className="w-full h-full flex flex-col items-center justify-center gap-6">
-        <div className="relative bg-[#3C4043] rounded-2xl overflow-hidden shadow-xl" style={{ width: '100%', maxWidth: 720, aspectRatio: '16/9' }}>
+      <div className="relative w-full h-full">
+        <div className="absolute inset-0 bg-[#3C4043] rounded-2xl overflow-hidden">
           <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
           {!isCameraOn && (
             <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]">
-              <div className="w-20 h-20 rounded-full flex items-center justify-center text-white text-3xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div>
+              <div className="w-24 h-24 rounded-full flex items-center justify-center text-white text-4xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div>
             </div>
           )}
           <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-lg flex items-center gap-1.5">
@@ -560,20 +561,23 @@ export default function MeetingRoom() {
             <div className="absolute top-3 right-3 bg-[#1a73e8] text-white text-xs px-2 py-1 rounded-md font-medium">Sharing screen</div>
           )}
         </div>
-        <div className="flex items-center gap-3 bg-[#3C4043] px-6 py-3 rounded-full">
-          <Users className="w-5 h-5 text-[#BDC1C6]" />
-          <span className="text-[#BDC1C6] text-sm font-medium">Waiting for others to join…</span>
+        {/* Waiting overlay */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-10">
+          <div className="flex items-center gap-3 bg-[#3C4043]/90 backdrop-blur-sm px-6 py-3 rounded-full">
+            <Users className="w-5 h-5 text-[#BDC1C6]" />
+            <span className="text-[#BDC1C6] text-sm font-medium">Waiting for others to join…</span>
+          </div>
+          <p className="text-[#9AA0A6] text-xs">Share the meeting link to invite people</p>
         </div>
-        <p className="text-[#9AA0A6] text-xs">Share the meeting link to invite people</p>
       </div>
     );
 
-    // 2 people: large remote + self pip
+    // 2 people: large remote fills full screen + self pip
     if (total === 2 && viewMode === 'grid') {
       const [[rid, rs]] = Array.from(remoteStreams.entries());
       return (
         <div className="relative w-full h-full">
-          <RemoteVideoCard participantId={rid} stream={rs} participant={participants.get(rid)} isPinned={pinnedParticipant === rid} onPin={() => setPinnedParticipant(p => p === rid ? null : rid)} />
+          <RemoteVideoCard participantId={rid} stream={rs} participant={participants.get(rid)} isPinned={pinnedParticipant === rid} onPin={() => setPinnedParticipant(p => p === rid ? null : rid)} fill />
           {/* Self PiP */}
           <div className="absolute bottom-4 right-4 w-44 rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-[#3C4043]" style={{ aspectRatio: '16/9' }}>
             <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
@@ -594,10 +598,10 @@ export default function MeetingRoom() {
       const sid = pinnedParticipant || Array.from(remoteStreams.keys())[0];
       const ss = sid ? remoteStreams.get(sid) : null;
       return (
-        <div className="w-full h-full flex flex-col gap-3">
+        <div className="w-full h-full flex flex-col gap-2">
           <div className="flex-1 min-h-0">
             {ss && sid
-              ? <RemoteVideoCard participantId={sid} stream={ss} participant={participants.get(sid)} isPinned onPin={() => setPinnedParticipant(null)} />
+              ? <RemoteVideoCard participantId={sid} stream={ss} participant={participants.get(sid)} isPinned onPin={() => setPinnedParticipant(null)} fill />
               : <div className="w-full h-full bg-[#3C4043] rounded-2xl flex items-center justify-center"><p className="text-[#9AA0A6]">No active speaker</p></div>
             }
           </div>
@@ -621,10 +625,10 @@ export default function MeetingRoom() {
     // Grid: 3+
     const cols = total <= 4 ? 2 : total <= 6 ? 3 : total <= 9 ? 3 : 4;
     return (
-      <div className={`grid gap-3 w-full h-full`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+      <div className="grid gap-2 w-full h-full" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridAutoRows: '1fr' }}>
         {/* Self */}
-        <div className="relative bg-[#3C4043] rounded-2xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
-          <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+        <div className="relative bg-[#3C4043] rounded-2xl overflow-hidden">
+          <video ref={localVideoRef} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover scale-x-[-1]" />
           {!isCameraOn && <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]"><div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div></div>}
           <div className="absolute bottom-2 left-2 bg-black/60 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
             <span className="text-white text-xs font-medium">{currentUserName} (You)</span>
@@ -633,7 +637,7 @@ export default function MeetingRoom() {
           {isHandRaised && <div className="absolute top-2 left-2 text-lg animate-bounce">✋</div>}
         </div>
         {Array.from(remoteStreams.entries()).map(([pid, st]) => (
-          <RemoteVideoCard key={pid} participantId={pid} stream={st} participant={participants.get(pid)} isPinned={pinnedParticipant === pid} onPin={() => setPinnedParticipant(p => p === pid ? null : pid)} />
+          <RemoteVideoCard key={pid} participantId={pid} stream={st} participant={participants.get(pid)} isPinned={pinnedParticipant === pid} onPin={() => setPinnedParticipant(p => p === pid ? null : pid)} fill />
         ))}
       </div>
     );
@@ -687,7 +691,7 @@ export default function MeetingRoom() {
       <div className="flex-1 flex overflow-hidden min-h-0">
 
         {/* Video area */}
-        <div className="flex-1 p-4 overflow-hidden">
+        <div className="flex-1 p-2 overflow-hidden min-h-0">
           {renderVideos()}
         </div>
 
