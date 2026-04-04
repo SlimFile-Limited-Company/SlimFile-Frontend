@@ -92,19 +92,7 @@ import PushListener from './components/PushListener';
 import SlimFileForge from './pages/SlimFileForge';
 import SlimFileLock from './pages/SlimFileLock';
 import { NotificationProvider } from './components/InAppNotification';
-
-// Register service worker for PWA functionality
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((registration) => {
-        console.log('SW registered: ', registration);
-      })
-      .catch((registrationError) => {
-        console.log('SW registration failed: ', registrationError);
-      });
-  });
-}
+import UpdatePrompt from './components/UpdatePrompt';
 
 const root = document.getElementById('root');
 const queryClient = new QueryClient({
@@ -127,6 +115,7 @@ ReactDOM.createRoot(root).render(
             <ScrollToTop />
             <BottomNav />
             <PushListener />
+            <UpdatePrompt />
             <Routes>
         <Route path="/login" element={<Login />} />
         {/* New Dashboard with nested routes */}
