@@ -190,6 +190,9 @@ export default function MeetingRoom() {
   const [showReactions, setShowReactions] = useState(false);
   const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
   const [isStreamReady, setIsStreamReady] = useState(false);
+  const [admissionState, setAdmissionState] = useState<'waiting' | 'admitted' | 'denied'>('waiting');
+  const [isJoined, setIsJoined] = useState(false);
+  const [admitRequests, setAdmitRequests] = useState<Array<{ socketId: string; userId: string; userName: string }>>([]);
   const [participants, setParticipants] = useState<Map<string, Participant>>(new Map());
   const [currentUserName, setCurrentUserName] = useState('');
   const [currentUserId, setCurrentUserId] = useState('');
@@ -264,9 +267,12 @@ export default function MeetingRoom() {
     localVideoRef.current.play().catch(() => {});
   }, [remoteStreams.size, isScreenSharing]);
 
-  // Join meeting
+  // Phase 1: Request admission when stream is ready
+  const userIdRef = useRef('');
+  const userNameRef = useRef('');
+
   useEffect(() => {
-    if (!meetingCode || !isStreamReady || !localStream.current) return;
+    if (!meetingCode || !isStreamReady) return;
 
     let socket = getSocket();
     if (!socket || !socket.connected) {
@@ -283,10 +289,38 @@ export default function MeetingRoom() {
         const p = JSON.parse(atob(token.split('.')[1]));
         userId = p.id || userId;
         userName = p.name || p.email || userName;
-        setCurrentUserId(userId);
-        setCurrentUserName(userName);
       } catch {}
     }
+    setCurrentUserId(userId);
+    setCurrentUserName(userName);
+    userIdRef.current = userId;
+    userNameRef.current = userName;
+
+    const onAdmitted = () => setAdmissionState('admitted');
+    const onDenied = () => setAdmissionState('denied');
+    const onAdmitRequest = (data: { socketId: string; userId: string; userName: string }) => {
+      setAdmitRequests(prev => prev.some(r => r.socketId === data.socketId) ? prev : [...prev, data]);
+    };
+
+    socket.on('meeting:admitted', onAdmitted);
+    socket.on('meeting:denied', onDenied);
+    socket.on('meeting:admit-request', onAdmitRequest);
+
+    socket.emit('meeting:request-admit', { meetingId: meetingCode, userId, userName });
+
+    return () => {
+      socket.off('meeting:admitted', onAdmitted);
+      socket.off('meeting:denied', onDenied);
+      socket.off('meeting:admit-request', onAdmitRequest);
+    };
+  }, [meetingCode, isStreamReady]);
+
+  // Phase 2: Actually join meeting once admitted
+  useEffect(() => {
+    if (admissionState !== 'admitted' || isJoined || !meetingCode || !localStream.current) return;
+
+    const userId = userIdRef.current;
+    const userName = userNameRef.current;
 
     setParticipants(prev => {
       const m = new Map(prev);
@@ -311,13 +345,14 @@ export default function MeetingRoom() {
     meetingService.onError = (msg) => showToast(msg, 'warning');
 
     try { meetingService.joinMeeting(meetingCode, userId, userName); } catch {}
+    setIsJoined(true);
 
     return () => { meetingService.leaveMeeting(); };
-  }, [meetingCode, isStreamReady]);
+  }, [admissionState, isJoined, meetingCode]);
 
-  // Socket listeners for UI events
+  // Socket listeners for UI events (only after admitted + joined)
   useEffect(() => {
-    if (!isStreamReady) return;
+    if (!isJoined) return;
     const socket = getSocket();
     if (!socket) return;
 
@@ -378,7 +413,7 @@ export default function MeetingRoom() {
       socket.off('meeting:participant-update', onUpdate);
       socket.off('meeting:user-typing', onTyping);
     };
-  }, [isStreamReady, notificationSounds]);
+  }, [isJoined, notificationSounds]);
 
   // Connection quality monitor
   useEffect(() => {
@@ -472,6 +507,20 @@ export default function MeetingRoom() {
   const copyLink = () => {
     navigator.clipboard.writeText(`${window.location.origin}/meet/${meetingCode}`);
     showToast('Meeting link copied!', 'success');
+  };
+
+  const admitUser = (socketId: string) => {
+    const socket = getSocket();
+    if (!socket || !meetingCode) return;
+    socket.emit('meeting:admit-user', { meetingId: meetingCode, socketId });
+    setAdmitRequests(prev => prev.filter(r => r.socketId !== socketId));
+  };
+
+  const denyUser = (socketId: string) => {
+    const socket = getSocket();
+    if (!socket || !meetingCode) return;
+    socket.emit('meeting:deny-user', { meetingId: meetingCode, socketId });
+    setAdmitRequests(prev => prev.filter(r => r.socketId !== socketId));
   };
 
   const leaveMeeting = () => {
@@ -652,6 +701,77 @@ export default function MeetingRoom() {
   };
 
   // ── Render ───────────────────────────────────────────────────────────────────
+
+  // Waiting to be admitted screen
+  if (admissionState === 'waiting') {
+    return (
+      <div className="h-screen bg-[#202124] flex flex-col items-center justify-center gap-6 select-none">
+        {/* Self preview */}
+        <div className="relative bg-[#3C4043] rounded-2xl overflow-hidden shadow-2xl" style={{ width: 320, aspectRatio: '16/9' }}>
+          <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+          {!isCameraOn && (
+            <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-medium" style={{ backgroundColor: avatarColor(currentUserName || 'You') }}>
+                {(currentUserName || 'Y').charAt(0).toUpperCase()}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col items-center gap-3 text-center">
+          <div className="w-12 h-12 rounded-full bg-[#3C4043] flex items-center justify-center animate-pulse">
+            <Users className="w-5 h-5 text-[#BDC1C6]" />
+          </div>
+          <h2 className="text-white text-xl font-medium">Waiting to be admitted</h2>
+          <p className="text-[#9AA0A6] text-sm">Someone in the meeting will let you in soon</p>
+          <p className="text-[#5F6368] text-xs font-mono">{meetingCode}</p>
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={toggleMic}
+            className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isMicOn ? 'bg-[#3C4043] text-white' : 'bg-red-600 text-white'}`}
+          >
+            {isMicOn ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
+          </button>
+          <button
+            onClick={toggleCamera}
+            className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isCameraOn ? 'bg-[#3C4043] text-white' : 'bg-red-600 text-white'}`}
+          >
+            {isCameraOn ? <Video className="w-4 h-4" /> : <VideoOff className="w-4 h-4" />}
+          </button>
+          <button
+            onClick={() => { localStream.current?.getTracks().forEach(t => t.stop()); navigate('/meet'); }}
+            className="w-12 h-12 rounded-full bg-red-600 hover:bg-red-500 flex items-center justify-center text-white transition-colors"
+          >
+            <PhoneOff className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Denied screen
+  if (admissionState === 'denied') {
+    return (
+      <div className="h-screen bg-[#202124] flex flex-col items-center justify-center gap-5 select-none">
+        <div className="w-16 h-16 rounded-full bg-red-600/20 border border-red-600/40 flex items-center justify-center">
+          <PhoneOff className="w-7 h-7 text-red-400" />
+        </div>
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h2 className="text-white text-xl font-medium">You weren't let in</h2>
+          <p className="text-[#9AA0A6] text-sm">The meeting host didn't admit your request</p>
+        </div>
+        <button
+          onClick={() => navigate('/meet')}
+          className="px-6 py-2.5 bg-[#1a73e8] hover:bg-[#1765cc] text-white text-sm font-medium rounded-full transition-colors"
+        >
+          Return to home
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen bg-[#202124] flex flex-col overflow-hidden select-none">
 
@@ -894,6 +1014,40 @@ export default function MeetingRoom() {
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ── Admit requests ── */}
+      {admitRequests.length > 0 && (
+        <div className="fixed bottom-36 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center">
+          {admitRequests.map(req => (
+            <div key={req.socketId} className="flex items-center gap-4 bg-[#292B2F] border border-[#3C4043] rounded-2xl px-5 py-3.5 shadow-2xl min-w-[340px]">
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0"
+                style={{ backgroundColor: avatarColor(req.userName) }}
+              >
+                {req.userName.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-white text-sm font-medium truncate">{req.userName}</p>
+                <p className="text-[#9AA0A6] text-xs">wants to join</p>
+              </div>
+              <div className="flex gap-2 flex-shrink-0">
+                <button
+                  onClick={() => denyUser(req.socketId)}
+                  className="px-3.5 py-1.5 rounded-full border border-[#5F6368] text-[#BDC1C6] text-xs font-medium hover:bg-[#3C4043] transition-colors"
+                >
+                  Deny
+                </button>
+                <button
+                  onClick={() => admitUser(req.socketId)}
+                  className="px-3.5 py-1.5 rounded-full bg-[#1a73e8] hover:bg-[#1765cc] text-white text-xs font-medium transition-colors"
+                >
+                  Admit
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
