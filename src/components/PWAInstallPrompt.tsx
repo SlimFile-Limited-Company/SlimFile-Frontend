@@ -156,9 +156,9 @@ export const PWAInstallPrompt = () => {
           {/* Features */}
           <div className="px-6 py-5 space-y-3">
             {[
-              'Quick access from your home screen',
-              'Works offline for core features',
-              'Faster load times',
+              'Launch SlimFile like a native app',
+              'Smoother, faster experience every time',
+              'Always one tap away on your device',
             ].map((feature) => (
               <div key={feature} className="flex items-center gap-3">
                 <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center shrink-0">
