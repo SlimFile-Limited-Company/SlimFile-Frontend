@@ -111,18 +111,18 @@ export const Header = () => {
         href="https://api.slim-file.com/cli"
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 bg-gray-900 px-4 py-1 text-white hover:bg-gray-800 transition-colors duration-200 group"
+        className="flex items-center justify-center gap-3 bg-gray-900 px-6 py-2.5 text-white hover:bg-gray-800 transition-colors duration-200 group"
       >
-        <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" />
         </svg>
-        <span className="text-xs font-medium tracking-wide">
+        <span className="text-sm font-medium tracking-wide">
           <span className="font-semibold">Introducing SlimFile CLI</span>
           <span className="hidden sm:inline opacity-80"> — </span>
-          <code className="hidden sm:inline font-mono bg-white/10 px-1 rounded">npm install -g @slimfile/cli</code>
+          <code className="hidden sm:inline font-mono bg-white/10 px-1.5 py-0.5 rounded text-xs">npm install -g @slimfile/cli</code>
           <span className="hidden sm:inline opacity-80"> · v1.0.0 Live on npm</span>
         </span>
-        <span className="text-xs opacity-75 group-hover:translate-x-0.5 transition-transform duration-150">›</span>
+        <span className="text-sm opacity-75 group-hover:translate-x-0.5 transition-transform duration-150">›</span>
       </a>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
