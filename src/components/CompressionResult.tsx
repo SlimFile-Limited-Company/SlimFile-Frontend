@@ -325,7 +325,7 @@ export const CompressionResult = ({
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Compressing: {file.name}
                   </h3>
-                  <ProcessingText mode="compress" />
+                  <ProcessingText mode="compress" progress={compressionProgress[idx] || 0} />
                 </div>
               </CardContent>
             </Card>

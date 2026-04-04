@@ -345,7 +345,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
                     Processing: {originalFile.name}
                   </h3>
                   <p className="text-sm text-gray-600 mb-3">{step}</p>
-                  <ProcessingText mode="both" />
+                  <ProcessingText mode="both" progress={progress || 0} />
                 </div>
               </div>
             ) : (

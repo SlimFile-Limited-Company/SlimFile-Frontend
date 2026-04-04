@@ -322,7 +322,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Converting: {originalFile.name}
                   </h3>
-                  <ProcessingText mode="convert" />
+                  <ProcessingText mode="convert" progress={progress || 0} />
                 </div>
               </div>
             ) : (

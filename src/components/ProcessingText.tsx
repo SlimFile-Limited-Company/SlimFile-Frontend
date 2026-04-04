@@ -81,9 +81,10 @@ type Mode = 'compress' | 'convert' | 'both';
 
 interface ProcessingTextProps {
   mode?: Mode;
+  progress?: number;
 }
 
-export const ProcessingText = ({ mode = 'compress' }: ProcessingTextProps) => {
+export const ProcessingText = ({ mode = 'compress', progress }: ProcessingTextProps) => {
   const verbs =
     mode === 'convert'
       ? CONVERT_VERBS
@@ -102,7 +103,7 @@ export const ProcessingText = ({ mode = 'compress' }: ProcessingTextProps) => {
   }, [verbs.length]);
 
   return (
-    <div className="flex items-center justify-center h-8 overflow-hidden">
+    <div className="flex items-center justify-center gap-3 h-8 overflow-hidden">
       <AnimatePresence mode="wait">
         <motion.span
           key={index}
@@ -120,6 +121,11 @@ export const ProcessingText = ({ mode = 'compress' }: ProcessingTextProps) => {
           />
         </motion.span>
       </AnimatePresence>
+      {progress !== undefined && (
+        <span className="text-sm font-semibold text-gray-400 tabular-nums shrink-0">
+          {progress}%
+        </span>
+      )}
     </div>
   );
 };
