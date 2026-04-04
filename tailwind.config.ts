@@ -161,6 +161,13 @@ const config = {
 				'.scrollbar-thin::-webkit-scrollbar-thumb:hover': {
 					backgroundColor: '#9ca3af',
 				},
+				'.scrollbar-hide': {
+					'-ms-overflow-style': 'none',
+					'scrollbar-width': 'none',
+				},
+				'.scrollbar-hide::-webkit-scrollbar': {
+					display: 'none',
+				},
 			};
 			addUtilities(newUtilities, ['responsive', 'hover']);
 		},

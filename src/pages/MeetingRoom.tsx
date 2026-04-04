@@ -157,11 +157,11 @@ function CtrlBtn({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div className="flex flex-col items-center gap-1 flex-shrink-0">
       <button
         onClick={onClick}
         title={label}
-        className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-150 focus:outline-none
+        className={`w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all duration-150 focus:outline-none
           ${danger
             ? 'bg-red-600 hover:bg-red-500 text-white'
             : active
@@ -171,7 +171,7 @@ function CtrlBtn({
       >
         {children}
       </button>
-      {label && <span className="text-[#BDC1C6] text-[10px] font-medium">{label}</span>}
+      {label && <span className="text-[#BDC1C6] text-[10px] font-medium hidden sm:block">{label}</span>}
     </div>
   );
 }
@@ -776,41 +776,41 @@ export default function MeetingRoom() {
     <div className="h-screen bg-[#202124] flex flex-col overflow-hidden select-none">
 
       {/* ── Header ── */}
-      <div className="flex items-center justify-between px-5 py-2.5 flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <span className="text-white font-medium text-sm">SlimFile Meet</span>
-          <span className="text-[#9AA0A6] text-sm">·</span>
-          <span className="text-[#9AA0A6] text-sm">{clock}</span>
+      <div className="flex items-center justify-between px-3 sm:px-5 py-2 sm:py-2.5 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <span className="text-white font-medium text-xs sm:text-sm whitespace-nowrap">SlimFile Meet</span>
+          <span className="text-[#9AA0A6] text-sm hidden sm:inline">·</span>
+          <span className="text-[#9AA0A6] text-xs sm:text-sm hidden sm:inline">{clock}</span>
           {/* Quality dot */}
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#3C4043] rounded-full">
+          <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 bg-[#3C4043] rounded-full">
             <Circle className={`w-2 h-2 fill-current ${connectionQuality === 'good' ? 'text-green-400' : connectionQuality === 'medium' ? 'text-yellow-400' : 'text-red-400'}`} />
-            <span className="text-[#BDC1C6] text-xs capitalize">{connectionQuality}</span>
+            <span className="text-[#BDC1C6] text-[10px] sm:text-xs capitalize hidden sm:inline">{connectionQuality}</span>
           </div>
           {isRecording && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-600/20 border border-red-600/40 rounded-full animate-pulse">
+            <div className="flex items-center gap-1 px-2 py-1 bg-red-600/20 border border-red-600/40 rounded-full animate-pulse">
               <Radio className="w-3 h-3 text-red-400" />
-              <span className="text-red-400 text-xs font-medium">REC {fmt(recordingDuration)}</span>
+              <span className="text-red-400 text-[10px] font-medium hidden sm:inline">REC {fmt(recordingDuration)}</span>
             </div>
           )}
           {isScreenSharing && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#1a73e8]/20 border border-[#1a73e8]/40 rounded-full">
+            <div className="flex items-center gap-1 px-2 py-1 bg-[#1a73e8]/20 border border-[#1a73e8]/40 rounded-full">
               <Monitor className="w-3 h-3 text-[#1a73e8]" />
-              <span className="text-[#1a73e8] text-xs font-medium">Sharing screen</span>
+              <span className="text-[#1a73e8] text-[10px] font-medium hidden sm:inline">Sharing</span>
             </div>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#3C4043] rounded-full">
-            <Users className="w-4 h-4 text-[#BDC1C6]" />
-            <span className="text-white text-sm font-medium">{participants.size}</span>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-[#3C4043] rounded-full">
+            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#BDC1C6]" />
+            <span className="text-white text-xs sm:text-sm font-medium">{participants.size}</span>
           </div>
           <button
             onClick={copyLink}
-            className="flex items-center gap-2 px-4 py-1.5 bg-[#1a73e8] hover:bg-[#1765cc] text-white text-sm font-medium rounded-full transition-colors"
+            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 bg-[#1a73e8] hover:bg-[#1765cc] text-white text-xs sm:text-sm font-medium rounded-full transition-colors"
           >
-            <Copy className="w-3.5 h-3.5" />
-            Invite
+            <Copy className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+            <span>Invite</span>
           </button>
         </div>
       </div>
@@ -832,7 +832,7 @@ export default function MeetingRoom() {
 
         {/* Participants sidebar */}
         {showParticipants && (
-          <div className="w-72 bg-[#292B2F] border-l border-[#3C4043] flex flex-col flex-shrink-0">
+          <div className="fixed inset-0 z-40 sm:static sm:inset-auto sm:w-72 bg-[#292B2F] border-l border-[#3C4043] flex flex-col flex-shrink-0">
             <div className="flex items-center justify-between px-4 py-3 border-b border-[#3C4043]">
               <span className="text-white font-medium text-sm">People ({participants.size})</span>
               <button onClick={() => setShowParticipants(false)} className="text-[#9AA0A6] hover:text-white text-xl leading-none">×</button>
@@ -874,7 +874,7 @@ export default function MeetingRoom() {
 
         {/* Chat sidebar */}
         {showChat && (
-          <div className="w-80 bg-[#292B2F] border-l border-[#3C4043] flex flex-col flex-shrink-0">
+          <div className="fixed inset-0 z-40 sm:static sm:inset-auto sm:w-80 bg-[#292B2F] border-l border-[#3C4043] flex flex-col flex-shrink-0">
             <div className="flex items-center justify-between px-4 py-3 border-b border-[#3C4043]">
               <span className="text-white font-medium text-sm">In-call messages</span>
               <button onClick={() => setShowChat(false)} className="text-[#9AA0A6] hover:text-white text-xl leading-none">×</button>
@@ -921,34 +921,34 @@ export default function MeetingRoom() {
 
       {/* ── Controls bar ── */}
       <div className="flex-shrink-0 pb-6 pt-2">
-        <div className="flex items-end justify-center gap-3">
+        <div className="flex items-end justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto px-4 sm:px-0 pb-1 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
           <CtrlBtn onClick={toggleMic} active={isMicOn} label={isMicOn ? 'Mute' : 'Unmute'}>
-            {isMicOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
+            {isMicOn ? <Mic className="w-4 h-4 sm:w-5 sm:h-5" /> : <MicOff className="w-4 h-4 sm:w-5 sm:h-5" />}
           </CtrlBtn>
 
           <CtrlBtn onClick={toggleCamera} active={isCameraOn} label={isCameraOn ? 'Camera off' : 'Camera on'}>
-            {isCameraOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
+            {isCameraOn ? <Video className="w-4 h-4 sm:w-5 sm:h-5" /> : <VideoOff className="w-4 h-4 sm:w-5 sm:h-5" />}
           </CtrlBtn>
 
           <CtrlBtn onClick={toggleScreenShare} active={!isScreenSharing} label={isScreenSharing ? 'Stop sharing' : 'Present'}>
-            {isScreenSharing ? <MonitorOff className="w-5 h-5" /> : <Monitor className="w-5 h-5" />}
+            {isScreenSharing ? <MonitorOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Monitor className="w-4 h-4 sm:w-5 sm:h-5" />}
           </CtrlBtn>
 
           <CtrlBtn onClick={toggleHandRaise} active={!isHandRaised} label={isHandRaised ? 'Lower hand' : 'Raise hand'}>
-            <Hand className="w-5 h-5" />
+            <Hand className="w-4 h-4 sm:w-5 sm:h-5" />
           </CtrlBtn>
 
           {/* Reactions picker */}
-          <div className="relative flex flex-col items-center gap-1">
+          <div className="relative flex flex-col items-center gap-1 flex-shrink-0">
             <button
               onClick={() => setShowReactions(p => !p)}
-              className="w-14 h-14 rounded-full bg-[#3C4043] hover:bg-[#4A4D51] flex items-center justify-center text-white transition-colors"
+              className="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#3C4043] hover:bg-[#4A4D51] flex items-center justify-center text-white transition-colors"
             >
-              <Smile className="w-5 h-5" />
+              <Smile className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
-            <span className="text-[#BDC1C6] text-[10px] font-medium">React</span>
+            <span className="text-[#BDC1C6] text-[10px] font-medium hidden sm:block">React</span>
             {showReactions && (
-              <div className="absolute bottom-20 left-1/2 -translate-x-1/2 bg-[#292B2F] border border-[#3C4043] rounded-2xl p-3 shadow-2xl flex gap-2 z-50">
+              <div className="fixed bottom-28 sm:bottom-auto sm:absolute sm:bottom-20 left-1/2 -translate-x-1/2 bg-[#292B2F] border border-[#3C4043] rounded-2xl p-3 shadow-2xl flex gap-2 z-50">
                 {['👍','❤️','😂','😮','👏','🎉'].map(e => (
                   <button key={e} onClick={() => sendReaction(e)} className="text-2xl hover:scale-125 transition-transform p-1.5 rounded-xl hover:bg-[#3C4043]">{e}</button>
                 ))}
@@ -957,30 +957,30 @@ export default function MeetingRoom() {
           </div>
 
           <CtrlBtn onClick={() => setShowChat(p => !p)} active={!showChat} label="Chat">
-            <MessageSquare className="w-5 h-5" />
+            <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
           </CtrlBtn>
 
           <CtrlBtn onClick={() => setShowParticipants(p => !p)} active={!showParticipants} label="People">
-            <Users className="w-5 h-5" />
+            <Users className="w-4 h-4 sm:w-5 sm:h-5" />
           </CtrlBtn>
 
           {remoteStreams.size > 0 && (
             <CtrlBtn onClick={() => setViewMode(p => p === 'grid' ? 'speaker' : 'grid')} label={viewMode === 'grid' ? 'Speaker' : 'Grid'}>
-              {viewMode === 'grid' ? <User className="w-5 h-5" /> : <Grid className="w-5 h-5" />}
+              {viewMode === 'grid' ? <User className="w-4 h-4 sm:w-5 sm:h-5" /> : <Grid className="w-4 h-4 sm:w-5 sm:h-5" />}
             </CtrlBtn>
           )}
 
           <CtrlBtn onClick={() => setShowSettings(p => !p)} label="More">
-            <Settings className="w-5 h-5" />
+            <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
           </CtrlBtn>
 
           {/* Leave */}
           <CtrlBtn onClick={leaveMeeting} danger label="Leave">
-            <PhoneOff className="w-5 h-5" />
+            <PhoneOff className="w-4 h-4 sm:w-5 sm:h-5" />
           </CtrlBtn>
         </div>
 
-        <p className="text-center text-[#5F6368] text-xs mt-3">
+        <p className="hidden sm:block text-center text-[#5F6368] text-xs mt-3">
           Meeting ID: <span className="font-mono text-[#9AA0A6]">{meetingCode}</span>
         </p>
       </div>
@@ -1019,9 +1019,9 @@ export default function MeetingRoom() {
 
       {/* ── Admit requests ── */}
       {admitRequests.length > 0 && (
-        <div className="fixed bottom-36 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center">
+        <div className="fixed bottom-28 sm:bottom-36 left-2 right-2 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-50 flex flex-col gap-2 items-stretch sm:items-center">
           {admitRequests.map(req => (
-            <div key={req.socketId} className="flex items-center gap-4 bg-[#292B2F] border border-[#3C4043] rounded-2xl px-5 py-3.5 shadow-2xl min-w-[340px]">
+            <div key={req.socketId} className="flex items-center gap-3 sm:gap-4 bg-[#292B2F] border border-[#3C4043] rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 shadow-2xl sm:min-w-[340px]">
               <div
                 className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0"
                 style={{ backgroundColor: avatarColor(req.userName) }}
