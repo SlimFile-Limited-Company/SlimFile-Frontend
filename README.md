@@ -1,4 +1,4 @@
-# SlimFile - File Compression and Conversion Platform
+# SlimFile - File Compression Conversion and Collaboration Platform
 
 A modern, full-stack file compression service that compresses images and PDFs with Google OAuth authentication. Built with React, TypeScript, Node.js, and MongoDB.
 
