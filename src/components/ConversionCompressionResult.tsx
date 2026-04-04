@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Download, RefreshCw, FileText, Image, File, Zap, ArrowRight, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+import { ProcessingText } from '@/components/ProcessingText';
 import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from '@/lib/auth';
 import { toast } from '@/hooks/use-toast';
@@ -345,8 +345,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
                     Processing: {originalFile.name}
                   </h3>
                   <p className="text-sm text-gray-600 mb-3">{step}</p>
-                  <Progress value={progress || 0} className="w-full mb-2" />
-                  <p className="text-sm text-gray-600">{progress || 0}% complete</p>
+                  <ProcessingText mode="both" />
                 </div>
               </div>
             ) : (

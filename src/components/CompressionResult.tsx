@@ -2,7 +2,7 @@ import { useState, Fragment, useEffect, useRef } from "react";
 import { Download, FileText, Image as ImageIcon, RotateCcw, CheckCircle, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { ProcessingText } from "@/components/ProcessingText";
 import { useNavigate } from "react-router-dom";
 import { isAuthenticated } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
@@ -325,8 +325,7 @@ export const CompressionResult = ({
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Compressing: {file.name}
                   </h3>
-                  <Progress value={compressionProgress[idx] || 0} className="w-full mb-2" />
-                  <p className="text-sm text-gray-600">{compressionProgress[idx] || 0}% complete</p>
+                  <ProcessingText mode="compress" />
                 </div>
               </CardContent>
             </Card>

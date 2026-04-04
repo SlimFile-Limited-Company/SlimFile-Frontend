@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Download, RefreshCw, FileText, Image, File, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+import { ProcessingText } from '@/components/ProcessingText';
 import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from '@/lib/auth';
 import { toast } from '@/hooks/use-toast';
@@ -322,8 +322,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Converting: {originalFile.name}
                   </h3>
-                  <Progress value={progress || 0} className="w-full mb-2" />
-                  <p className="text-sm text-gray-600">{progress || 0}% complete</p>
+                  <ProcessingText mode="convert" />
                 </div>
               </div>
             ) : (
