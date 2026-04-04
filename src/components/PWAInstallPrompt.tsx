@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { X, Download } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -19,19 +19,17 @@ export const PWAInstallPrompt = () => {
 
   useEffect(() => {
     console.log('PWA Install Prompt: Component mounted');
-    
-    // Check if app is already installed
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
                         (window.navigator as any).standalone === true;
-    
+
     console.log('PWA Install Prompt: Is standalone?', isStandalone);
-    
+
     if (isStandalone) {
       setIsInstalled(true);
       return;
     }
 
-    // Listen for the beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
       console.log('PWA Install Prompt: beforeinstallprompt event fired');
       e.preventDefault();
@@ -39,20 +37,17 @@ export const PWAInstallPrompt = () => {
       setShowPrompt(true);
     };
 
-    // Listen for app installed event
     const handleAppInstalled = () => {
       console.log('PWA Install Prompt: App installed event fired');
       setIsInstalled(true);
       setShowPrompt(false);
     };
 
-    // Check if the app is installable
     const checkInstallability = async () => {
       try {
         const response = await fetch('/manifest.json');
         if (response.ok) {
           console.log('PWA Install Prompt: Manifest is accessible');
-          // Show prompt after a short delay if manifest is accessible
           timeoutRef.current = setTimeout(() => {
             console.log('PWA Install Prompt: Showing prompt after manifest check');
             setShowPrompt(true);
@@ -64,7 +59,7 @@ export const PWAInstallPrompt = () => {
         console.log('PWA Install Prompt: Error checking manifest:', error);
       }
     };
-    
+
     checkInstallability();
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -79,27 +74,20 @@ export const PWAInstallPrompt = () => {
 
   const handleInstallClick = async () => {
     console.log('PWA Install Prompt: Install button clicked');
-    
+
     if (deferredPrompt) {
-      console.log('PWA Install Prompt: Using deferred prompt');
       try {
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
-        
         if (outcome === 'accepted') {
-          console.log('PWA Install Prompt: User accepted the install prompt');
           setShowPrompt(false);
-        } else {
-          console.log('PWA Install Prompt: User dismissed the install prompt');
         }
-        
         setDeferredPrompt(null);
       } catch (error) {
         console.log('PWA Install Prompt: Error with deferred prompt:', error);
         showManualInstallInstructions();
       }
     } else {
-      console.log('PWA Install Prompt: No deferred prompt, trying alternative methods');
       showManualInstallInstructions();
     }
   };
@@ -109,25 +97,21 @@ export const PWAInstallPrompt = () => {
     const isAndroid = /Android/.test(navigator.userAgent);
     const isChrome = /Chrome/.test(navigator.userAgent);
     const isEdge = /Edg/.test(navigator.userAgent);
-    
+
     let message = '';
-    
+
     if (isIOS) {
       message = 'To install SlimFile:\n1. Tap the Share button (square with arrow)\n2. Tap "Add to Home Screen"\n3. Tap "Add"';
     } else if (isAndroid) {
       message = 'To install SlimFile:\n1. Tap the menu button (three dots)\n2. Tap "Add to Home screen"\n3. Tap "Add"';
     } else if (isChrome || isEdge) {
-      message = 'To install SlimFile:\n1. Look for the install icon (+ symbol) in your browser\'s address bar\n2. Click it and follow the prompts\n3. Or press Ctrl+Shift+I, go to Application tab, and look for "Install"';
+      message = 'To install SlimFile:\n1. Look for the install icon (+ symbol) in your browser\'s address bar\n2. Click it and follow the prompts';
     } else {
-      message = 'To install SlimFile:\n1. Look for an install option in your browser\'s menu\n2. Or use your browser\'s developer tools to find the install option';
+      message = 'To install SlimFile:\n1. Look for an install option in your browser\'s menu';
     }
-    
+
     alert(message);
-    
-    // Hide the prompt after showing instructions
-    setTimeout(() => {
-      setShowPrompt(false);
-    }, 3000);
+    setTimeout(() => setShowPrompt(false), 3000);
   };
 
   const handleDismiss = () => {
@@ -140,41 +124,72 @@ export const PWAInstallPrompt = () => {
   }
 
   return (
-    <div className="fixed top-[88px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm">
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 flex items-center justify-center overflow-hidden rounded-lg">
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+        onClick={handleDismiss}
+      />
+
+      {/* Modal */}
+      <div className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm mx-auto px-4">
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* Header */}
+          <div className="relative bg-gradient-to-br from-primary to-primary/80 px-6 pt-8 pb-6 text-white text-center">
+            <button
+              onClick={handleDismiss}
+              className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-white/20 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="w-16 h-16 mx-auto mb-3 rounded-2xl overflow-hidden shadow-lg">
               <img
                 src="/lovable-uploads/logo.png"
                 alt="SlimFile Logo"
-                className="w-10 h-10 object-cover rounded-lg"
+                className="w-full h-full object-cover"
               />
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">Install SlimFile</p>
-              <p className="text-xs text-gray-600">Quick access to file compression</p>
-            </div>
+            <h2 className="text-xl font-bold">Install SlimFile</h2>
+            <p className="text-sm text-white/80 mt-1">Get the full app experience</p>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              onClick={handleInstallClick}
-              size="sm"
-              className="bg-primary text-white hover:bg-primary/90 font-medium rounded-full px-4 transition-all duration-200"
-            >
-              Install
-            </Button>
+
+          {/* Features */}
+          <div className="px-6 py-5 space-y-3">
+            {[
+              'Quick access from your home screen',
+              'Works offline for core features',
+              'Faster load times',
+            ].map((feature) => (
+              <div key={feature} className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                  <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <span className="text-sm text-gray-700">{feature}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Actions */}
+          <div className="px-6 pb-6 flex gap-3">
             <Button
               onClick={handleDismiss}
-              size="sm"
-              variant="ghost"
-              className="text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200"
+              variant="outline"
+              className="flex-1 rounded-xl border-gray-200 text-gray-600"
             >
-              <X className="w-4 h-4" />
+              Not now
+            </Button>
+            <Button
+              onClick={handleInstallClick}
+              className="flex-1 rounded-xl bg-primary text-white hover:bg-primary/90 gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Install
             </Button>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
-}; 
+};
