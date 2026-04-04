@@ -1,38 +1,20 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, type ReactNode } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Mic, MicOff, Video, VideoOff, Monitor, MonitorOff, PhoneOff,
   Users, MessageSquare, Hand, Smile, Grid, User, Settings,
-  Bell, BellOff, Radio, Square, Maximize2, Minimize2, Sparkles,
+  Bell, Radio, Square, Maximize2, Minimize2,
   Copy, Circle, Pin,
 } from 'lucide-react';
 import { getToken } from '@/lib/auth';
 import { meetingService } from '@/services/meetingService';
 import { initializeSocket, getSocket } from '@/services/socketService';
 
-interface ChatMessage {
-  userId: string;
-  userName: string;
-  message: string;
-  timestamp: string;
-}
+interface ChatMessage { userId: string; userName: string; message: string; timestamp: string; }
+interface Participant { userId: string; userName: string; isHandRaised: boolean; isMuted: boolean; isCameraOff: boolean; }
+interface Reaction { userId: string; userName: string; emoji: string; timestamp: number; }
 
-interface Participant {
-  userId: string;
-  userName: string;
-  isHandRaised: boolean;
-  isMuted: boolean;
-  isCameraOff: boolean;
-}
-
-interface Reaction {
-  userId: string;
-  userName: string;
-  emoji: string;
-  timestamp: number;
-}
-
-// ─── Avatar helper ────────────────────────────────────────────────────────────
+// ─── Avatar ──────────────────────────────────────────────────────────────────
 const COLORS = ['#1a73e8','#34a853','#fbbc04','#ea4335','#9c27b0','#00bcd4','#ff5722','#607d8b'];
 function avatarColor(name: string) {
   let h = 0;
@@ -40,55 +22,30 @@ function avatarColor(name: string) {
   return COLORS[Math.abs(h) % COLORS.length];
 }
 
-// ─── Remote video card ────────────────────────────────────────────────────────
-interface RemoteVideoCardProps {
-  participantId: string;
-  stream: MediaStream;
-  participant?: Participant;
-  isPinned?: boolean;
-  onPin?: () => void;
-  compact?: boolean;
-  fill?: boolean;
-}
-
-function RemoteVideoCard({ participantId, stream, participant, isPinned, onPin, compact, fill }: RemoteVideoCardProps) {
+// ─── Remote video tile ────────────────────────────────────────────────────────
+function RemoteVideoCard({ participantId, stream, participant, isPinned, onPin, compact, fill, isActiveSpeaker }: {
+  participantId: string; stream: MediaStream; participant?: Participant;
+  isPinned?: boolean; onPin?: () => void; compact?: boolean; fill?: boolean; isActiveSpeaker?: boolean;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasVideo, setHasVideo] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !stream) return;
-
     const attach = () => {
       video.srcObject = stream;
       const vt = stream.getVideoTracks();
       setHasVideo(vt.length > 0 && vt[0].enabled && vt[0].readyState === 'live');
-      video.onloadedmetadata = () => {
-        video.play().catch((e) => { if (e.name !== 'AbortError') console.error(e); });
-      };
+      video.onloadedmetadata = () => video.play().catch(e => { if (e.name !== 'AbortError') console.error(e); });
     };
-
     attach();
-
-    const onAdd = (e: MediaStreamTrackEvent) => {
-      if (e.track.kind === 'video') attach();
-    };
-    const onRemove = () => {
-      const vt = stream.getVideoTracks();
-      setHasVideo(vt.length > 0 && vt[0].enabled);
-    };
-
+    const onAdd = (e: MediaStreamTrackEvent) => { if (e.track.kind === 'video') attach(); };
+    const onRemove = () => { const vt = stream.getVideoTracks(); setHasVideo(vt.length > 0 && vt[0].enabled); };
     stream.addEventListener('addtrack', onAdd);
     stream.addEventListener('removetrack', onRemove);
-    stream.getTracks().forEach(t => {
-      t.onunmute = () => attach();
-      t.onmute = () => { if (t.kind === 'video') setHasVideo(false); };
-    });
-
-    return () => {
-      stream.removeEventListener('addtrack', onAdd);
-      stream.removeEventListener('removetrack', onRemove);
-    };
+    stream.getTracks().forEach(t => { t.onunmute = () => attach(); t.onmute = () => { if (t.kind === 'video') setHasVideo(false); }; });
+    return () => { stream.removeEventListener('addtrack', onAdd); stream.removeEventListener('removetrack', onRemove); };
   }, [stream]);
 
   const name = participant?.userName || participantId.substring(0, 10);
@@ -97,78 +54,47 @@ function RemoteVideoCard({ participantId, stream, participant, isPinned, onPin, 
 
   return (
     <div
-      className={`relative bg-[#3C4043] overflow-hidden flex items-center justify-center group cursor-pointer ${compact ? 'rounded-xl' : 'rounded-2xl'} ${isPinned ? 'ring-2 ring-[#1a73e8]' : ''} ${fill ? 'w-full h-full' : ''}`}
+      className={`relative bg-[#3C4043] overflow-hidden flex items-center justify-center group cursor-pointer
+        ${compact ? 'rounded-xl' : 'rounded-2xl'}
+        ${fill ? 'w-full h-full' : ''}
+        ${isActiveSpeaker ? 'ring-2 ring-[#1a73e8]' : isPinned ? 'ring-2 ring-white/40' : ''}`}
       style={fill ? undefined : { aspectRatio: '16/9' }}
       onClick={onPin}
     >
       <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
-
       {!hasVideo && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            className="rounded-full flex items-center justify-center text-white font-medium shadow-lg"
-            style={{
-              backgroundColor: color,
-              width: compact ? 48 : 72,
-              height: compact ? 48 : 72,
-              fontSize: compact ? 20 : 30,
-            }}
-          >
+          <div className="rounded-full flex items-center justify-center text-white font-medium shadow-lg"
+            style={{ backgroundColor: color, width: compact ? 48 : 72, height: compact ? 48 : 72, fontSize: compact ? 20 : 30 }}>
             {initial}
           </div>
         </div>
       )}
-
-      {/* Pin button */}
       {!compact && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onPin?.(); }}
-          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-full p-1.5"
-        >
+        <button onClick={e => { e.stopPropagation(); onPin?.(); }}
+          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-full p-1.5">
           <Pin className={`w-3.5 h-3.5 ${isPinned ? 'text-[#1a73e8]' : 'text-white'}`} />
         </button>
       )}
-
-      {/* Name tag */}
-      <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-lg">
+      <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-lg flex items-center gap-1.5">
         <span className="text-white text-xs font-medium">{name}</span>
+        {participant?.isMuted && <MicOff className="w-3 h-3 text-red-400" />}
       </div>
-
-      {participant?.isMuted && (
-        <div className="absolute top-2 left-2 bg-[#3C4043]/80 rounded-full p-1.5">
-          <MicOff className="w-3 h-3 text-red-400" />
-        </div>
-      )}
-      {participant?.isHandRaised && (
-        <div className="absolute top-2 right-2 text-base animate-bounce">✋</div>
-      )}
+      {participant?.isHandRaised && <div className="absolute top-2 left-2 text-base animate-bounce">✋</div>}
+      {isActiveSpeaker && <div className="absolute top-2 right-2 w-2 h-2 bg-[#1a73e8] rounded-full animate-pulse" />}
     </div>
   );
 }
 
 // ─── Control button ───────────────────────────────────────────────────────────
-function CtrlBtn({
-  onClick, active = true, danger = false, label, children,
-}: {
-  onClick: () => void;
-  active?: boolean;
-  danger?: boolean;
-  label?: string;
-  children: React.ReactNode;
+function CtrlBtn({ onClick, active = true, danger = false, label, children }: {
+  onClick: () => void; active?: boolean; danger?: boolean; label?: string; children: ReactNode;
 }) {
   return (
     <div className="flex flex-col items-center gap-1 flex-shrink-0">
-      <button
-        onClick={onClick}
-        title={label}
+      <button onClick={onClick} title={label}
         className={`w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all duration-150 focus:outline-none
-          ${danger
-            ? 'bg-red-600 hover:bg-red-500 text-white'
-            : active
-              ? 'bg-[#3C4043] hover:bg-[#4A4D51] text-white'
-              : 'bg-red-600 hover:bg-red-500 text-white'
-          }`}
-      >
+          ${danger ? 'bg-red-600 hover:bg-red-500 text-white' : active ? 'bg-[#3C4043] hover:bg-[#4A4D51] text-white' : 'bg-red-600 hover:bg-red-500 text-white'}`}>
         {children}
       </button>
       {label && <span className="text-[#BDC1C6] text-[10px] font-medium hidden sm:block">{label}</span>}
@@ -176,50 +102,70 @@ function CtrlBtn({
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Main ─────────────────────────────────────────────────────────────────────
 export default function MeetingRoom() {
   const { meetingCode } = useParams<{ meetingCode: string }>();
   const navigate = useNavigate();
 
+  // ── Pre-join lobby
+  const [inLobby, setInLobby] = useState(true);
+  const lobbyVideoRef = useRef<HTMLVideoElement>(null);
+
+  // ── Media
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const localStream = useRef<MediaStream | null>(null);
+
+  // ── Meeting state
+  const [isStreamReady, setIsStreamReady] = useState(false);
+  const [admissionState, setAdmissionState] = useState<'checking' | 'waiting' | 'admitted' | 'denied'>('checking');
+  const [isJoined, setIsJoined] = useState(false);
+  const [isHost, setIsHost] = useState(false);
+  const userIdRef = useRef('');
+  const userNameRef = useRef('');
+
+  // ── Participants & streams
+  const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
+  const [participants, setParticipants] = useState<Map<string, Participant>>(new Map());
+  const [currentUserName, setCurrentUserName] = useState('');
+  const [currentUserId, setCurrentUserId] = useState('');
+  const [admitRequests, setAdmitRequests] = useState<Array<{ socketId: string; userId: string; userName: string }>>([]);
+
+  // ── UI state
   const [showParticipants, setShowParticipants] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showReactions, setShowReactions] = useState(false);
-  const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
-  const [isStreamReady, setIsStreamReady] = useState(false);
-  const [admissionState, setAdmissionState] = useState<'checking' | 'waiting' | 'admitted' | 'denied'>('checking');
-  const [isJoined, setIsJoined] = useState(false);
-  const [admitRequests, setAdmitRequests] = useState<Array<{ socketId: string; userId: string; userName: string }>>([]);
-  const [participants, setParticipants] = useState<Map<string, Participant>>(new Map());
-  const [currentUserName, setCurrentUserName] = useState('');
-  const [currentUserId, setCurrentUserId] = useState('');
   const [isHandRaised, setIsHandRaised] = useState(false);
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'speaker'>('grid');
   const [pinnedParticipant, setPinnedParticipant] = useState<string | null>(null);
-  const [connectionQuality, setConnectionQuality] = useState<'good' | 'medium' | 'poor'>('good');
+  const [activeSpeaker, setActiveSpeaker] = useState<string | null>(null);
+
+  // ── Chat
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ── Misc
+  const [connectionQuality, setConnectionQuality] = useState<'good' | 'medium' | 'poor'>('good');
   const [notificationSounds, setNotificationSounds] = useState(true);
   const [isPipMode, setIsPipMode] = useState(false);
   const [isBackgroundBlurred, setIsBackgroundBlurred] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
+  const [meetingDuration, setMeetingDuration] = useState(0);
   const [clock, setClock] = useState('');
   const [toasts, setToasts] = useState<Array<{ id: number; message: string; type: string }>>([]);
-
-  const localVideoRef = useRef<HTMLVideoElement>(null);
-  const localStream = useRef<MediaStream | null>(null);
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const recordingIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const meetingStartRef = useRef<number | null>(null);
 
-  // Clock
+  // ── Clock
   useEffect(() => {
     const tick = () => setClock(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
     tick();
@@ -227,13 +173,23 @@ export default function MeetingRoom() {
     return () => clearInterval(id);
   }, []);
 
-  const showToast = (message: string, type = 'info') => {
+  // ── Meeting duration timer (starts when joined)
+  useEffect(() => {
+    if (!isJoined) return;
+    meetingStartRef.current = Date.now();
+    const id = setInterval(() => {
+      setMeetingDuration(Math.floor((Date.now() - meetingStartRef.current!) / 1000));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [isJoined]);
+
+  const showToast = useCallback((message: string, type = 'info') => {
     const id = Date.now();
     setToasts(p => [...p, { id, message, type }]);
     setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 3500);
-  };
+  }, []);
 
-  // Media init
+  // ── Media init (runs immediately on mount for lobby preview)
   useEffect(() => {
     const init = async () => {
       try {
@@ -243,9 +199,10 @@ export default function MeetingRoom() {
         });
         localStream.current = stream;
         meetingService.setLocalStream(stream);
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = stream;
-          localVideoRef.current.play().catch(() => {});
+        // Attach to lobby preview
+        if (lobbyVideoRef.current) {
+          lobbyVideoRef.current.srcObject = stream;
+          lobbyVideoRef.current.play().catch(() => {});
         }
         setIsStreamReady(true);
       } catch (err: any) {
@@ -259,20 +216,17 @@ export default function MeetingRoom() {
     };
   }, []);
 
-  // Re-attach local stream whenever layout switches (remoteStreams.size change unmounts/remounts the video element)
+  // ── Re-attach local stream when layout changes
   useEffect(() => {
     if (!localStream.current || !localVideoRef.current) return;
-    if (isScreenSharing) return; // screen share handles its own srcObject
+    if (isScreenSharing) return;
     localVideoRef.current.srcObject = localStream.current;
     localVideoRef.current.play().catch(() => {});
   }, [remoteStreams.size, isScreenSharing]);
 
-  // Phase 1: Request admission when stream is ready
-  const userIdRef = useRef('');
-  const userNameRef = useRef('');
-
+  // ── Phase 1: Request admission when stream ready AND lobby exited
   useEffect(() => {
-    if (!meetingCode || !isStreamReady) return;
+    if (!meetingCode || !isStreamReady || inLobby) return;
 
     let socket = getSocket();
     if (!socket || !socket.connected) {
@@ -296,7 +250,11 @@ export default function MeetingRoom() {
     userIdRef.current = userId;
     userNameRef.current = userName;
 
-    const onAdmitted = () => setAdmissionState('admitted');
+    const onAdmitted = (data: any) => {
+      // If backend says room was empty, this user is the host
+      if (data?.wasEmpty) setIsHost(true);
+      setAdmissionState('admitted');
+    };
     const onWaiting = () => setAdmissionState('waiting');
     const onDenied = () => setAdmissionState('denied');
     const onAdmitRequest = (data: { socketId: string; userId: string; userName: string }) => {
@@ -316,9 +274,9 @@ export default function MeetingRoom() {
       socket.off('meeting:denied', onDenied);
       socket.off('meeting:admit-request', onAdmitRequest);
     };
-  }, [meetingCode, isStreamReady]);
+  }, [meetingCode, isStreamReady, inLobby]);
 
-  // Phase 2: Actually join meeting once admitted (works for both auto-admit and manual admit)
+  // ── Phase 2: Join once admitted
   useEffect(() => {
     if (admissionState !== 'admitted' || isJoined || !meetingCode || !localStream.current) return;
 
@@ -351,9 +309,9 @@ export default function MeetingRoom() {
     setIsJoined(true);
 
     return () => { meetingService.leaveMeeting(); };
-  }, [admissionState, isJoined, meetingCode]);
+  }, [admissionState, isJoined, meetingCode, showToast]);
 
-  // Socket listeners for UI events (only after admitted + joined)
+  // ── Socket listeners (UI events)
   useEffect(() => {
     if (!isJoined) return;
     const socket = getSocket();
@@ -372,13 +330,17 @@ export default function MeetingRoom() {
       if (notificationSounds) playSound('join');
       showToast(`${data.userName} joined`);
     };
-    const onHandRaised = (d: { userId: string; isRaised: boolean }) => {
+    const onHandRaised = (d: { userId: string; userName: string; isRaised: boolean }) => {
       setParticipants(prev => {
         const m = new Map(prev);
         const p = m.get(d.userId);
         if (p) m.set(d.userId, { ...p, isHandRaised: d.isRaised });
         return m;
       });
+      // Toast notification when someone raises hand
+      if (d.isRaised && d.userId !== currentUserId) {
+        showToast(`✋ ${d.userName} raised their hand`, 'info');
+      }
     };
     const onReaction = (d: { userId: string; userName: string; emoji: string }) => {
       const r: Reaction = { ...d, timestamp: Date.now() };
@@ -416,9 +378,51 @@ export default function MeetingRoom() {
       socket.off('meeting:participant-update', onUpdate);
       socket.off('meeting:user-typing', onTyping);
     };
-  }, [isJoined, notificationSounds]);
+  }, [isJoined, notificationSounds, currentUserId, showToast]);
 
-  // Connection quality monitor
+  // ── Active speaker detection via Web Audio API
+  useEffect(() => {
+    if (!isJoined) return;
+    const analysers: { id: string; analyser: AnalyserNode; ctx: AudioContext }[] = [];
+    let animFrame: number;
+
+    const setupAnalyser = (id: string, stream: MediaStream) => {
+      try {
+        const ctx = new AudioContext();
+        const source = ctx.createMediaStreamSource(stream);
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 256;
+        source.connect(analyser);
+        analysers.push({ id, analyser, ctx });
+      } catch {}
+    };
+
+    // Local
+    if (localStream.current) setupAnalyser('local', localStream.current);
+    // Remote
+    remoteStreams.forEach((stream, pid) => setupAnalyser(pid, stream));
+
+    const detect = () => {
+      let loudestId: string | null = null;
+      let loudestLevel = 8; // threshold
+      const buf = new Uint8Array(128);
+      for (const { id, analyser } of analysers) {
+        analyser.getByteFrequencyData(buf);
+        const avg = buf.slice(0, 10).reduce((a, b) => a + b, 0) / 10;
+        if (avg > loudestLevel) { loudestLevel = avg; loudestId = id === 'local' ? null : id; }
+      }
+      setActiveSpeaker(loudestId);
+      animFrame = requestAnimationFrame(detect);
+    };
+    detect();
+
+    return () => {
+      cancelAnimationFrame(animFrame);
+      analysers.forEach(({ ctx }) => ctx.close().catch(() => {}));
+    };
+  }, [isJoined, remoteStreams]);
+
+  // ── Connection quality monitor
   useEffect(() => {
     const id = setInterval(() => {
       const s = getSocket();
@@ -440,8 +444,9 @@ export default function MeetingRoom() {
     } catch {}
   };
 
-  // ── Controls ────────────────────────────────────────────────────────────────
+  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
+  // ── Controls
   const toggleMic = () => {
     if (!localStream.current) return;
     const t = localStream.current.getAudioTracks()[0];
@@ -462,7 +467,6 @@ export default function MeetingRoom() {
 
   const toggleScreenShare = async () => {
     if (isScreenSharing) {
-      // Stop sharing — revert to camera
       await meetingService.stopScreenShare();
       setIsScreenSharing(false);
       if (localVideoRef.current && localStream.current) {
@@ -473,12 +477,10 @@ export default function MeetingRoom() {
       try {
         const screenStream = await meetingService.startScreenShare();
         setIsScreenSharing(true);
-        // Show screen in local preview
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = screenStream;
           localVideoRef.current.play().catch(() => {});
         }
-        // When user stops via browser stop-share button
         screenStream.getVideoTracks()[0].onended = () => {
           setIsScreenSharing(false);
           meetingService.stopScreenShare().catch(() => {});
@@ -487,9 +489,7 @@ export default function MeetingRoom() {
             localVideoRef.current.play().catch(() => {});
           }
         };
-      } catch (err) {
-        console.error('Screen share error:', err);
-      }
+      } catch (err) { console.error('Screen share error:', err); }
     }
   };
 
@@ -513,17 +513,25 @@ export default function MeetingRoom() {
   };
 
   const admitUser = (socketId: string) => {
-    const socket = getSocket();
-    if (!socket || !meetingCode) return;
-    socket.emit('meeting:admit-user', { meetingId: meetingCode, socketId });
+    getSocket()?.emit('meeting:admit-user', { meetingId: meetingCode, socketId });
     setAdmitRequests(prev => prev.filter(r => r.socketId !== socketId));
   };
 
   const denyUser = (socketId: string) => {
-    const socket = getSocket();
-    if (!socket || !meetingCode) return;
-    socket.emit('meeting:deny-user', { meetingId: meetingCode, socketId });
+    getSocket()?.emit('meeting:deny-user', { meetingId: meetingCode, socketId });
     setAdmitRequests(prev => prev.filter(r => r.socketId !== socketId));
+  };
+
+  // Host: mute a remote participant
+  const muteParticipant = (userId: string) => {
+    getSocket()?.emit('meeting:participant-update', { meetingId: meetingCode, userId, isMuted: true });
+    showToast('Participant muted', 'info');
+  };
+
+  // Host: remove a participant
+  const removeParticipant = (userId: string) => {
+    getSocket()?.emit('meeting:remove-participant', { meetingId: meetingCode, targetUserId: userId });
+    showToast('Participant removed', 'info');
   };
 
   const leaveMeeting = () => {
@@ -594,19 +602,16 @@ export default function MeetingRoom() {
     setRecordingDuration(0);
   };
 
-  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
-
   const total = remoteStreams.size + 1;
   const myInitial = currentUserName.charAt(0).toUpperCase() || 'Y';
   const myColor = avatarColor(currentUserName || 'You');
 
-  // ── Video layout ─────────────────────────────────────────────────────────────
+  // ── Video layout
   const renderVideos = () => {
-    // Solo — video fills full area, waiting message overlaid
     if (total === 1) return (
       <div className="relative w-full h-full">
         <div className="absolute inset-0 bg-[#3C4043] rounded-2xl overflow-hidden">
-          <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+          <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" style={isBackgroundBlurred ? { filter: 'blur(8px)', transform: 'scaleX(-1)' } : undefined} />
           {!isCameraOn && (
             <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]">
               <div className="w-24 h-24 rounded-full flex items-center justify-center text-white text-4xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div>
@@ -617,30 +622,28 @@ export default function MeetingRoom() {
             {!isMicOn && <MicOff className="w-3 h-3 text-red-400" />}
           </div>
           {isHandRaised && <div className="absolute top-3 left-3 text-xl animate-bounce">✋</div>}
-          {isScreenSharing && (
-            <div className="absolute top-3 right-3 bg-[#1a73e8] text-white text-xs px-2 py-1 rounded-md font-medium">Sharing screen</div>
-          )}
+          {isScreenSharing && <div className="absolute top-3 right-3 bg-[#1a73e8] text-white text-xs px-2 py-1 rounded-md font-medium">Sharing screen</div>}
         </div>
-        {/* Waiting overlay */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-10">
+        {/* Waiting overlay — sits above controls */}
+        <div className="absolute bottom-24 sm:bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-10 w-full px-4">
           <div className="flex items-center gap-3 bg-[#3C4043]/90 backdrop-blur-sm px-6 py-3 rounded-full">
-            <Users className="w-5 h-5 text-[#BDC1C6]" />
-            <span className="text-[#BDC1C6] text-sm font-medium">Waiting for others to join…</span>
+            <Users className="w-5 h-5 text-[#BDC1C6] flex-shrink-0" />
+            <span className="text-[#BDC1C6] text-sm font-medium whitespace-nowrap">Waiting for others to join…</span>
           </div>
           <p className="text-[#9AA0A6] text-xs">Share the meeting link to invite people</p>
         </div>
       </div>
     );
 
-    // 2 people: large remote fills full screen + self pip
     if (total === 2 && viewMode === 'grid') {
       const [[rid, rs]] = Array.from(remoteStreams.entries());
       return (
         <div className="relative w-full h-full">
-          <RemoteVideoCard participantId={rid} stream={rs} participant={participants.get(rid)} isPinned={pinnedParticipant === rid} onPin={() => setPinnedParticipant(p => p === rid ? null : rid)} fill />
-          {/* Self PiP */}
-          <div className="absolute bottom-4 right-4 w-44 rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-[#3C4043]" style={{ aspectRatio: '16/9' }}>
-            <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+          <RemoteVideoCard participantId={rid} stream={rs} participant={participants.get(rid)}
+            isPinned={pinnedParticipant === rid} onPin={() => setPinnedParticipant(p => p === rid ? null : rid)}
+            fill isActiveSpeaker={activeSpeaker === rid} />
+          <div className="absolute bottom-4 right-4 w-36 sm:w-44 rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-[#3C4043]" style={{ aspectRatio: '16/9' }}>
+            <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" style={isBackgroundBlurred ? { filter: 'blur(8px)', transform: 'scaleX(-1)' } : undefined} />
             {!isCameraOn && (
               <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div>
@@ -653,7 +656,6 @@ export default function MeetingRoom() {
       );
     }
 
-    // Speaker view
     if (viewMode === 'speaker' || pinnedParticipant) {
       const sid = pinnedParticipant || Array.from(remoteStreams.keys())[0];
       const ss = sid ? remoteStreams.get(sid) : null;
@@ -661,20 +663,19 @@ export default function MeetingRoom() {
         <div className="w-full h-full flex flex-col gap-2">
           <div className="flex-1 min-h-0">
             {ss && sid
-              ? <RemoteVideoCard participantId={sid} stream={ss} participant={participants.get(sid)} isPinned onPin={() => setPinnedParticipant(null)} fill />
-              : <div className="w-full h-full bg-[#3C4043] rounded-2xl flex items-center justify-center"><p className="text-[#9AA0A6]">No active speaker</p></div>
-            }
+              ? <RemoteVideoCard participantId={sid} stream={ss} participant={participants.get(sid)} isPinned onPin={() => setPinnedParticipant(null)} fill isActiveSpeaker={activeSpeaker === sid} />
+              : <div className="w-full h-full bg-[#3C4043] rounded-2xl flex items-center justify-center"><p className="text-[#9AA0A6]">No active speaker</p></div>}
           </div>
           <div className="h-24 flex gap-2 overflow-x-auto pb-1">
-            {/* self */}
             <div className="relative bg-[#3C4043] rounded-xl overflow-hidden flex-shrink-0" style={{ aspectRatio: '16/9', height: '100%' }}>
-              <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+              <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" style={isBackgroundBlurred ? { filter: 'blur(8px)', transform: 'scaleX(-1)' } : undefined} />
               {!isCameraOn && <div className="absolute inset-0 flex items-center justify-center"><div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div></div>}
               <div className="absolute bottom-1 left-1 bg-black/60 px-1.5 py-0.5 rounded text-[10px] text-white">You</div>
             </div>
             {Array.from(remoteStreams.entries()).filter(([id]) => id !== sid).map(([pid, st]) => (
-              <div key={pid} className="relative bg-[#3C4043] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer hover:ring-2 ring-[#1a73e8]" style={{ aspectRatio: '16/9', height: '100%' }} onClick={() => setPinnedParticipant(pid)}>
-                <RemoteVideoCard participantId={pid} stream={st} participant={participants.get(pid)} compact />
+              <div key={pid} className="relative bg-[#3C4043] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer hover:ring-2 ring-[#1a73e8]"
+                style={{ aspectRatio: '16/9', height: '100%' }} onClick={() => setPinnedParticipant(pid)}>
+                <RemoteVideoCard participantId={pid} stream={st} participant={participants.get(pid)} compact isActiveSpeaker={activeSpeaker === pid} />
               </div>
             ))}
           </div>
@@ -682,13 +683,11 @@ export default function MeetingRoom() {
       );
     }
 
-    // Grid: 3+
-    const cols = total <= 4 ? 2 : total <= 6 ? 3 : total <= 9 ? 3 : 4;
+    const cols = total <= 4 ? 2 : total <= 9 ? 3 : 4;
     return (
       <div className="grid gap-2 w-full h-full" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridAutoRows: '1fr' }}>
-        {/* Self */}
         <div className="relative bg-[#3C4043] rounded-2xl overflow-hidden">
-          <video ref={localVideoRef} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover scale-x-[-1]" />
+          <video ref={localVideoRef} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover scale-x-[-1]" style={isBackgroundBlurred ? { filter: 'blur(8px)', transform: 'scaleX(-1)' } : undefined} />
           {!isCameraOn && <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]"><div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div></div>}
           <div className="absolute bottom-2 left-2 bg-black/60 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
             <span className="text-white text-xs font-medium">{currentUserName} (You)</span>
@@ -697,15 +696,60 @@ export default function MeetingRoom() {
           {isHandRaised && <div className="absolute top-2 left-2 text-lg animate-bounce">✋</div>}
         </div>
         {Array.from(remoteStreams.entries()).map(([pid, st]) => (
-          <RemoteVideoCard key={pid} participantId={pid} stream={st} participant={participants.get(pid)} isPinned={pinnedParticipant === pid} onPin={() => setPinnedParticipant(p => p === pid ? null : pid)} fill />
+          <RemoteVideoCard key={pid} participantId={pid} stream={st} participant={participants.get(pid)}
+            isPinned={pinnedParticipant === pid} onPin={() => setPinnedParticipant(p => p === pid ? null : pid)} fill isActiveSpeaker={activeSpeaker === pid} />
         ))}
       </div>
     );
   };
 
-  // ── Render ───────────────────────────────────────────────────────────────────
+  // ── Lobby screen (pre-join camera/mic check)
+  if (inLobby) {
+    return (
+      <div className="h-screen bg-[#202124] flex flex-col items-center justify-center gap-6 px-4 select-none">
+        <p className="text-[#9AA0A6] text-sm font-medium tracking-wide uppercase">Ready to join?</p>
+        <h1 className="text-white text-2xl font-medium -mt-2">{meetingCode}</h1>
 
-  // Brief loading while checking room (auto-resolves in <1 round-trip for the host)
+        {/* Camera preview */}
+        <div className="relative bg-[#3C4043] rounded-2xl overflow-hidden shadow-2xl w-full max-w-sm" style={{ aspectRatio: '16/9' }}>
+          <video ref={lobbyVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+          {!isCameraOn && (
+            <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-medium" style={{ backgroundColor: avatarColor('You') }}>
+                {currentUserName.charAt(0).toUpperCase() || 'Y'}
+              </div>
+            </div>
+          )}
+          {/* Mic/cam toggles overlay */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+            <button onClick={toggleMic}
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${isMicOn ? 'bg-black/50 text-white' : 'bg-red-600 text-white'}`}>
+              {isMicOn ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
+            </button>
+            <button onClick={toggleCamera}
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${isCameraOn ? 'bg-black/50 text-white' : 'bg-red-600 text-white'}`}>
+              {isCameraOn ? <Video className="w-4 h-4" /> : <VideoOff className="w-4 h-4" />}
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center gap-3 w-full max-w-sm">
+          <button
+            onClick={() => setInLobby(false)}
+            disabled={!isStreamReady}
+            className="w-full py-3 bg-[#1a73e8] hover:bg-[#1765cc] disabled:opacity-50 text-white font-medium rounded-full transition-colors text-sm"
+          >
+            {isStreamReady ? 'Join now' : 'Setting up camera…'}
+          </button>
+          <button onClick={() => navigate('/meet')} className="text-[#9AA0A6] hover:text-white text-sm transition-colors">
+            Return to home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Checking (spinner)
   if (admissionState === 'checking') {
     return (
       <div className="h-screen bg-[#202124] flex flex-col items-center justify-center gap-4 select-none">
@@ -715,13 +759,12 @@ export default function MeetingRoom() {
     );
   }
 
-  // Waiting to be admitted screen (only shown when backend confirms room has participants)
+  // ── Waiting to be admitted
   if (admissionState === 'waiting') {
     return (
-      <div className="h-screen bg-[#202124] flex flex-col items-center justify-center gap-6 select-none">
-        {/* Self preview */}
-        <div className="relative bg-[#3C4043] rounded-2xl overflow-hidden shadow-2xl" style={{ width: 320, aspectRatio: '16/9' }}>
-          <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+      <div className="h-screen bg-[#202124] flex flex-col items-center justify-center gap-6 select-none px-4">
+        <div className="relative bg-[#3C4043] rounded-2xl overflow-hidden shadow-2xl w-full max-w-xs" style={{ aspectRatio: '16/9' }}>
+          <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" style={isBackgroundBlurred ? { filter: 'blur(8px)', transform: 'scaleX(-1)' } : undefined} />
           {!isCameraOn && (
             <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]">
               <div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-medium" style={{ backgroundColor: avatarColor(currentUserName || 'You') }}>
@@ -730,8 +773,7 @@ export default function MeetingRoom() {
             </div>
           )}
         </div>
-
-        <div className="flex flex-col items-center gap-3 text-center">
+        <div className="flex flex-col items-center gap-2 text-center">
           <div className="w-12 h-12 rounded-full bg-[#3C4043] flex items-center justify-center animate-pulse">
             <Users className="w-5 h-5 text-[#BDC1C6]" />
           </div>
@@ -739,24 +781,15 @@ export default function MeetingRoom() {
           <p className="text-[#9AA0A6] text-sm">Someone in the meeting will let you in soon</p>
           <p className="text-[#5F6368] text-xs font-mono">{meetingCode}</p>
         </div>
-
         <div className="flex gap-3">
-          <button
-            onClick={toggleMic}
-            className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isMicOn ? 'bg-[#3C4043] text-white' : 'bg-red-600 text-white'}`}
-          >
+          <button onClick={toggleMic} className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isMicOn ? 'bg-[#3C4043] text-white' : 'bg-red-600 text-white'}`}>
             {isMicOn ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
           </button>
-          <button
-            onClick={toggleCamera}
-            className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isCameraOn ? 'bg-[#3C4043] text-white' : 'bg-red-600 text-white'}`}
-          >
+          <button onClick={toggleCamera} className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isCameraOn ? 'bg-[#3C4043] text-white' : 'bg-red-600 text-white'}`}>
             {isCameraOn ? <Video className="w-4 h-4" /> : <VideoOff className="w-4 h-4" />}
           </button>
-          <button
-            onClick={() => { localStream.current?.getTracks().forEach(t => t.stop()); navigate('/meet'); }}
-            className="w-12 h-12 rounded-full bg-red-600 hover:bg-red-500 flex items-center justify-center text-white transition-colors"
-          >
+          <button onClick={() => { localStream.current?.getTracks().forEach(t => t.stop()); navigate('/meet'); }}
+            className="w-12 h-12 rounded-full bg-red-600 hover:bg-red-500 flex items-center justify-center text-white transition-colors">
             <PhoneOff className="w-4 h-4" />
           </button>
         </div>
@@ -764,7 +797,7 @@ export default function MeetingRoom() {
     );
   }
 
-  // Denied screen
+  // ── Denied
   if (admissionState === 'denied') {
     return (
       <div className="h-screen bg-[#202124] flex flex-col items-center justify-center gap-5 select-none">
@@ -775,26 +808,29 @@ export default function MeetingRoom() {
           <h2 className="text-white text-xl font-medium">You weren't let in</h2>
           <p className="text-[#9AA0A6] text-sm">The meeting host didn't admit your request</p>
         </div>
-        <button
-          onClick={() => navigate('/meet')}
-          className="px-6 py-2.5 bg-[#1a73e8] hover:bg-[#1765cc] text-white text-sm font-medium rounded-full transition-colors"
-        >
+        <button onClick={() => navigate('/meet')}
+          className="px-6 py-2.5 bg-[#1a73e8] hover:bg-[#1765cc] text-white text-sm font-medium rounded-full transition-colors">
           Return to home
         </button>
       </div>
     );
   }
 
+  // ── Main meeting room
   return (
     <div className="h-screen bg-[#202124] flex flex-col overflow-hidden select-none">
 
-      {/* ── Header ── */}
+      {/* Header */}
       <div className="flex items-center justify-between px-3 sm:px-5 py-2 sm:py-2.5 flex-shrink-0">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <span className="text-white font-medium text-xs sm:text-sm whitespace-nowrap">SlimFile Meet</span>
           <span className="text-[#9AA0A6] text-sm hidden sm:inline">·</span>
           <span className="text-[#9AA0A6] text-xs sm:text-sm hidden sm:inline">{clock}</span>
-          {/* Quality dot */}
+          {/* Meeting duration */}
+          {isJoined && (
+            <span className="text-[#9AA0A6] text-xs sm:text-sm font-mono">{fmt(meetingDuration)}</span>
+          )}
+          {/* Quality */}
           <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 bg-[#3C4043] rounded-full">
             <Circle className={`w-2 h-2 fill-current ${connectionQuality === 'good' ? 'text-green-400' : connectionQuality === 'medium' ? 'text-yellow-400' : 'text-red-400'}`} />
             <span className="text-[#BDC1C6] text-[10px] sm:text-xs capitalize hidden sm:inline">{connectionQuality}</span>
@@ -811,6 +847,9 @@ export default function MeetingRoom() {
               <span className="text-[#1a73e8] text-[10px] font-medium hidden sm:inline">Sharing</span>
             </div>
           )}
+          {isHost && (
+            <span className="text-[#9AA0A6] text-[10px] hidden sm:inline">Host</span>
+          )}
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -818,17 +857,15 @@ export default function MeetingRoom() {
             <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#BDC1C6]" />
             <span className="text-white text-xs sm:text-sm font-medium">{participants.size}</span>
           </div>
-          <button
-            onClick={copyLink}
-            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 bg-[#1a73e8] hover:bg-[#1765cc] text-white text-xs sm:text-sm font-medium rounded-full transition-colors"
-          >
+          <button onClick={copyLink}
+            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 bg-[#1a73e8] hover:bg-[#1765cc] text-white text-xs sm:text-sm font-medium rounded-full transition-colors">
             <Copy className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             <span>Invite</span>
           </button>
         </div>
       </div>
 
-      {/* ── Main content ── */}
+      {/* Main content */}
       <div className="flex-1 flex overflow-hidden min-h-0">
 
         {/* Video area */}
@@ -838,7 +875,8 @@ export default function MeetingRoom() {
 
         {/* Floating reactions */}
         {reactions.map((r, i) => (
-          <div key={`${r.userId}-${r.timestamp}`} className="fixed text-5xl pointer-events-none z-50 animate-bounce" style={{ left: `${15 + (i % 6) * 12}%`, bottom: '25%' }}>
+          <div key={`${r.userId}-${r.timestamp}`} className="fixed text-5xl pointer-events-none z-50 animate-bounce"
+            style={{ left: `${15 + (i % 6) * 12}%`, bottom: '25%' }}>
             {r.emoji}
           </div>
         ))}
@@ -856,7 +894,7 @@ export default function MeetingRoom() {
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0" style={{ backgroundColor: myColor }}>{myInitial}</div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-sm font-medium truncate">{currentUserName}</p>
-                  <p className="text-[#9AA0A6] text-xs">You</p>
+                  <p className="text-[#9AA0A6] text-xs">{isHost ? 'You · Host' : 'You'}</p>
                 </div>
                 <div className="flex gap-1">
                   {!isMicOn && <MicOff className="w-4 h-4 text-red-400" />}
@@ -865,22 +903,44 @@ export default function MeetingRoom() {
                 </div>
               </div>
               {/* Others */}
-              {Array.from(participants.entries()).filter(([id]) => id !== currentUserId).sort((a, b) => {
-                if (a[1].isHandRaised && !b[1].isHandRaised) return -1;
-                if (!a[1].isHandRaised && b[1].isHandRaised) return 1;
-                return a[1].userName.localeCompare(b[1].userName);
-              }).map(([pid, p]) => (
-                <div key={pid} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#3C4043]/50 cursor-pointer" onClick={() => setPinnedParticipant(prev => prev === pid ? null : pid)}>
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0" style={{ backgroundColor: avatarColor(p.userName) }}>{p.userName.charAt(0).toUpperCase()}</div>
-                  <div className="flex-1 min-w-0"><p className="text-white text-sm font-medium truncate">{p.userName}</p></div>
-                  <div className="flex gap-1">
-                    {p.isHandRaised && <span className="text-sm animate-bounce">✋</span>}
-                    {p.isMuted && <MicOff className="w-4 h-4 text-red-400" />}
-                    {p.isCameraOff && <VideoOff className="w-4 h-4 text-red-400" />}
-                    {pinnedParticipant === pid && <Pin className="w-3.5 h-3.5 text-[#1a73e8]" />}
+              {Array.from(participants.entries()).filter(([id]) => id !== currentUserId)
+                .sort((a, b) => {
+                  if (a[1].isHandRaised && !b[1].isHandRaised) return -1;
+                  if (!a[1].isHandRaised && b[1].isHandRaised) return 1;
+                  return a[1].userName.localeCompare(b[1].userName);
+                })
+                .map(([pid, p]) => (
+                  <div key={pid} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#3C4043]/50 cursor-pointer group"
+                    onClick={() => setPinnedParticipant(prev => prev === pid ? null : pid)}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0"
+                      style={{ backgroundColor: avatarColor(p.userName) }}>{p.userName.charAt(0).toUpperCase()}</div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-sm font-medium truncate">{p.userName}</p>
+                      {activeSpeaker === pid && <p className="text-[#1a73e8] text-[10px]">Speaking</p>}
+                    </div>
+                    <div className="flex gap-1 items-center">
+                      {p.isHandRaised && <span className="text-sm animate-bounce">✋</span>}
+                      {p.isMuted && <MicOff className="w-4 h-4 text-red-400" />}
+                      {p.isCameraOff && <VideoOff className="w-4 h-4 text-red-400" />}
+                      {pinnedParticipant === pid && <Pin className="w-3.5 h-3.5 text-[#1a73e8]" />}
+                      {/* Host controls */}
+                      {isHost && (
+                        <div className="hidden group-hover:flex gap-1 ml-1">
+                          {!p.isMuted && (
+                            <button onClick={e => { e.stopPropagation(); muteParticipant(pid); }}
+                              className="p-1 rounded-full bg-[#3C4043] hover:bg-red-600/20 text-[#9AA0A6] hover:text-red-400 transition-colors" title="Mute">
+                              <MicOff className="w-3 h-3" />
+                            </button>
+                          )}
+                          <button onClick={e => { e.stopPropagation(); removeParticipant(pid); }}
+                            className="p-1 rounded-full bg-[#3C4043] hover:bg-red-600/20 text-[#9AA0A6] hover:text-red-400 transition-colors" title="Remove">
+                            <PhoneOff className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         )}
@@ -903,7 +963,9 @@ export default function MeetingRoom() {
                         <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-sm text-white ${isMe ? 'bg-[#1a73e8] rounded-tr-sm' : 'bg-[#3C4043] rounded-tl-sm'}`}>
                           {msg.message}
                         </div>
-                        <span className="text-[#9AA0A6] text-[10px] px-1">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <span className="text-[#9AA0A6] text-[10px] px-1">
+                          {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
                       </div>
                     );
                   })}
@@ -919,22 +981,23 @@ export default function MeetingRoom() {
             </div>
             <form onSubmit={sendChatMessage} className="p-3 border-t border-[#3C4043]">
               <div className="flex gap-2">
-                <input
-                  value={chatInput}
-                  onChange={handleChatInput}
-                  placeholder="Send a message…"
-                  className="flex-1 bg-[#3C4043] text-white text-sm px-3 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#1a73e8] placeholder-[#9AA0A6]"
-                />
-                <button type="submit" disabled={!chatInput.trim()} className="px-4 py-2 bg-[#1a73e8] hover:bg-[#1765cc] disabled:opacity-40 text-white text-sm font-medium rounded-full transition-colors">Send</button>
+                <input value={chatInput} onChange={handleChatInput} placeholder="Send a message…"
+                  className="flex-1 bg-[#3C4043] text-white text-sm px-3 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#1a73e8] placeholder-[#9AA0A6]" />
+                <button type="submit" disabled={!chatInput.trim()}
+                  className="px-4 py-2 bg-[#1a73e8] hover:bg-[#1765cc] disabled:opacity-40 text-white text-sm font-medium rounded-full transition-colors">
+                  Send
+                </button>
               </div>
             </form>
           </div>
         )}
       </div>
 
-      {/* ── Controls bar ── */}
+      {/* Controls bar */}
       <div className="flex-shrink-0 pb-6 pt-2">
-        <div className="flex items-end justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto px-4 sm:px-0 pb-1 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div className="flex items-end justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto px-4 sm:px-0 pb-1 scrollbar-hide"
+          style={{ WebkitOverflowScrolling: 'touch' }}>
+
           <CtrlBtn onClick={toggleMic} active={isMicOn} label={isMicOn ? 'Mute' : 'Unmute'}>
             {isMicOn ? <Mic className="w-4 h-4 sm:w-5 sm:h-5" /> : <MicOff className="w-4 h-4 sm:w-5 sm:h-5" />}
           </CtrlBtn>
@@ -951,17 +1014,15 @@ export default function MeetingRoom() {
             <Hand className="w-4 h-4 sm:w-5 sm:h-5" />
           </CtrlBtn>
 
-          {/* Reactions picker */}
+          {/* Reactions */}
           <div className="relative flex flex-col items-center gap-1 flex-shrink-0">
-            <button
-              onClick={() => setShowReactions(p => !p)}
-              className="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#3C4043] hover:bg-[#4A4D51] flex items-center justify-center text-white transition-colors"
-            >
+            <button onClick={() => setShowReactions(p => !p)}
+              className="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#3C4043] hover:bg-[#4A4D51] flex items-center justify-center text-white transition-colors">
               <Smile className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
             <span className="text-[#BDC1C6] text-[10px] font-medium hidden sm:block">React</span>
             {showReactions && (
-              <div className="fixed bottom-28 sm:bottom-auto sm:absolute sm:bottom-20 left-1/2 -translate-x-1/2 bg-[#292B2F] border border-[#3C4043] rounded-2xl p-3 shadow-2xl flex gap-2 z-50">
+              <div className="fixed bottom-28 sm:absolute sm:bottom-20 left-1/2 -translate-x-1/2 bg-[#292B2F] border border-[#3C4043] rounded-2xl p-3 shadow-2xl flex gap-2 z-50">
                 {['👍','❤️','😂','😮','👏','🎉'].map(e => (
                   <button key={e} onClick={() => sendReaction(e)} className="text-2xl hover:scale-125 transition-transform p-1.5 rounded-xl hover:bg-[#3C4043]">{e}</button>
                 ))}
@@ -987,7 +1048,6 @@ export default function MeetingRoom() {
             <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
           </CtrlBtn>
 
-          {/* Leave */}
           <CtrlBtn onClick={leaveMeeting} danger label="Leave">
             <PhoneOff className="w-4 h-4 sm:w-5 sm:h-5" />
           </CtrlBtn>
@@ -998,7 +1058,7 @@ export default function MeetingRoom() {
         </p>
       </div>
 
-      {/* ── Settings modal ── */}
+      {/* Settings modal */}
       {showSettings && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50" onClick={() => setShowSettings(false)}>
           <div className="bg-[#292B2F] rounded-2xl p-6 w-full max-w-sm mx-4 border border-[#3C4043] shadow-2xl" onClick={e => e.stopPropagation()}>
@@ -1010,6 +1070,7 @@ export default function MeetingRoom() {
               {[
                 { icon: isPipMode ? Minimize2 : Maximize2, label: 'Picture-in-Picture', sub: 'Float your video on top', action: togglePiP, active: isPipMode },
                 { icon: Bell, label: 'Notification sounds', sub: 'Sounds when people join/leave', action: () => setNotificationSounds(p => !p), active: notificationSounds },
+                { icon: Monitor, label: 'Background blur', sub: 'Blur your background', action: () => setIsBackgroundBlurred(p => !p), active: isBackgroundBlurred },
                 { icon: isRecording ? Square : Radio, label: 'Record meeting', sub: isRecording ? `Recording: ${fmt(recordingDuration)}` : 'Save as video file', action: isRecording ? stopRecording : startRecording, active: isRecording, danger: isRecording },
               ].map(({ icon: Icon, label, sub, action, active, danger }) => (
                 <div key={label} className="flex items-center justify-between p-3 rounded-xl bg-[#3C4043]/50 hover:bg-[#3C4043] cursor-pointer" onClick={action}>
@@ -1030,15 +1091,13 @@ export default function MeetingRoom() {
         </div>
       )}
 
-      {/* ── Admit requests ── */}
+      {/* Admit requests */}
       {admitRequests.length > 0 && (
         <div className="fixed bottom-28 sm:bottom-36 left-2 right-2 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-50 flex flex-col gap-2 items-stretch sm:items-center">
           {admitRequests.map(req => (
             <div key={req.socketId} className="flex items-center gap-3 sm:gap-4 bg-[#292B2F] border border-[#3C4043] rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 shadow-2xl sm:min-w-[340px]">
-              <div
-                className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0"
-                style={{ backgroundColor: avatarColor(req.userName) }}
-              >
+              <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0"
+                style={{ backgroundColor: avatarColor(req.userName) }}>
                 {req.userName.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
@@ -1046,16 +1105,12 @@ export default function MeetingRoom() {
                 <p className="text-[#9AA0A6] text-xs">wants to join</p>
               </div>
               <div className="flex gap-2 flex-shrink-0">
-                <button
-                  onClick={() => denyUser(req.socketId)}
-                  className="px-3.5 py-1.5 rounded-full border border-[#5F6368] text-[#BDC1C6] text-xs font-medium hover:bg-[#3C4043] transition-colors"
-                >
+                <button onClick={() => denyUser(req.socketId)}
+                  className="px-3.5 py-1.5 rounded-full border border-[#5F6368] text-[#BDC1C6] text-xs font-medium hover:bg-[#3C4043] transition-colors">
                   Deny
                 </button>
-                <button
-                  onClick={() => admitUser(req.socketId)}
-                  className="px-3.5 py-1.5 rounded-full bg-[#1a73e8] hover:bg-[#1765cc] text-white text-xs font-medium transition-colors"
-                >
+                <button onClick={() => admitUser(req.socketId)}
+                  className="px-3.5 py-1.5 rounded-full bg-[#1a73e8] hover:bg-[#1765cc] text-white text-xs font-medium transition-colors">
                   Admit
                 </button>
               </div>
@@ -1064,7 +1119,7 @@ export default function MeetingRoom() {
         </div>
       )}
 
-      {/* ── Toasts ── */}
+      {/* Toasts */}
       <div className="fixed top-16 right-4 z-50 space-y-2 pointer-events-none">
         {toasts.map(t => (
           <div key={t.id} className={`px-4 py-2.5 rounded-xl shadow-lg text-white text-sm font-medium ${t.type === 'success' ? 'bg-[#34a853]' : t.type === 'warning' ? 'bg-[#fbbc04] text-gray-900' : 'bg-[#3C4043]'}`}>
