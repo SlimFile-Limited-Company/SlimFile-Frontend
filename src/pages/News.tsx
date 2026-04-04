@@ -4,11 +4,9 @@ import {
   Newspaper,
   Tv,
   Mic,
-  Building2,
   Calendar,
   ArrowRight,
   Image as ImageIcon,
-  Upload,
   ExternalLink,
 } from "lucide-react";
 
@@ -53,7 +51,8 @@ const newsItems: NewsItem[] = [
     dateLabel: "2025",
     category: "Events",
     icon: Mic,
-    imageHint: "Add summit stage / booth photos here",
+    imageHint: "SlimFile at the Ghana Youth Tech Summit",
+    imageUrl: "/news/ghana-youth-tech-summit.png",
     highlights: [
       "Live demo and community Q&A",
       "Partnership conversations",
@@ -145,7 +144,7 @@ export default function News() {
                         </div>
                         <p className="text-sm text-gray-600">{item.imageHint}</p>
                         <p className="text-xs text-gray-500 mt-2">
-                          You can replace this placeholder with your image later.
+                          Image will be added later.
                         </p>
                       </div>
                     )}
@@ -171,7 +170,7 @@ export default function News() {
                       {item.subtitle}
                     </p>
 
-                    <ul className="space-y-2 text-sm text-gray-700 mb-5">
+                    <ul className="space-y-2 text-sm text-gray-700">
                       {item.highlights.map((h) => (
                         <li key={h} className="flex items-start gap-2">
                           <span className="mt-1 inline-block w-1.5 h-1.5 rounded-full bg-red-600" />
@@ -180,38 +179,21 @@ export default function News() {
                       ))}
                     </ul>
 
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      {item.externalUrl ? (
+                    {item.externalUrl ? (
+                      <div className="mt-5">
                         <a
                           href={item.externalUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-full"
+                          className="block"
                         >
                           <Button className="w-full justify-center">
                             <ExternalLink className="w-4 h-4 mr-2" />
                             {item.externalCtaLabel ?? "View"}
                           </Button>
                         </a>
-                      ) : null}
-                      <Button
-                        variant="outline"
-                        className="w-full justify-center"
-                        onClick={() => {
-                          const el = document.getElementById(item.id);
-                          el?.scrollIntoView({ behavior: "smooth", block: "start" });
-                        }}
-                      >
-                        Read details
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                      <Link to="/contact" className="w-full">
-                        <Button className="w-full justify-center">
-                          <Upload className="w-4 h-4 mr-2" />
-                          Send images
-                        </Button>
-                      </Link>
-                    </div>
+                      </div>
+                    ) : null}
                   </div>
                 </article>
               );
