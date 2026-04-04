@@ -216,13 +216,13 @@ export default function MeetingRoom() {
     };
   }, []);
 
-  // ── Re-attach local stream when layout changes
+  // ── Attach local stream to localVideoRef whenever layout changes OR after lobby exit
   useEffect(() => {
     if (!localStream.current || !localVideoRef.current) return;
     if (isScreenSharing) return;
     localVideoRef.current.srcObject = localStream.current;
     localVideoRef.current.play().catch(() => {});
-  }, [remoteStreams.size, isScreenSharing]);
+  }, [remoteStreams.size, isScreenSharing, isJoined, admissionState]);
 
   // ── Phase 1: Request admission when stream ready AND lobby exited
   useEffect(() => {
@@ -251,20 +251,15 @@ export default function MeetingRoom() {
     userNameRef.current = userName;
 
     const onAdmitted = (data: any) => {
-      // If backend says room was empty, this user is the host
       if (data?.wasEmpty) setIsHost(true);
       setAdmissionState('admitted');
     };
     const onWaiting = () => setAdmissionState('waiting');
     const onDenied = () => setAdmissionState('denied');
-    const onAdmitRequest = (data: { socketId: string; userId: string; userName: string }) => {
-      setAdmitRequests(prev => prev.some(r => r.socketId === data.socketId) ? prev : [...prev, data]);
-    };
 
     socket.on('meeting:admitted', onAdmitted);
     socket.on('meeting:waiting', onWaiting);
     socket.on('meeting:denied', onDenied);
-    socket.on('meeting:admit-request', onAdmitRequest);
 
     socket.emit('meeting:request-admit', { meetingId: meetingCode, userId, userName });
 
@@ -272,7 +267,6 @@ export default function MeetingRoom() {
       socket.off('meeting:admitted', onAdmitted);
       socket.off('meeting:waiting', onWaiting);
       socket.off('meeting:denied', onDenied);
-      socket.off('meeting:admit-request', onAdmitRequest);
     };
   }, [meetingCode, isStreamReady, inLobby]);
 
@@ -363,12 +357,17 @@ export default function MeetingRoom() {
       });
     };
 
+    const onAdmitRequest = (data: { socketId: string; userId: string; userName: string }) => {
+      setAdmitRequests(prev => prev.some(r => r.socketId === data.socketId) ? prev : [...prev, data]);
+    };
+
     socket.on('meeting:chat-message', onChat);
     socket.on('meeting:participant-joined', onJoined);
     socket.on('meeting:hand-raised', onHandRaised);
     socket.on('meeting:reaction', onReaction);
     socket.on('meeting:participant-update', onUpdate);
     socket.on('meeting:user-typing', onTyping);
+    socket.on('meeting:admit-request', onAdmitRequest);
 
     return () => {
       socket.off('meeting:chat-message', onChat);
@@ -377,6 +376,7 @@ export default function MeetingRoom() {
       socket.off('meeting:reaction', onReaction);
       socket.off('meeting:participant-update', onUpdate);
       socket.off('meeting:user-typing', onTyping);
+      socket.off('meeting:admit-request', onAdmitRequest);
     };
   }, [isJoined, notificationSounds, currentUserId, showToast]);
 
