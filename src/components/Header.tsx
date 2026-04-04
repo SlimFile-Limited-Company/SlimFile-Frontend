@@ -106,19 +106,21 @@ export const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
-      {/* GTV Ghana feature banner */}
+      {/* CLI announcement banner */}
       <a
-        href="https://www.youtube.com/watch?v=ZZ2v94GbS58"
+        href="https://api.slim-file.com/cli"
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 bg-red-600 px-4 py-1 text-white hover:bg-red-700 transition-colors duration-200 group"
+        className="flex items-center justify-center gap-2 bg-gray-900 px-4 py-1 text-white hover:bg-gray-800 transition-colors duration-200 group"
       >
-        <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/>
+        <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" />
         </svg>
         <span className="text-xs font-medium tracking-wide">
-          <span className="font-semibold">SlimFile featured on GTV Ghana</span>
-          <span className="hidden sm:inline opacity-80"> — Watch the session</span>
+          <span className="font-semibold">Introducing SlimFile CLI</span>
+          <span className="hidden sm:inline opacity-80"> — </span>
+          <code className="hidden sm:inline font-mono bg-white/10 px-1 rounded">npm install -g @slimfile/cli</code>
+          <span className="hidden sm:inline opacity-80"> · v1.0.0 Live on npm</span>
         </span>
         <span className="text-xs opacity-75 group-hover:translate-x-0.5 transition-transform duration-150">›</span>
       </a>
