@@ -45,25 +45,25 @@ export const Header = () => {
   ];
 
   const dashboardNavigation = [
-    { name: "My Dashboard", href: "/dashboard", badge: null },
-    { name: "Global Stats", href: "/global-dashboard", badge: "Live" },
+    { name: "My Dashboard", href: "/dashboard" },
+    { name: "Global Stats", href: "/global-dashboard" },
   ];
 
   const connectNavigation = [
-    { name: "Feed", href: "/feed", badge: "Live", badgeColor: "bg-green-100 text-green-700" },
-    ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces", badge: "Team", badgeColor: "bg-blue-100 text-blue-700" }] : []),
-    ...(isAuthenticated() ? [{ name: "Documents", href: "/documents", badge: "New", badgeColor: "bg-blue-100 text-blue-700" }] : []),
-    ...(isAuthenticated() ? [{ name: "My Whiteboards", href: "/my-whiteboards", badge: "New", badgeColor: "bg-purple-100 text-purple-700" }] : []),
-    { name: "Meet", href: "/meet", badge: "New", badgeColor: "bg-purple-100 text-purple-700" },
+    { name: "Feed", href: "/feed" },
+    ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces" }] : []),
+    ...(isAuthenticated() ? [{ name: "Documents", href: "/documents" }] : []),
+    ...(isAuthenticated() ? [{ name: "My Whiteboards", href: "/my-whiteboards" }] : []),
+    { name: "Meet", href: "/meet" },
   ];
 
   const suitesNavigation = [
-    { name: "Compress", href: "/compress", badge: null, badgeColor: null },
-    { name: "Convert", href: "/convert-only", badge: null, badgeColor: null },
-    { name: "Compress and Convert", href: "/convert-compress", badge: null, badgeColor: null },
-    { name: "OCR Tool", href: "/ocr-tool", badge: "New", badgeColor: "bg-blue-100 text-blue-700" },
-    { name: "PDF Merger & Splitter", href: "/forge", badge: "New", badgeColor: "bg-orange-100 text-orange-700" },
-    { name: "PDF Password Protect", href: "/lock", badge: "New", badgeColor: "bg-red-100 text-red-700" },
+    { name: "Compress", href: "/compress" },
+    { name: "Convert", href: "/convert-only" },
+    { name: "Compress and Convert", href: "/convert-compress" },
+    { name: "OCR Tool", href: "/ocr-tool" },
+    { name: "PDF Merger & Splitter", href: "/forge" },
+    { name: "PDF Password Protect", href: "/lock" },
   ];
 
   const isActiveRoute = (href: string) => {
@@ -242,11 +242,6 @@ export const Header = () => {
                       )}
                     >
                       <span>{item.name}</span>
-                      {item.badge && (
-                        <span className={cn("text-xs px-2 py-0.5 rounded-full font-semibold", item.badgeColor)}>
-                          {item.badge}
-                        </span>
-                      )}
                     </Link>
                   ))}
                 </div>
@@ -282,11 +277,6 @@ export const Header = () => {
                       )}
                     >
                       <span>{item.name}</span>
-                      {item.badge && (
-                        <span className={cn("text-xs px-2 py-0.5 rounded-full font-semibold", item.badgeColor)}>
-                          {item.badge}
-                        </span>
-                      )}
                     </Link>
                   ))}
                 </div>
@@ -322,9 +312,6 @@ export const Header = () => {
                       )}
                     >
                       <span>{item.name}</span>
-                      {item.badge && (
-                        <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full font-semibold">{item.badge}</span>
-                      )}
                     </Link>
                   ))}
                 </div>
