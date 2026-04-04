@@ -190,7 +190,7 @@ export default function MeetingRoom() {
   const [showReactions, setShowReactions] = useState(false);
   const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
   const [isStreamReady, setIsStreamReady] = useState(false);
-  const [admissionState, setAdmissionState] = useState<'waiting' | 'admitted' | 'denied'>('waiting');
+  const [admissionState, setAdmissionState] = useState<'checking' | 'waiting' | 'admitted' | 'denied'>('checking');
   const [isJoined, setIsJoined] = useState(false);
   const [admitRequests, setAdmitRequests] = useState<Array<{ socketId: string; userId: string; userName: string }>>([]);
   const [participants, setParticipants] = useState<Map<string, Participant>>(new Map());
@@ -297,12 +297,14 @@ export default function MeetingRoom() {
     userNameRef.current = userName;
 
     const onAdmitted = () => setAdmissionState('admitted');
+    const onWaiting = () => setAdmissionState('waiting');
     const onDenied = () => setAdmissionState('denied');
     const onAdmitRequest = (data: { socketId: string; userId: string; userName: string }) => {
       setAdmitRequests(prev => prev.some(r => r.socketId === data.socketId) ? prev : [...prev, data]);
     };
 
     socket.on('meeting:admitted', onAdmitted);
+    socket.on('meeting:waiting', onWaiting);
     socket.on('meeting:denied', onDenied);
     socket.on('meeting:admit-request', onAdmitRequest);
 
@@ -310,12 +312,13 @@ export default function MeetingRoom() {
 
     return () => {
       socket.off('meeting:admitted', onAdmitted);
+      socket.off('meeting:waiting', onWaiting);
       socket.off('meeting:denied', onDenied);
       socket.off('meeting:admit-request', onAdmitRequest);
     };
   }, [meetingCode, isStreamReady]);
 
-  // Phase 2: Actually join meeting once admitted
+  // Phase 2: Actually join meeting once admitted (works for both auto-admit and manual admit)
   useEffect(() => {
     if (admissionState !== 'admitted' || isJoined || !meetingCode || !localStream.current) return;
 
@@ -702,7 +705,17 @@ export default function MeetingRoom() {
 
   // ── Render ───────────────────────────────────────────────────────────────────
 
-  // Waiting to be admitted screen
+  // Brief loading while checking room (auto-resolves in <1 round-trip for the host)
+  if (admissionState === 'checking') {
+    return (
+      <div className="h-screen bg-[#202124] flex flex-col items-center justify-center gap-4 select-none">
+        <div className="w-10 h-10 border-2 border-[#3C4043] border-t-[#1a73e8] rounded-full animate-spin" />
+        <p className="text-[#9AA0A6] text-sm">Connecting…</p>
+      </div>
+    );
+  }
+
+  // Waiting to be admitted screen (only shown when backend confirms room has participants)
   if (admissionState === 'waiting') {
     return (
       <div className="h-screen bg-[#202124] flex flex-col items-center justify-center gap-6 select-none">
