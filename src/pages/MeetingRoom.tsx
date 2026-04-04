@@ -1,33 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import {
-  Mic,
-  MicOff,
-  Video,
-  VideoOff,
-  Monitor,
-  MonitorOff,
-  PhoneOff,
-  Copy,
-  Users,
-  Settings,
-  MessageSquare,
-  Hand,
-  Smile,
-  Grid,
-  User,
-  Pin,
-  MoreVertical,
-  UserPlus,
-  Circle,
-  Maximize2,
-  Minimize2,
-  Sparkles,
-  Bell,
-  BellOff,
-  Radio,
-  Square,
+  Mic, MicOff, Video, VideoOff, Monitor, MonitorOff, PhoneOff,
+  Users, MessageSquare, Hand, Smile, Grid, User, Settings,
+  Bell, BellOff, Radio, Square, Maximize2, Minimize2, Sparkles,
+  Copy, Circle, Pin,
 } from 'lucide-react';
 import { getToken } from '@/lib/auth';
 import { meetingService } from '@/services/meetingService';
@@ -46,7 +23,6 @@ interface Participant {
   isHandRaised: boolean;
   isMuted: boolean;
   isCameraOff: boolean;
-  socketId?: string;
 }
 
 interface Reaction {
@@ -56,1764 +32,867 @@ interface Reaction {
   timestamp: number;
 }
 
-export default function MeetingRoom() {
-  const { meetingCode } = useParams<{ meetingCode: string }>();
-  const navigate = useNavigate();
-
-  // Media states
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [isCameraOn, setIsCameraOn] = useState(true);
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [showParticipants, setShowParticipants] = useState(false);
-  const [showChat, setShowChat] = useState(false);
-  const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
-  const [isStreamReady, setIsStreamReady] = useState(false);
-
-  // Chat states
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [chatInput, setChatInput] = useState('');
-  const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Participant management
-  const [participants, setParticipants] = useState<Map<string, Participant>>(new Map());
-  const [currentUserName, setCurrentUserName] = useState<string>('');
-  const [currentUserId, setCurrentUserId] = useState<string>('');
-
-  // New features
-  const [isHandRaised, setIsHandRaised] = useState(false);
-  const [reactions, setReactions] = useState<Reaction[]>([]);
-  const [viewMode, setViewMode] = useState<'grid' | 'speaker'>('grid');
-  const [pinnedParticipant, setPinnedParticipant] = useState<string | null>(null);
-  const [showReactions, setShowReactions] = useState(false);
-  const [connectionQuality, setConnectionQuality] = useState<'good' | 'medium' | 'poor'>('good');
-  const [isPipMode, setIsPipMode] = useState(false);
-  const [isBackgroundBlurred, setIsBackgroundBlurred] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [notificationSounds, setNotificationSounds] = useState(true);
-  const [toasts, setToasts] = useState<Array<{ id: number; message: string; type: 'info' | 'success' | 'warning' }>>([]);
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingDuration, setRecordingDuration] = useState(0);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Refs for video elements
-  const localVideoRef = useRef<HTMLVideoElement>(null);
-  const localStream = useRef<MediaStream | null>(null);
-
-  // Initialize local media
-  useEffect(() => {
-    const initializeMedia = async () => {
-      try {
-        console.log('Requesting camera and microphone access...');
-
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-          },
-          audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-          },
-        });
-
-        console.log('Media access granted:', stream.getTracks().map(t => t.kind));
-
-        localStream.current = stream;
-        // Set stream in meeting service so it can add tracks to peer connections
-        meetingService.setLocalStream(stream);
-
-        // Wait for video element to be ready
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = stream;
-          // Force play to ensure video starts
-          localVideoRef.current.play().catch(e => console.error('Video play error:', e));
-        }
-
-        // Signal that stream is ready
-        setIsStreamReady(true);
-      } catch (error: any) {
-        console.error('Error accessing media devices:', error);
-
-        let errorMessage = 'Unable to access camera/microphone. ';
-
-        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-          errorMessage += 'Permission denied. Please allow camera and microphone access in your browser settings.';
-        } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-          errorMessage += 'No camera or microphone found on this device.';
-        } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
-          errorMessage += 'Camera or microphone is already in use by another application.';
-        } else {
-          errorMessage += error.message || 'Please check your device permissions.';
-        }
-
-        alert(errorMessage);
-      }
-    };
-
-    // Add a small delay to ensure component is mounted
-    const timeoutId = setTimeout(() => {
-      initializeMedia();
-    }, 100);
-
-    // Cleanup function
-    return () => {
-      clearTimeout(timeoutId);
-      if (localStream.current) {
-        localStream.current.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, []);
-
-  // Join meeting and set up WebRTC signaling
-  useEffect(() => {
-    if (!meetingCode || !isStreamReady || !localStream.current) {
-      console.log('Waiting for stream...', { meetingCode, isStreamReady, hasStream: !!localStream.current });
-      return;
-    }
-
-    console.log('Initializing meeting connection with stream ready...');
-
-    // Initialize socket if not already connected
-    let socket = getSocket();
-    if (!socket || !socket.connected) {
-      console.log('🔌 Initializing socket connection...');
-      socket = initializeSocket();
-
-      // Authenticate with token if available
-      const token = getToken();
-      if (token) {
-        console.log('🔐 Authenticating socket...');
-        socket.emit('authenticate', token);
-      }
-    } else {
-      console.log('✅ Socket already connected:', socket.id);
-    }
-
-    // Get userId and userName from token
-    const token = getToken();
-    let userId = `guest-${Date.now()}`;
-    let userName = 'Guest User';
-
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        userId = payload.id || `user-${Date.now()}`;
-        userName = payload.name || payload.email || 'User';
-        setCurrentUserId(userId);
-        setCurrentUserName(userName);
-      } catch (e) {
-        console.error('Failed to parse token:', e);
-        userId = `user-${Date.now()}`;
-        userName = 'User';
-      }
-    }
-
-    // Add self to participants
-    setParticipants((prev) => {
-      const newParticipants = new Map(prev);
-      newParticipants.set(userId, {
-        userId,
-        userName,
-        isHandRaised: false,
-        isMuted: !isMicOn,
-        isCameraOff: !isCameraOn,
-      });
-      return newParticipants;
-    });
-
-    // Set up meeting service callbacks
-    meetingService.onRemoteStreamAdded = (participantId: string, stream: MediaStream) => {
-      const tracks = stream.getTracks();
-      const videoTracks = stream.getVideoTracks();
-      const audioTracks = stream.getAudioTracks();
-      console.log(`📹 Remote stream added from: ${participantId}`);
-      console.log(`   Total tracks: ${tracks.length} (${videoTracks.length} video, ${audioTracks.length} audio)`);
-      console.log(`   Video tracks:`, videoTracks.map(t => `${t.label} (enabled: ${t.enabled}, readyState: ${t.readyState})`));
-      console.log(`   Audio tracks:`, audioTracks.map(t => `${t.label} (enabled: ${t.enabled}, readyState: ${t.readyState})`));
-
-      setRemoteStreams((prev) => {
-        const newStreams = new Map(prev);
-        newStreams.set(participantId, stream);
-        console.log(`   ✅ Remote streams map updated. Total remote streams: ${newStreams.size}`);
-        return newStreams;
-      });
-    };
-
-    meetingService.onParticipantLeft = (participantId: string) => {
-      console.log('Participant left:', participantId);
-
-      const participant = participants.get(participantId);
-
-      setRemoteStreams((prev) => {
-        const newStreams = new Map(prev);
-        newStreams.delete(participantId);
-        return newStreams;
-      });
-      setParticipants((prev) => {
-        const newParticipants = new Map(prev);
-        newParticipants.delete(participantId);
-        return newParticipants;
-      });
-
-      // Play notification sound
-      if (notificationSounds && participant) {
-        playNotificationSound('leave');
-        showToast(`${participant.userName} left the meeting`, 'warning');
-      }
-    };
-
-    meetingService.onParticipantMetadata = (participantId: string, userName: string) => {
-      console.log(`👤 Participant metadata received: "${userName}" (ID: ${participantId})`);
-      setParticipants((prev) => {
-        const newParticipants = new Map(prev);
-        newParticipants.set(participantId, {
-          userId: participantId,
-          userName: userName,
-          isHandRaised: false,
-          isMuted: false,
-          isCameraOff: false,
-        });
-        console.log(`   ✅ Added to participants map. Total participants: ${newParticipants.size}`);
-        return newParticipants;
-      });
-    };
-
-    // Join the meeting
-    try {
-      meetingService.joinMeeting(meetingCode, userId, userName);
-      console.log('Joined meeting:', meetingCode, 'as', userName);
-    } catch (error) {
-      console.error('Failed to join meeting:', error);
-      alert('Failed to join meeting. Please try again.');
-    }
-
-    // Cleanup on unmount
-    return () => {
-      console.log('Leaving meeting...');
-      meetingService.leaveMeeting();
-    };
-  }, [meetingCode, isStreamReady]);
-
-  // Monitor connection quality
-  useEffect(() => {
-    const monitorConnection = setInterval(() => {
-      const socket = getSocket();
-      if (!socket || !socket.connected) {
-        setConnectionQuality('poor');
-        return;
-      }
-
-      // Simple quality check based on socket state
-      const latency = socket.io.engine?.transport?.ping || 0;
-      if (latency < 100) {
-        setConnectionQuality('good');
-      } else if (latency < 250) {
-        setConnectionQuality('medium');
-      } else {
-        setConnectionQuality('poor');
-      }
-    }, 3000); // Check every 3 seconds
-
-    return () => clearInterval(monitorConnection);
-  }, []);
-
-  // Picture-in-Picture event listeners
-  useEffect(() => {
-    const handlePipChange = () => {
-      setIsPipMode(!!document.pictureInPictureElement);
-    };
-
-    document.addEventListener('enterpictureinpicture', handlePipChange);
-    document.addEventListener('leavepictureinpicture', handlePipChange);
-
-    return () => {
-      document.removeEventListener('enterpictureinpicture', handlePipChange);
-      document.removeEventListener('leavepictureinpicture', handlePipChange);
-    };
-  }, []);
-
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      // Don't trigger shortcuts when typing in input fields
-      if (
-        e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLTextAreaElement
-      ) {
-        return;
-      }
-
-      // Cmd/Ctrl + D: Toggle microphone
-      if ((e.metaKey || e.ctrlKey) && e.key === 'd') {
-        e.preventDefault();
-        toggleMic();
-      }
-
-      // Cmd/Ctrl + E: Toggle camera
-      if ((e.metaKey || e.ctrlKey) && e.key === 'e') {
-        e.preventDefault();
-        toggleCamera();
-      }
-
-      // Cmd/Ctrl + H: Toggle raise hand
-      if ((e.metaKey || e.ctrlKey) && e.key === 'h') {
-        e.preventDefault();
-        toggleHandRaise();
-      }
-
-      // Cmd/Ctrl + Shift + M: Toggle chat
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'M') {
-        e.preventDefault();
-        setShowChat((prev) => !prev);
-      }
-
-      // Cmd/Ctrl + Shift + P: Toggle participants
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'P') {
-        e.preventDefault();
-        setShowParticipants((prev) => !prev);
-      }
-
-      // Cmd/Ctrl + Shift + V: Toggle view mode
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'V') {
-        e.preventDefault();
-        toggleViewMode();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isMicOn, isCameraOn, isHandRaised]); // Include dependencies
-
-  // Listen for chat messages and new features
-  useEffect(() => {
-    const socket = getSocket();
-    if (!socket) return;
-
-    const handleChatMessage = (data: ChatMessage) => {
-      setChatMessages((prev) => [...prev, data]);
-      // Auto-scroll to bottom
-      setTimeout(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    };
-
-    const handleParticipantJoined = (data: { userId: string; userName: string }) => {
-      console.log(`👤 Participant joined event: "${data.userName}" (ID: ${data.userId})`);
-
-      setParticipants((prev) => {
-        const newParticipants = new Map(prev);
-        newParticipants.set(data.userId, {
-          userId: data.userId,
-          userName: data.userName,
-          isHandRaised: false,
-          isMuted: false,
-          isCameraOff: false,
-        });
-        console.log(`   ✅ Added to participants map. Total participants: ${newParticipants.size}`);
-        return newParticipants;
-      });
-
-      // Play notification sound
-      if (notificationSounds) {
-        playNotificationSound('join');
-      }
-
-      // Show toast notification
-      showToast(`${data.userName} joined the meeting`, 'info');
-    };
-
-    const handleHandRaised = (data: { userId: string; isRaised: boolean; userName?: string }) => {
-      setParticipants((prev) => {
-        const newParticipants = new Map(prev);
-        const participant = newParticipants.get(data.userId);
-        if (participant) {
-          participant.isHandRaised = data.isRaised;
-          newParticipants.set(data.userId, { ...participant });
-        }
-        return newParticipants;
-      });
-    };
-
-    const handleReaction = (data: { userId: string; userName: string; emoji: string }) => {
-      const reaction: Reaction = {
-        ...data,
-        timestamp: Date.now(),
-      };
-      setReactions((prev) => [...prev, reaction]);
-      // Remove reaction after 3 seconds
-      setTimeout(() => {
-        setReactions((prev) => prev.filter((r) => r.timestamp !== reaction.timestamp));
-      }, 3000);
-    };
-
-    const handleParticipantUpdate = (data: Partial<Participant> & { userId: string }) => {
-      setParticipants((prev) => {
-        const newParticipants = new Map(prev);
-        const participant = newParticipants.get(data.userId);
-        if (participant) {
-          newParticipants.set(data.userId, { ...participant, ...data });
-        }
-        return newParticipants;
-      });
-    };
-
-    const handleUserTyping = (data: { userId: string; userName: string; isTyping: boolean }) => {
-      if (data.userId === currentUserId) return; // Don't show own typing
-
-      setTypingUsers((prev) => {
-        const newTyping = new Set(prev);
-        if (data.isTyping) {
-          newTyping.add(data.userName);
-        } else {
-          newTyping.delete(data.userName);
-        }
-        return newTyping;
-      });
-    };
-
-    socket.on('meeting:chat-message', handleChatMessage);
-    socket.on('meeting:participant-joined', handleParticipantJoined);
-    socket.on('meeting:hand-raised', handleHandRaised);
-    socket.on('meeting:reaction', handleReaction);
-    socket.on('meeting:participant-update', handleParticipantUpdate);
-    socket.on('meeting:user-typing', handleUserTyping);
-
-    return () => {
-      socket.off('meeting:chat-message', handleChatMessage);
-      socket.off('meeting:participant-joined', handleParticipantJoined);
-      socket.off('meeting:hand-raised', handleHandRaised);
-      socket.off('meeting:reaction', handleReaction);
-      socket.off('meeting:participant-update', handleParticipantUpdate);
-      socket.off('meeting:user-typing', handleUserTyping);
-    };
-  }, [isStreamReady]);
-
-  const toggleMic = () => {
-    if (localStream.current) {
-      const audioTrack = localStream.current.getAudioTracks()[0];
-      if (audioTrack) {
-        audioTrack.enabled = !audioTrack.enabled;
-        setIsMicOn(audioTrack.enabled);
-
-        // Notify other participants
-        const socket = getSocket();
-        if (socket && meetingCode) {
-          socket.emit('meeting:participant-update', {
-            meetingId: meetingCode,
-            userId: currentUserId,
-            isMuted: !audioTrack.enabled,
-          });
-        }
-      }
-    }
-  };
-
-  const toggleCamera = () => {
-    if (localStream.current) {
-      const videoTrack = localStream.current.getVideoTracks()[0];
-      if (videoTrack) {
-        videoTrack.enabled = !videoTrack.enabled;
-        setIsCameraOn(videoTrack.enabled);
-
-        // Notify other participants
-        const socket = getSocket();
-        if (socket && meetingCode) {
-          socket.emit('meeting:participant-update', {
-            meetingId: meetingCode,
-            userId: currentUserId,
-            isCameraOff: !videoTrack.enabled,
-          });
-        }
-      }
-    }
-  };
-
-  const toggleScreenShare = async () => {
-    if (isScreenSharing) {
-      // Stop screen sharing
-      setIsScreenSharing(false);
-      // TODO: Revert to camera stream
-    } else {
-      try {
-        const screenStream = await navigator.mediaDevices.getDisplayMedia({
-          video: true,
-        });
-
-        // TODO: Switch video track to screen stream
-        setIsScreenSharing(true);
-
-        // When user stops sharing via browser UI
-        screenStream.getVideoTracks()[0].onended = () => {
-          setIsScreenSharing(false);
-        };
-      } catch (error) {
-        console.error('Error sharing screen:', error);
-      }
-    }
-  };
-
-  const copyMeetingLink = () => {
-    const meetingLink = `${window.location.origin}/meet/${meetingCode}`;
-    navigator.clipboard.writeText(meetingLink);
-    alert('Meeting link copied to clipboard!');
-  };
-
-  const leaveMeeting = () => {
-    if (localStream.current) {
-      localStream.current.getTracks().forEach((track) => track.stop());
-    }
-    navigate('/meet');
-  };
-
-  const handleChatInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setChatInput(e.target.value);
-
-    const socket = getSocket();
-    if (!socket || !meetingCode) return;
-
-    // Emit typing indicator
-    socket.emit('meeting:typing', {
-      meetingId: meetingCode,
-      userId: currentUserId,
-      userName: currentUserName,
-      isTyping: true,
-    });
-
-    // Clear previous timeout
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-
-    // Set timeout to stop typing after 2 seconds of no input
-    typingTimeoutRef.current = setTimeout(() => {
-      socket.emit('meeting:typing', {
-        meetingId: meetingCode,
-        userId: currentUserId,
-        userName: currentUserName,
-        isTyping: false,
-      });
-    }, 2000);
-  };
-
-  const sendChatMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!chatInput.trim() || !meetingCode) return;
-
-    const socket = getSocket();
-    if (!socket) {
-      alert('Not connected to meeting');
-      return;
-    }
-
-    // Stop typing indicator
-    socket.emit('meeting:typing', {
-      meetingId: meetingCode,
-      userId: currentUserId,
-      userName: currentUserName,
-      isTyping: false,
-    });
-
-    // Add message to local chat immediately
-    const newMessage: ChatMessage = {
-      userId: currentUserId,
-      userName: currentUserName || 'Anonymous',
-      message: chatInput.trim(),
-      timestamp: new Date().toISOString(),
-    };
-    setChatMessages((prev) => [...prev, newMessage]);
-
-    // Auto-scroll to bottom
-    setTimeout(() => {
-      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-
-    // Emit chat message
-    socket.emit('meeting:chat-message', {
-      meetingId: meetingCode,
-      message: chatInput.trim(),
-      userName: currentUserName || 'Anonymous',
-    });
-
-    // Clear input
-    setChatInput('');
-  };
-
-  const toggleHandRaise = () => {
-    const newHandRaisedState = !isHandRaised;
-    setIsHandRaised(newHandRaisedState);
-
-    const socket = getSocket();
-    if (socket && meetingCode) {
-      socket.emit('meeting:raise-hand', {
-        meetingId: meetingCode,
-        userId: currentUserId,
-        userName: currentUserName,
-        isRaised: newHandRaisedState,
-      });
-    }
-  };
-
-  const sendReaction = (emoji: string) => {
-    console.log('Sending reaction:', emoji, 'User:', currentUserName);
-
-    // Add reaction to local state immediately
-    const newReaction: Reaction = {
-      userId: currentUserId,
-      userName: currentUserName || 'You',
-      emoji,
-      timestamp: Date.now(),
-    };
-    setReactions((prev) => [...prev, newReaction]);
-
-    // Remove reaction after 3 seconds
-    setTimeout(() => {
-      setReactions((prev) => prev.filter((r) => r.timestamp !== newReaction.timestamp));
-    }, 3000);
-
-    // Also emit to server for other participants
-    const socket = getSocket();
-    if (socket && meetingCode) {
-      socket.emit('meeting:reaction', {
-        meetingId: meetingCode,
-        userId: currentUserId,
-        userName: currentUserName,
-        emoji,
-      });
-    } else {
-      console.warn('Cannot send reaction - socket or meetingCode missing');
-    }
-
-    setShowReactions(false);
-  };
-
-  const toggleViewMode = () => {
-    setViewMode((prev) => (prev === 'grid' ? 'speaker' : 'grid'));
-  };
-
-  const pinParticipant = (participantId: string) => {
-    setPinnedParticipant((prev) => (prev === participantId ? null : participantId));
-  };
-
-  const togglePictureInPicture = async () => {
-    if (!localVideoRef.current) return;
-
-    try {
-      if (document.pictureInPictureElement) {
-        await document.exitPictureInPicture();
-        setIsPipMode(false);
-      } else {
-        await localVideoRef.current.requestPictureInPicture();
-        setIsPipMode(true);
-      }
-    } catch (error) {
-      console.error('PiP error:', error);
-      alert('Picture-in-Picture is not supported on this browser');
-    }
-  };
-
-  const toggleBackgroundBlur = async () => {
-    if (!localStream.current) return;
-
-    // This is a placeholder - actual implementation would require a library like @mediapipe/selfie_segmentation
-    // For now, we'll just toggle the state
-    setIsBackgroundBlurred((prev) => !prev);
-
-    // In production, you would:
-    // 1. Use MediaPipe or TensorFlow.js for background segmentation
-    // 2. Apply blur to background pixels
-    // 3. Replace the video track with the processed stream
-
-    showToast(
-      isBackgroundBlurred
-        ? 'Background blur disabled'
-        : 'Background blur enabled (Demo mode)',
-      'info'
-    );
-  };
-
-  const playNotificationSound = (type: 'join' | 'leave' | 'message') => {
-    if (!notificationSounds) return;
-
-    // Simple beep using Web Audio API
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    // Different frequencies for different events
-    oscillator.frequency.value = type === 'join' ? 800 : type === 'leave' ? 400 : 600;
-    oscillator.type = 'sine';
-
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.3);
-  };
-
-  const showToast = (message: string, type: 'info' | 'success' | 'warning') => {
-    const id = Date.now();
-    setToasts((prev) => [...prev, { id, message, type }]);
-
-    // Auto-remove after 3 seconds
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    }, 3000);
-  };
-
-  const startRecording = async () => {
-    if (!localStream.current) {
-      showToast('Cannot start recording: No stream available', 'warning');
-      return;
-    }
-
-    try {
-      // Create a canvas to combine local and remote streams
-      const canvas = document.createElement('canvas');
-      canvas.width = 1920;
-      canvas.height = 1080;
-      const ctx = canvas.getContext('2d');
-
-      // For now, just record the local stream
-      // In production, you'd combine all video streams on the canvas
-      const recordingStream = canvas.captureStream(30);
-
-      // Add audio from local stream
-      if (localStream.current.getAudioTracks().length > 0) {
-        recordingStream.addTrack(localStream.current.getAudioTracks()[0]);
-      }
-
-      const mediaRecorder = new MediaRecorder(recordingStream, {
-        mimeType: 'video/webm;codecs=vp9',
-      });
-
-      const chunks: Blob[] = [];
-
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunks.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `slimfile-meet-${meetingCode}-${Date.now()}.webm`;
-        a.click();
-        URL.revokeObjectURL(url);
-
-        showToast('Recording saved successfully!', 'success');
-      };
-
-      mediaRecorder.start();
-      mediaRecorderRef.current = mediaRecorder;
-      setIsRecording(true);
-      setRecordingDuration(0);
-
-      // Start duration timer
-      recordingIntervalRef.current = setInterval(() => {
-        setRecordingDuration((prev) => prev + 1);
-      }, 1000);
-
-      showToast('Recording started', 'success');
-    } catch (error) {
-      console.error('Recording error:', error);
-      showToast('Failed to start recording', 'warning');
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current = null;
-      setIsRecording(false);
-
-      if (recordingIntervalRef.current) {
-        clearInterval(recordingIntervalRef.current);
-        recordingIntervalRef.current = null;
-      }
-
-      setRecordingDuration(0);
-      showToast('Recording stopped', 'info');
-    }
-  };
-
-  const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  return (
-    <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 flex flex-col overflow-hidden">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-700 border-b border-gray-600 px-4 py-3 flex-shrink-0 shadow-lg">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div>
-              <h1 className="text-white font-semibold text-lg">SlimFile Meet</h1>
-              <p className="text-gray-400 text-sm">Meeting: {meetingCode}</p>
-            </div>
-
-            {/* Connection Quality Indicator */}
-            <div className="flex items-center gap-2 px-3 py-1 bg-gray-700 rounded-full">
-              <Circle
-                className={`w-2 h-2 ${
-                  connectionQuality === 'good'
-                    ? 'text-green-500 fill-green-500'
-                    : connectionQuality === 'medium'
-                    ? 'text-yellow-500 fill-yellow-500'
-                    : 'text-red-500 fill-red-500'
-                }`}
-              />
-              <span className="text-gray-300 text-xs capitalize">{connectionQuality}</span>
-            </div>
-
-            {/* Recording Indicator */}
-            {isRecording && (
-              <div className="flex items-center gap-2 px-3 py-1 bg-red-600 rounded-full animate-pulse">
-                <Radio className="w-3 h-3 text-white" />
-                <span className="text-white text-xs font-medium">REC {formatDuration(recordingDuration)}</span>
-              </div>
-            )}
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* Participant count badge */}
-            <div className="flex items-center gap-2 px-3 py-1 bg-gray-700 rounded-full">
-              <Users className="w-4 h-4 text-gray-300" />
-              <span className="text-white text-sm font-medium">{participants.size}</span>
-            </div>
-
-            <Button
-              onClick={copyMeetingLink}
-              className="bg-purple-600 hover:bg-purple-700 text-white"
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              Invite
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex relative overflow-hidden min-h-0">
-        {/* Video Grid */}
-        <div className="flex-1 p-6 flex items-center justify-center overflow-y-auto overflow-x-hidden">
-          {(() => {
-            const totalParticipants = remoteStreams.size + 1; // +1 for self
-            const remoteCount = remoteStreams.size;
-
-            // Calculate grid class based on participant count
-            let gridClass = 'grid gap-3 w-full';
-            if (totalParticipants === 1) {
-              gridClass = 'flex flex-col items-center justify-center w-full h-full'; // Centered view when alone
-            } else if (totalParticipants === 2) {
-              // Google Meet style: 2 people = large view with small PiP
-              gridClass = 'relative w-full h-full';
-            } else if (totalParticipants <= 4) {
-              gridClass += ' grid-cols-2 max-w-6xl mx-auto'; // 2x2 grid - fixed columns
-            } else if (totalParticipants <= 6) {
-              gridClass += ' grid-cols-2 sm:grid-cols-3 max-w-6xl mx-auto'; // 2-3 columns
-            } else if (totalParticipants <= 9) {
-              gridClass += ' grid-cols-2 sm:grid-cols-3 max-w-7xl mx-auto'; // 3x3 grid
-            } else if (totalParticipants <= 12) {
-              gridClass += ' grid-cols-3 sm:grid-cols-4 max-w-7xl mx-auto'; // 4x3 grid
-            } else {
-              gridClass += ' grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 max-w-7xl mx-auto'; // 5 columns for many
-            }
-
-            // 2-PERSON LAYOUT: Google Meet style (1 large + 1 small PiP)
-            if (totalParticipants === 2 && viewMode === 'grid') {
-              const [firstRemoteId, firstRemoteStream] = Array.from(remoteStreams.entries())[0];
-              const firstParticipant = participants.get(firstRemoteId);
-
-              return (
-                <div className="relative w-full h-full">
-                  {/* Large view - Remote participant */}
-                  <div className="w-full h-full">
-                    <RemoteVideoCard
-                      participantId={firstRemoteId}
-                      stream={firstRemoteStream}
-                      participant={firstParticipant}
-                      isPinned={pinnedParticipant === firstRemoteId}
-                      onPin={() => pinParticipant(firstRemoteId)}
-                    />
-                  </div>
-
-                  {/* Small PiP - You (bottom-right corner) */}
-                  <div className="absolute bottom-6 right-6 w-48 sm:w-64 md:w-72 rounded-xl overflow-hidden shadow-2xl border-2 border-gray-600 z-10 hover:scale-105 transition-transform">
-                    <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video">
-                      <video
-                        ref={localVideoRef}
-                        autoPlay
-                        playsInline
-                        muted
-                        className="w-full h-full object-contain transform scale-x-[-1]"
-                      />
-                      {!isCameraOn && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-full p-4 shadow-xl">
-                            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-white text-lg font-bold shadow-lg">
-                              {currentUserName.charAt(0).toUpperCase()}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      <div className="absolute bottom-2 left-2 bg-black bg-opacity-75 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-700">
-                        <span className="text-white text-xs font-semibold">{currentUserName} (You)</span>
-                      </div>
-                      {!isMicOn && (
-                        <div className="absolute top-2 right-2 bg-red-600 rounded-full p-1.5 shadow-lg">
-                          <MicOff className="w-3.5 h-3.5 text-white" />
-                        </div>
-                      )}
-                      {isHandRaised && (
-                        <div className="absolute top-2 left-2 bg-yellow-500 rounded-full p-1.5 animate-bounce shadow-lg">
-                          <Hand className="w-3.5 h-3.5 text-white" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            }
-
-            // SPEAKER VIEW: Pinned or first participant large
-            if (viewMode === 'speaker' || pinnedParticipant) {
-              const speakerId = pinnedParticipant || Array.from(remoteStreams.keys())[0];
-              const speakerStream = speakerId ? remoteStreams.get(speakerId) : null;
-              const speakerParticipant = speakerId ? participants.get(speakerId) : undefined;
-
-              return (
-                <div className="w-full h-full flex flex-col gap-4 overflow-hidden">
-                  {/* Large speaker view */}
-                  <div className="flex-1 min-h-0">
-                    {speakerStream && speakerId ? (
-                      <RemoteVideoCard
-                        participantId={speakerId}
-                        stream={speakerStream}
-                        participant={speakerParticipant}
-                        isPinned={pinnedParticipant === speakerId}
-                        onPin={() => pinParticipant(speakerId)}
-                      />
-                    ) : (
-                      <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video h-full flex items-center justify-center">
-                        <div className="text-center">
-                          <Users className="w-16 h-16 text-gray-600 mx-auto mb-2" />
-                          <p className="text-gray-400">No active speaker</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Thumbnails at bottom */}
-                  <div className="h-28 overflow-x-auto">
-                    <div className="flex gap-2 h-full">
-                      {/* Local video thumbnail */}
-                      <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video h-full flex-shrink-0 w-40">
-                        <video
-                          ref={localVideoRef}
-                          autoPlay
-                          playsInline
-                          muted
-                          className="w-full h-full object-cover transform scale-x-[-1]"
-                        />
-                        {!isCameraOn && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
-                            <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                              {currentUserName.charAt(0).toUpperCase()}
-                            </div>
-                          </div>
-                        )}
-                        <div className="absolute bottom-1 left-1 bg-black bg-opacity-60 px-2 py-0.5 rounded-full">
-                          <span className="text-white text-xs">You</span>
-                        </div>
-                      </div>
-
-                      {/* Remote participants thumbnails */}
-                      {Array.from(remoteStreams.entries())
-                        .filter(([id]) => id !== speakerId)
-                        .map(([participantId, stream]) => (
-                          <div
-                            key={participantId}
-                            className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video h-full flex-shrink-0 w-40 cursor-pointer hover:ring-2 hover:ring-purple-500"
-                            onClick={() => pinParticipant(participantId)}
-                          >
-                            <video
-                              ref={(el) => {
-                                if (el && stream) {
-                                  el.srcObject = stream;
-                                  el.play().catch((e) => console.error('Thumbnail play error:', e));
-                                }
-                              }}
-                              autoPlay
-                              playsInline
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute bottom-1 left-1 bg-black bg-opacity-60 px-2 py-0.5 rounded-full">
-                              <span className="text-white text-xs">
-                                {participants.get(participantId)?.userName || participantId.substring(0, 8)}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            }
-
-            // GRID VIEW: Standard grid for 1, 3+ participants
-
-            // SOLO VIEW: Just you - Google Meet style centered view
-            if (totalParticipants === 1) {
-              return (
-                <div className={gridClass}>
-                  <div className="w-full max-w-5xl px-4">
-                    {/* Your Video - Large centered */}
-                    <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl overflow-hidden aspect-video shadow-2xl border border-gray-700">
-                      <video
-                        ref={localVideoRef}
-                        autoPlay
-                        playsInline
-                        muted
-                        className="w-full h-full object-contain transform scale-x-[-1]"
-                      />
-                      {!isCameraOn && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-                          <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-full p-10 shadow-xl">
-                            <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
-                              {currentUserName.charAt(0).toUpperCase()}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      <div className="absolute bottom-4 left-4 bg-black bg-opacity-75 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 shadow-lg border border-gray-700">
-                        <span className="text-white text-base font-semibold">{currentUserName}</span>
-                        <span className="text-gray-400 text-sm">(You)</span>
-                        {!isMicOn && <MicOff className="w-4 h-4 text-red-400" />}
-                      </div>
-                      {isHandRaised && (
-                        <div className="absolute top-4 left-4 bg-yellow-500 rounded-full p-3 animate-bounce shadow-lg">
-                          <Hand className="w-5 h-5 text-white" />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Waiting message below video - with bottom padding to avoid controls */}
-                    <div className="text-center mt-8 mb-24">
-                      <div className="inline-flex items-center gap-3 bg-gradient-to-r from-gray-800 to-gray-700 px-8 py-4 rounded-full border border-gray-600 shadow-lg">
-                        <Users className="w-6 h-6 text-purple-400" />
-                        <p className="text-white text-base font-medium">Waiting for others to join...</p>
-                      </div>
-                      <p className="text-gray-400 text-sm mt-4 font-medium">Share the meeting link to invite people</p>
-                    </div>
-                  </div>
-                </div>
-              );
-            }
-
-            // GRID VIEW: 3+ participants
-            return (
-              <div className={gridClass}>
-                {/* Local Video */}
-                <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden aspect-video border border-gray-700 shadow-lg hover:shadow-xl transition-shadow">
-                  <video
-                    ref={localVideoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="w-full h-full object-contain transform scale-x-[-1]"
-                  />
-                  {!isCameraOn && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-                      <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-full p-6 shadow-xl">
-                        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
-                          {currentUserName.charAt(0).toUpperCase()}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  <div className="absolute bottom-3 left-3 bg-black bg-opacity-75 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-2 shadow-md border border-gray-700">
-                    <span className="text-white text-sm font-semibold">{currentUserName}</span>
-                    <span className="text-gray-400 text-xs">(You)</span>
-                    {!isMicOn && <MicOff className="w-3.5 h-3.5 text-red-400" />}
-                  </div>
-                  {isHandRaised && (
-                    <div className="absolute top-3 left-3 bg-yellow-500 rounded-full p-2 animate-bounce shadow-lg">
-                      <Hand className="w-4 h-4 text-white" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Remote Participants */}
-                {Array.from(remoteStreams.entries()).map(([participantId, stream]) => {
-                  const participant = participants.get(participantId);
-                  if (!participant) {
-                    console.warn(`⚠️  No participant data found for ${participantId}. Available participants:`, Array.from(participants.keys()));
-                  }
-                  return (
-                    <RemoteVideoCard
-                      key={participantId}
-                      participantId={participantId}
-                      stream={stream}
-                      participant={participant}
-                      isPinned={pinnedParticipant === participantId}
-                      onPin={() => pinParticipant(participantId)}
-                    />
-                  );
-                })}
-              </div>
-            );
-          })()}
-        </div>
-
-        {/* Floating Reactions */}
-        {reactions.map((reaction, index) => (
-          <div
-            key={`${reaction.userId}-${reaction.timestamp}`}
-            className="fixed text-6xl animate-float-up pointer-events-none z-50"
-            style={{
-              left: `${20 + (index % 5) * 15}%`,
-              bottom: '20%',
-              animationDelay: `${index * 0.1}s`,
-            }}
-          >
-            {reaction.emoji}
-          </div>
-        ))}
-
-        {/* Participants Sidebar */}
-        {showParticipants && (
-          <div className="w-80 bg-gray-800 border-l border-gray-700 p-4 flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-semibold">
-                Participants ({participants.size})
-              </h3>
-              <button
-                onClick={() => setShowParticipants(false)}
-                className="text-gray-400 hover:text-white text-2xl leading-none"
-              >
-                ×
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto space-y-2">
-              {/* You */}
-              <div className="flex items-center gap-3 p-2 rounded bg-gray-700 hover:bg-gray-600">
-                <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                  {currentUserName.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1">
-                  <span className="text-white font-medium">{currentUserName}</span>
-                  <span className="text-gray-400 text-xs ml-1">(You)</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  {isHandRaised && (
-                    <div className="bg-yellow-500 rounded-full p-1">
-                      <Hand className="w-3 h-3 text-white" />
-                    </div>
-                  )}
-                  {!isMicOn && <MicOff className="w-4 h-4 text-red-500" />}
-                  {!isCameraOn && <VideoOff className="w-4 h-4 text-red-500" />}
-                </div>
-              </div>
-
-              {/* Remote participants */}
-              {Array.from(participants.entries())
-                .filter(([id]) => id !== currentUserId)
-                .sort((a, b) => {
-                  // Sort by hand raised first, then alphabetically
-                  if (a[1].isHandRaised && !b[1].isHandRaised) return -1;
-                  if (!a[1].isHandRaised && b[1].isHandRaised) return 1;
-                  return a[1].userName.localeCompare(b[1].userName);
-                })
-                .map(([participantId, participant]) => (
-                  <div
-                    key={participantId}
-                    className="flex items-center gap-3 p-2 rounded bg-gray-700 hover:bg-gray-600 cursor-pointer"
-                    onClick={() => pinParticipant(participantId)}
-                  >
-                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                      {participant.userName.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="flex-1">
-                      <span className="text-white font-medium">{participant.userName}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {participant.isHandRaised && (
-                        <div className="bg-yellow-500 rounded-full p-1 animate-bounce">
-                          <Hand className="w-3 h-3 text-white" />
-                        </div>
-                      )}
-                      {participant.isMuted && <MicOff className="w-4 h-4 text-red-500" />}
-                      {participant.isCameraOff && <VideoOff className="w-4 h-4 text-red-500" />}
-                      {pinnedParticipant === participantId && (
-                        <Pin className="w-4 h-4 text-purple-400" />
-                      )}
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-        )}
-
-        {/* Chat Sidebar */}
-        {showChat && (
-          <div className="w-80 bg-gray-800 border-l border-gray-700 p-4 flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-semibold">Chat</h3>
-              <button
-                onClick={() => setShowChat(false)}
-                className="text-gray-400 hover:text-white text-2xl leading-none"
-              >
-                ×
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto mb-4 space-y-3">
-              {chatMessages.length === 0 ? (
-                <p className="text-gray-500 text-sm text-center py-8">
-                  No messages yet. Start the conversation!
-                </p>
-              ) : (
-                chatMessages.map((msg, index) => {
-                  const isOwnMessage = msg.userName === currentUserName;
-                  return (
-                    <div
-                      key={index}
-                      className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-[80%] rounded-lg p-3 ${
-                          isOwnMessage
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-gray-700 text-white'
-                        }`}
-                      >
-                        {!isOwnMessage && (
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold text-sm">
-                              {msg.userName}
-                            </span>
-                          </div>
-                        )}
-                        <p className="text-sm break-words">{msg.message}</p>
-                        <span className={`text-xs mt-1 block ${
-                          isOwnMessage ? 'text-purple-200' : 'text-gray-400'
-                        }`}>
-                          {new Date(msg.timestamp).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-
-              {/* Typing indicator */}
-              {typingUsers.size > 0 && (
-                <div className="flex items-center gap-2 text-gray-400 text-sm px-3">
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                  </div>
-                  <span>
-                    {Array.from(typingUsers).slice(0, 2).join(', ')}
-                    {typingUsers.size > 2 && ` and ${typingUsers.size - 2} more`} typing...
-                  </span>
-                </div>
-              )}
-
-              <div ref={chatEndRef} />
-            </div>
-            <form onSubmit={sendChatMessage} className="flex flex-col gap-2">
-              <input
-                type="text"
-                value={chatInput}
-                onChange={handleChatInputChange}
-                placeholder="Type a message..."
-                className="flex-1 bg-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 placeholder-gray-400"
-              />
-              <Button type="submit" className="bg-purple-600 hover:bg-purple-700 w-full py-3">
-                Send Message
-              </Button>
-            </form>
-          </div>
-        )}
-      </div>
-
-      {/* Controls Bar */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-700 border-t border-gray-600 px-4 py-5 flex-shrink-0 shadow-2xl">
-        <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
-          {/* Microphone */}
-          <Button
-            onClick={toggleMic}
-            className={`rounded-full w-12 h-12 p-0 ${
-              isMicOn
-                ? 'bg-gray-700 hover:bg-gray-600'
-                : 'bg-red-600 hover:bg-red-700'
-            }`}
-          >
-            {isMicOn ? (
-              <Mic className="w-5 h-5 text-white" />
-            ) : (
-              <MicOff className="w-5 h-5 text-white" />
-            )}
-          </Button>
-
-          {/* Camera */}
-          <Button
-            onClick={toggleCamera}
-            className={`rounded-full w-12 h-12 p-0 ${
-              isCameraOn
-                ? 'bg-gray-700 hover:bg-gray-600'
-                : 'bg-red-600 hover:bg-red-700'
-            }`}
-          >
-            {isCameraOn ? (
-              <Video className="w-5 h-5 text-white" />
-            ) : (
-              <VideoOff className="w-5 h-5 text-white" />
-            )}
-          </Button>
-
-          {/* Screen Share */}
-          <Button
-            onClick={toggleScreenShare}
-            className={`rounded-full w-12 h-12 p-0 ${
-              isScreenSharing
-                ? 'bg-purple-600 hover:bg-purple-700'
-                : 'bg-gray-700 hover:bg-gray-600'
-            }`}
-          >
-            {isScreenSharing ? (
-              <MonitorOff className="w-5 h-5 text-white" />
-            ) : (
-              <Monitor className="w-5 h-5 text-white" />
-            )}
-          </Button>
-
-          {/* Raise Hand */}
-          <Button
-            onClick={toggleHandRaise}
-            className={`rounded-full w-12 h-12 p-0 ${
-              isHandRaised
-                ? 'bg-yellow-500 hover:bg-yellow-600'
-                : 'bg-gray-700 hover:bg-gray-600'
-            }`}
-            title="Raise hand"
-          >
-            <Hand className={`w-5 h-5 ${isHandRaised ? 'text-white' : 'text-gray-300'}`} />
-          </Button>
-
-          {/* Reactions */}
-          <div className="relative">
-            <Button
-              onClick={() => setShowReactions(!showReactions)}
-              className={`rounded-full w-12 h-12 p-0 ${
-                showReactions
-                  ? 'bg-purple-600 hover:bg-purple-700'
-                  : 'bg-gray-700 hover:bg-gray-600'
-              }`}
-              title="Send reaction"
-            >
-              <Smile className="w-5 h-5 text-white" />
-            </Button>
-            {showReactions && (
-              <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-gray-800 to-gray-700 border-2 border-purple-500 rounded-xl p-3 shadow-2xl flex gap-3 z-[100]">
-                {['👍', '❤️', '😂', '😮', '👏', '🎉'].map((emoji) => (
-                  <button
-                    key={emoji}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      sendReaction(emoji);
-                    }}
-                    className="text-3xl hover:scale-125 transition-transform bg-gray-700 hover:bg-gray-600 rounded-lg p-2 active:scale-95"
-                    type="button"
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* View Mode Toggle */}
-          {remoteStreams.size > 0 && (
-            <Button
-              onClick={toggleViewMode}
-              className="rounded-full w-12 h-12 p-0 bg-gray-700 hover:bg-gray-600"
-              title={viewMode === 'grid' ? 'Switch to speaker view' : 'Switch to grid view'}
-            >
-              {viewMode === 'grid' ? (
-                <User className="w-5 h-5 text-white" />
-              ) : (
-                <Grid className="w-5 h-5 text-white" />
-              )}
-            </Button>
-          )}
-
-          {/* Chat */}
-          <Button
-            onClick={() => setShowChat(!showChat)}
-            className={`rounded-full w-12 h-12 p-0 ${
-              showChat
-                ? 'bg-purple-600 hover:bg-purple-700'
-                : 'bg-gray-700 hover:bg-gray-600'
-            }`}
-            title="Toggle chat"
-          >
-            <MessageSquare className="w-5 h-5 text-white" />
-          </Button>
-
-          {/* Participants */}
-          <Button
-            onClick={() => setShowParticipants(!showParticipants)}
-            className={`rounded-full w-12 h-12 p-0 ${
-              showParticipants
-                ? 'bg-purple-600 hover:bg-purple-700'
-                : 'bg-gray-700 hover:bg-gray-600'
-            }`}
-            title="Show participants"
-          >
-            <Users className="w-5 h-5 text-white" />
-          </Button>
-
-          {/* Settings */}
-          <Button
-            onClick={() => setShowSettings(!showSettings)}
-            className={`rounded-full w-12 h-12 p-0 ${
-              showSettings
-                ? 'bg-purple-600 hover:bg-purple-700'
-                : 'bg-gray-700 hover:bg-gray-600'
-            }`}
-            title="Settings"
-          >
-            <Settings className="w-5 h-5 text-white" />
-          </Button>
-
-          {/* Leave Call */}
-          <Button
-            onClick={leaveMeeting}
-            className="rounded-full w-12 h-12 p-0 bg-red-600 hover:bg-red-700 ml-4"
-          >
-            <PhoneOff className="w-5 h-5 text-white" />
-          </Button>
-        </div>
-
-        {/* Meeting Info */}
-        <div className="max-w-4xl mx-auto mt-3 text-center">
-          <p className="text-gray-400 text-sm">
-            Meeting ID: <span className="text-white font-mono">{meetingCode}</span>
-          </p>
-        </div>
-      </div>
-
-      {/* Settings Modal */}
-      {showSettings && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 border border-gray-700">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-xl font-semibold">Meeting Settings</h2>
-              <button
-                onClick={() => setShowSettings(false)}
-                className="text-gray-400 hover:text-white text-2xl leading-none"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {/* Picture-in-Picture */}
-              <div className="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600">
-                <div className="flex items-center gap-3">
-                  {isPipMode ? (
-                    <Minimize2 className="w-5 h-5 text-purple-400" />
-                  ) : (
-                    <Maximize2 className="w-5 h-5 text-gray-400" />
-                  )}
-                  <div>
-                    <p className="text-white font-medium">Picture-in-Picture</p>
-                    <p className="text-gray-400 text-xs">Float your video on top of other windows</p>
-                  </div>
-                </div>
-                <button
-                  onClick={togglePictureInPicture}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    isPipMode
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
-                  }`}
-                >
-                  {isPipMode ? 'Disable' : 'Enable'}
-                </button>
-              </div>
-
-              {/* Background Blur */}
-              <div className="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600">
-                <div className="flex items-center gap-3">
-                  <Sparkles className="w-5 h-5 text-blue-400" />
-                  <div>
-                    <p className="text-white font-medium">Background Blur</p>
-                    <p className="text-gray-400 text-xs">Blur your background (Demo mode)</p>
-                  </div>
-                </div>
-                <button
-                  onClick={toggleBackgroundBlur}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    isBackgroundBlurred
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
-                  }`}
-                >
-                  {isBackgroundBlurred ? 'On' : 'Off'}
-                </button>
-              </div>
-
-              {/* Notification Sounds */}
-              <div className="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600">
-                <div className="flex items-center gap-3">
-                  {notificationSounds ? (
-                    <Bell className="w-5 h-5 text-green-400" />
-                  ) : (
-                    <BellOff className="w-5 h-5 text-gray-400" />
-                  )}
-                  <div>
-                    <p className="text-white font-medium">Notification Sounds</p>
-                    <p className="text-gray-400 text-xs">Play sounds when people join/leave</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setNotificationSounds((prev) => !prev)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    notificationSounds
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
-                  }`}
-                >
-                  {notificationSounds ? 'On' : 'Off'}
-                </button>
-              </div>
-
-              {/* Recording */}
-              <div className="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600">
-                <div className="flex items-center gap-3">
-                  {isRecording ? (
-                    <Square className="w-5 h-5 text-red-500" />
-                  ) : (
-                    <Radio className="w-5 h-5 text-gray-400" />
-                  )}
-                  <div>
-                    <p className="text-white font-medium">Record Meeting</p>
-                    <p className="text-gray-400 text-xs">
-                      {isRecording ? `Recording: ${formatDuration(recordingDuration)}` : 'Save meeting as video file'}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={isRecording ? stopRecording : startRecording}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    isRecording
-                      ? 'bg-red-600 text-white hover:bg-red-700'
-                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
-                  }`}
-                >
-                  {isRecording ? 'Stop' : 'Record'}
-                </button>
-              </div>
-
-              {/* Connection Quality */}
-              <div className="p-3 bg-gray-700 rounded-lg">
-                <div className="flex items-center gap-3 mb-2">
-                  <Circle
-                    className={`w-4 h-4 ${
-                      connectionQuality === 'good'
-                        ? 'text-green-500 fill-green-500'
-                        : connectionQuality === 'medium'
-                        ? 'text-yellow-500 fill-yellow-500'
-                        : 'text-red-500 fill-red-500'
-                    }`}
-                  />
-                  <p className="text-white font-medium">Connection Quality</p>
-                </div>
-                <p className="text-gray-400 text-sm">
-                  Status: <span className="text-white capitalize">{connectionQuality}</span>
-                </p>
-                <p className="text-gray-400 text-xs mt-1">
-                  {participants.size} participants • WebRTC P2P
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <Button
-                onClick={() => setShowSettings(false)}
-                className="w-full bg-purple-600 hover:bg-purple-700"
-              >
-                Close Settings
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Toast Notifications */}
-      <div className="fixed top-20 right-4 z-50 space-y-2">
-        {toasts.map((toast) => (
-          <div
-            key={toast.id}
-            className={`px-4 py-3 rounded-lg shadow-lg border-l-4 max-w-sm animate-slide-in ${
-              toast.type === 'info'
-                ? 'bg-gray-800 border-blue-500'
-                : toast.type === 'success'
-                ? 'bg-gray-800 border-green-500'
-                : 'bg-gray-800 border-yellow-500'
-            }`}
-          >
-            <p className="text-white text-sm">{toast.message}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+// ─── Avatar helper ────────────────────────────────────────────────────────────
+const COLORS = ['#1a73e8','#34a853','#fbbc04','#ea4335','#9c27b0','#00bcd4','#ff5722','#607d8b'];
+function avatarColor(name: string) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+  return COLORS[Math.abs(h) % COLORS.length];
 }
 
-// Remote video card component
+// ─── Remote video card ────────────────────────────────────────────────────────
 interface RemoteVideoCardProps {
   participantId: string;
   stream: MediaStream;
   participant?: Participant;
   isPinned?: boolean;
   onPin?: () => void;
+  compact?: boolean;
 }
 
-function RemoteVideoCard({
-  participantId,
-  stream,
-  participant,
-  isPinned,
-  onPin
-}: RemoteVideoCardProps) {
+function RemoteVideoCard({ participantId, stream, participant, isPinned, onPin, compact }: RemoteVideoCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [hasVideoTrack, setHasVideoTrack] = useState(false);
+  const [hasVideo, setHasVideo] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !stream) return;
 
-    // Function to update video element
-    const updateVideo = () => {
+    const attach = () => {
       video.srcObject = stream;
-
-      // Check if stream has video track
-      const videoTracks = stream.getVideoTracks();
-      setHasVideoTrack(videoTracks.length > 0 && videoTracks[0].enabled);
-
+      const vt = stream.getVideoTracks();
+      setHasVideo(vt.length > 0 && vt[0].enabled && vt[0].readyState === 'live');
       video.onloadedmetadata = () => {
-        video.play().catch((e) => {
-          if (e.name !== 'AbortError') console.error('Remote video play error:', e);
-        });
+        video.play().catch((e) => { if (e.name !== 'AbortError') console.error(e); });
       };
     };
 
-    // Initial setup
-    updateVideo();
+    attach();
 
-    // Listen for track additions (video track may arrive after audio)
-    const handleTrackAdded = (event: MediaStreamTrackEvent) => {
-      console.log(`Track added to remote stream: ${event.track.kind}`);
-      updateVideo();
+    const onAdd = (e: MediaStreamTrackEvent) => {
+      if (e.track.kind === 'video') attach();
+    };
+    const onRemove = () => {
+      const vt = stream.getVideoTracks();
+      setHasVideo(vt.length > 0 && vt[0].enabled);
     };
 
-    const handleTrackRemoved = (event: MediaStreamTrackEvent) => {
-      console.log(`Track removed from remote stream: ${event.track.kind}`);
-      const videoTracks = stream.getVideoTracks();
-      setHasVideoTrack(videoTracks.length > 0 && videoTracks[0].enabled);
-    };
-
-    stream.addEventListener('addtrack', handleTrackAdded);
-    stream.addEventListener('removetrack', handleTrackRemoved);
-
-    // Also listen for track enabled/disabled changes
-    stream.getTracks().forEach(track => {
-      track.onended = () => {
-        console.log(`Track ended: ${track.kind}`);
-        updateVideo();
-      };
-      track.onmute = () => {
-        console.log(`Track muted: ${track.kind}`);
-      };
-      track.onunmute = () => {
-        console.log(`Track unmuted: ${track.kind}`);
-        updateVideo();
-      };
+    stream.addEventListener('addtrack', onAdd);
+    stream.addEventListener('removetrack', onRemove);
+    stream.getTracks().forEach(t => {
+      t.onunmute = () => attach();
+      t.onmute = () => { if (t.kind === 'video') setHasVideo(false); };
     });
 
     return () => {
-      stream.removeEventListener('addtrack', handleTrackAdded);
-      stream.removeEventListener('removetrack', handleTrackRemoved);
+      stream.removeEventListener('addtrack', onAdd);
+      stream.removeEventListener('removetrack', onRemove);
     };
   }, [stream]);
 
-  const displayName = participant?.userName || participantId.substring(0, 12);
+  const name = participant?.userName || participantId.substring(0, 10);
+  const initial = name.charAt(0).toUpperCase();
+  const color = avatarColor(name);
 
   return (
-    <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden aspect-video border border-gray-700 shadow-lg hover:shadow-xl transition-all group hover:border-purple-500">
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        className="w-full h-full object-contain"
-      />
+    <div
+      className={`relative bg-[#3C4043] overflow-hidden flex items-center justify-center group cursor-pointer ${compact ? 'rounded-xl' : 'rounded-2xl'} ${isPinned ? 'ring-2 ring-[#1a73e8]' : ''}`}
+      style={{ aspectRatio: '16/9' }}
+      onClick={onPin}
+    >
+      <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
 
-      {/* Camera off indicator - show when camera is off OR no video track received */}
-      {(participant?.isCameraOff || !hasVideoTrack) && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-          <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-full p-6 shadow-xl">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
-              {displayName.charAt(0).toUpperCase()}
+      {!hasVideo && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div
+            className="rounded-full flex items-center justify-center text-white font-medium shadow-lg"
+            style={{
+              backgroundColor: color,
+              width: compact ? 48 : 72,
+              height: compact ? 48 : 72,
+              fontSize: compact ? 20 : 30,
+            }}
+          >
+            {initial}
+          </div>
+        </div>
+      )}
+
+      {/* Pin button */}
+      {!compact && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onPin?.(); }}
+          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-full p-1.5"
+        >
+          <Pin className={`w-3.5 h-3.5 ${isPinned ? 'text-[#1a73e8]' : 'text-white'}`} />
+        </button>
+      )}
+
+      {/* Name tag */}
+      <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-lg">
+        <span className="text-white text-xs font-medium">{name}</span>
+      </div>
+
+      {participant?.isMuted && (
+        <div className="absolute top-2 left-2 bg-[#3C4043]/80 rounded-full p-1.5">
+          <MicOff className="w-3 h-3 text-red-400" />
+        </div>
+      )}
+      {participant?.isHandRaised && (
+        <div className="absolute top-2 right-2 text-base animate-bounce">✋</div>
+      )}
+    </div>
+  );
+}
+
+// ─── Control button ───────────────────────────────────────────────────────────
+function CtrlBtn({
+  onClick, active = true, danger = false, label, children,
+}: {
+  onClick: () => void;
+  active?: boolean;
+  danger?: boolean;
+  label?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <button
+        onClick={onClick}
+        title={label}
+        className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-150 focus:outline-none
+          ${danger
+            ? 'bg-red-600 hover:bg-red-500 text-white'
+            : active
+              ? 'bg-[#3C4043] hover:bg-[#4A4D51] text-white'
+              : 'bg-red-600 hover:bg-red-500 text-white'
+          }`}
+      >
+        {children}
+      </button>
+      {label && <span className="text-[#BDC1C6] text-[10px] font-medium">{label}</span>}
+    </div>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+export default function MeetingRoom() {
+  const { meetingCode } = useParams<{ meetingCode: string }>();
+  const navigate = useNavigate();
+
+  const [isMicOn, setIsMicOn] = useState(true);
+  const [isCameraOn, setIsCameraOn] = useState(true);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [showParticipants, setShowParticipants] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showReactions, setShowReactions] = useState(false);
+  const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
+  const [isStreamReady, setIsStreamReady] = useState(false);
+  const [participants, setParticipants] = useState<Map<string, Participant>>(new Map());
+  const [currentUserName, setCurrentUserName] = useState('');
+  const [currentUserId, setCurrentUserId] = useState('');
+  const [isHandRaised, setIsHandRaised] = useState(false);
+  const [reactions, setReactions] = useState<Reaction[]>([]);
+  const [viewMode, setViewMode] = useState<'grid' | 'speaker'>('grid');
+  const [pinnedParticipant, setPinnedParticipant] = useState<string | null>(null);
+  const [connectionQuality, setConnectionQuality] = useState<'good' | 'medium' | 'poor'>('good');
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
+  const [notificationSounds, setNotificationSounds] = useState(true);
+  const [isPipMode, setIsPipMode] = useState(false);
+  const [isBackgroundBlurred, setIsBackgroundBlurred] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const [clock, setClock] = useState('');
+  const [toasts, setToasts] = useState<Array<{ id: number; message: string; type: string }>>([]);
+
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const localStream = useRef<MediaStream | null>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clock
+  useEffect(() => {
+    const tick = () => setClock(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const showToast = (message: string, type = 'info') => {
+    const id = Date.now();
+    setToasts(p => [...p, { id, message, type }]);
+    setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 3500);
+  };
+
+  // Media init
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: { echoCancellation: true, noiseSuppression: true },
+        });
+        localStream.current = stream;
+        meetingService.setLocalStream(stream);
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = stream;
+          localVideoRef.current.play().catch(() => {});
+        }
+        setIsStreamReady(true);
+      } catch (err: any) {
+        alert('Unable to access camera/microphone: ' + err.message);
+      }
+    };
+    const t = setTimeout(init, 100);
+    return () => {
+      clearTimeout(t);
+      localStream.current?.getTracks().forEach(t => t.stop());
+    };
+  }, []);
+
+  // Join meeting
+  useEffect(() => {
+    if (!meetingCode || !isStreamReady || !localStream.current) return;
+
+    let socket = getSocket();
+    if (!socket || !socket.connected) {
+      socket = initializeSocket();
+      const token = getToken();
+      if (token) socket.emit('authenticate', token);
+    }
+
+    const token = getToken();
+    let userId = `guest-${Date.now()}`;
+    let userName = 'Guest';
+    if (token) {
+      try {
+        const p = JSON.parse(atob(token.split('.')[1]));
+        userId = p.id || userId;
+        userName = p.name || p.email || userName;
+        setCurrentUserId(userId);
+        setCurrentUserName(userName);
+      } catch {}
+    }
+
+    setParticipants(prev => {
+      const m = new Map(prev);
+      m.set(userId, { userId, userName, isHandRaised: false, isMuted: false, isCameraOff: false });
+      return m;
+    });
+
+    meetingService.onRemoteStreamAdded = (pid, stream) => {
+      setRemoteStreams(prev => { const m = new Map(prev); m.set(pid, stream); return m; });
+    };
+    meetingService.onParticipantLeft = (pid) => {
+      setRemoteStreams(prev => { const m = new Map(prev); m.delete(pid); return m; });
+      setParticipants(prev => { const m = new Map(prev); m.delete(pid); return m; });
+    };
+    meetingService.onParticipantMetadata = (pid, name) => {
+      setParticipants(prev => {
+        const m = new Map(prev);
+        m.set(pid, { userId: pid, userName: name, isHandRaised: false, isMuted: false, isCameraOff: false });
+        return m;
+      });
+    };
+    meetingService.onError = (msg) => showToast(msg, 'warning');
+
+    try { meetingService.joinMeeting(meetingCode, userId, userName); } catch {}
+
+    return () => { meetingService.leaveMeeting(); };
+  }, [meetingCode, isStreamReady]);
+
+  // Socket listeners for UI events
+  useEffect(() => {
+    if (!isStreamReady) return;
+    const socket = getSocket();
+    if (!socket) return;
+
+    const onChat = (data: ChatMessage) => {
+      setChatMessages(p => [...p, data]);
+      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    };
+    const onJoined = (data: { userId: string; userName: string }) => {
+      setParticipants(prev => {
+        const m = new Map(prev);
+        m.set(data.userId, { userId: data.userId, userName: data.userName, isHandRaised: false, isMuted: false, isCameraOff: false });
+        return m;
+      });
+      if (notificationSounds) playSound('join');
+      showToast(`${data.userName} joined`);
+    };
+    const onHandRaised = (d: { userId: string; isRaised: boolean }) => {
+      setParticipants(prev => {
+        const m = new Map(prev);
+        const p = m.get(d.userId);
+        if (p) m.set(d.userId, { ...p, isHandRaised: d.isRaised });
+        return m;
+      });
+    };
+    const onReaction = (d: { userId: string; userName: string; emoji: string }) => {
+      const r: Reaction = { ...d, timestamp: Date.now() };
+      setReactions(p => [...p, r]);
+      setTimeout(() => setReactions(p => p.filter(x => x.timestamp !== r.timestamp)), 3000);
+    };
+    const onUpdate = (d: any) => {
+      setParticipants(prev => {
+        const m = new Map(prev);
+        const p = m.get(d.userId);
+        if (p) m.set(d.userId, { ...p, ...d });
+        return m;
+      });
+    };
+    const onTyping = (d: { userName: string; isTyping: boolean }) => {
+      setTypingUsers(prev => {
+        const s = new Set(prev);
+        d.isTyping ? s.add(d.userName) : s.delete(d.userName);
+        return s;
+      });
+    };
+
+    socket.on('meeting:chat-message', onChat);
+    socket.on('meeting:participant-joined', onJoined);
+    socket.on('meeting:hand-raised', onHandRaised);
+    socket.on('meeting:reaction', onReaction);
+    socket.on('meeting:participant-update', onUpdate);
+    socket.on('meeting:user-typing', onTyping);
+
+    return () => {
+      socket.off('meeting:chat-message', onChat);
+      socket.off('meeting:participant-joined', onJoined);
+      socket.off('meeting:hand-raised', onHandRaised);
+      socket.off('meeting:reaction', onReaction);
+      socket.off('meeting:participant-update', onUpdate);
+      socket.off('meeting:user-typing', onTyping);
+    };
+  }, [isStreamReady, notificationSounds]);
+
+  // Connection quality monitor
+  useEffect(() => {
+    const id = setInterval(() => {
+      const s = getSocket();
+      setConnectionQuality(s?.connected ? 'good' : 'poor');
+    }, 3000);
+    return () => clearInterval(id);
+  }, []);
+
+  const playSound = (type: 'join' | 'leave' | 'message') => {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = type === 'join' ? 880 : type === 'leave' ? 440 : 660;
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      osc.start(); osc.stop(ctx.currentTime + 0.3);
+    } catch {}
+  };
+
+  // ── Controls ────────────────────────────────────────────────────────────────
+
+  const toggleMic = () => {
+    if (!localStream.current) return;
+    const t = localStream.current.getAudioTracks()[0];
+    if (!t) return;
+    t.enabled = !t.enabled;
+    setIsMicOn(t.enabled);
+    getSocket()?.emit('meeting:participant-update', { meetingId: meetingCode, userId: currentUserId, isMuted: !t.enabled });
+  };
+
+  const toggleCamera = () => {
+    if (!localStream.current) return;
+    const t = localStream.current.getVideoTracks()[0];
+    if (!t) return;
+    t.enabled = !t.enabled;
+    setIsCameraOn(t.enabled);
+    getSocket()?.emit('meeting:participant-update', { meetingId: meetingCode, userId: currentUserId, isCameraOff: !t.enabled });
+  };
+
+  const toggleScreenShare = async () => {
+    if (isScreenSharing) {
+      // Stop sharing — revert to camera
+      await meetingService.stopScreenShare();
+      setIsScreenSharing(false);
+      if (localVideoRef.current && localStream.current) {
+        localVideoRef.current.srcObject = localStream.current;
+        localVideoRef.current.play().catch(() => {});
+      }
+    } else {
+      try {
+        const screenStream = await meetingService.startScreenShare();
+        setIsScreenSharing(true);
+        // Show screen in local preview
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = screenStream;
+          localVideoRef.current.play().catch(() => {});
+        }
+        // When user stops via browser stop-share button
+        screenStream.getVideoTracks()[0].onended = () => {
+          setIsScreenSharing(false);
+          meetingService.stopScreenShare().catch(() => {});
+          if (localVideoRef.current && localStream.current) {
+            localVideoRef.current.srcObject = localStream.current;
+            localVideoRef.current.play().catch(() => {});
+          }
+        };
+      } catch (err) {
+        console.error('Screen share error:', err);
+      }
+    }
+  };
+
+  const toggleHandRaise = () => {
+    const next = !isHandRaised;
+    setIsHandRaised(next);
+    getSocket()?.emit('meeting:raise-hand', { meetingId: meetingCode, userId: currentUserId, userName: currentUserName, isRaised: next });
+  };
+
+  const sendReaction = (emoji: string) => {
+    const r: Reaction = { userId: currentUserId, userName: currentUserName || 'You', emoji, timestamp: Date.now() };
+    setReactions(p => [...p, r]);
+    setTimeout(() => setReactions(p => p.filter(x => x.timestamp !== r.timestamp)), 3000);
+    getSocket()?.emit('meeting:reaction', { meetingId: meetingCode, userId: currentUserId, userName: currentUserName, emoji });
+    setShowReactions(false);
+  };
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(`${window.location.origin}/meet/${meetingCode}`);
+    showToast('Meeting link copied!', 'success');
+  };
+
+  const leaveMeeting = () => {
+    localStream.current?.getTracks().forEach(t => t.stop());
+    meetingService.leaveMeeting();
+    navigate('/meet');
+  };
+
+  const sendChatMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim() || !meetingCode) return;
+    const socket = getSocket();
+    if (!socket) return;
+    socket.emit('meeting:typing', { meetingId: meetingCode, userId: currentUserId, userName: currentUserName, isTyping: false });
+    const msg: ChatMessage = { userId: currentUserId, userName: currentUserName || 'You', message: chatInput.trim(), timestamp: new Date().toISOString() };
+    setChatMessages(p => [...p, msg]);
+    setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    socket.emit('meeting:chat-message', { meetingId: meetingCode, message: chatInput.trim(), userName: currentUserName || 'You' });
+    setChatInput('');
+  };
+
+  const handleChatInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setChatInput(e.target.value);
+    const socket = getSocket();
+    if (!socket || !meetingCode) return;
+    socket.emit('meeting:typing', { meetingId: meetingCode, userId: currentUserId, userName: currentUserName, isTyping: true });
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => {
+      socket.emit('meeting:typing', { meetingId: meetingCode, userId: currentUserId, userName: currentUserName, isTyping: false });
+    }, 2000);
+  };
+
+  const togglePiP = async () => {
+    if (!localVideoRef.current) return;
+    try {
+      if (document.pictureInPictureElement) { await document.exitPictureInPicture(); setIsPipMode(false); }
+      else { await localVideoRef.current.requestPictureInPicture(); setIsPipMode(true); }
+    } catch { showToast('PiP not supported in this browser', 'warning'); }
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = localStream.current!;
+      const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+      const chunks: BlobPart[] = [];
+      recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `slimfile-meet-${meetingCode}-${Date.now()}.webm`;
+        a.click();
+        showToast('Recording saved!', 'success');
+      };
+      recorder.start();
+      mediaRecorderRef.current = recorder;
+      setIsRecording(true);
+      recordingIntervalRef.current = setInterval(() => setRecordingDuration(p => p + 1), 1000);
+      showToast('Recording started', 'success');
+    } catch { showToast('Failed to start recording', 'warning'); }
+  };
+
+  const stopRecording = () => {
+    mediaRecorderRef.current?.stop();
+    mediaRecorderRef.current = null;
+    setIsRecording(false);
+    if (recordingIntervalRef.current) { clearInterval(recordingIntervalRef.current); recordingIntervalRef.current = null; }
+    setRecordingDuration(0);
+  };
+
+  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+
+  const total = remoteStreams.size + 1;
+  const myInitial = currentUserName.charAt(0).toUpperCase() || 'Y';
+  const myColor = avatarColor(currentUserName || 'You');
+
+  // ── Video layout ─────────────────────────────────────────────────────────────
+  const renderVideos = () => {
+    // Solo
+    if (total === 1) return (
+      <div className="w-full h-full flex flex-col items-center justify-center gap-6">
+        <div className="relative bg-[#3C4043] rounded-2xl overflow-hidden shadow-xl" style={{ width: '100%', maxWidth: 720, aspectRatio: '16/9' }}>
+          <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+          {!isCameraOn && (
+            <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center text-white text-3xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div>
+            </div>
+          )}
+          <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+            <span className="text-white text-xs font-medium">{currentUserName} (You)</span>
+            {!isMicOn && <MicOff className="w-3 h-3 text-red-400" />}
+          </div>
+          {isHandRaised && <div className="absolute top-3 left-3 text-xl animate-bounce">✋</div>}
+          {isScreenSharing && (
+            <div className="absolute top-3 right-3 bg-[#1a73e8] text-white text-xs px-2 py-1 rounded-md font-medium">Sharing screen</div>
+          )}
+        </div>
+        <div className="flex items-center gap-3 bg-[#3C4043] px-6 py-3 rounded-full">
+          <Users className="w-5 h-5 text-[#BDC1C6]" />
+          <span className="text-[#BDC1C6] text-sm font-medium">Waiting for others to join…</span>
+        </div>
+        <p className="text-[#9AA0A6] text-xs">Share the meeting link to invite people</p>
+      </div>
+    );
+
+    // 2 people: large remote + self pip
+    if (total === 2 && viewMode === 'grid') {
+      const [[rid, rs]] = Array.from(remoteStreams.entries());
+      return (
+        <div className="relative w-full h-full">
+          <RemoteVideoCard participantId={rid} stream={rs} participant={participants.get(rid)} isPinned={pinnedParticipant === rid} onPin={() => setPinnedParticipant(p => p === rid ? null : rid)} />
+          {/* Self PiP */}
+          <div className="absolute bottom-4 right-4 w-44 rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-[#3C4043]" style={{ aspectRatio: '16/9' }}>
+            <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+            {!isCameraOn && (
+              <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div>
+              </div>
+            )}
+            <div className="absolute bottom-1.5 left-1.5 bg-black/60 px-2 py-0.5 rounded text-white text-[10px]">You</div>
+            {!isMicOn && <MicOff className="absolute top-1.5 right-1.5 w-3 h-3 text-red-400" />}
+          </div>
+        </div>
+      );
+    }
+
+    // Speaker view
+    if (viewMode === 'speaker' || pinnedParticipant) {
+      const sid = pinnedParticipant || Array.from(remoteStreams.keys())[0];
+      const ss = sid ? remoteStreams.get(sid) : null;
+      return (
+        <div className="w-full h-full flex flex-col gap-3">
+          <div className="flex-1 min-h-0">
+            {ss && sid
+              ? <RemoteVideoCard participantId={sid} stream={ss} participant={participants.get(sid)} isPinned onPin={() => setPinnedParticipant(null)} />
+              : <div className="w-full h-full bg-[#3C4043] rounded-2xl flex items-center justify-center"><p className="text-[#9AA0A6]">No active speaker</p></div>
+            }
+          </div>
+          <div className="h-24 flex gap-2 overflow-x-auto pb-1">
+            {/* self */}
+            <div className="relative bg-[#3C4043] rounded-xl overflow-hidden flex-shrink-0" style={{ aspectRatio: '16/9', height: '100%' }}>
+              <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+              {!isCameraOn && <div className="absolute inset-0 flex items-center justify-center"><div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div></div>}
+              <div className="absolute bottom-1 left-1 bg-black/60 px-1.5 py-0.5 rounded text-[10px] text-white">You</div>
+            </div>
+            {Array.from(remoteStreams.entries()).filter(([id]) => id !== sid).map(([pid, st]) => (
+              <div key={pid} className="relative bg-[#3C4043] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer hover:ring-2 ring-[#1a73e8]" style={{ aspectRatio: '16/9', height: '100%' }} onClick={() => setPinnedParticipant(pid)}>
+                <RemoteVideoCard participantId={pid} stream={st} participant={participants.get(pid)} compact />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Grid: 3+
+    const cols = total <= 4 ? 2 : total <= 6 ? 3 : total <= 9 ? 3 : 4;
+    return (
+      <div className={`grid gap-3 w-full h-full`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+        {/* Self */}
+        <div className="relative bg-[#3C4043] rounded-2xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+          <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
+          {!isCameraOn && <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]"><div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div></div>}
+          <div className="absolute bottom-2 left-2 bg-black/60 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+            <span className="text-white text-xs font-medium">{currentUserName} (You)</span>
+            {!isMicOn && <MicOff className="w-3 h-3 text-red-400" />}
+          </div>
+          {isHandRaised && <div className="absolute top-2 left-2 text-lg animate-bounce">✋</div>}
+        </div>
+        {Array.from(remoteStreams.entries()).map(([pid, st]) => (
+          <RemoteVideoCard key={pid} participantId={pid} stream={st} participant={participants.get(pid)} isPinned={pinnedParticipant === pid} onPin={() => setPinnedParticipant(p => p === pid ? null : pid)} />
+        ))}
+      </div>
+    );
+  };
+
+  // ── Render ───────────────────────────────────────────────────────────────────
+  return (
+    <div className="h-screen bg-[#202124] flex flex-col overflow-hidden select-none">
+
+      {/* ── Header ── */}
+      <div className="flex items-center justify-between px-5 py-2.5 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <span className="text-white font-medium text-sm">SlimFile Meet</span>
+          <span className="text-[#9AA0A6] text-sm">·</span>
+          <span className="text-[#9AA0A6] text-sm">{clock}</span>
+          {/* Quality dot */}
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#3C4043] rounded-full">
+            <Circle className={`w-2 h-2 fill-current ${connectionQuality === 'good' ? 'text-green-400' : connectionQuality === 'medium' ? 'text-yellow-400' : 'text-red-400'}`} />
+            <span className="text-[#BDC1C6] text-xs capitalize">{connectionQuality}</span>
+          </div>
+          {isRecording && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-600/20 border border-red-600/40 rounded-full animate-pulse">
+              <Radio className="w-3 h-3 text-red-400" />
+              <span className="text-red-400 text-xs font-medium">REC {fmt(recordingDuration)}</span>
+            </div>
+          )}
+          {isScreenSharing && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#1a73e8]/20 border border-[#1a73e8]/40 rounded-full">
+              <Monitor className="w-3 h-3 text-[#1a73e8]" />
+              <span className="text-[#1a73e8] text-xs font-medium">Sharing screen</span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#3C4043] rounded-full">
+            <Users className="w-4 h-4 text-[#BDC1C6]" />
+            <span className="text-white text-sm font-medium">{participants.size}</span>
+          </div>
+          <button
+            onClick={copyLink}
+            className="flex items-center gap-2 px-4 py-1.5 bg-[#1a73e8] hover:bg-[#1765cc] text-white text-sm font-medium rounded-full transition-colors"
+          >
+            <Copy className="w-3.5 h-3.5" />
+            Invite
+          </button>
+        </div>
+      </div>
+
+      {/* ── Main content ── */}
+      <div className="flex-1 flex overflow-hidden min-h-0">
+
+        {/* Video area */}
+        <div className="flex-1 p-4 overflow-hidden">
+          {renderVideos()}
+        </div>
+
+        {/* Floating reactions */}
+        {reactions.map((r, i) => (
+          <div key={`${r.userId}-${r.timestamp}`} className="fixed text-5xl pointer-events-none z-50 animate-bounce" style={{ left: `${15 + (i % 6) * 12}%`, bottom: '25%' }}>
+            {r.emoji}
+          </div>
+        ))}
+
+        {/* Participants sidebar */}
+        {showParticipants && (
+          <div className="w-72 bg-[#292B2F] border-l border-[#3C4043] flex flex-col flex-shrink-0">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#3C4043]">
+              <span className="text-white font-medium text-sm">People ({participants.size})</span>
+              <button onClick={() => setShowParticipants(false)} className="text-[#9AA0A6] hover:text-white text-xl leading-none">×</button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-3 space-y-1">
+              {/* Self */}
+              <div className="flex items-center gap-3 p-2.5 rounded-xl bg-[#3C4043]/50">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0" style={{ backgroundColor: myColor }}>{myInitial}</div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-sm font-medium truncate">{currentUserName}</p>
+                  <p className="text-[#9AA0A6] text-xs">You</p>
+                </div>
+                <div className="flex gap-1">
+                  {!isMicOn && <MicOff className="w-4 h-4 text-red-400" />}
+                  {!isCameraOn && <VideoOff className="w-4 h-4 text-red-400" />}
+                  {isHandRaised && <span className="text-sm">✋</span>}
+                </div>
+              </div>
+              {/* Others */}
+              {Array.from(participants.entries()).filter(([id]) => id !== currentUserId).sort((a, b) => {
+                if (a[1].isHandRaised && !b[1].isHandRaised) return -1;
+                if (!a[1].isHandRaised && b[1].isHandRaised) return 1;
+                return a[1].userName.localeCompare(b[1].userName);
+              }).map(([pid, p]) => (
+                <div key={pid} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#3C4043]/50 cursor-pointer" onClick={() => setPinnedParticipant(prev => prev === pid ? null : pid)}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0" style={{ backgroundColor: avatarColor(p.userName) }}>{p.userName.charAt(0).toUpperCase()}</div>
+                  <div className="flex-1 min-w-0"><p className="text-white text-sm font-medium truncate">{p.userName}</p></div>
+                  <div className="flex gap-1">
+                    {p.isHandRaised && <span className="text-sm animate-bounce">✋</span>}
+                    {p.isMuted && <MicOff className="w-4 h-4 text-red-400" />}
+                    {p.isCameraOff && <VideoOff className="w-4 h-4 text-red-400" />}
+                    {pinnedParticipant === pid && <Pin className="w-3.5 h-3.5 text-[#1a73e8]" />}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Chat sidebar */}
+        {showChat && (
+          <div className="w-80 bg-[#292B2F] border-l border-[#3C4043] flex flex-col flex-shrink-0">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#3C4043]">
+              <span className="text-white font-medium text-sm">In-call messages</span>
+              <button onClick={() => setShowChat(false)} className="text-[#9AA0A6] hover:text-white text-xl leading-none">×</button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {chatMessages.length === 0
+                ? <p className="text-[#9AA0A6] text-xs text-center mt-8">Messages can only be seen by people in the call</p>
+                : chatMessages.map((msg, i) => {
+                    const isMe = msg.userId === currentUserId;
+                    return (
+                      <div key={i} className={`flex flex-col gap-1 ${isMe ? 'items-end' : 'items-start'}`}>
+                        {!isMe && <span className="text-[#9AA0A6] text-xs px-1">{msg.userName}</span>}
+                        <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-sm text-white ${isMe ? 'bg-[#1a73e8] rounded-tr-sm' : 'bg-[#3C4043] rounded-tl-sm'}`}>
+                          {msg.message}
+                        </div>
+                        <span className="text-[#9AA0A6] text-[10px] px-1">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
+                    );
+                  })}
+              {typingUsers.size > 0 && (
+                <div className="flex items-center gap-2 text-[#9AA0A6] text-xs">
+                  <div className="flex gap-0.5">
+                    {[0, 150, 300].map(d => <span key={d} className="w-1.5 h-1.5 bg-[#9AA0A6] rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
+                  </div>
+                  <span>{Array.from(typingUsers).slice(0, 2).join(', ')} typing…</span>
+                </div>
+              )}
+              <div ref={chatEndRef} />
+            </div>
+            <form onSubmit={sendChatMessage} className="p-3 border-t border-[#3C4043]">
+              <div className="flex gap-2">
+                <input
+                  value={chatInput}
+                  onChange={handleChatInput}
+                  placeholder="Send a message…"
+                  className="flex-1 bg-[#3C4043] text-white text-sm px-3 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#1a73e8] placeholder-[#9AA0A6]"
+                />
+                <button type="submit" disabled={!chatInput.trim()} className="px-4 py-2 bg-[#1a73e8] hover:bg-[#1765cc] disabled:opacity-40 text-white text-sm font-medium rounded-full transition-colors">Send</button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
+
+      {/* ── Controls bar ── */}
+      <div className="flex-shrink-0 pb-6 pt-2">
+        <div className="flex items-end justify-center gap-3">
+          <CtrlBtn onClick={toggleMic} active={isMicOn} label={isMicOn ? 'Mute' : 'Unmute'}>
+            {isMicOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
+          </CtrlBtn>
+
+          <CtrlBtn onClick={toggleCamera} active={isCameraOn} label={isCameraOn ? 'Camera off' : 'Camera on'}>
+            {isCameraOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
+          </CtrlBtn>
+
+          <CtrlBtn onClick={toggleScreenShare} active={!isScreenSharing} label={isScreenSharing ? 'Stop sharing' : 'Present'}>
+            {isScreenSharing ? <MonitorOff className="w-5 h-5" /> : <Monitor className="w-5 h-5" />}
+          </CtrlBtn>
+
+          <CtrlBtn onClick={toggleHandRaise} active={!isHandRaised} label={isHandRaised ? 'Lower hand' : 'Raise hand'}>
+            <Hand className="w-5 h-5" />
+          </CtrlBtn>
+
+          {/* Reactions picker */}
+          <div className="relative flex flex-col items-center gap-1">
+            <button
+              onClick={() => setShowReactions(p => !p)}
+              className="w-14 h-14 rounded-full bg-[#3C4043] hover:bg-[#4A4D51] flex items-center justify-center text-white transition-colors"
+            >
+              <Smile className="w-5 h-5" />
+            </button>
+            <span className="text-[#BDC1C6] text-[10px] font-medium">React</span>
+            {showReactions && (
+              <div className="absolute bottom-20 left-1/2 -translate-x-1/2 bg-[#292B2F] border border-[#3C4043] rounded-2xl p-3 shadow-2xl flex gap-2 z-50">
+                {['👍','❤️','😂','😮','👏','🎉'].map(e => (
+                  <button key={e} onClick={() => sendReaction(e)} className="text-2xl hover:scale-125 transition-transform p-1.5 rounded-xl hover:bg-[#3C4043]">{e}</button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <CtrlBtn onClick={() => setShowChat(p => !p)} active={!showChat} label="Chat">
+            <MessageSquare className="w-5 h-5" />
+          </CtrlBtn>
+
+          <CtrlBtn onClick={() => setShowParticipants(p => !p)} active={!showParticipants} label="People">
+            <Users className="w-5 h-5" />
+          </CtrlBtn>
+
+          {remoteStreams.size > 0 && (
+            <CtrlBtn onClick={() => setViewMode(p => p === 'grid' ? 'speaker' : 'grid')} label={viewMode === 'grid' ? 'Speaker' : 'Grid'}>
+              {viewMode === 'grid' ? <User className="w-5 h-5" /> : <Grid className="w-5 h-5" />}
+            </CtrlBtn>
+          )}
+
+          <CtrlBtn onClick={() => setShowSettings(p => !p)} label="More">
+            <Settings className="w-5 h-5" />
+          </CtrlBtn>
+
+          {/* Leave */}
+          <CtrlBtn onClick={leaveMeeting} danger label="Leave">
+            <PhoneOff className="w-5 h-5" />
+          </CtrlBtn>
+        </div>
+
+        <p className="text-center text-[#5F6368] text-xs mt-3">
+          Meeting ID: <span className="font-mono text-[#9AA0A6]">{meetingCode}</span>
+        </p>
+      </div>
+
+      {/* ── Settings modal ── */}
+      {showSettings && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50" onClick={() => setShowSettings(false)}>
+          <div className="bg-[#292B2F] rounded-2xl p-6 w-full max-w-sm mx-4 border border-[#3C4043] shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-5">
+              <span className="text-white font-medium">Settings</span>
+              <button onClick={() => setShowSettings(false)} className="text-[#9AA0A6] hover:text-white text-xl">×</button>
+            </div>
+            <div className="space-y-2">
+              {[
+                { icon: isPipMode ? Minimize2 : Maximize2, label: 'Picture-in-Picture', sub: 'Float your video on top', action: togglePiP, active: isPipMode },
+                { icon: Bell, label: 'Notification sounds', sub: 'Sounds when people join/leave', action: () => setNotificationSounds(p => !p), active: notificationSounds },
+                { icon: isRecording ? Square : Radio, label: 'Record meeting', sub: isRecording ? `Recording: ${fmt(recordingDuration)}` : 'Save as video file', action: isRecording ? stopRecording : startRecording, active: isRecording, danger: isRecording },
+              ].map(({ icon: Icon, label, sub, action, active, danger }) => (
+                <div key={label} className="flex items-center justify-between p-3 rounded-xl bg-[#3C4043]/50 hover:bg-[#3C4043] cursor-pointer" onClick={action}>
+                  <div className="flex items-center gap-3">
+                    <Icon className={`w-4 h-4 ${danger ? 'text-red-400' : active ? 'text-[#1a73e8]' : 'text-[#9AA0A6]'}`} />
+                    <div>
+                      <p className="text-white text-sm font-medium">{label}</p>
+                      <p className="text-[#9AA0A6] text-xs">{sub}</p>
+                    </div>
+                  </div>
+                  <div className={`w-10 h-5 rounded-full transition-colors ${active ? (danger ? 'bg-red-600' : 'bg-[#1a73e8]') : 'bg-[#5F6368]'} flex items-center`}>
+                    <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform mx-0.5 ${active ? 'translate-x-5' : 'translate-x-0'}`} />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       )}
 
-      {/* Name badge */}
-      <div className="absolute bottom-3 left-3 bg-black bg-opacity-75 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-2 shadow-md border border-gray-700">
-        <span className="text-white text-sm font-semibold">{displayName}</span>
-        {participant?.isMuted && (
-          <MicOff className="w-3.5 h-3.5 text-red-400" />
-        )}
+      {/* ── Toasts ── */}
+      <div className="fixed top-16 right-4 z-50 space-y-2 pointer-events-none">
+        {toasts.map(t => (
+          <div key={t.id} className={`px-4 py-2.5 rounded-xl shadow-lg text-white text-sm font-medium ${t.type === 'success' ? 'bg-[#34a853]' : t.type === 'warning' ? 'bg-[#fbbc04] text-gray-900' : 'bg-[#3C4043]'}`}>
+            {t.message}
+          </div>
+        ))}
       </div>
-
-      {/* Hand raised indicator */}
-      {participant?.isHandRaised && (
-        <div className="absolute top-3 left-3 bg-yellow-500 rounded-full p-2 animate-bounce shadow-lg">
-          <Hand className="w-4 h-4 text-white" />
-        </div>
-      )}
-
-      {/* Pin button - visible on hover */}
-      {onPin && (
-        <button
-          onClick={onPin}
-          className={`absolute top-3 right-3 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all shadow-lg ${
-            isPinned ? 'bg-gradient-to-br from-purple-500 to-purple-700' : 'bg-black bg-opacity-75 backdrop-blur-sm hover:bg-opacity-90'
-          }`}
-        >
-          <Pin className={`w-4 h-4 ${isPinned ? 'text-white' : 'text-gray-300'}`} />
-        </button>
-      )}
     </div>
   );
 }
