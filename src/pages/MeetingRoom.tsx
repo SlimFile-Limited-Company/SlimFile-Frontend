@@ -193,6 +193,7 @@ export default function MeetingRoom() {
   // ── Media init (runs immediately on mount for lobby preview)
   useEffect(() => {
     const init = async () => {
+      console.log('[Meet] Media init: requesting camera/mic...');
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { width: { ideal: 1280 }, height: { ideal: 720 } },
@@ -200,40 +201,59 @@ export default function MeetingRoom() {
         });
         localStream.current = stream;
         meetingService.setLocalStream(stream);
+        console.log('[Meet] Media init: stream ready, tracks:', stream.getTracks().map(t => `${t.kind}(${t.readyState})`));
         // Attach to lobby preview
         if (lobbyVideoRef.current) {
           lobbyVideoRef.current.srcObject = stream;
           lobbyVideoRef.current.play().catch(() => {});
+          console.log('[Meet] Media init: attached to lobbyVideoRef');
+        } else {
+          console.warn('[Meet] Media init: lobbyVideoRef not mounted yet');
         }
         setIsStreamReady(true);
       } catch (err: any) {
+        console.error('[Meet] Media init FAILED:', err);
         alert('Unable to access camera/microphone: ' + err.message);
       }
     };
     const t = setTimeout(init, 100);
     return () => {
       clearTimeout(t);
+      console.log('[Meet] Media init cleanup: stopping tracks');
       localStream.current?.getTracks().forEach(t => t.stop());
     };
   }, []);
 
   // ── Attach local stream to localVideoRef whenever layout changes OR after lobby exit
   useEffect(() => {
-    if (!localStream.current || !localVideoRef.current) return;
-    if (isScreenSharing) return;
+    const tracks = localStream.current?.getTracks().map(t => `${t.kind}(${t.readyState})`) ?? [];
+    console.log(`[Meet] Re-attach effect — admissionState=${admissionState} isJoined=${isJoined} isScreenSharing=${isScreenSharing} remotes=${remoteStreams.size} stream=${!!localStream.current} ref=${!!localVideoRef.current} tracks=[${tracks}]`);
+    if (!localStream.current || !localVideoRef.current) {
+      console.warn('[Meet] Re-attach: skipped — stream or ref missing');
+      return;
+    }
+    if (isScreenSharing) {
+      console.log('[Meet] Re-attach: skipped — screen sharing active');
+      return;
+    }
     localVideoRef.current.srcObject = localStream.current;
-    localVideoRef.current.play().catch(() => {});
+    localVideoRef.current.play().catch(e => console.warn('[Meet] Re-attach play() error:', e));
+    console.log('[Meet] Re-attach: stream attached to localVideoRef');
   }, [remoteStreams.size, isScreenSharing, isJoined, admissionState]);
 
   // ── Phase 1: Request admission when stream ready AND lobby exited
   useEffect(() => {
     if (!meetingCode || !isStreamReady || inLobby) return;
+    console.log('[Meet] Phase 1: requesting admission for meeting', meetingCode);
 
     let socket = getSocket();
     if (!socket || !socket.connected) {
+      console.log('[Meet] Phase 1: no socket, initializing...');
       socket = initializeSocket();
       const token = getToken();
       if (token) socket.emit('authenticate', token);
+    } else {
+      console.log('[Meet] Phase 1: reusing existing socket', socket.id);
     }
 
     const token = getToken();
@@ -246,25 +266,35 @@ export default function MeetingRoom() {
         userName = p.name || p.email || userName;
       } catch {}
     }
+    console.log('[Meet] Phase 1: identity —', { userId, userName });
     setCurrentUserId(userId);
     setCurrentUserName(userName);
     userIdRef.current = userId;
     userNameRef.current = userName;
 
     const onAdmitted = (data: any) => {
-      if (data?.wasEmpty) setIsHost(true);
+      console.log('[Meet] Phase 1: received meeting:admitted', data);
+      if (data?.wasEmpty) { console.log('[Meet] Phase 1: I am the host'); setIsHost(true); }
       setAdmissionState('admitted');
     };
-    const onWaiting = () => setAdmissionState('waiting');
-    const onDenied = () => setAdmissionState('denied');
+    const onWaiting = (data: any) => {
+      console.log('[Meet] Phase 1: received meeting:waiting', data);
+      setAdmissionState('waiting');
+    };
+    const onDenied = (data: any) => {
+      console.log('[Meet] Phase 1: received meeting:denied', data);
+      setAdmissionState('denied');
+    };
 
     socket.on('meeting:admitted', onAdmitted);
     socket.on('meeting:waiting', onWaiting);
     socket.on('meeting:denied', onDenied);
 
+    console.log('[Meet] Phase 1: emitting meeting:request-admit');
     socket.emit('meeting:request-admit', { meetingId: meetingCode, userId, userName });
 
     return () => {
+      console.log('[Meet] Phase 1 cleanup');
       socket.off('meeting:admitted', onAdmitted);
       socket.off('meeting:waiting', onWaiting);
       socket.off('meeting:denied', onDenied);
@@ -273,8 +303,13 @@ export default function MeetingRoom() {
 
   // ── Phase 2: Join once admitted
   useEffect(() => {
-    if (admissionState !== 'admitted' || hasJoinedRef.current || !meetingCode || !localStream.current) return;
+    console.log(`[Meet] Phase 2 check — admissionState=${admissionState} hasJoined=${hasJoinedRef.current} meetingCode=${meetingCode} stream=${!!localStream.current}`);
+    if (admissionState !== 'admitted' || hasJoinedRef.current || !meetingCode || !localStream.current) {
+      if (admissionState === 'admitted' && hasJoinedRef.current) console.log('[Meet] Phase 2: already joined, skipping');
+      return;
+    }
     hasJoinedRef.current = true;
+    console.log('[Meet] Phase 2: joining meeting as', userIdRef.current);
 
     const userId = userIdRef.current;
     const userName = userNameRef.current;
@@ -286,25 +321,36 @@ export default function MeetingRoom() {
     });
 
     meetingService.onRemoteStreamAdded = (pid, stream) => {
+      console.log('[Meet] Remote stream added for', pid, 'tracks:', stream.getTracks().map(t => `${t.kind}(${t.readyState})`));
       setRemoteStreams(prev => { const m = new Map(prev); m.set(pid, stream); return m; });
     };
     meetingService.onParticipantLeft = (pid) => {
+      console.log('[Meet] Participant left:', pid);
       setRemoteStreams(prev => { const m = new Map(prev); m.delete(pid); return m; });
       setParticipants(prev => { const m = new Map(prev); m.delete(pid); return m; });
     };
     meetingService.onParticipantMetadata = (pid, name) => {
+      console.log('[Meet] Participant metadata:', pid, name);
       setParticipants(prev => {
         const m = new Map(prev);
         m.set(pid, { userId: pid, userName: name, isHandRaised: false, isMuted: false, isCameraOff: false });
         return m;
       });
     };
-    meetingService.onError = (msg) => showToast(msg, 'warning');
+    meetingService.onError = (msg) => { console.error('[Meet] meetingService error:', msg); showToast(msg, 'warning'); };
 
-    try { meetingService.joinMeeting(meetingCode, userId, userName); } catch {}
+    try {
+      meetingService.joinMeeting(meetingCode, userId, userName);
+      console.log('[Meet] Phase 2: joinMeeting() called');
+    } catch (e) {
+      console.error('[Meet] Phase 2: joinMeeting() threw:', e);
+    }
     setIsJoined(true);
 
-    return () => { meetingService.leaveMeeting(); };
+    return () => {
+      console.log('[Meet] Phase 2 cleanup: calling leaveMeeting()');
+      meetingService.leaveMeeting();
+    };
   }, [admissionState, meetingCode, showToast]); // isJoined intentionally excluded — adding it would trigger leaveMeeting() cleanup on every join
 
   // ── Socket listeners (UI events)
