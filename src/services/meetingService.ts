@@ -10,22 +10,22 @@ import { getSocket } from './socketService';
 const ICE_SERVERS: RTCIceServer[] = [
   { urls: 'stun:stun.relay.metered.ca:80' },
   {
-    urls: 'turn:global.relay.metered.ca:80',
+    urls: 'turn:standard.relay.metered.ca:80',
     username: '9754915960b02d61b9cd6ed1',
     credential: '1OyjGtc9ZsQ9/uu+',
   },
   {
-    urls: 'turn:global.relay.metered.ca:80?transport=tcp',
+    urls: 'turn:standard.relay.metered.ca:80?transport=tcp',
     username: '9754915960b02d61b9cd6ed1',
     credential: '1OyjGtc9ZsQ9/uu+',
   },
   {
-    urls: 'turn:global.relay.metered.ca:443',
+    urls: 'turn:standard.relay.metered.ca:443',
     username: '9754915960b02d61b9cd6ed1',
     credential: '1OyjGtc9ZsQ9/uu+',
   },
   {
-    urls: 'turns:global.relay.metered.ca:443?transport=tcp',
+    urls: 'turns:standard.relay.metered.ca:443?transport=tcp',
     username: '9754915960b02d61b9cd6ed1',
     credential: '1OyjGtc9ZsQ9/uu+',
   },
