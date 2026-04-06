@@ -125,6 +125,7 @@ export default function MeetingRoom() {
   const [isHost, setIsHost] = useState(false);
   const userIdRef = useRef('');
   const userNameRef = useRef('');
+  const hasJoinedRef = useRef(false); // prevents Phase 2 from running twice
 
   // ── Participants & streams
   const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
@@ -272,7 +273,8 @@ export default function MeetingRoom() {
 
   // ── Phase 2: Join once admitted
   useEffect(() => {
-    if (admissionState !== 'admitted' || isJoined || !meetingCode || !localStream.current) return;
+    if (admissionState !== 'admitted' || hasJoinedRef.current || !meetingCode || !localStream.current) return;
+    hasJoinedRef.current = true;
 
     const userId = userIdRef.current;
     const userName = userNameRef.current;
@@ -303,7 +305,7 @@ export default function MeetingRoom() {
     setIsJoined(true);
 
     return () => { meetingService.leaveMeeting(); };
-  }, [admissionState, isJoined, meetingCode, showToast]);
+  }, [admissionState, meetingCode, showToast]); // isJoined intentionally excluded — adding it would trigger leaveMeeting() cleanup on every join
 
   // ── Socket listeners (UI events)
   useEffect(() => {
