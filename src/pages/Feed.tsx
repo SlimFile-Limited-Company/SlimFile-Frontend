@@ -283,8 +283,8 @@ export const Feed = () => {
     <div className="min-h-screen bg-[#F5F5F7]">
 
       {/* ── Hero ── */}
-      <div className="bg-[#0A0A0F] pt-28 pb-16 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
+      <div className="bg-[#0A0A0F] pt-36 pb-16 px-4 sm:px-6">
+        <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-2 mb-6">
             <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
