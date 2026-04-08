@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import io from 'socket.io-client';
-import { Zap, FileText, Image, Music, Video, Archive, Users, TrendingUp, HardDrive } from 'lucide-react';
+import { Zap, FileText, Image, Archive, Users, TrendingUp, HardDrive, BarChart2, Monitor } from 'lucide-react';
 
 interface FeedActivity {
   _id: string;
@@ -42,34 +42,31 @@ const getFileExt = (filename: string) => {
 
 const getFileTypeLabel = (fileType: string) => {
   if (fileType.includes('image')) return 'Image';
-  if (fileType.includes('audio')) return 'Audio';
-  if (fileType.includes('video')) return 'Video';
   if (fileType.includes('pdf')) return 'PDF';
-  if (fileType.includes('zip') || fileType.includes('archive')) return 'Archive';
-  if (fileType.includes('word') || fileType.includes('document')) return 'Document';
-  if (fileType.includes('sheet') || fileType.includes('excel')) return 'Spreadsheet';
   if (fileType.includes('presentation') || fileType.includes('powerpoint')) return 'Presentation';
+  if (fileType.includes('sheet') || fileType.includes('excel')) return 'Spreadsheet';
+  if (fileType.includes('word') || fileType.includes('document')) return 'Document';
+  if (fileType.includes('zip') || fileType.includes('archive')) return 'Archive';
   return 'File';
 };
 
 const FILE_TYPE_CONFIG: Record<string, { icon: typeof FileText; bg: string; text: string }> = {
-  image:    { icon: Image,    bg: 'bg-amber-100',   text: 'text-amber-600'  },
-  audio:    { icon: Music,    bg: 'bg-pink-100',    text: 'text-pink-600'   },
-  video:    { icon: Video,    bg: 'bg-violet-100',  text: 'text-violet-600' },
-  pdf:      { icon: FileText, bg: 'bg-red-100',     text: 'text-red-600'    },
-  archive:  { icon: Archive,  bg: 'bg-orange-100',  text: 'text-orange-600' },
-  document: { icon: FileText, bg: 'bg-blue-100',    text: 'text-blue-600'   },
-  default:  { icon: FileText, bg: 'bg-gray-100',    text: 'text-gray-600'   },
+  image:        { icon: Image,    bg: 'bg-amber-100',   text: 'text-amber-600'  },
+  pdf:          { icon: FileText, bg: 'bg-red-100',     text: 'text-red-600'    },
+  presentation: { icon: Monitor,  bg: 'bg-orange-100',  text: 'text-orange-600' },
+  spreadsheet:  { icon: BarChart2,bg: 'bg-emerald-100', text: 'text-emerald-600'},
+  document:     { icon: FileText, bg: 'bg-blue-100',    text: 'text-blue-600'   },
+  archive:      { icon: Archive,  bg: 'bg-purple-100',  text: 'text-purple-600' },
+  default:      { icon: FileText, bg: 'bg-gray-100',    text: 'text-gray-600'   },
 };
 
 const getFileTypeConfig = (fileType: string) => {
   if (fileType.includes('image')) return FILE_TYPE_CONFIG.image;
-  if (fileType.includes('audio')) return FILE_TYPE_CONFIG.audio;
-  if (fileType.includes('video')) return FILE_TYPE_CONFIG.video;
   if (fileType.includes('pdf'))   return FILE_TYPE_CONFIG.pdf;
+  if (fileType.includes('presentation') || fileType.includes('powerpoint')) return FILE_TYPE_CONFIG.presentation;
+  if (fileType.includes('sheet') || fileType.includes('excel')) return FILE_TYPE_CONFIG.spreadsheet;
+  if (fileType.includes('word') || fileType.includes('document')) return FILE_TYPE_CONFIG.document;
   if (fileType.includes('zip') || fileType.includes('archive')) return FILE_TYPE_CONFIG.archive;
-  if (fileType.includes('word') || fileType.includes('document') ||
-      fileType.includes('sheet') || fileType.includes('presentation')) return FILE_TYPE_CONFIG.document;
   return FILE_TYPE_CONFIG.default;
 };
 
