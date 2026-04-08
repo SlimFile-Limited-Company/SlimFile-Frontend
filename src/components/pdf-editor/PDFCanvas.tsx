@@ -10,7 +10,7 @@ interface PDFCanvasProps {
 }
 
 export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
-  const { documentState, viewState, textEdits } = usePDFEditor();
+  const { documentState, viewState } = usePDFEditor();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [pdfDocument, setPdfDocument] = useState<any>(null);
@@ -20,22 +20,18 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
   const [error, setError] = useState<string | null>(null);
   const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
 
-  // Load PDF document
   useEffect(() => {
     if (!documentState.pdfDoc) return;
-
     const loadPDF = async () => {
       try {
         setIsRendering(true);
         setError(null);
-
         let pdfData: ArrayBuffer;
         if (documentState.pdfDoc instanceof File) {
           pdfData = await documentState.pdfDoc.arrayBuffer();
         } else {
           pdfData = documentState.pdfDoc;
         }
-
         const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
         setPdfDocument(pdf);
       } catch (err) {
@@ -45,32 +41,9 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
         setIsRendering(false);
       }
     };
-
     loadPDF();
   }, [documentState.pdfDoc]);
 
-  // Core render function — renders to canvas at correct scale
-  const renderPageToCanvas = useCallback(async (page: any, scale: number) => {
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d')!;
-    const dpr = window.devicePixelRatio || 1;
-
-    const outputScale = dpr * scale;
-    const scaledViewport = page.getViewport({ scale: outputScale });
-
-    canvas.width = scaledViewport.width;
-    canvas.height = scaledViewport.height;
-    canvas.style.width = `${scaledViewport.width / dpr}px`;
-    canvas.style.height = `${scaledViewport.height / dpr}px`;
-
-    setCanvasDimensions({ width: scaledViewport.width / dpr, height: scaledViewport.height / dpr });
-    setDisplayScale(scale);
-
-    await page.render({ canvasContext: context, viewport: scaledViewport }).promise;
-  }, []);
-
-  // Calculate scale from viewState
   const calcScale = useCallback((viewport: any) => {
     let scale = viewState.zoom;
     if (viewState.fitMode === 'width') {
@@ -84,22 +57,32 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
     return Math.max(scale, 1.2);
   }, [viewState.zoom, viewState.fitMode]);
 
-  // Render current page (initial + zoom/page changes)
   useEffect(() => {
     if (!pdfDocument || documentState.currentPage < 1) return;
-
     const renderPage = async () => {
       try {
         setIsRendering(true);
         setError(null);
-
         const page = await pdfDocument.getPage(documentState.currentPage);
         setCurrentPageObj(page);
 
         const baseViewport = page.getViewport({ scale: 1.0 });
         const scale = calcScale(baseViewport);
 
-        await renderPageToCanvas(page, scale);
+        const canvas = canvasRef.current!;
+        const context = canvas.getContext('2d')!;
+        const dpr = window.devicePixelRatio || 1;
+        const outputScale = dpr * scale;
+        const scaledViewport = page.getViewport({ scale: outputScale });
+
+        canvas.width = scaledViewport.width;
+        canvas.height = scaledViewport.height;
+        canvas.style.width = `${scaledViewport.width / dpr}px`;
+        canvas.style.height = `${scaledViewport.height / dpr}px`;
+        setCanvasDimensions({ width: scaledViewport.width / dpr, height: scaledViewport.height / dpr });
+        setDisplayScale(scale);
+
+        await page.render({ canvasContext: context, viewport: scaledViewport }).promise;
       } catch (err) {
         console.error('Error rendering page:', err);
         setError('Failed to render page. Please try refreshing.');
@@ -107,66 +90,8 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
         setIsRendering(false);
       }
     };
-
     renderPage();
   }, [pdfDocument, documentState.currentPage, viewState.zoom, viewState.fitMode]);
-
-  // Re-render page with text edits baked in whenever edits change
-  useEffect(() => {
-    if (!documentState.pdfDoc || !canvasRef.current || textEdits.length === 0) return;
-
-    const pageEdits = textEdits.filter(e => e.pageNumber === documentState.currentPage);
-    if (pageEdits.length === 0) return;
-
-    const rerender = async () => {
-      try {
-        const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
-
-        const originalBytes = await (documentState.pdfDoc as File).arrayBuffer();
-        const pdfDoc = await PDFDocument.load(originalBytes);
-        const pages = pdfDoc.getPages();
-        const page = pages[documentState.currentPage - 1];
-        const { height: pageHeight } = page.getSize();
-        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
-        for (const edit of pageEdits) {
-          // Cover original text with a rectangle matching the page background
-          // We use a slightly wider/taller rect to fully erase the original
-          page.drawRectangle({
-            x: edit.pdfX - 2,
-            y: edit.pdfY - edit.fontSize * 0.25,
-            width: edit.pdfWidth + 8,
-            height: edit.fontSize * 1.4,
-            color: rgb(1, 1, 1),
-            borderWidth: 0,
-            opacity: 1,
-          });
-
-          page.drawText(edit.newText, {
-            x: edit.pdfX,
-            y: edit.pdfY,
-            size: edit.fontSize,
-            font,
-            color: rgb(0, 0, 0),
-          });
-        }
-
-        const modifiedBytes = await pdfDoc.save();
-        const modifiedPdf = await pdfjsLib.getDocument({ data: modifiedBytes }).promise;
-        const modifiedPage = await modifiedPdf.getPage(documentState.currentPage);
-
-        setCurrentPageObj(modifiedPage);
-
-        const baseViewport = modifiedPage.getViewport({ scale: 1.0 });
-        const scale = calcScale(baseViewport);
-        await renderPageToCanvas(modifiedPage, scale);
-      } catch (err) {
-        console.error('Error re-rendering with edits:', err);
-      }
-    };
-
-    rerender();
-  }, [textEdits]);
 
   if (error) {
     return (
@@ -190,16 +115,13 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
           </div>
         </div>
       )}
-
       <canvas ref={canvasRef} className="shadow-2xl rounded-lg bg-white block" />
-
       {canvasDimensions.width > 0 && currentPageObj && (
         <TextEditLayer
           pdfPage={currentPageObj}
           displayScale={displayScale}
           canvasWidth={canvasDimensions.width}
           canvasHeight={canvasDimensions.height}
-          canvasRef={canvasRef}
         />
       )}
     </div>
