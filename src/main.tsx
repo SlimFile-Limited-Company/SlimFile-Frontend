@@ -91,7 +91,6 @@ import BottomNav from './components/BottomNav';
 import PushListener from './components/PushListener';
 import SlimFileForge from './pages/SlimFileForge';
 import SlimFileLock from './pages/SlimFileLock';
-import PDFEditor from './pages/PDFEditor';
 import { NotificationProvider } from './components/InAppNotification';
 import UpdatePrompt from './components/UpdatePrompt';
 
@@ -204,7 +203,6 @@ ReactDOM.createRoot(root).render(
           <Route path="ocr-tool" element={<OCRTool />} />
           <Route path="forge" element={<SlimFileForge />} />
           <Route path="lock" element={<SlimFileLock />} />
-          <Route path="pdf-editor" element={<PDFEditor />} />
         </Route>
 
         {/* Workspace chat - Full screen without header/footer */}
