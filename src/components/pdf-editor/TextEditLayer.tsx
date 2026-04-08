@@ -18,20 +18,18 @@ interface EditableTextItem extends TextItem {
 }
 
 interface TextEditLayerProps {
-  pdfPage: any; // pdf.js page object
-  displayScale: number; // the CSS-pixel scale (not dpr-scaled)
+  pdfPage: any;
+  displayScale: number;
   canvasWidth: number;
   canvasHeight: number;
 }
 
 export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canvasHeight }: TextEditLayerProps) {
-  const { editState, addTextEdit, documentState } = usePDFEditor();
+  const { addTextEdit, documentState } = usePDFEditor();
   const [textItems, setTextItems] = useState<EditableTextItem[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const isTextMode = editState.selectedTool === 'text';
 
   useEffect(() => {
     if (!pdfPage) return;
@@ -46,9 +44,7 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
           if (!item.str?.trim()) continue;
 
           const [a, b, , , tx, ty] = item.transform;
-          // Convert PDF coordinates to CSS pixel coordinates
           const [cssX, cssY] = viewport.convertToViewportPoint(tx, ty);
-          // Font size from transform scale
           const cssFontSize = Math.sqrt(a * a + b * b) * displayScale;
           const cssWidth = Math.max(item.width * displayScale, cssFontSize * item.str.length * 0.55);
 
@@ -76,7 +72,6 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
   }, [pdfPage, displayScale]);
 
   const startEdit = (item: EditableTextItem) => {
-    if (!isTextMode) return;
     setEditingId(item.id);
     setEditValue(item.str);
     setTimeout(() => {
@@ -88,7 +83,7 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
   const commitEdit = (item: EditableTextItem) => {
     if (editValue !== item.str && editValue.trim() !== '') {
       const [a, b, , , tx, ty] = item.transform;
-      const fontSize = Math.sqrt(a * a + b * b); // PDF points
+      const fontSize = Math.sqrt(a * a + b * b);
 
       addTextEdit({
         pageNumber: documentState.currentPage,
@@ -101,7 +96,6 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
         fontSize,
       });
 
-      // Update the displayed text immediately
       setTextItems(prev => prev.map(t => t.id === item.id ? { ...t, str: editValue } : t));
     }
     setEditingId(null);
@@ -113,9 +107,9 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
       style={{
         width: canvasWidth,
         height: canvasHeight,
-        pointerEvents: isTextMode ? 'auto' : 'none',
-        zIndex: isTextMode ? 20 : 5,
-        cursor: isTextMode ? 'text' : 'default',
+        pointerEvents: 'auto',
+        zIndex: 20,
+        cursor: 'text',
       }}
     >
       {textItems.map((item) => {
@@ -131,8 +125,8 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
               top,
               width: item.cssWidth + 4,
               height: item.cssFontSize * 1.4,
-              cursor: isTextMode ? 'text' : 'default',
-              zIndex: isEditing ? 20 : 10,
+              cursor: 'text',
+              zIndex: isEditing ? 30 : 20,
             }}
           >
             {isEditing ? (
@@ -165,14 +159,12 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
                 style={{
                   width: '100%',
                   height: '100%',
-                  // Transparent by default — PDF canvas text shows through
-                  // Blue tint on hover to show it's editable
                   background: 'transparent',
                   borderRadius: 2,
                   transition: 'background 0.1s',
                 }}
-                className={isTextMode ? 'hover:bg-blue-200/40 hover:outline hover:outline-1 hover:outline-blue-400' : ''}
-                title={isTextMode ? `Click to edit: "${item.str}"` : ''}
+                className="hover:bg-blue-200/40 hover:outline hover:outline-1 hover:outline-blue-400"
+                title={`Click to edit: "${item.str}"`}
               />
             )}
           </div>

@@ -1,63 +1,32 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import {
-  MousePointer2, Type, Pen, Highlighter, Square, Stamp, EyeOff,
   ZoomIn, ZoomOut, Undo2, Redo2, Download, ChevronLeft, ChevronRight,
-  FileUp, PanelRight, X, Settings, Scissors, Combine, Droplet, Lock,
-  FileText, FileSearch, Users, MessageCircle, RotateCw, ChevronDown,
+  FileUp, PanelLeft, X, Settings, Scissors, Combine,
+  FileText, ChevronDown,
 } from 'lucide-react';
 import { PDFEditorProvider, usePDFEditor } from '@/contexts/PDFEditorContext';
-import { CollaborationProvider } from '@/contexts/CollaborationContext';
 import PDFCanvas from '@/components/pdf-editor/PDFCanvas';
 import PageThumbnail from '@/components/pdf-editor/PageThumbnail';
 import PageOperationsDialog from '@/components/pdf-editor/dialogs/PageOperationsDialog';
 import AddPageDialog from '@/components/pdf-editor/dialogs/AddPageDialog';
 import MergePDFDialog from '@/components/pdf-editor/dialogs/MergePDFDialog';
 import SplitPDFDialog from '@/components/pdf-editor/dialogs/SplitPDFDialog';
-import WatermarkDialog from '@/components/pdf-editor/dialogs/WatermarkDialog';
-import SecurityDialog from '@/components/pdf-editor/dialogs/SecurityDialog';
-import FormsDialog from '@/components/pdf-editor/dialogs/FormsDialog';
-import OCRDialog from '@/components/pdf-editor/dialogs/OCRDialog';
-import CollaborationDialog from '@/components/pdf-editor/dialogs/CollaborationDialog';
-import ChatSidebar from '@/components/pdf-editor/collaboration/ChatSidebar';
 
 export default function PDFEditor() {
   return (
-    <CollaborationProvider>
-      <PDFEditorProvider>
-        <PDFEditorContent />
-      </PDFEditorProvider>
-    </CollaborationProvider>
+    <PDFEditorProvider>
+      <PDFEditorContent />
+    </PDFEditorProvider>
   );
 }
 
-// Tool definitions
-const TOOLS = [
-  { id: 'select',    Icon: MousePointer2, label: 'Select',    shortcut: 'S' },
-  { id: 'text',      Icon: Type,          label: 'Text',      shortcut: 'T' },
-  { id: 'draw',      Icon: Pen,           label: 'Draw',      shortcut: 'D' },
-  { id: 'highlight', Icon: Highlighter,   label: 'Highlight', shortcut: 'H' },
-  { id: 'shape',     Icon: Square,        label: 'Shape',     shortcut: 'G' },
-  { id: 'stamp',     Icon: Stamp,         label: 'Stamp',     shortcut: '' },
-  { id: 'redact',    Icon: EyeOff,        label: 'Redact',    shortcut: 'R' },
-] as const;
-
 const ZOOM_PRESETS = [50, 75, 100, 125, 150, 200];
-
-const DRAW_COLORS = [
-  { label: 'Red',    value: '#ef4444' },
-  { label: 'Blue',   value: '#3b82f6' },
-  { label: 'Green',  value: '#10b981' },
-  { label: 'Yellow', value: '#eab308' },
-  { label: 'Purple', value: '#a855f7' },
-  { label: 'Black',  value: '#000000' },
-];
 
 function PDFEditorContent() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     documentState, loadPDF, savePDF,
     viewState, zoomIn, zoomOut, setZoom,
-    editState, setEditState,
     documentState: { currentPage, totalPages },
     nextPage, previousPage, goToPage,
     undo, redo, canUndo, canRedo,
@@ -65,19 +34,12 @@ function PDFEditorContent() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [showRightPanel, setShowRightPanel] = useState(true);
   const [showThumbnails, setShowThumbnails] = useState(true);
   const [showZoomMenu, setShowZoomMenu] = useState(false);
   const [selectedPageForOps, setSelectedPageForOps] = useState<number | null>(null);
   const [showAddPageDialog, setShowAddPageDialog] = useState(false);
   const [showMergeDialog, setShowMergeDialog] = useState(false);
   const [showSplitDialog, setShowSplitDialog] = useState(false);
-  const [showWatermarkDialog, setShowWatermarkDialog] = useState(false);
-  const [showSecurityDialog, setShowSecurityDialog] = useState(false);
-  const [showFormsDialog, setShowFormsDialog] = useState(false);
-  const [showOCRDialog, setShowOCRDialog] = useState(false);
-  const [showCollaborationDialog, setShowCollaborationDialog] = useState(false);
-  const [showChatSidebar, setShowChatSidebar] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [pageInput, setPageInput] = useState('');
   const [isEditingPage, setIsEditingPage] = useState(false);
@@ -103,26 +65,16 @@ function PDFEditorContent() {
     setIsSaving(true);
     try {
       const blob = await savePDF();
-      if (blob) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = documentState.fileName.replace(/\.pdf$/i, '') + '_edited.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      } else {
-        // If no annotations, download original file
-        const url = URL.createObjectURL(documentState.pdfDoc as File);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = documentState.fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
+      const url = URL.createObjectURL(blob ?? (documentState.pdfDoc as File));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = blob
+        ? documentState.fileName.replace(/\.pdf$/i, '') + '_edited.pdf'
+        : documentState.fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Download failed:', err);
     } finally {
@@ -130,26 +82,16 @@ function PDFEditorContent() {
     }
   }, [savePDF, documentState.fileName, documentState.pdfDoc]);
 
-  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undo(); return; }
       if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) { e.preventDefault(); redo(); return; }
       if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); handleDownload(); return; }
-      switch (e.key.toLowerCase()) {
-        case 's': setEditState({ selectedTool: 'select' }); break;
-        case 't': setEditState({ selectedTool: 'text' }); break;
-        case 'd': setEditState({ selectedTool: 'draw' }); break;
-        case 'h': setEditState({ selectedTool: 'highlight' }); break;
-        case 'g': setEditState({ selectedTool: 'shape' }); break;
-        case 'r': setEditState({ selectedTool: 'redact' }); break;
-        case 'escape': setEditState({ selectedTool: 'select' }); break;
-      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo, setEditState, handleDownload]);
+  }, [undo, redo, handleDownload]);
 
   const hasFile = !!documentState.fileName;
 
@@ -178,10 +120,10 @@ function PDFEditorContent() {
               <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-red-500/30">
                 <FileUp className="w-10 h-10 text-white" />
               </div>
-              <h2 className="text-white text-2xl font-bold mb-3">Open a PDF</h2>
+              <h2 className="text-white text-2xl font-bold mb-3">Open a PDF to Edit</h2>
               <p className="text-zinc-400 text-sm mb-6 leading-relaxed">
                 Drag & drop your PDF here or click to browse.<br />
-                Annotate, draw, highlight, and download — all free.
+                Click any text on the page to edit it directly.
               </p>
               <div className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
                 <FileUp className="w-4 h-4" />
@@ -194,16 +136,14 @@ function PDFEditorContent() {
     );
   }
 
-  // Editor screen
   const zoomPercent = Math.round(viewState.zoom * 100);
-  const activeTool = editState.selectedTool;
-  const showColorPicker = activeTool === 'draw' || activeTool === 'highlight' || activeTool === 'shape';
 
   return (
     <div className="h-screen bg-zinc-900 flex flex-col pt-16 overflow-hidden">
 
       {/* Top Toolbar */}
       <div className="h-12 bg-zinc-800 border-b border-zinc-700 flex items-center px-3 gap-2 flex-shrink-0">
+
         {/* File name */}
         <div className="flex items-center gap-2 min-w-0 mr-2">
           <div className="w-5 h-5 rounded bg-red-500/20 flex items-center justify-center flex-shrink-0">
@@ -227,12 +167,11 @@ function PDFEditorContent() {
 
         <div className="w-px h-5 bg-zinc-700 mx-1" />
 
-        {/* Zoom controls */}
+        {/* Zoom */}
         <button onClick={zoomOut} title="Zoom out"
           className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors">
           <ZoomOut className="w-4 h-4" />
         </button>
-
         <div className="relative">
           <button
             onClick={() => setShowZoomMenu(!showZoomMenu)}
@@ -254,7 +193,6 @@ function PDFEditorContent() {
             </div>
           )}
         </div>
-
         <button onClick={zoomIn} title="Zoom in"
           className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors">
           <ZoomIn className="w-4 h-4" />
@@ -262,27 +200,21 @@ function PDFEditorContent() {
 
         <div className="w-px h-5 bg-zinc-700 mx-1" />
 
-        {/* More tools dropdown */}
+        {/* More tools */}
         <div className="relative">
           <button
             onClick={() => setShowMoreMenu(!showMoreMenu)}
             className="h-8 px-3 rounded-lg flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors text-sm"
           >
             <Settings className="w-3.5 h-3.5" />
-            <span>Tools</span>
+            <span>More</span>
             <ChevronDown className="w-3 h-3" />
           </button>
           {showMoreMenu && (
-            <div className="absolute top-10 left-0 bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl z-50 py-1 min-w-[180px]">
+            <div className="absolute top-10 left-0 bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl z-50 py-1 min-w-[160px]">
               {[
-                { icon: Combine,    label: 'Merge PDFs',     action: () => setShowMergeDialog(true) },
-                { icon: Scissors,   label: 'Split PDF',      action: () => setShowSplitDialog(true) },
-                { icon: Droplet,    label: 'Watermark',      action: () => setShowWatermarkDialog(true) },
-                { icon: Lock,       label: 'Security',       action: () => setShowSecurityDialog(true) },
-                { icon: FileText,   label: 'Forms',          action: () => setShowFormsDialog(true) },
-                { icon: FileSearch, label: 'OCR',            action: () => setShowOCRDialog(true) },
-                { icon: Users,      label: 'Collaborate',    action: () => setShowCollaborationDialog(true) },
-                { icon: MessageCircle, label: 'Team Chat',   action: () => setShowChatSidebar(true) },
+                { icon: Combine,  label: 'Merge PDFs', action: () => setShowMergeDialog(true) },
+                { icon: Scissors, label: 'Split PDF',  action: () => setShowSplitDialog(true) },
               ].map(({ icon: Icon, label, action }) => (
                 <button key={label}
                   onClick={() => { action(); setShowMoreMenu(false); }}
@@ -295,17 +227,12 @@ function PDFEditorContent() {
           )}
         </div>
 
-        {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Panel toggles */}
+        {/* Toggle thumbnails */}
         <button onClick={() => setShowThumbnails(!showThumbnails)} title="Toggle pages panel"
           className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${showThumbnails ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-700'}`}>
-          <PanelRight className="w-4 h-4 scale-x-[-1]" />
-        </button>
-        <button onClick={() => setShowRightPanel(!showRightPanel)} title="Toggle properties"
-          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${showRightPanel ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-700'}`}>
-          <PanelRight className="w-4 h-4" />
+          <PanelLeft className="w-4 h-4" />
         </button>
 
         <div className="w-px h-5 bg-zinc-700 mx-1" />
@@ -318,43 +245,20 @@ function PDFEditorContent() {
         </button>
       </div>
 
-      {/* Main Editor Area */}
+      {/* Editor body */}
       <div className="flex flex-1 overflow-hidden">
 
-        {/* Left Tool Sidebar */}
-        <div className="w-14 bg-zinc-900 border-r border-zinc-800 flex flex-col items-center py-3 gap-1 flex-shrink-0">
-          {TOOLS.map(({ id, Icon, label, shortcut }) => (
-            <button key={id}
-              onClick={() => setEditState({ selectedTool: id as any })}
-              title={`${label}${shortcut ? ` (${shortcut})` : ''}`}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-150 group relative ${
-                activeTool === id
-                  ? 'bg-red-600 text-white shadow-lg shadow-red-500/30'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-              }`}>
-              <Icon className="w-5 h-5" />
-              {/* Tooltip */}
-              <div className="absolute left-12 bg-zinc-700 text-white text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                {label}{shortcut && <span className="ml-1 text-zinc-400">{shortcut}</span>}
-              </div>
-            </button>
-          ))}
-
-          <div className="flex-1" />
-
-          {/* Rotate page */}
-          <button title="Rotate view"
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors">
-            <RotateCw className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Page Thumbnails Sidebar */}
+        {/* Page thumbnails sidebar */}
         {showThumbnails && (
           <div className="w-52 bg-zinc-900 border-r border-zinc-800 flex flex-col flex-shrink-0 overflow-hidden">
             <div className="px-3 py-2 border-b border-zinc-800 flex items-center justify-between">
               <span className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Pages</span>
-              <span className="text-zinc-500 text-xs">{totalPages}</span>
+              <div className="flex items-center gap-1">
+                <span className="text-zinc-500 text-xs">{totalPages}</span>
+                <button onClick={() => setShowThumbnails(false)} className="text-zinc-600 hover:text-zinc-400 ml-1">
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
             </div>
             <div className="flex-1 overflow-y-auto py-2 px-2 space-y-1.5 scrollbar-hide">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
@@ -379,7 +283,6 @@ function PDFEditorContent() {
                 </div>
               ))}
 
-              {/* Add Page */}
               <button
                 onClick={() => setShowAddPageDialog(true)}
                 className="w-full border border-dashed border-zinc-700 hover:border-zinc-500 rounded-lg p-3 flex flex-col items-center gap-1.5 transition-all hover:bg-zinc-800/50 group"
@@ -393,14 +296,16 @@ function PDFEditorContent() {
           </div>
         )}
 
-        {/* Canvas Area */}
-        <div className="flex-1 bg-[#2c2c2c] overflow-auto relative flex items-start justify-center"
-          onClick={() => { setShowZoomMenu(false); setShowMoreMenu(false); }}>
+        {/* Canvas area */}
+        <div
+          className="flex-1 bg-[#2c2c2c] overflow-auto relative flex items-start justify-center"
+          onClick={() => { setShowZoomMenu(false); setShowMoreMenu(false); }}
+        >
           <div className="my-8">
             <PDFCanvas className="max-w-full" />
           </div>
 
-          {/* Page Navigation */}
+          {/* Page navigation pill */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-zinc-800/95 backdrop-blur border border-zinc-700 rounded-full px-4 py-2 shadow-2xl">
             <button onClick={previousPage} disabled={currentPage <= 1}
               className="w-7 h-7 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
@@ -413,11 +318,7 @@ function PDFEditorContent() {
                 type="number"
                 value={pageInput}
                 onChange={(e) => setPageInput(e.target.value)}
-                onBlur={() => {
-                  const n = parseInt(pageInput);
-                  if (!isNaN(n)) goToPage(n);
-                  setIsEditingPage(false);
-                }}
+                onBlur={() => { const n = parseInt(pageInput); if (!isNaN(n)) goToPage(n); setIsEditingPage(false); }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') { const n = parseInt(pageInput); if (!isNaN(n)) goToPage(n); setIsEditingPage(false); }
                   if (e.key === 'Escape') setIsEditingPage(false);
@@ -441,110 +342,6 @@ function PDFEditorContent() {
             </button>
           </div>
         </div>
-
-        {/* Right Properties Panel */}
-        {showRightPanel && (
-          <div className="w-64 bg-zinc-900 border-l border-zinc-800 flex flex-col flex-shrink-0 overflow-hidden">
-            <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
-              <span className="text-white text-sm font-semibold">Properties</span>
-              <button onClick={() => setShowRightPanel(false)} className="text-zinc-500 hover:text-white transition-colors">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto scrollbar-hide">
-              {/* Active Tool Info */}
-              <div className="px-4 py-3 border-b border-zinc-800">
-                <div className="text-zinc-500 text-xs uppercase tracking-wider mb-2">Active Tool</div>
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-red-600/20 flex items-center justify-center">
-                    {(() => {
-                      const tool = TOOLS.find(t => t.id === activeTool);
-                      if (!tool) return null;
-                      const { Icon } = tool;
-                      return <Icon className="w-4 h-4 text-red-400" />;
-                    })()}
-                  </div>
-                  <span className="text-white text-sm capitalize">{activeTool}</span>
-                </div>
-              </div>
-
-              {/* Color picker */}
-              {showColorPicker && (
-                <div className="px-4 py-3 border-b border-zinc-800">
-                  <div className="text-zinc-500 text-xs uppercase tracking-wider mb-2.5">Color</div>
-                  <div className="grid grid-cols-6 gap-2">
-                    {DRAW_COLORS.map((c) => (
-                      <button key={c.value}
-                        onClick={() => setEditState({ brushColor: c.value })}
-                        title={c.label}
-                        className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${
-                          editState.brushColor === c.value ? 'border-white scale-110' : 'border-transparent'
-                        }`}
-                        style={{ backgroundColor: c.value }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Brush size */}
-              {(activeTool === 'draw' || activeTool === 'highlight') && (
-                <div className="px-4 py-3 border-b border-zinc-800">
-                  <div className="text-zinc-500 text-xs uppercase tracking-wider mb-2.5">
-                    Size — <span className="text-zinc-300">{editState.brushSize}px</span>
-                  </div>
-                  <input
-                    type="range" min="1" max="20" value={editState.brushSize}
-                    onChange={(e) => setEditState({ brushSize: Number(e.target.value) })}
-                    className="w-full accent-red-500"
-                  />
-                </div>
-              )}
-
-              {/* Document info */}
-              <div className="px-4 py-3 border-b border-zinc-800">
-                <div className="text-zinc-500 text-xs uppercase tracking-wider mb-2.5">Document</div>
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-zinc-400">Pages</span>
-                    <span className="text-white font-medium">{totalPages}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-zinc-400">Size</span>
-                    <span className="text-white font-medium">{(documentState.fileSize / 1024 / 1024).toFixed(2)} MB</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-zinc-400">Zoom</span>
-                    <span className="text-white font-medium">{zoomPercent}%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Keyboard shortcuts */}
-              <div className="px-4 py-3">
-                <div className="text-zinc-500 text-xs uppercase tracking-wider mb-2.5">Shortcuts</div>
-                <div className="space-y-1">
-                  {[
-                    ['S', 'Select'],
-                    ['T', 'Text'],
-                    ['D', 'Draw'],
-                    ['H', 'Highlight'],
-                    ['G', 'Shape'],
-                    ['R', 'Redact'],
-                    ['Ctrl+Z', 'Undo'],
-                    ['Ctrl+S', 'Download'],
-                  ].map(([key, label]) => (
-                    <div key={key} className="flex justify-between items-center text-xs">
-                      <span className="text-zinc-400">{label}</span>
-                      <kbd className="bg-zinc-800 border border-zinc-700 text-zinc-300 px-1.5 py-0.5 rounded text-xs font-mono">{key}</kbd>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Dialogs */}
@@ -554,12 +351,6 @@ function PDFEditorContent() {
       <AddPageDialog isOpen={showAddPageDialog} onClose={() => setShowAddPageDialog(false)} />
       <MergePDFDialog isOpen={showMergeDialog} onClose={() => setShowMergeDialog(false)} currentPDF={documentState.pdfDoc as File} />
       <SplitPDFDialog isOpen={showSplitDialog} onClose={() => setShowSplitDialog(false)} />
-      <WatermarkDialog isOpen={showWatermarkDialog} onClose={() => setShowWatermarkDialog(false)} />
-      <SecurityDialog isOpen={showSecurityDialog} onClose={() => setShowSecurityDialog(false)} />
-      <FormsDialog isOpen={showFormsDialog} onClose={() => setShowFormsDialog(false)} />
-      <OCRDialog isOpen={showOCRDialog} onClose={() => setShowOCRDialog(false)} />
-      <CollaborationDialog isOpen={showCollaborationDialog} onClose={() => setShowCollaborationDialog(false)} />
-      <ChatSidebar isOpen={showChatSidebar} onClose={() => setShowChatSidebar(false)} />
     </div>
   );
 }
