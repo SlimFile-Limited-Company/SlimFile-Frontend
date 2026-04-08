@@ -235,7 +235,7 @@ export const Feed = () => {
     (async () => {
       try {
         const [fRes, sRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/feed?limit=100`),
+          fetch(`${API_BASE_URL}/feed?limit=300`),
           fetch(`${API_BASE_URL}/feed/stats`),
         ]);
         setActivities(await fRes.json());
@@ -251,7 +251,7 @@ export const Feed = () => {
       reconnectionDelayMax: 5000, reconnectionAttempts: 5,
     });
     socket.on('newActivity', (a: FeedActivity) => {
-      setActivities(prev => [{ ...a, isNew: true }, ...prev].slice(0, 100));
+      setActivities(prev => [{ ...a, isNew: true }, ...prev].slice(0, 300));
       setTimeout(() => setActivities(prev => prev.map(x => x._id === a._id ? { ...x, isNew: false } : x)), 4000);
     });
     return () => { socket.disconnect(); };
@@ -265,7 +265,7 @@ export const Feed = () => {
     if (filter === 'compress') return a.operation === 'compress';
     if (filter === 'convert') return a.operation.includes('convert');
     return true;
-  });
+  }).slice(0, 100);
 
   const FILTERS = [
     { key: 'all',      label: 'All' },
