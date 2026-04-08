@@ -782,14 +782,15 @@ const WorkspaceDetail = () => {
           className="flex items-center justify-between px-4 py-3.5 flex-shrink-0"
           style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
         >
-          <span className="text-[15px] font-semibold text-white">Workspaces</span>
           <button
             onClick={() => navigate('/workspaces')}
-            className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
-            title="Manage workspaces"
+            className="flex items-center gap-2 p-1.5 rounded-full hover:bg-white/10 transition-colors"
+            title="Back to Workspaces"
           >
-            <Settings className="h-4 w-4 text-white/50" />
+            <ArrowLeft className="h-4 w-4 text-white/60" />
           </button>
+          <span className="text-[15px] font-semibold text-white">Workspaces</span>
+          <div className="w-7" />
         </div>
 
         {/* Workspace list */}
@@ -1177,7 +1178,7 @@ const WorkspaceDetail = () => {
 
       {/* Message Input — Telegram-style */}
       <div
-        className="px-2 sm:px-4 py-2 sm:py-3 flex-shrink-0"
+        className="px-2 sm:px-3 py-1.5 flex-shrink-0"
         style={{ background: '#17212b', borderTop: '1px solid rgba(255,255,255,0.05)' }}
       >
         {/* Reply Preview */}
@@ -1260,7 +1261,7 @@ const WorkspaceDetail = () => {
           ) : (
             /* Normal Text Input — all inline in one pill */
             <div
-              className="flex items-center gap-2 rounded-full px-3 py-1.5 focus-within:ring-1 focus-within:ring-red-600/40 transition-all"
+              className="flex items-center gap-1.5 rounded-full px-2.5 py-1 focus-within:ring-1 focus-within:ring-red-600/40 transition-all"
               style={{ background: '#202b36', border: '1px solid rgba(255,255,255,0.07)' }}
             >
               <FileUploadInput
@@ -1288,7 +1289,7 @@ const WorkspaceDetail = () => {
                 onKeyDown={handleKeyPress}
                 members={workspaceData?.members || []}
                 disabled={sendMutation.isPending}
-                className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 py-2 text-white/90 placeholder:text-white/30 text-sm"
+                className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 py-1 text-white/90 placeholder:text-white/30 text-sm"
               />
               <button
                 onClick={startRecording}
@@ -1303,13 +1304,13 @@ const WorkspaceDetail = () => {
                   (!messageText.trim() && selectedFiles.length === 0) ||
                   sendMutation.isPending
                 }
-                className="h-8 w-8 rounded-full flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:brightness-110 flex-shrink-0"
+                className="h-7 w-7 rounded-full flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:brightness-110 flex-shrink-0"
                 style={{ background: '#dc2626' }}
               >
                 {sendMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin text-white" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-white" />
                 ) : (
-                  <Send className="h-3.5 w-3.5 text-white" />
+                  <Send className="h-3 w-3 text-white" />
                 )}
               </button>
             </div>
