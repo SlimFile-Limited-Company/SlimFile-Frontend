@@ -259,7 +259,8 @@ export const PDFEditorProvider = ({ children }: PDFEditorProviderProps) => {
             borderWidth: 0,
           });
 
-          // Draw the new text
+          // Draw the new text (skip if empty — user erased the text)
+          if (!edit.newText) continue;
           page.drawText(edit.newText, {
             x: edit.pdfX,
             y: pdfY,

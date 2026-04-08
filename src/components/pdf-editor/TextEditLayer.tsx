@@ -93,7 +93,7 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
   };
 
   const commitEdit = (item: EditableTextItem) => {
-    if (editValue.trim() !== '' && editValue !== item.str) {
+    if (editValue !== item.str) {
       const [a, b, , , tx, ty] = item.transform;
       const fontSize = Math.sqrt(a * a + b * b);
       addTextEdit({
