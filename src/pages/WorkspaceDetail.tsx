@@ -710,7 +710,7 @@ const WorkspaceDetail = () => {
               className="h-full rounded-full transition-all"
               style={{
                 width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%`,
-                background: isOwnMessage ? 'rgba(255,255,255,0.8)' : '#dc2626'
+                background: isOwnMessage ? 'rgba(255,255,255,0.8)' : '#5288c1'
               }}
             />
           </div>
@@ -733,7 +733,7 @@ const WorkspaceDetail = () => {
     return (
       <div className="h-screen flex items-center justify-center" style={{ background: '#1a2633' }}>
         <div className="text-center">
-          <Loader2 className="h-9 w-9 animate-spin text-red-500 mx-auto" />
+          <Loader2 className="h-9 w-9 animate-spin text-[#5288c1] mx-auto" />
           <p className="mt-3 text-sm text-white/40">Loading workspace...</p>
         </div>
       </div>
@@ -746,7 +746,7 @@ const WorkspaceDetail = () => {
         <div className="text-center p-8 rounded-2xl" style={{ background: '#1f2b38', border: '1px solid rgba(255,255,255,0.07)' }}>
           <h2 className="text-lg font-semibold text-white">Workspace not found</h2>
           <p className="text-white/40 text-sm mt-2">This workspace may have been deleted</p>
-          <Button onClick={() => navigate('/workspaces')} className="mt-6 bg-red-600 hover:bg-red-700 text-white">
+          <Button onClick={() => navigate('/workspaces')} className="mt-6 bg-[#5288c1] hover:bg-[#3a6d9e] text-white">
             Back to Workspaces
           </Button>
         </div>
@@ -814,7 +814,7 @@ const WorkspaceDetail = () => {
               const isActive = ws._id === workspaceId;
               const initials = ws.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
               // Telegram-style avatar colours based on first char
-              const avatarColors = ['#5288c1','#3d9a6e','#b5562e','#6c5faa','#c9564e','#4b8b9e','#9c6b31'];
+              const avatarColors = ['#5288c1','#3d9a6e','#b5562e','#6c5faa','#5288c1','#4b8b9e','#9c6b31'];
               const colorIndex = ws.name.charCodeAt(0) % avatarColors.length;
               const avatarBg = avatarColors[colorIndex];
               return (
@@ -873,7 +873,7 @@ const WorkspaceDetail = () => {
           </button>
           <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <div className="relative flex-shrink-0">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#dc2626] to-[#991b1b] flex items-center justify-center text-white font-bold text-sm shadow-lg">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#5288c1] to-[#3a6d9e] flex items-center justify-center text-white font-bold text-sm shadow-lg">
                 {getInitials(workspace.name)}
               </div>
               <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-[#1f2b38]" />
@@ -949,8 +949,8 @@ const WorkspaceDetail = () => {
 
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center py-20">
-            <div className="rounded-full p-5 mb-4" style={{ background: 'rgba(220,38,38,0.15)' }}>
-              <Send className="h-9 w-9 text-red-400" />
+            <div className="rounded-full p-5 mb-4" style={{ background: 'rgba(82,136,193,0.15)' }}>
+              <Send className="h-9 w-9 text-[#5288c1]" />
             </div>
             <h3 className="text-base font-semibold text-white/80">No messages yet</h3>
             <p className="text-white/40 text-sm mt-1 max-w-xs">Be the first to send a message in this workspace</p>
@@ -994,7 +994,7 @@ const WorkspaceDetail = () => {
                       {showAvatar ? (
                         <Avatar className="h-7 w-7 ring-1 ring-white/10">
                           <AvatarImage src={message.senderId.picture} />
-                          <AvatarFallback className="text-[10px] bg-gradient-to-br from-[#dc2626] to-[#991b1b] text-white font-bold">
+                          <AvatarFallback className="text-[10px] bg-gradient-to-br from-[#5288c1] to-[#3a6d9e] text-white font-bold">
                             {getInitials(message.senderId.name)}
                           </AvatarFallback>
                         </Avatar>
@@ -1006,7 +1006,7 @@ const WorkspaceDetail = () => {
 
                   <div className={`max-w-[80%] sm:max-w-[65%] min-w-0 flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}>
                     {showName && (
-                      <p className="text-xs font-semibold text-red-400 mb-1 ml-3">
+                      <p className="text-xs font-semibold text-[#5288c1] mb-1 ml-3">
                         {message.senderId.name}
                       </p>
                     )}
@@ -1034,7 +1034,7 @@ const WorkspaceDetail = () => {
                           style={
                             isOwnMessage
                               ? { borderColor: '#5b9bd5', background: 'rgba(91,155,213,0.15)' }
-                              : { borderColor: '#dc2626', background: 'rgba(220,38,38,0.1)' }
+                              : { borderColor: '#5288c1', background: 'rgba(82,136,193,0.1)' }
                           }
                         >
                           <p className="text-[10px] font-semibold" style={{ color: isOwnMessage ? '#7db8e8' : '#f87171' }}>
@@ -1117,7 +1117,7 @@ const WorkspaceDetail = () => {
                             className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
                             title="Delete"
                           >
-                            <Trash2 className="h-3.5 w-3.5 text-red-400/70" />
+                            <Trash2 className="h-3.5 w-3.5 text-[#5288c1]/70" />
                           </button>
                         )}
                       </div>
@@ -1156,7 +1156,7 @@ const WorkspaceDetail = () => {
               return (
                 <Avatar key={userId} className="h-5 w-5 ring-1 ring-[#1f2b38]">
                   <AvatarImage src={member?.user.picture} />
-                  <AvatarFallback className="text-[9px] bg-gradient-to-br from-[#dc2626] to-[#991b1b] text-white font-bold">
+                  <AvatarFallback className="text-[9px] bg-gradient-to-br from-[#5288c1] to-[#3a6d9e] text-white font-bold">
                     {member ? getInitials(member.user.name) : '?'}
                   </AvatarFallback>
                 </Avatar>
@@ -1165,9 +1165,9 @@ const WorkspaceDetail = () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="flex space-x-1">
-              <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#dc2626', animationDelay: '0ms' }} />
-              <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#dc2626', animationDelay: '150ms' }} />
-              <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#dc2626', animationDelay: '300ms' }} />
+              <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#5288c1', animationDelay: '0ms' }} />
+              <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#5288c1', animationDelay: '150ms' }} />
+              <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#5288c1', animationDelay: '300ms' }} />
             </div>
             <span className="text-xs text-white/40">{getTypingText()}</span>
           </div>
@@ -1176,18 +1176,18 @@ const WorkspaceDetail = () => {
 
       {/* Message Input — Telegram-style */}
       <div
-        className="px-2 sm:px-3 py-1.5 flex-shrink-0"
+        className="px-3 sm:px-4 py-1 flex-shrink-0"
         style={{ background: '#1f2b38', borderTop: '1px solid rgba(255,255,255,0.05)' }}
       >
         {/* Reply Preview */}
         {replyToMessage && (
           <div
             className="max-w-3xl mx-auto mb-2 px-3 py-2 rounded-xl flex items-start gap-3"
-            style={{ background: 'rgba(255,255,255,0.06)', borderLeft: '3px solid #dc2626' }}
+            style={{ background: 'rgba(255,255,255,0.06)', borderLeft: '3px solid #5288c1' }}
           >
-            <Reply className="h-3.5 w-3.5 text-red-400 mt-0.5 flex-shrink-0" />
+            <Reply className="h-3.5 w-3.5 text-[#5288c1] mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-red-400 mb-0.5">
+              <p className="text-xs font-semibold text-[#5288c1] mb-0.5">
                 {replyToMessage.senderId.name}
               </p>
               <p className="text-xs text-white/50 truncate">
@@ -1208,10 +1208,10 @@ const WorkspaceDetail = () => {
             /* Recording UI — full-width pill */
             <div
               className="flex items-center gap-3 rounded-full px-4 py-2.5"
-              style={{ background: '#253545', border: '1px solid rgba(220,38,38,0.3)' }}
+              style={{ background: '#253545', border: '1px solid rgba(82,136,193,0.3)' }}
             >
-              <div className="h-2.5 w-2.5 bg-red-500 rounded-full animate-pulse flex-shrink-0" />
-              <span className="text-sm font-medium text-red-400">Recording</span>
+              <div className="h-2.5 w-2.5 bg-[#5288c1] rounded-full animate-pulse flex-shrink-0" />
+              <span className="text-sm font-medium text-[#5288c1]">Recording</span>
               <span className="text-sm text-white/50 flex-1">{formatRecordingTime(recordingTime)}</span>
               <button
                 onClick={cancelRecording}
@@ -1221,7 +1221,7 @@ const WorkspaceDetail = () => {
               </button>
               <button
                 onClick={stopRecording}
-                className="text-xs font-medium text-white px-3 py-1 rounded-full bg-red-600 hover:bg-red-700 transition-colors"
+                className="text-xs font-medium text-white px-3 py-1 rounded-full bg-[#5288c1] hover:bg-[#3a6d9e] transition-colors"
               >
                 Stop
               </button>
@@ -1230,9 +1230,9 @@ const WorkspaceDetail = () => {
             /* Audio Preview UI — full-width pill */
             <div
               className="flex items-center gap-3 rounded-full px-4 py-2.5"
-              style={{ background: '#253545', border: '1px solid rgba(220,38,38,0.3)' }}
+              style={{ background: '#253545', border: '1px solid rgba(82,136,193,0.3)' }}
             >
-              <Mic className="h-4 w-4 text-red-400 flex-shrink-0" />
+              <Mic className="h-4 w-4 text-[#5288c1] flex-shrink-0" />
               <div className="flex-1">
                 <p className="text-sm font-medium text-white/80">Voice message ready</p>
                 <p className="text-[11px] text-white/40">{formatRecordingTime(recordingTime)}</p>
@@ -1247,7 +1247,7 @@ const WorkspaceDetail = () => {
                 onClick={sendAudioMessage}
                 disabled={sendMutation.isPending}
                 className="h-8 w-8 rounded-full flex items-center justify-center transition-all disabled:opacity-40 hover:brightness-110 flex-shrink-0"
-                style={{ background: '#dc2626' }}
+                style={{ background: '#5288c1' }}
               >
                 {sendMutation.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin text-white" />
@@ -1259,7 +1259,7 @@ const WorkspaceDetail = () => {
           ) : (
             /* Normal Text Input — all inline in one pill */
             <div
-              className="flex items-center gap-1.5 rounded-full px-2.5 py-1 focus-within:ring-1 focus-within:ring-red-600/40 transition-all"
+              className="flex items-center gap-1.5 rounded-full px-2.5 py-0.5 focus-within:ring-1 focus-within:ring-[#5288c1]/40 transition-all"
               style={{ background: '#253545', border: '1px solid rgba(255,255,255,0.07)' }}
             >
               <FileUploadInput
@@ -1287,7 +1287,7 @@ const WorkspaceDetail = () => {
                 onKeyDown={handleKeyPress}
                 members={workspaceData?.members || []}
                 disabled={sendMutation.isPending}
-                className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 py-1 text-white/90 placeholder:text-white/30 text-sm"
+                className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 py-0.5 text-white/90 placeholder:text-white/30 text-sm"
               />
               <button
                 onClick={startRecording}
@@ -1303,7 +1303,7 @@ const WorkspaceDetail = () => {
                   sendMutation.isPending
                 }
                 className="h-7 w-7 rounded-full flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:brightness-110 flex-shrink-0"
-                style={{ background: '#dc2626' }}
+                style={{ background: '#5288c1' }}
               >
                 {sendMutation.isPending ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin text-white" />

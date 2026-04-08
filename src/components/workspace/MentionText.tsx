@@ -62,7 +62,7 @@ export function MentionText({ text, currentUserId, className = '', isOwnMessage 
                     ? 'text-white bg-white/25'
                     : 'text-sky-200 bg-white/15'
                   : part.userId === currentUserId
-                  ? 'text-red-400 bg-red-500/20'
+                  ? 'text-[#5288c1] bg-[#5288c1]/20'
                   : 'text-sky-400 bg-sky-500/15'
               }`}
               title={part.name}

@@ -134,7 +134,7 @@ export function FileUploadInput({
               {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} selected
             </span>
             <button
-              className="text-xs text-red-400 hover:text-red-300 px-2 py-0.5 rounded-lg hover:bg-white/10 transition-colors"
+              className="text-xs text-[#5288c1] hover:text-red-300 px-2 py-0.5 rounded-lg hover:bg-white/10 transition-colors"
               onClick={onClearFiles}
             >
               Clear all
@@ -164,7 +164,7 @@ export function FileUploadInput({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-white/40 hover:text-red-400 hover:bg-white/10"
+                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-white/40 hover:text-[#5288c1] hover:bg-white/10"
                     onClick={() => onRemoveFile(index)}
                   >
                     <X className="h-3 w-3" />
@@ -175,7 +175,7 @@ export function FileUploadInput({
           </div>
 
           {error && (
-            <div className="mt-2 text-xs text-red-400 px-1">
+            <div className="mt-2 text-xs text-[#5288c1] px-1">
               {error}
             </div>
           )}

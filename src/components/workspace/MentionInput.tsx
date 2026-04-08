@@ -156,14 +156,14 @@ export function MentionInput({
                 onClick={() => insertMention(member)}
                 className="w-full flex items-center gap-3 px-3 py-2.5 transition-colors text-left"
                 style={{
-                  background: index === selectedIndex ? 'rgba(220,38,38,0.15)' : 'transparent',
+                  background: index === selectedIndex ? 'rgba(82,136,193,0.15)' : 'transparent',
                 }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = index === selectedIndex ? 'rgba(220,38,38,0.15)' : 'transparent'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = index === selectedIndex ? 'rgba(82,136,193,0.15)' : 'transparent'; }}
               >
                 <Avatar className="h-7 w-7 flex-shrink-0">
                   <AvatarImage src={member.user.picture} />
-                  <AvatarFallback className="text-[10px] bg-gradient-to-br from-[#dc2626] to-[#991b1b] text-white font-bold">
+                  <AvatarFallback className="text-[10px] bg-gradient-to-br from-[#5288c1] to-[#3a6d9e] text-white font-bold">
                     {getInitials(member.user.name)}
                   </AvatarFallback>
                 </Avatar>
