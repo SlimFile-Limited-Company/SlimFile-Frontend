@@ -146,7 +146,7 @@ const Documents = () => {
   );
 
   return (
-    <div className="min-h-screen pt-24 pb-12 bg-gray-50">
+    <div className="min-h-screen pt-28 pb-12 bg-gray-50">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Header */}
         <div className="mb-6">

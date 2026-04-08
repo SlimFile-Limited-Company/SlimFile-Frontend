@@ -137,7 +137,7 @@ const PersonalWhiteboards = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-12 bg-gradient-to-br from-purple-50 via-white to-blue-50">
+    <div className="min-h-screen pt-28 pb-12 bg-gradient-to-br from-purple-50 via-white to-blue-50">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
         <div className="mb-6">

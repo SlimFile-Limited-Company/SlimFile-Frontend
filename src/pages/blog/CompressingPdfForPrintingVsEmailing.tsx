@@ -39,7 +39,7 @@ import {
 
 export default function BlogCompressingPdfForPrintingVsEmailing() {
   return (
-    <div className="min-h-screen pt-16">
+    <div className="min-h-screen pt-28">
       {/* Hero Section */}
       <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 via-white to-green-50">
         <div className="container mx-auto max-w-4xl">

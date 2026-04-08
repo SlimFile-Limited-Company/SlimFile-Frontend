@@ -2,7 +2,7 @@ import { Minimize2, RefreshCw, Users, FileImage, FileText, FileType, Scan, GitMe
 
 const About: React.FC = () => {
   return (
-    <div className="min-h-screen pt-24 bg-white">
+    <div className="min-h-screen pt-28 bg-white">
 
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">

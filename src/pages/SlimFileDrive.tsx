@@ -171,7 +171,7 @@ const SlimFileDrive = () => {
   const usedPct = Math.min(100, (storageUsed / FREE_LIMIT) * 100);
 
   return (
-    <div className="min-h-screen pt-24 pb-12 bg-gray-50">
+    <div className="min-h-screen pt-28 pb-12 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
 
         {/* Header */}

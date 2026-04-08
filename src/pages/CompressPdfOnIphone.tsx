@@ -34,7 +34,7 @@ import {
 
 export default function CompressPdfOnIphone() {
   return (
-    <div className="min-h-screen pt-16">
+    <div className="min-h-screen pt-28">
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-pink-50 via-white to-blue-50">
         <div className="container mx-auto text-center">

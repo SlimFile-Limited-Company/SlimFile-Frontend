@@ -56,7 +56,7 @@ const supportCategories = [
 
 export default function Contact() {
   return (
-    <div className="min-h-screen bg-white pt-24">
+    <div className="min-h-screen bg-white pt-28">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-gray-50 to-white py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

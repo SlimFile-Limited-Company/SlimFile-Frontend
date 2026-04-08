@@ -86,7 +86,7 @@ const newsItems: NewsItem[] = [
 
 export default function News() {
   return (
-    <div className="min-h-screen pt-24">
+    <div className="min-h-screen pt-28">
       {/* Hero */}
       <section className="py-14 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-red-50 via-white to-orange-50">
         <div className="container mx-auto max-w-6xl">

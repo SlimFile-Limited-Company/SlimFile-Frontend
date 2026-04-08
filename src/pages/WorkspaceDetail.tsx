@@ -667,20 +667,11 @@ const WorkspaceDetail = () => {
     const isDelivered = message.deliveredTo && message.deliveredTo.length > 0;
 
     if (isRead) {
-      // Blue double check for read
-      return (
-        <CheckCheck className="inline-block h-3.5 w-3.5 ml-1 text-blue-300" />
-      );
+      return <CheckCheck className="inline-block h-3 w-3 ml-0.5 text-sky-400" />;
     } else if (isDelivered) {
-      // Gray double check for delivered
-      return (
-        <CheckCheck className="inline-block h-3.5 w-3.5 ml-1 text-blue-200 opacity-60" />
-      );
+      return <CheckCheck className="inline-block h-3 w-3 ml-0.5" style={{ color: 'rgba(255,255,255,0.4)' }} />;
     } else {
-      // Single check for sent
-      return (
-        <Check className="inline-block h-3.5 w-3.5 ml-1 text-blue-200 opacity-60" />
-      );
+      return <Check className="inline-block h-3 w-3 ml-0.5" style={{ color: 'rgba(255,255,255,0.4)' }} />;
     }
   };
 
@@ -718,29 +709,32 @@ const WorkspaceDetail = () => {
     };
 
     return (
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5 min-w-[180px]">
         <button
           onClick={togglePlay}
-          className={`flex-shrink-0 p-2 rounded-full transition-colors ${
-            isOwnMessage
-              ? 'bg-blue-500 hover:bg-blue-400'
-              : 'bg-slate-200 hover:bg-slate-300'
-          }`}
+          className="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center transition-colors"
+          style={{ background: isOwnMessage ? 'rgba(255,255,255,0.2)' : 'rgba(220,38,38,0.25)' }}
         >
           {isPlaying ? (
-            <Pause className={`h-4 w-4 ${isOwnMessage ? 'text-white' : 'text-slate-700'}`} />
+            <Pause className="h-3.5 w-3.5 text-white" />
           ) : (
-            <Play className={`h-4 w-4 ${isOwnMessage ? 'text-white' : 'text-slate-700'}`} />
+            <Play className="h-3.5 w-3.5 text-white" />
           )}
         </button>
         <div className="flex-1 min-w-0">
-          <div className={`h-1 rounded-full ${isOwnMessage ? 'bg-blue-400' : 'bg-slate-300'} overflow-hidden`}>
+          <div
+            className="h-1 rounded-full overflow-hidden"
+            style={{ background: isOwnMessage ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)' }}
+          >
             <div
-              className={`h-full ${isOwnMessage ? 'bg-white' : 'bg-blue-600'} transition-all`}
-              style={{ width: `${(currentTime / duration) * 100}%` }}
+              className="h-full rounded-full transition-all"
+              style={{
+                width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%`,
+                background: isOwnMessage ? 'rgba(255,255,255,0.8)' : '#dc2626'
+              }}
             />
           </div>
-          <p className={`text-xs mt-1 ${isOwnMessage ? 'text-blue-100' : 'text-slate-500'}`}>
+          <p className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.45)' }}>
             {formatTime(currentTime)} / {formatTime(duration)}
           </p>
         </div>
@@ -757,10 +751,10 @@ const WorkspaceDetail = () => {
 
   if (loadingWorkspace || loadingMessages) {
     return (
-      <div className="h-screen flex items-center justify-center bg-slate-50">
+      <div className="h-screen flex items-center justify-center" style={{ background: '#0e1621' }}>
         <div className="text-center">
-          <Loader2 className="h-10 w-10 animate-spin text-slate-600 mx-auto" />
-          <p className="mt-3 text-slate-500">Loading workspace...</p>
+          <Loader2 className="h-9 w-9 animate-spin text-red-500 mx-auto" />
+          <p className="mt-3 text-sm text-white/40">Loading workspace...</p>
         </div>
       </div>
     );
@@ -768,11 +762,11 @@ const WorkspaceDetail = () => {
 
   if (!workspaceData) {
     return (
-      <div className="h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center bg-white p-8 rounded-2xl shadow-lg">
-          <h2 className="text-xl font-semibold text-slate-900">Workspace not found</h2>
-          <p className="text-slate-500 mt-2">This workspace may have been deleted</p>
-          <Button onClick={() => navigate('/workspaces')} className="mt-6">
+      <div className="h-screen flex items-center justify-center" style={{ background: '#0e1621' }}>
+        <div className="text-center p-8 rounded-2xl" style={{ background: '#17212b', border: '1px solid rgba(255,255,255,0.07)' }}>
+          <h2 className="text-lg font-semibold text-white">Workspace not found</h2>
+          <p className="text-white/40 text-sm mt-2">This workspace may have been deleted</p>
+          <Button onClick={() => navigate('/workspaces')} className="mt-6 bg-red-600 hover:bg-red-700 text-white">
             Back to Workspaces
           </Button>
         </div>
@@ -783,40 +777,44 @@ const WorkspaceDetail = () => {
   const { workspace, members, pendingInvites, currentUserRole } = workspaceData;
 
   return (
-    <div className="h-screen flex flex-col bg-white">
-      {/* Modern Header - Mobile Optimized */}
-      <div className="bg-white border-b border-slate-200 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
-          <Button
-            variant="ghost"
-            size="icon"
+    <div className="h-screen flex flex-col" style={{ background: '#0e1621' }}>
+      {/* Telegram-style Header */}
+      <div
+        className="flex items-center justify-between px-3 sm:px-4 py-2.5 flex-shrink-0"
+        style={{ background: '#17212b', borderBottom: '1px solid #0d1723' }}
+      >
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          <button
             onClick={() => navigate('/workspaces')}
-            className="hover:bg-slate-100 flex-shrink-0"
+            className="p-1.5 rounded-full transition-colors hover:bg-white/10 flex-shrink-0"
           >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-            <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-xs sm:text-sm flex-shrink-0">
-              {getInitials(workspace.name)}
+            <ArrowLeft className="h-5 w-5 text-white/80" />
+          </button>
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+            <div className="relative flex-shrink-0">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#dc2626] to-[#991b1b] flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                {getInitials(workspace.name)}
+              </div>
+              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-[#17212b]" />
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="font-semibold text-slate-900 text-sm sm:text-base truncate">{workspace.name}</h1>
-              <p className="text-xs text-slate-500 hidden sm:block">{members.length} {members.length === 1 ? 'member' : 'members'}</p>
+              <h1 className="font-semibold text-white text-sm sm:text-[15px] truncate leading-tight">{workspace.name}</h1>
+              <p className="text-xs text-white/50 leading-tight mt-0.5">
+                {members.length} {members.length === 1 ? 'member' : 'members'}
+              </p>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+        <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
           {currentUserRole === 'owner' && (
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={() => setInviteDialogOpen(true)}
-              className="hover:bg-slate-100"
+              className="p-2 rounded-full hover:bg-white/10 transition-colors"
+              title="Invite member"
             >
-              <UserPlus className="h-4 w-4" />
-              <span className="ml-2 hidden sm:inline">Invite</span>
-            </Button>
+              <UserPlus className="h-5 w-5 text-white/70" />
+            </button>
           )}
 
           <WallpaperSettings
@@ -825,23 +823,22 @@ const WorkspaceDetail = () => {
             presets={wallpaperPresets}
             onUpdateWallpaper={handleUpdateWallpaper}
             trigger={
-              <Button variant="ghost" size="icon" className="hover:bg-slate-100 h-8 w-8">
-                <Palette className="h-4 w-4" />
-              </Button>
+              <button className="p-2 rounded-full hover:bg-white/10 transition-colors">
+                <Palette className="h-5 w-5 text-white/70" />
+              </button>
             }
           />
 
           <Sheet open={membersSheetOpen} onOpenChange={setMembersSheetOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="hover:bg-slate-100">
-                <Users className="h-4 w-4" />
-                <span className="ml-2 hidden sm:inline">Members</span>
-              </Button>
+              <button className="p-2 rounded-full hover:bg-white/10 transition-colors" title="Members">
+                <Users className="h-5 w-5 text-white/70" />
+              </button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent className="bg-[#17212b] border-[#0d1723]">
               <SheetHeader>
-                <SheetTitle>Workspace Members</SheetTitle>
-                <SheetDescription>
+                <SheetTitle className="text-white">Workspace Members</SheetTitle>
+                <SheetDescription className="text-white/50">
                   {members.length} members in this workspace
                 </SheetDescription>
               </SheetHeader>
@@ -857,42 +854,40 @@ const WorkspaceDetail = () => {
         </div>
       </div>
 
-      {/* Chat Messages Area */}
+      {/* Chat Messages Area — Telegram background */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-6 relative"
-        style={getWallpaperStyle(chatSettings, wallpaperPresets)}
+        className="flex-1 overflow-y-auto px-2 sm:px-4 py-3 relative"
+        style={getWallpaperStyle(chatSettings, wallpaperPresets) ?? { background: '#0e1621' }}
       >
         {hasMore && (
-          <div className="text-center mb-6">
-            <Button
-              variant="outline"
-              size="sm"
+          <div className="text-center mb-4">
+            <button
               onClick={loadMoreMessages}
               disabled={loadingMore}
-              className="bg-white shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium text-white/70 bg-white/10 hover:bg-white/15 transition-colors border border-white/10"
             >
               {loadingMore ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                <ChevronUp className="h-4 w-4 mr-2" />
+                <ChevronUp className="h-3.5 w-3.5" />
               )}
               Load earlier messages
-            </Button>
+            </button>
           </div>
         )}
 
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center py-20">
-            <div className="bg-slate-100 rounded-full p-6 mb-4">
-              <Send className="h-10 w-10 text-slate-400" />
+            <div className="rounded-full p-5 mb-4" style={{ background: 'rgba(220,38,38,0.15)' }}>
+              <Send className="h-9 w-9 text-red-400" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-700">Start the conversation</h3>
-            <p className="text-slate-500 mt-1 max-w-sm">Send your first message to get things rolling!</p>
+            <h3 className="text-base font-semibold text-white/80">No messages yet</h3>
+            <p className="text-white/40 text-sm mt-1 max-w-xs">Be the first to send a message in this workspace</p>
           </div>
         )}
 
-        <div className="max-w-4xl mx-auto space-y-1">
+        <div className="max-w-3xl mx-auto space-y-0.5">
           {messages.map((message, index) => {
             const isOwnMessage = message.senderId._id === currentUserId;
             const prevMessage = index > 0 ? messages[index - 1] : undefined;
@@ -909,75 +904,75 @@ const WorkspaceDetail = () => {
             return (
               <div key={message._id}>
                 {showDateSeparator && (
-                  <div className="flex items-center justify-center my-8">
-                    <div className="bg-white px-4 py-1.5 rounded-full text-xs font-medium text-slate-600 shadow-sm border border-slate-200">
+                  <div className="flex items-center justify-center my-6">
+                    <div
+                      className="px-4 py-1 rounded-full text-xs font-medium text-white/70"
+                      style={{ background: 'rgba(0,0,0,0.35)' }}
+                    >
                       {formatDateSeparator(message.createdAt)}
                     </div>
                   </div>
                 )}
 
                 <div
-                  className={`flex items-end gap-2 ${isConsecutive ? 'mt-1' : 'mt-4'} ${
+                  className={`flex items-end gap-1.5 ${isConsecutive ? 'mt-0.5' : 'mt-3'} ${
                     isOwnMessage ? 'flex-row-reverse' : ''
                   }`}
                 >
                   {!isOwnMessage && (
-                    <div className="w-8 flex-shrink-0">
-                      {showAvatar && (
-                        <Avatar className="h-8 w-8 ring-2 ring-white shadow">
+                    <div className="w-7 flex-shrink-0 self-end mb-0.5">
+                      {showAvatar ? (
+                        <Avatar className="h-7 w-7 ring-1 ring-white/10">
                           <AvatarImage src={message.senderId.picture} />
-                          <AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-semibold">
+                          <AvatarFallback className="text-[10px] bg-gradient-to-br from-[#dc2626] to-[#991b1b] text-white font-bold">
                             {getInitials(message.senderId.name)}
                           </AvatarFallback>
                         </Avatar>
+                      ) : (
+                        <div className="w-7" />
                       )}
                     </div>
                   )}
 
-                  <div className={`max-w-[85%] sm:max-w-[70%] ${isOwnMessage ? 'items-end' : 'items-start'}`}>
+                  <div className={`max-w-[80%] sm:max-w-[65%] flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}`}>
                     {showName && (
-                      <p className="text-xs font-medium text-slate-600 mb-1 ml-1">
+                      <p className="text-xs font-semibold text-red-400 mb-1 ml-3">
                         {message.senderId.name}
                       </p>
                     )}
 
                     <div
-                      className={`group relative px-4 py-2.5 ${
+                      className={`group relative px-3 py-2 ${
                         message.deleted
-                          ? 'bg-slate-200 text-slate-400 italic rounded-2xl'
+                          ? 'italic rounded-2xl'
                           : isOwnMessage
-                          ? 'bg-blue-600 text-white rounded-2xl rounded-br-md shadow-md'
-                          : 'bg-white text-slate-800 rounded-2xl rounded-bl-md shadow-sm border border-slate-100'
+                          ? 'rounded-2xl rounded-br-sm'
+                          : 'rounded-2xl rounded-bl-sm'
                       }`}
+                      style={
+                        message.deleted
+                          ? { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.35)' }
+                          : isOwnMessage
+                          ? { background: '#2b5278', color: '#fff' }
+                          : { background: '#182533', color: '#e8e8e8' }
+                      }
                     >
-                      {/* Show quoted message if this is a reply */}
+                      {/* Reply quote */}
                       {message.replyTo && (
                         <div
-                          className={`mb-2 pb-2 border-l-2 pl-3 ${
+                          className="mb-2 pb-2 pl-3 border-l-2 rounded-r"
+                          style={
                             isOwnMessage
-                              ? 'border-blue-400 bg-blue-500 bg-opacity-20'
-                              : 'border-slate-300 bg-slate-50'
-                          } rounded-r`}
+                              ? { borderColor: '#5b9bd5', background: 'rgba(91,155,213,0.15)' }
+                              : { borderColor: '#dc2626', background: 'rgba(220,38,38,0.1)' }
+                          }
                         >
-                          <p
-                            className={`text-[10px] font-medium ${
-                              isOwnMessage ? 'text-blue-200' : 'text-slate-600'
-                            }`}
-                          >
+                          <p className="text-[10px] font-semibold" style={{ color: isOwnMessage ? '#7db8e8' : '#f87171' }}>
                             {message.replyTo.senderId.name}
                           </p>
-                          <p
-                            className={`text-xs ${
-                              message.replyTo.deleted
-                                ? 'italic'
-                                : ''
-                            } ${
-                              isOwnMessage ? 'text-blue-100' : 'text-slate-600'
-                            } truncate`}
-                          >
-                            {message.replyTo.deleted
-                              ? '[Message deleted]'
-                              : message.replyTo.text}
+                          <p className={`text-xs truncate ${message.replyTo.deleted ? 'italic' : ''}`}
+                            style={{ color: isOwnMessage ? 'rgba(255,255,255,0.6)' : 'rgba(232,232,232,0.6)' }}>
+                            {message.replyTo.deleted ? '[Message deleted]' : message.replyTo.text}
                           </p>
                         </div>
                       )}
@@ -1009,65 +1004,55 @@ const WorkspaceDetail = () => {
                         </div>
                       )}
 
-                      <div className="flex items-center gap-1 mt-1.5">
-                        <p
-                          className={`text-[10px] ${
-                            message.deleted
-                              ? 'text-slate-400'
-                              : isOwnMessage
-                              ? 'text-blue-200'
-                              : 'text-slate-400'
-                          }`}
+                      {/* Timestamp + status — Telegram-style bottom-right inline */}
+                      <div className="flex items-center justify-end gap-1 mt-1">
+                        <span
+                          className="text-[10px] leading-none"
+                          style={{ color: message.deleted ? 'rgba(255,255,255,0.3)' : isOwnMessage ? 'rgba(255,255,255,0.5)' : 'rgba(232,232,232,0.4)' }}
                         >
                           {formatMessageTime(message.createdAt)}
-                          {message.editedAt && (
-                            <span className="ml-1 italic">(edited)</span>
-                          )}
-                        </p>
+                          {message.editedAt && <span className="ml-1 italic">edited</span>}
+                        </span>
                         {renderMessageStatus(message)}
                       </div>
 
-                      {/* Reply, Edit and Delete buttons */}
+                      {/* Action buttons — appear on hover */}
                       <div
-                        className={`absolute -top-8 left-1/2 -translate-x-1/2 sm:top-1/2 sm:-translate-y-1/2 sm:left-auto sm:translate-x-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 flex gap-1 bg-white rounded-full shadow-md border border-slate-200 p-0.5 sm:bg-transparent sm:shadow-none sm:border-none sm:p-0 ${
-                          isOwnMessage ? 'sm:-left-24' : 'sm:-right-24'
+                        className={`absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex gap-0.5 rounded-xl p-0.5 z-10 ${
+                          isOwnMessage ? 'right-0' : 'left-0'
                         }`}
+                        style={{ background: '#17212b', border: '1px solid rgba(255,255,255,0.08)' }}
                       >
                         {!message.deleted && (
                           <button
                             onClick={() => setReplyToMessage(message)}
-                            className="p-2 rounded-full hover:bg-slate-100 sm:bg-white sm:shadow-md sm:border sm:border-slate-200"
-                            title="Reply to this message"
+                            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                            title="Reply"
                           >
-                            <Reply className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600" />
+                            <Reply className="h-3.5 w-3.5 text-white/60" />
                           </button>
                         )}
                         {isOwnMessage && !message.deleted && message.type === 'text' && (
                           <button
-                            onClick={() => {
-                              setEditingMessage(message);
-                              setIsEditDialogOpen(true);
-                            }}
-                            className="p-2 rounded-full hover:bg-slate-100 sm:bg-white sm:shadow-md sm:border sm:border-slate-200"
-                            title="Edit message"
+                            onClick={() => { setEditingMessage(message); setIsEditDialogOpen(true); }}
+                            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                            title="Edit"
                           >
-                            <Edit2 className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600" />
+                            <Edit2 className="h-3.5 w-3.5 text-white/60" />
                           </button>
                         )}
                         {isOwnMessage && !message.deleted && (
                           <button
                             onClick={() => deleteMutation.mutate(message._id)}
-                            className="p-2 rounded-full hover:bg-slate-100 sm:bg-white sm:shadow-md sm:border sm:border-slate-200"
-                            title="Delete message"
+                            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                            title="Delete"
                           >
-                            <Trash2 className="h-3.5 w-3.5 text-slate-400 hover:text-slate-600" />
+                            <Trash2 className="h-3.5 w-3.5 text-red-400/70" />
                           </button>
                         )}
                       </div>
                     </div>
                   </div>
-
-                  {isOwnMessage && <div className="w-8 flex-shrink-0" />}
                 </div>
               </div>
             );
@@ -1076,29 +1061,32 @@ const WorkspaceDetail = () => {
 
         {/* Floating Scroll to Bottom Button */}
         {showScrollButton && (
-          <div className="absolute bottom-6 right-6 z-10">
-            <Button
+          <div className="absolute bottom-5 right-5 z-10">
+            <button
               onClick={() => scrollToBottom()}
-              size="icon"
-              className="h-12 w-12 rounded-full bg-blue-600 hover:bg-blue-700 shadow-lg"
+              className="h-10 w-10 rounded-full flex items-center justify-center shadow-xl transition-colors"
+              style={{ background: '#17212b', border: '1px solid rgba(255,255,255,0.12)' }}
               title="Scroll to bottom"
             >
-              <ArrowDown className="h-5 w-5" />
-            </Button>
+              <ArrowDown className="h-4 w-4 text-white/70" />
+            </button>
           </div>
         )}
       </div>
 
       {/* Typing Indicator */}
       {typingUsers.size > 0 && (
-        <div className="px-3 sm:px-6 py-2 bg-white border-t border-slate-100 flex items-center gap-3">
-          <div className="flex -space-x-1">
+        <div
+          className="px-4 py-2 flex items-center gap-2.5"
+          style={{ background: '#17212b', borderTop: '1px solid rgba(255,255,255,0.05)' }}
+        >
+          <div className="flex -space-x-1.5">
             {Array.from(typingUsers.entries()).slice(0, 3).map(([userId]) => {
               const member = workspaceData.members.find(m => m.user._id === userId);
               return (
-                <Avatar key={userId} className="h-6 w-6 ring-2 ring-white">
+                <Avatar key={userId} className="h-5 w-5 ring-1 ring-[#17212b]">
                   <AvatarImage src={member?.user.picture} />
-                  <AvatarFallback className="text-[10px] bg-blue-500 text-white">
+                  <AvatarFallback className="text-[9px] bg-gradient-to-br from-[#dc2626] to-[#991b1b] text-white font-bold">
                     {member ? getInitials(member.user.name) : '?'}
                   </AvatarFallback>
                 </Avatar>
@@ -1107,87 +1095,95 @@ const WorkspaceDetail = () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="flex space-x-1">
-              <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" />
-              <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }} />
-              <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }} />
+              <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#dc2626', animationDelay: '0ms' }} />
+              <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#dc2626', animationDelay: '150ms' }} />
+              <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: '#dc2626', animationDelay: '300ms' }} />
             </div>
-            <span className="text-sm text-slate-600">{getTypingText()}</span>
+            <span className="text-xs text-white/40">{getTypingText()}</span>
           </div>
         </div>
       )}
 
-      {/* Message Input */}
-      <div className="bg-white border-t border-slate-200 px-3 sm:px-6 py-3 sm:py-4">
+      {/* Message Input — Telegram-style */}
+      <div
+        className="px-2 sm:px-4 py-2 sm:py-3 flex-shrink-0"
+        style={{ background: '#17212b', borderTop: '1px solid rgba(255,255,255,0.05)' }}
+      >
         {/* Reply Preview */}
         {replyToMessage && (
-          <div className="max-w-4xl mx-auto mb-2 sm:mb-3 bg-slate-50 border border-slate-200 rounded-lg p-2 sm:p-3 flex items-start gap-2 sm:gap-3">
+          <div
+            className="max-w-3xl mx-auto mb-2 px-3 py-2 rounded-xl flex items-start gap-3"
+            style={{ background: 'rgba(255,255,255,0.06)', borderLeft: '3px solid #dc2626' }}
+          >
+            <Reply className="h-3.5 w-3.5 text-red-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <Reply className="h-3.5 w-3.5 text-slate-500" />
-                <p className="text-xs font-medium text-slate-700">
-                  Replying to {replyToMessage.senderId.name}
-                </p>
-              </div>
-              <p className="text-sm text-slate-600 truncate">
+              <p className="text-xs font-semibold text-red-400 mb-0.5">
+                {replyToMessage.senderId.name}
+              </p>
+              <p className="text-xs text-white/50 truncate">
                 {replyToMessage.deleted ? '[Message deleted]' : replyToMessage.text}
               </p>
             </div>
             <button
               onClick={() => setReplyToMessage(null)}
-              className="p-1 hover:bg-slate-200 rounded-full transition-colors flex-shrink-0"
+              className="p-1 rounded-full hover:bg-white/10 transition-colors flex-shrink-0"
             >
-              <X className="h-4 w-4 text-slate-500" />
+              <X className="h-3.5 w-3.5 text-white/40" />
             </button>
           </div>
         )}
 
-        <div className="max-w-4xl mx-auto flex items-center gap-2">
+        <div className="max-w-3xl mx-auto flex items-center gap-2">
           {isRecording ? (
             /* Recording UI */
-            <div className="flex-1 flex items-center gap-2 sm:gap-3 bg-blue-50 border-2 border-blue-200 rounded-lg px-3 sm:px-4 py-2 sm:py-3">
+            <div
+              className="flex-1 flex items-center gap-3 rounded-2xl px-4 py-2.5"
+              style={{ background: 'rgba(220,38,38,0.12)', border: '1px solid rgba(220,38,38,0.3)' }}
+            >
               <div className="flex items-center gap-2 flex-1">
-                <div className="h-3 w-3 bg-blue-500 rounded-full animate-pulse" />
-                <span className="text-sm font-medium text-blue-700">Recording</span>
-                <span className="text-sm text-blue-600">{formatRecordingTime(recordingTime)}</span>
+                <div className="h-2.5 w-2.5 bg-red-500 rounded-full animate-pulse" />
+                <span className="text-sm font-medium text-red-400">Recording</span>
+                <span className="text-sm text-white/50">{formatRecordingTime(recordingTime)}</span>
               </div>
               <div className="flex gap-2">
-                <Button
+                <button
                   onClick={cancelRecording}
-                  variant="ghost"
-                  size="sm"
-                  className="text-slate-600 hover:text-slate-700 hover:bg-slate-100"
+                  className="text-xs text-white/50 hover:text-white/80 px-2 py-1 rounded-lg hover:bg-white/10 transition-colors"
                 >
                   Cancel
-                </Button>
-                <Button
+                </button>
+                <button
                   onClick={stopRecording}
-                  size="sm"
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="text-xs font-medium text-white px-3 py-1 rounded-lg bg-red-600 hover:bg-red-700 transition-colors"
                 >
                   Stop
-                </Button>
+                </button>
               </div>
             </div>
           ) : audioChunks.length > 0 ? (
             /* Audio Preview UI */
-            <div className="flex-1 flex items-center gap-2 sm:gap-3 bg-blue-50 border-2 border-blue-200 rounded-lg px-3 sm:px-4 py-2 sm:py-3">
-              <Mic className="h-5 w-5 text-blue-600" />
+            <div
+              className="flex-1 flex items-center gap-3 rounded-2xl px-4 py-2.5"
+              style={{ background: 'rgba(220,38,38,0.12)', border: '1px solid rgba(220,38,38,0.3)' }}
+            >
+              <Mic className="h-4 w-4 text-red-400 flex-shrink-0" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-blue-700">Voice message ready</p>
-                <p className="text-xs text-blue-600">{formatRecordingTime(recordingTime)}</p>
+                <p className="text-sm font-medium text-white/80">Voice message ready</p>
+                <p className="text-xs text-white/40">{formatRecordingTime(recordingTime)}</p>
               </div>
-              <Button
+              <button
                 onClick={cancelRecording}
-                variant="ghost"
-                size="sm"
-                className="text-blue-600 hover:text-blue-700 hover:bg-blue-100"
+                className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
               >
-                <X className="h-4 w-4" />
-              </Button>
+                <X className="h-4 w-4 text-white/40" />
+              </button>
             </div>
           ) : (
-            /* Normal Text Input with Mentions and File Upload */
-            <div className="flex items-center gap-1 sm:gap-2 flex-1 bg-slate-50 border border-slate-200 rounded-full px-2 py-1 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-200 transition-colors">
+            /* Normal Text Input */
+            <div
+              className="flex items-center gap-1 sm:gap-2 flex-1 rounded-2xl px-3 py-1.5 focus-within:ring-1 focus-within:ring-red-600/40 transition-all"
+              style={{ background: '#202b36', border: '1px solid rgba(255,255,255,0.07)' }}
+            >
               <FileUploadInput
                 onFilesSelected={setSelectedFiles}
                 selectedFiles={selectedFiles}
@@ -1198,7 +1194,7 @@ const WorkspaceDetail = () => {
                 disabled={sendMutation.isPending}
               />
               <MentionInput
-                placeholder="Type a message (use @ to mention)"
+                placeholder="Message..."
                 value={messageText}
                 onChange={(value) => {
                   setMessageText(value);
@@ -1213,36 +1209,34 @@ const WorkspaceDetail = () => {
                 onKeyDown={handleKeyPress}
                 members={workspaceData?.members || []}
                 disabled={sendMutation.isPending}
-                className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 pt-2.5 pb-2"
+                className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 py-2 text-white/90 placeholder:text-white/30 text-sm"
               />
-              <Button
+              <button
                 onClick={startRecording}
-                size="icon"
-                variant="ghost"
-                className="h-8 w-8 flex-shrink-0 hover:bg-slate-200 rounded-full"
+                className="p-1.5 rounded-full hover:bg-white/10 transition-colors flex-shrink-0"
                 title="Record voice message"
               >
-                <Mic className="h-4 w-4 text-slate-500" />
-              </Button>
+                <Mic className="h-4 w-4 text-white/40" />
+              </button>
             </div>
           )}
 
-          <Button
+          <button
             onClick={audioChunks.length > 0 ? sendAudioMessage : handleSendMessage}
             disabled={
               (audioChunks.length === 0 && !messageText.trim() && selectedFiles.length === 0) ||
               sendMutation.isPending ||
               isRecording
             }
-            size="icon"
-            className="bg-blue-600 hover:bg-blue-700 h-10 w-10 flex-shrink-0 rounded-full"
+            className="h-10 w-10 flex-shrink-0 rounded-full flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110"
+            style={{ background: '#dc2626' }}
           >
             {sendMutation.isPending ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin text-white" />
             ) : (
-              <Send className="h-5 w-5" />
+              <Send className="h-4 w-4 text-white" />
             )}
-          </Button>
+          </button>
         </div>
       </div>
 

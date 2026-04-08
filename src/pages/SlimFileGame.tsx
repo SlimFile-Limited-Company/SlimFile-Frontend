@@ -1107,7 +1107,7 @@ export default function SlimFileGame() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 pt-20 sm:pt-24 pb-4 sm:pb-8 px-2 sm:px-3 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 pt-28 pb-4 sm:pb-8 px-2 sm:px-3 lg:px-8 relative overflow-hidden">
       {/* Minimal background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-300 to-cyan-300 rounded-full blur-3xl" />

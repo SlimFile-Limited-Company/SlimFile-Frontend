@@ -160,7 +160,7 @@ export default function Teams() {
     <div className="min-h-screen bg-gradient-to-br from-[#2d0a0a] via-[#4a0000] to-[#1a0000]">
       <Header />
       
-      <div className="pt-24">
+      <div className="pt-28">
         {/* Hero Section */}
         <div className="relative py-12 md:py-16 lg:py-20 px-4 overflow-hidden">
           {/* Background atmospheric lights */}

@@ -36,7 +36,7 @@ import {
 
 export default function CompressPdfWithoutLosingQuality() {
   return (
-    <div className="min-h-screen pt-24">
+    <div className="min-h-screen pt-28">
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 via-white to-blue-50">
         <div className="container mx-auto text-center">

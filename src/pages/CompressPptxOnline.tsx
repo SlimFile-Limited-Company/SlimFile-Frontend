@@ -35,7 +35,7 @@ import {
 
 export default function CompressPptxOnline() {
   return (
-    <div className="min-h-screen pt-24">
+    <div className="min-h-screen pt-28">
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-orange-50 via-white to-purple-50">
         <div className="container mx-auto text-center">

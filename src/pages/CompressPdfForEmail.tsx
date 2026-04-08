@@ -33,7 +33,7 @@ import {
 
 export default function CompressPdfForEmail() {
   return (
-    <div className="min-h-screen pt-24">
+    <div className="min-h-screen pt-28">
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-green-50">
         <div className="container mx-auto text-center">

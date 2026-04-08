@@ -99,7 +99,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24">
+    <div className="min-h-screen pt-28">
       <WelcomeModal />
       {/* Hero Section */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">

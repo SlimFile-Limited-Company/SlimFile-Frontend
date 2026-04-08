@@ -268,7 +268,7 @@ const OCRTool = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-12 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen pt-28 pb-12 bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-12">
