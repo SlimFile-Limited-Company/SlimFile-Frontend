@@ -318,9 +318,6 @@ export const Feed = () => {
               {f.label}
             </button>
           ))}
-          <div className="ml-auto text-xs text-gray-400">
-            {filtered.length} entries
-          </div>
         </div>
       </div>
 
