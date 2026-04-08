@@ -199,6 +199,7 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
           displayScale={displayScale}
           canvasWidth={canvasDimensions.width}
           canvasHeight={canvasDimensions.height}
+          canvasRef={canvasRef}
         />
       )}
     </div>

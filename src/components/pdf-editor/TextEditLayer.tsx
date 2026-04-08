@@ -11,6 +11,10 @@ interface EditableTextItem {
   cssY: number;
   cssFontSize: number;
   cssWidth: number;
+  cssFontFamily: string;
+  cssFontWeight: string;
+  cssFontStyle: string;
+  cssColor: string;
 }
 
 interface TextEditLayerProps {
@@ -18,9 +22,57 @@ interface TextEditLayerProps {
   displayScale: number;
   canvasWidth: number;
   canvasHeight: number;
+  canvasRef: React.RefObject<HTMLCanvasElement | null>;
 }
 
-export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canvasHeight }: TextEditLayerProps) {
+function parseFontName(raw: string): { family: string; weight: string; style: string } {
+  // Strip subset prefix e.g. "ABCDEF+"
+  const name = raw.replace(/^[A-Z]{6}\+/, '');
+  const lower = name.toLowerCase();
+
+  const weight = /bold|heavy|black/i.test(name) ? 'bold' : 'normal';
+  const style = /italic|oblique/i.test(name) ? 'italic' : 'normal';
+
+  let family = 'Arial, sans-serif';
+  if (/times|minion|palatino|garamond|georgia|serif/i.test(lower)) family = '"Times New Roman", Times, serif';
+  else if (/courier|mono|typewriter/i.test(lower)) family = '"Courier New", Courier, monospace';
+  else if (/helvetica/i.test(lower)) family = 'Helvetica, Arial, sans-serif';
+  else if (/arial/i.test(lower)) family = 'Arial, Helvetica, sans-serif';
+  else if (/verdana/i.test(lower)) family = 'Verdana, sans-serif';
+  else if (/tahoma/i.test(lower)) family = 'Tahoma, sans-serif';
+  else if (/trebuchet/i.test(lower)) family = '"Trebuchet MS", sans-serif';
+  else if (/calibri/i.test(lower)) family = 'Calibri, sans-serif';
+  else if (/cambria/i.test(lower)) family = 'Cambria, serif';
+
+  return { family, weight, style };
+}
+
+function sampleCanvasColor(
+  canvas: HTMLCanvasElement,
+  cssX: number,
+  cssY: number,
+  cssFontSize: number,
+): string {
+  try {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return '#000000';
+    const dpr = window.devicePixelRatio || 1;
+    // Sample near the vertical center of the text
+    const px = Math.round((cssX + 2) * dpr);
+    const py = Math.round((cssY - cssFontSize * 0.5) * dpr);
+    const d = ctx.getImageData(px, py, 1, 1).data;
+    // If pixel is very light (background), fall back to black
+    const brightness = (d[0] + d[1] + d[2]) / 3;
+    if (brightness > 200) return '#000000';
+    return `rgb(${d[0]},${d[1]},${d[2]})`;
+  } catch {
+    return '#000000';
+  }
+}
+
+export default function TextEditLayer({
+  pdfPage, displayScale, canvasWidth, canvasHeight, canvasRef,
+}: TextEditLayerProps) {
   const { addTextEdit, documentState } = usePDFEditor();
   const [textItems, setTextItems] = useState<EditableTextItem[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -34,6 +86,7 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
       try {
         const textContent = await pdfPage.getTextContent();
         const viewport = pdfPage.getViewport({ scale: displayScale });
+        const canvas = canvasRef.current;
         const items: EditableTextItem[] = [];
 
         for (const item of textContent.items) {
@@ -42,6 +95,11 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
           const [cssX, cssY] = viewport.convertToViewportPoint(tx, ty);
           const cssFontSize = Math.sqrt(a * a + b * b) * displayScale;
           const cssWidth = Math.max(item.width * displayScale, cssFontSize * item.str.length * 0.55);
+
+          const { family, weight, style } = parseFontName(item.fontName || '');
+          const cssColor = canvas
+            ? sampleCanvasColor(canvas, cssX, cssY, cssFontSize)
+            : '#000000';
 
           items.push({
             str: item.str,
@@ -53,6 +111,10 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
             cssY,
             cssFontSize,
             cssWidth,
+            cssFontFamily: family,
+            cssFontWeight: weight,
+            cssFontStyle: style,
+            cssColor,
           });
         }
         setTextItems(items);
@@ -90,7 +152,6 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
         fontSize,
       });
 
-      // Update the local label so the overlay title stays correct
       setTextItems(prev => prev.map(t => t.id === item.id ? { ...t, str: editValue } : t));
     }
     setEditingId(null);
@@ -132,28 +193,23 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
                   width: '100%',
                   height: '100%',
                   fontSize: item.cssFontSize,
-                  fontFamily: 'Arial, sans-serif',
+                  fontFamily: item.cssFontFamily,
+                  fontWeight: item.cssFontWeight,
+                  fontStyle: item.cssFontStyle,
+                  color: item.cssColor,
+                  caretColor: item.cssColor,
                   border: 'none',
                   background: 'transparent',
                   padding: '0 2px',
                   outline: 'none',
                   lineHeight: 1,
                   boxSizing: 'border-box',
-                  borderRadius: 2,
-                  color: 'transparent',
-                  caretColor: '#000',
                 }}
               />
             ) : (
               <div
                 onClick={() => startEdit(item)}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  background: 'transparent',
-                  borderRadius: 2,
-                  transition: 'background 0.1s',
-                }}
+                style={{ width: '100%', height: '100%', background: 'transparent', borderRadius: 2 }}
                 className="hover:bg-blue-200/30 hover:outline hover:outline-1 hover:outline-blue-400"
                 title={`Click to edit: "${item.str}"`}
               />

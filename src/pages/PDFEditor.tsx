@@ -260,6 +260,18 @@ function PDFEditorContent() {
                 </button>
               </div>
             </div>
+            {/* Download button */}
+            <div className="px-2 py-2 border-b border-zinc-800">
+              <button
+                onClick={handleDownload}
+                disabled={isSaving}
+                className="w-full h-9 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold flex items-center justify-center gap-2 transition-colors"
+              >
+                <Download className="w-4 h-4" />
+                {isSaving ? 'Saving...' : 'Download PDF'}
+              </button>
+            </div>
+
             <div className="flex-1 overflow-y-auto py-2 px-2 space-y-1.5 scrollbar-hide">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
                 <div key={pageNum} className="relative group">
