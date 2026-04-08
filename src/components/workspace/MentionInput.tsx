@@ -141,7 +141,7 @@ export function MentionInput({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-        className={`min-h-[40px] max-h-[120px] resize-none w-full ${className || ''}`}
+        className={`min-h-0 max-h-[120px] resize-none w-full leading-normal ${className || ''}`}
       />
 
       {showSuggestions && filteredMembers.length > 0 && (

@@ -1259,7 +1259,7 @@ const WorkspaceDetail = () => {
           ) : (
             /* Normal Text Input — all inline in one pill */
             <div
-              className="flex items-center gap-1.5 rounded-full px-2.5 py-0.5 focus-within:ring-1 focus-within:ring-[#5288c1]/40 transition-all"
+              className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 focus-within:ring-1 focus-within:ring-[#5288c1]/40 transition-all"
               style={{ background: '#253545', border: '1px solid rgba(255,255,255,0.07)' }}
             >
               <FileUploadInput
@@ -1287,11 +1287,11 @@ const WorkspaceDetail = () => {
                 onKeyDown={handleKeyPress}
                 members={workspaceData?.members || []}
                 disabled={sendMutation.isPending}
-                className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 py-0.5 text-white/90 placeholder:text-white/30 text-sm"
+                className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 py-0 text-white/90 placeholder:text-white/30 text-sm self-center"
               />
               <button
                 onClick={startRecording}
-                className="p-1.5 rounded-full hover:bg-white/10 transition-colors flex-shrink-0"
+                className="p-1.5 rounded-full hover:bg-white/10 transition-colors flex-shrink-0 self-center"
                 title="Record voice message"
               >
                 <Mic className="h-4 w-4 text-white/40" />
@@ -1302,7 +1302,7 @@ const WorkspaceDetail = () => {
                   (!messageText.trim() && selectedFiles.length === 0) ||
                   sendMutation.isPending
                 }
-                className="h-7 w-7 rounded-full flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:brightness-110 flex-shrink-0"
+                className="h-7 w-7 rounded-full flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:brightness-110 flex-shrink-0 self-center"
                 style={{ background: '#5288c1' }}
               >
                 {sendMutation.isPending ? (
