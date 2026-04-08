@@ -107,7 +107,6 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
   const Icon = cfg.icon;
   const ext = getFileExt(activity.filename);
   const isConvert = activity.operation === 'convert';
-  const filename = activity.filename.replace(/^(slimfile_|compressed_|converted_)/, '');
 
   return (
     <motion.div
@@ -136,8 +135,8 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
             <p className="text-white/60 text-[11px] font-medium uppercase tracking-wider mb-1">
               {isConvert ? `Convert → ${activity.targetFormat?.toUpperCase()}` : 'Compressed'}
             </p>
-            <p className="text-white font-semibold text-sm leading-snug truncate" title={filename}>
-              {filename}
+            <p className="text-white font-semibold text-sm leading-snug">
+              {cfg.label} File
             </p>
           </div>
           <div className={`w-10 h-10 rounded-xl ${cfg.iconBg} flex items-center justify-center flex-shrink-0`}>
@@ -236,7 +235,7 @@ export const Feed = () => {
     (async () => {
       try {
         const [fRes, sRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/feed?limit=100`),
+          fetch(`${API_BASE_URL}/feed?limit=500`),
           fetch(`${API_BASE_URL}/feed/stats`),
         ]);
         setActivities(await fRes.json());
@@ -302,9 +301,9 @@ export const Feed = () => {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 border-t border-white/10 pt-10">
-            <HeroStat icon={Zap}        label="Total compressions" value={stats ? formatCount(stats.totalCompressions) : '—'} sub="files processed globally" />
-            <HeroStat icon={HardDrive}  label="Space saved"        value={stats ? formatBytes(stats.totalSpaceSaved)   : '—'} sub="freed across all users"   />
-            <HeroStat icon={TrendingUp} label="Avg compression"    value={stats ? `${stats.avgCompressionRatio}%`      : '—'} sub="average reduction ratio"  />
+            <HeroStat icon={Zap}        label="Total compressions" value={stats ? formatCount(stats.totalCompressions) : '—'} sub="all time, across all users" />
+            <HeroStat icon={HardDrive}  label="Space saved"        value={stats ? formatBytes(stats.totalSpaceSaved)   : '—'} sub="all time, freed globally"   />
+            <HeroStat icon={TrendingUp} label="Avg compression"    value={stats ? `${stats.avgCompressionRatio}%`      : '—'} sub="all time average ratio"     />
           </div>
         </div>
       </div>
