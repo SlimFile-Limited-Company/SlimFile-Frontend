@@ -731,7 +731,7 @@ const WorkspaceDetail = () => {
 
   if (loadingWorkspace || loadingMessages) {
     return (
-      <div className="h-screen flex items-center justify-center" style={{ background: '#0e1621' }}>
+      <div className="h-screen flex items-center justify-center" style={{ background: '#1a2633' }}>
         <div className="text-center">
           <Loader2 className="h-9 w-9 animate-spin text-red-500 mx-auto" />
           <p className="mt-3 text-sm text-white/40">Loading workspace...</p>
@@ -742,8 +742,8 @@ const WorkspaceDetail = () => {
 
   if (!workspaceData) {
     return (
-      <div className="h-screen flex items-center justify-center" style={{ background: '#0e1621' }}>
-        <div className="text-center p-8 rounded-2xl" style={{ background: '#17212b', border: '1px solid rgba(255,255,255,0.07)' }}>
+      <div className="h-screen flex items-center justify-center" style={{ background: '#1a2633' }}>
+        <div className="text-center p-8 rounded-2xl" style={{ background: '#1f2b38', border: '1px solid rgba(255,255,255,0.07)' }}>
           <h2 className="text-lg font-semibold text-white">Workspace not found</h2>
           <p className="text-white/40 text-sm mt-2">This workspace may have been deleted</p>
           <Button onClick={() => navigate('/workspaces')} className="mt-6 bg-red-600 hover:bg-red-700 text-white">
@@ -763,7 +763,7 @@ const WorkspaceDetail = () => {
     text.replace(/@\[([^\]]+)\]\([a-f0-9]{24}\)/g, '@$1');
 
   return (
-    <div className="h-screen flex overflow-hidden" style={{ background: '#0e1621' }}>
+    <div className="h-screen flex overflow-hidden" style={{ background: '#0d1117' }}>
 
       {/* ─── Left panel: workspace list ───
            Mobile: full screen when mobileChatOpen=false, hidden when mobileChatOpen=true
@@ -772,40 +772,39 @@ const WorkspaceDetail = () => {
       <aside
         className={`
           flex-col flex-shrink-0
-          w-full md:w-72
+          w-full md:w-[300px]
           ${mobileChatOpen ? 'hidden md:flex' : 'flex'}
         `}
-        style={{ background: '#17212b', borderRight: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ background: '#212d3b', borderRight: '1px solid rgba(255,255,255,0.04)' }}
       >
-        {/* Panel header */}
+        {/* Header — Telegram style */}
         <div
-          className="flex items-center justify-between px-4 py-3.5 flex-shrink-0"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+          className="flex items-center gap-3 px-4 py-3 flex-shrink-0"
+          style={{ background: '#1f2b38', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
         >
           <button
             onClick={() => navigate('/workspaces')}
-            className="flex items-center gap-2 p-1.5 rounded-full hover:bg-white/10 transition-colors"
+            className="p-1.5 rounded-full hover:bg-white/10 transition-colors flex-shrink-0"
             title="Back to Workspaces"
           >
-            <ArrowLeft className="h-4 w-4 text-white/60" />
+            <ArrowLeft className="h-5 w-5 text-white/70" />
           </button>
-          <span className="text-[15px] font-semibold text-white">Workspaces</span>
-          <div className="w-7" />
+          <span className="text-[16px] font-semibold text-white flex-1">Workspaces</span>
         </div>
 
         {/* Workspace list */}
         <div className="flex-1 overflow-y-auto">
           {allWorkspaces.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-              <div className="h-14 w-14 rounded-full flex items-center justify-center mb-4" style={{ background: 'rgba(220,38,38,0.12)' }}>
-                <Users className="h-6 w-6 text-red-400" />
+              <div className="h-14 w-14 rounded-full flex items-center justify-center mb-4" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                <Users className="h-6 w-6 text-white/40" />
               </div>
               <p className="text-white/60 text-sm font-medium">No workspaces yet</p>
               <p className="text-white/30 text-xs mt-1">Create one to start chatting</p>
               <button
                 onClick={() => navigate('/workspaces')}
                 className="mt-4 px-4 py-2 rounded-full text-xs font-medium text-white transition-colors"
-                style={{ background: '#dc2626' }}
+                style={{ background: '#5288c1' }}
               >
                 Create Workspace
               </button>
@@ -814,6 +813,10 @@ const WorkspaceDetail = () => {
             allWorkspaces.map((ws) => {
               const isActive = ws._id === workspaceId;
               const initials = ws.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
+              // Telegram-style avatar colours based on first char
+              const avatarColors = ['#5288c1','#3d9a6e','#b5562e','#6c5faa','#c9564e','#4b8b9e','#9c6b31'];
+              const colorIndex = ws.name.charCodeAt(0) % avatarColors.length;
+              const avatarBg = avatarColors[colorIndex];
               return (
                 <button
                   key={ws._id}
@@ -821,30 +824,25 @@ const WorkspaceDetail = () => {
                     navigate(`/workspaces/${ws._id}`);
                     setMobileChatOpen(true);
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 transition-colors text-left"
-                  style={{
-                    background: isActive ? 'rgba(220,38,38,0.12)' : 'transparent',
-                    borderLeft: isActive ? '3px solid #dc2626' : '3px solid transparent',
-                  }}
-                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 transition-colors text-left"
+                  style={{ background: isActive ? '#2b5278' : 'transparent' }}
+                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.05)'; }}
                   onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
                 >
-                  <div className="h-11 w-11 rounded-full bg-gradient-to-br from-[#dc2626] to-[#991b1b] flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow">
+                  <div
+                    className="h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0"
+                    style={{ background: avatarBg }}
+                  >
                     {initials}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className={`text-[14px] font-medium truncate leading-tight ${isActive ? 'text-white' : 'text-white/85'}`}>
+                    <p className="text-[14px] font-medium truncate leading-tight text-white">
                       {ws.name}
                     </p>
-                    {ws.description ? (
-                      <p className="text-xs text-white/35 truncate mt-0.5">{ws.description}</p>
-                    ) : (
-                      <p className="text-xs text-white/25 mt-0.5">Tap to open chat</p>
-                    )}
+                    <p className="text-xs truncate mt-0.5" style={{ color: isActive ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.35)' }}>
+                      {ws.description || 'Tap to open chat'}
+                    </p>
                   </div>
-                  {isActive && (
-                    <div className="h-2 w-2 rounded-full bg-red-500 flex-shrink-0" />
-                  )}
                 </button>
               );
             })
@@ -858,12 +856,12 @@ const WorkspaceDetail = () => {
       ─── */}
       <div
         className={`flex-col min-w-0 flex-1 ${mobileChatOpen ? 'flex' : 'hidden md:flex'}`}
-        style={{ background: '#0e1621' }}
+        style={{ background: '#1a2633' }}
       >
       {/* Telegram-style Header */}
       <div
         className="flex items-center justify-between px-3 sm:px-4 py-2.5 flex-shrink-0"
-        style={{ background: '#17212b', borderBottom: '1px solid #0d1723' }}
+        style={{ background: '#1f2b38', borderBottom: '1px solid #151f29' }}
       >
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
           {/* Mobile: tap to go back to workspace list */}
@@ -878,7 +876,7 @@ const WorkspaceDetail = () => {
               <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#dc2626] to-[#991b1b] flex items-center justify-center text-white font-bold text-sm shadow-lg">
                 {getInitials(workspace.name)}
               </div>
-              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-[#17212b]" />
+              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-[#1f2b38]" />
             </div>
             <div className="min-w-0 flex-1">
               <h1 className="font-semibold text-white text-sm sm:text-[15px] truncate leading-tight">{workspace.name}</h1>
@@ -907,7 +905,7 @@ const WorkspaceDetail = () => {
                 <Users className="h-5 w-5 text-white/70" />
               </button>
             </SheetTrigger>
-            <SheetContent className="bg-[#17212b] border-[#0d1723]">
+            <SheetContent className="bg-[#1f2b38] border-[#151f29]">
               <SheetHeader>
                 <SheetTitle className="text-white">Workspace Members</SheetTitle>
                 <SheetDescription className="text-white/50">
@@ -930,7 +928,7 @@ const WorkspaceDetail = () => {
       <div
         ref={scrollContainerRef}
         className="flex-1 overflow-y-auto overflow-x-hidden px-2 sm:px-4 py-3 relative"
-        style={{ background: '#0e1621' }}
+        style={{ background: '#1a2633' }}
       >
         {hasMore && (
           <div className="text-center mb-4">
@@ -1093,7 +1091,7 @@ const WorkspaceDetail = () => {
                         className={`absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex gap-0.5 rounded-xl p-0.5 z-10 ${
                           isOwnMessage ? 'right-0' : 'left-0'
                         }`}
-                        style={{ background: '#17212b', border: '1px solid rgba(255,255,255,0.08)' }}
+                        style={{ background: '#1f2b38', border: '1px solid rgba(255,255,255,0.08)' }}
                       >
                         {!message.deleted && (
                           <button
@@ -1137,7 +1135,7 @@ const WorkspaceDetail = () => {
             <button
               onClick={() => scrollToBottom()}
               className="h-10 w-10 rounded-full flex items-center justify-center shadow-xl transition-colors"
-              style={{ background: '#17212b', border: '1px solid rgba(255,255,255,0.12)' }}
+              style={{ background: '#1f2b38', border: '1px solid rgba(255,255,255,0.12)' }}
               title="Scroll to bottom"
             >
               <ArrowDown className="h-4 w-4 text-white/70" />
@@ -1150,13 +1148,13 @@ const WorkspaceDetail = () => {
       {typingUsers.size > 0 && (
         <div
           className="px-4 py-2 flex items-center gap-2.5"
-          style={{ background: '#17212b', borderTop: '1px solid rgba(255,255,255,0.05)' }}
+          style={{ background: '#1f2b38', borderTop: '1px solid rgba(255,255,255,0.05)' }}
         >
           <div className="flex -space-x-1.5">
             {Array.from(typingUsers.entries()).slice(0, 3).map(([userId]) => {
               const member = workspaceData.members.find(m => m.user._id === userId);
               return (
-                <Avatar key={userId} className="h-5 w-5 ring-1 ring-[#17212b]">
+                <Avatar key={userId} className="h-5 w-5 ring-1 ring-[#1f2b38]">
                   <AvatarImage src={member?.user.picture} />
                   <AvatarFallback className="text-[9px] bg-gradient-to-br from-[#dc2626] to-[#991b1b] text-white font-bold">
                     {member ? getInitials(member.user.name) : '?'}
@@ -1179,7 +1177,7 @@ const WorkspaceDetail = () => {
       {/* Message Input — Telegram-style */}
       <div
         className="px-2 sm:px-3 py-1.5 flex-shrink-0"
-        style={{ background: '#17212b', borderTop: '1px solid rgba(255,255,255,0.05)' }}
+        style={{ background: '#1f2b38', borderTop: '1px solid rgba(255,255,255,0.05)' }}
       >
         {/* Reply Preview */}
         {replyToMessage && (
@@ -1210,7 +1208,7 @@ const WorkspaceDetail = () => {
             /* Recording UI — full-width pill */
             <div
               className="flex items-center gap-3 rounded-full px-4 py-2.5"
-              style={{ background: '#202b36', border: '1px solid rgba(220,38,38,0.3)' }}
+              style={{ background: '#253545', border: '1px solid rgba(220,38,38,0.3)' }}
             >
               <div className="h-2.5 w-2.5 bg-red-500 rounded-full animate-pulse flex-shrink-0" />
               <span className="text-sm font-medium text-red-400">Recording</span>
@@ -1232,7 +1230,7 @@ const WorkspaceDetail = () => {
             /* Audio Preview UI — full-width pill */
             <div
               className="flex items-center gap-3 rounded-full px-4 py-2.5"
-              style={{ background: '#202b36', border: '1px solid rgba(220,38,38,0.3)' }}
+              style={{ background: '#253545', border: '1px solid rgba(220,38,38,0.3)' }}
             >
               <Mic className="h-4 w-4 text-red-400 flex-shrink-0" />
               <div className="flex-1">
@@ -1262,7 +1260,7 @@ const WorkspaceDetail = () => {
             /* Normal Text Input — all inline in one pill */
             <div
               className="flex items-center gap-1.5 rounded-full px-2.5 py-1 focus-within:ring-1 focus-within:ring-red-600/40 transition-all"
-              style={{ background: '#202b36', border: '1px solid rgba(255,255,255,0.07)' }}
+              style={{ background: '#253545', border: '1px solid rgba(255,255,255,0.07)' }}
             >
               <FileUploadInput
                 onFilesSelected={setSelectedFiles}
