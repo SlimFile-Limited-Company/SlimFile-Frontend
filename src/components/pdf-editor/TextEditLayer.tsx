@@ -114,7 +114,8 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
         width: canvasWidth,
         height: canvasHeight,
         pointerEvents: isTextMode ? 'auto' : 'none',
-        zIndex: 5,
+        zIndex: isTextMode ? 20 : 5,
+        cursor: isTextMode ? 'text' : 'default',
       }}
     >
       {textItems.map((item) => {

@@ -552,11 +552,14 @@ export default function AnnotationLayer({ pageNumber, width, height }: Annotatio
     };
   }, [isReady]);
 
+  // When text tool is active, pass pointer events through so TextEditLayer receives clicks
+  const isTextTool = editState.selectedTool === 'text';
+
   return (
     <>
       <div
-        className="absolute top-0 left-0 pointer-events-auto"
-        style={{ width, height }}
+        className="absolute top-0 left-0"
+        style={{ width, height, pointerEvents: isTextTool ? 'none' : 'auto', zIndex: 10 }}
       >
         <canvas ref={canvasRef} />
       </div>
