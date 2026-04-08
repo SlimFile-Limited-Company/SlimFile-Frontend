@@ -65,12 +65,13 @@ export default function AnnotationLayer({ pageNumber, width, height }: Annotatio
         break;
 
       case 'draw': {
-        canvas.isDrawingMode = true;
-        // Fabric v7 requires explicit PencilBrush instantiation
+        // Assign brush BEFORE enabling drawing mode — Fabric accesses freeDrawingBrush
+        // internally the moment isDrawingMode is set to true, causing crash if undefined.
         const brush = new fabric.PencilBrush(canvas);
         brush.width = size;
         brush.color = color;
         canvas.freeDrawingBrush = brush;
+        canvas.isDrawingMode = true;
         break;
       }
 
@@ -80,12 +81,11 @@ export default function AnnotationLayer({ pageNumber, width, height }: Annotatio
         break;
 
       case 'highlight': {
-        canvas.isDrawingMode = true;
         const hBrush = new fabric.PencilBrush(canvas);
         hBrush.width = 20;
-        // Force semi-transparent yellow regardless of color picker
         hBrush.color = 'rgba(255, 230, 0, 0.4)';
         canvas.freeDrawingBrush = hBrush;
+        canvas.isDrawingMode = true;
         break;
       }
 
