@@ -45,67 +45,71 @@ export default function AnnotationLayer({ pageNumber, width, height }: Annotatio
     };
   }, [width, height]);
 
-  // Handle tool changes
+  // Handle tool + color/size changes — re-run whenever tool, color, or brush size changes
   useEffect(() => {
     const canvas = fabricCanvasRef.current;
     if (!canvas || !isReady) return;
 
     const tool = editState.selectedTool;
+    const color = editState.brushColor || '#ef4444';
+    const size = editState.brushSize || 3;
 
-    // Reset drawing mode
     canvas.isDrawingMode = false;
     canvas.selection = true;
+    canvas.defaultCursor = 'default';
 
     switch (tool) {
       case 'select':
-        canvas.isDrawingMode = false;
         canvas.selection = true;
         canvas.defaultCursor = 'default';
         break;
 
-      case 'draw':
+      case 'draw': {
         canvas.isDrawingMode = true;
-        canvas.freeDrawingBrush.width = 3;
-        canvas.freeDrawingBrush.color = '#ef4444'; // Red
+        // Fabric v7 requires explicit PencilBrush instantiation
+        const brush = new fabric.PencilBrush(canvas);
+        brush.width = size;
+        brush.color = color;
+        canvas.freeDrawingBrush = brush;
         break;
+      }
 
       case 'text':
-        canvas.isDrawingMode = false;
         canvas.selection = false;
         canvas.defaultCursor = 'text';
         break;
 
-      case 'highlight':
+      case 'highlight': {
         canvas.isDrawingMode = true;
-        canvas.freeDrawingBrush.width = 20;
-        canvas.freeDrawingBrush.color = 'rgba(255, 255, 0, 0.5)'; // Yellow with transparency
+        const hBrush = new fabric.PencilBrush(canvas);
+        hBrush.width = 20;
+        // Force semi-transparent yellow regardless of color picker
+        hBrush.color = 'rgba(255, 230, 0, 0.4)';
+        canvas.freeDrawingBrush = hBrush;
         break;
+      }
 
       case 'shape':
-        canvas.isDrawingMode = false;
         canvas.selection = false;
         canvas.defaultCursor = 'crosshair';
         break;
 
       case 'stamp':
-        canvas.isDrawingMode = false;
         canvas.selection = false;
-        canvas.defaultCursor = 'pointer';
+        canvas.defaultCursor = 'copy';
         break;
 
       case 'redact':
-        canvas.isDrawingMode = false;
         canvas.selection = false;
         canvas.defaultCursor = 'crosshair';
         break;
 
       default:
-        canvas.isDrawingMode = false;
         canvas.selection = true;
     }
 
     canvas.renderAll();
-  }, [editState.selectedTool, isReady]);
+  }, [editState.selectedTool, editState.brushColor, editState.brushSize, isReady]);
 
   // Handle text tool click
   useEffect(() => {

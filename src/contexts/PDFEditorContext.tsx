@@ -37,6 +37,8 @@ export interface Annotation {
 export interface PDFEditState {
   mode: ToolType;
   selectedTool: ToolType;
+  brushColor: string;
+  brushSize: number;
   annotations: Annotation[];
   selectedAnnotation: Annotation | null;
   undoStack: any[];
@@ -107,8 +109,8 @@ export const PDFEditorProvider = ({ children }: PDFEditorProviderProps) => {
   });
 
   const [editState, setEditStateInternal] = useState<PDFEditState>({
-    mode: 'select', selectedTool: 'select', annotations: [], selectedAnnotation: null,
-    undoStack: [], redoStack: [], clipboardData: null,
+    mode: 'select', selectedTool: 'select', brushColor: '#ef4444', brushSize: 3,
+    annotations: [], selectedAnnotation: null, undoStack: [], redoStack: [], clipboardData: null,
   });
 
   // Per-page canvas state ref (mutable, doesn't trigger re-renders)

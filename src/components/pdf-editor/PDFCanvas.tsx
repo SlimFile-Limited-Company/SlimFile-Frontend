@@ -138,7 +138,9 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
   }
 
   return (
-    <div ref={containerRef} className={`relative ${className}`}>
+    // inline-block makes this div shrink-wrap to the canvas size exactly,
+    // so the absolute-positioned AnnotationLayer aligns perfectly with the PDF canvas.
+    <div ref={containerRef} className={`relative inline-block ${className}`}>
       {/* Loading Overlay */}
       {isRendering && (
         <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10 rounded-lg">
@@ -152,14 +154,10 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
       {/* PDF Canvas */}
       <canvas
         ref={canvasRef}
-        className="mx-auto shadow-2xl rounded-lg bg-white"
-        style={{
-          maxWidth: '100%',
-          height: 'auto',
-        }}
+        className="shadow-2xl rounded-lg bg-white block"
       />
 
-      {/* Fabric.js Annotation Layer */}
+      {/* Fabric.js Annotation Layer — sits exactly over the PDF canvas */}
       {canvasDimensions.width > 0 && canvasDimensions.height > 0 && (
         <AnnotationLayer
           pageNumber={documentState.currentPage}

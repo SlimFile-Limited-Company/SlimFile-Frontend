@@ -68,8 +68,6 @@ function PDFEditorContent() {
   const [showRightPanel, setShowRightPanel] = useState(true);
   const [showThumbnails, setShowThumbnails] = useState(true);
   const [showZoomMenu, setShowZoomMenu] = useState(false);
-  const [selectedColor, setSelectedColor] = useState('#ef4444');
-  const [brushSize, setBrushSize] = useState(3);
   const [selectedPageForOps, setSelectedPageForOps] = useState<number | null>(null);
   const [showAddPageDialog, setShowAddPageDialog] = useState(false);
   const [showMergeDialog, setShowMergeDialog] = useState(false);
@@ -478,10 +476,10 @@ function PDFEditorContent() {
                   <div className="grid grid-cols-6 gap-2">
                     {DRAW_COLORS.map((c) => (
                       <button key={c.value}
-                        onClick={() => setSelectedColor(c.value)}
+                        onClick={() => setEditState({ brushColor: c.value })}
                         title={c.label}
                         className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${
-                          selectedColor === c.value ? 'border-white scale-110' : 'border-transparent'
+                          editState.brushColor === c.value ? 'border-white scale-110' : 'border-transparent'
                         }`}
                         style={{ backgroundColor: c.value }}
                       />
@@ -494,11 +492,11 @@ function PDFEditorContent() {
               {(activeTool === 'draw' || activeTool === 'highlight') && (
                 <div className="px-4 py-3 border-b border-zinc-800">
                   <div className="text-zinc-500 text-xs uppercase tracking-wider mb-2.5">
-                    Size — <span className="text-zinc-300">{brushSize}px</span>
+                    Size — <span className="text-zinc-300">{editState.brushSize}px</span>
                   </div>
                   <input
-                    type="range" min="1" max="20" value={brushSize}
-                    onChange={(e) => setBrushSize(Number(e.target.value))}
+                    type="range" min="1" max="20" value={editState.brushSize}
+                    onChange={(e) => setEditState({ brushSize: Number(e.target.value) })}
                     className="w-full accent-red-500"
                   />
                 </div>
