@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard } from "lucide-react";
+import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 
 // Add keyframes for animations
@@ -137,6 +137,7 @@ const Home: FC = () => {
               { icon: FileType,       title: "My Documents",            description: "Write and edit documents with a rich text editor.",            features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600",      href: "/documents",       badge: "New" },
               { icon: FilePlus2,      title: "PDF Merger & Splitter",   description: "Combine multiple PDFs or split one into custom sections.",     features: ["Merge up to 20 PDFs", "Split by page ranges", "Drag to reorder"],           gradient: "from-amber-500 to-orange-500", href: "/forge",           badge: "New" },
               { icon: Lock,           title: "PDF Password Protect",    description: "Lock PDFs with a password or remove existing ones.",          features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", href: "/lock",           badge: "New" },
+              { icon: FileEdit,       title: "PDF Editor",              description: "Annotate, draw, highlight and edit PDFs in your browser.",    features: ["Draw & highlight", "Merge, split & rotate", "No login required"],           gradient: "from-rose-500 to-red-600",     href: "/pdf-editor",     badge: "New" },
             ].map((feature) => (
               <Link to={feature.href} key={feature.title} className="group block">
                 <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-200 h-full flex flex-col">

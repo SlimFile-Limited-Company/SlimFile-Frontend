@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit } from 'lucide-react';
 
 const FEATURES = [
   {
@@ -57,6 +57,11 @@ const FEATURES = [
     icon: Lock,      title: 'PDF Password Protect',  badge: 'New',        gradient: 'from-violet-500 to-violet-600',
     href: '/lock',              description: 'Lock PDFs with a password or remove existing ones.',
     features: ['128-bit encryption', 'Remove passwords', 'Files never stored'],
+  },
+  {
+    icon: FileEdit,  title: 'PDF Editor',             badge: 'New',        gradient: 'from-rose-500 to-red-600',
+    href: '/pdf-editor',        description: 'Annotate, draw, highlight and edit PDFs in your browser.',
+    features: ['Draw & highlight', 'Merge, split & rotate', 'No login required'],
   },
 ];
 

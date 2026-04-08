@@ -13,7 +13,7 @@ interface AnnotationLayerProps {
 export default function AnnotationLayer({ pageNumber, width, height }: AnnotationLayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
-  const { editState, addAnnotation, updateAnnotation, deleteAnnotation } = usePDFEditor();
+  const { editState, addAnnotation, updateAnnotation, deleteAnnotation, setPageCanvasState } = usePDFEditor();
   const [isReady, setIsReady] = useState(false);
   const [showStampDialog, setShowStampDialog] = useState(false);
   const [pendingStampPosition, setPendingStampPosition] = useState<{ x: number; y: number } | null>(null);
@@ -476,6 +476,28 @@ export default function AnnotationLayer({ pageNumber, width, height }: Annotatio
       };
     }
   }, [editState.selectedTool, isReady, pageNumber, addAnnotation]);
+
+  // Sync canvas state to context whenever annotations change (enables save)
+  useEffect(() => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas || !isReady) return;
+
+    const sync = () => {
+      setPageCanvasState(pageNumber, canvas.toJSON(), width, height);
+    };
+
+    canvas.on('object:added', sync);
+    canvas.on('object:modified', sync);
+    canvas.on('object:removed', sync);
+    canvas.on('path:created', sync);
+
+    return () => {
+      canvas.off('object:added', sync);
+      canvas.off('object:modified', sync);
+      canvas.off('object:removed', sync);
+      canvas.off('path:created', sync);
+    };
+  }, [isReady, pageNumber, width, height, setPageCanvasState]);
 
   // Handle drawing completion
   useEffect(() => {

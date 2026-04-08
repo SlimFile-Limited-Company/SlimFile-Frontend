@@ -20,6 +20,20 @@ export default function MergePDFDialog({ isOpen, onClose, currentPDF }: MergePDF
   const [isProcessing, setIsProcessing] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
+  // Pre-load the currently open PDF when dialog opens
+  useState(() => {
+    if (isOpen && currentPDF && pdfFiles.length === 0) {
+      (async () => {
+        try {
+          const pdfjsLib = await import('pdfjs-dist');
+          const arrayBuffer = await currentPDF.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          setPdfFiles([{ id: `pdf-current-${Date.now()}`, file: currentPDF, pageCount: pdf.numPages }]);
+        } catch { /* ignore */ }
+      })();
+    }
+  });
+
   if (!isOpen) return null;
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,23 +100,29 @@ export default function MergePDFDialog({ isOpen, onClose, currentPDF }: MergePDF
 
     setIsProcessing(true);
     try {
-      // TODO: Implement actual merge API call
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
       const formData = new FormData();
-      pdfFiles.forEach((item, index) => {
-        formData.append(`pdf${index}`, item.file);
-      });
+      pdfFiles.forEach((item) => formData.append('pdfs', item.file));
 
-      // Mock API call
-      console.log('Merging PDFs:', pdfFiles.map(f => f.file.name));
+      const response = await fetch(`${API_BASE_URL}/pdf/merge`, { method: 'POST', body: formData });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || 'Merge failed');
+      }
 
-      // Simulate delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      alert('PDFs merged successfully!');
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'merged.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error merging PDFs:', error);
-      alert('Failed to merge PDFs. Please try again.');
+      alert(error.message || 'Failed to merge PDFs. Please try again.');
     } finally {
       setIsProcessing(false);
     }

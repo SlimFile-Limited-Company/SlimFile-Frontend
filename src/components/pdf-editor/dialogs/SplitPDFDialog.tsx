@@ -20,25 +20,42 @@ export default function SplitPDFDialog({ isOpen, onClose }: SplitPDFDialogProps)
 
   if (!isOpen) return null;
 
+  const splitByRange = async (start: number, end: number, filename: string) => {
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
+    const formData = new FormData();
+    formData.append('pdf', documentState.pdfDoc as File);
+    formData.append('startPage', String(start));
+    formData.append('endPage', String(end));
+
+    const response = await fetch(`${API_BASE_URL}/pdf/split`, { method: 'POST', body: formData });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error || 'Split failed');
+    }
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const handleSplitByRange = async () => {
     if (startPage < 1 || endPage > documentState.totalPages || startPage > endPage) {
       alert('Invalid page range');
       return;
     }
-
     setIsProcessing(true);
     try {
-      // TODO: Implement actual split API call
-      console.log(`Splitting pages ${startPage} to ${endPage}`);
-
-      // Simulate delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      alert(`Pages ${startPage}-${endPage} extracted successfully!`);
+      await splitByRange(startPage, endPage, `pages-${startPage}-${endPage}.pdf`);
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error splitting PDF:', error);
-      alert('Failed to split PDF. Please try again.');
+      alert(error.message || 'Failed to split PDF. Please try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -49,42 +66,27 @@ export default function SplitPDFDialog({ isOpen, onClose }: SplitPDFDialogProps)
       alert('Invalid page count');
       return;
     }
-
     setIsProcessing(true);
     try {
-      const numFiles = Math.ceil(documentState.totalPages / everyNPages);
-      console.log(`Splitting into ${numFiles} files (${everyNPages} pages each)`);
-
-      // Simulate delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      alert(`PDF split into ${numFiles} files successfully!`);
+      const total = documentState.totalPages;
+      const chunks = Math.ceil(total / everyNPages);
+      for (let i = 0; i < chunks; i++) {
+        const start = i * everyNPages + 1;
+        const end = Math.min((i + 1) * everyNPages, total);
+        await splitByRange(start, end, `part-${i + 1}-pages-${start}-${end}.pdf`);
+      }
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error splitting PDF:', error);
-      alert('Failed to split PDF. Please try again.');
+      alert(error.message || 'Failed to split PDF. Please try again.');
     } finally {
       setIsProcessing(false);
     }
   };
 
   const handleSplitByBookmarks = async () => {
-    setIsProcessing(true);
-    try {
-      // TODO: Implement bookmark detection and split
-      console.log('Splitting by bookmarks');
-
-      // Simulate delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      alert('PDF split by bookmarks successfully!');
-      onClose();
-    } catch (error) {
-      console.error('Error splitting PDF:', error);
-      alert('Failed to split PDF. Please try again.');
-    } finally {
-      setIsProcessing(false);
-    }
+    // Bookmarks require parsing the PDF outline — not supported via the current backend endpoint
+    alert('Split by bookmarks is not yet supported. Use "Extract Page Range" instead.');
   };
 
   const handleSplit = () => {

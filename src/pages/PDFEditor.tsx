@@ -1,33 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import {
-  FileUp,
-  Download,
-  Share2,
-  Settings,
-  ZoomIn,
-  ZoomOut,
-  RotateCw,
-  Eye,
-  Save,
-  PanelLeftClose,
-  PanelRightClose,
-  ChevronLeft,
-  ChevronRight,
-  Maximize2,
-  Undo2,
-  Redo2,
-  Stamp,
-  Ban,
-  Combine,
-  Scissors,
-  Droplet,
-  Lock,
-  FileText,
-  FileSearch,
-  Users,
-  MessageCircle
+  MousePointer2, Type, Pen, Highlighter, Square, Stamp, EyeOff,
+  ZoomIn, ZoomOut, Undo2, Redo2, Download, ChevronLeft, ChevronRight,
+  FileUp, PanelRight, X, Settings, Scissors, Combine, Droplet, Lock,
+  FileText, FileSearch, Users, MessageCircle, RotateCw, ChevronDown,
 } from 'lucide-react';
 import { PDFEditorProvider, usePDFEditor } from '@/contexts/PDFEditorContext';
 import { CollaborationProvider } from '@/contexts/CollaborationContext';
@@ -42,11 +18,8 @@ import SecurityDialog from '@/components/pdf-editor/dialogs/SecurityDialog';
 import FormsDialog from '@/components/pdf-editor/dialogs/FormsDialog';
 import OCRDialog from '@/components/pdf-editor/dialogs/OCRDialog';
 import CollaborationDialog from '@/components/pdf-editor/dialogs/CollaborationDialog';
-import OnlineUsers from '@/components/pdf-editor/collaboration/OnlineUsers';
-import ActivityFeed from '@/components/pdf-editor/collaboration/ActivityFeed';
 import ChatSidebar from '@/components/pdf-editor/collaboration/ChatSidebar';
 
-// Main PDF Editor with Context
 export default function PDFEditor() {
   return (
     <CollaborationProvider>
@@ -57,12 +30,46 @@ export default function PDFEditor() {
   );
 }
 
-// PDF Editor Content Component
+// Tool definitions
+const TOOLS = [
+  { id: 'select',    Icon: MousePointer2, label: 'Select',    shortcut: 'S' },
+  { id: 'text',      Icon: Type,          label: 'Text',      shortcut: 'T' },
+  { id: 'draw',      Icon: Pen,           label: 'Draw',      shortcut: 'D' },
+  { id: 'highlight', Icon: Highlighter,   label: 'Highlight', shortcut: 'H' },
+  { id: 'shape',     Icon: Square,        label: 'Shape',     shortcut: 'G' },
+  { id: 'stamp',     Icon: Stamp,         label: 'Stamp',     shortcut: '' },
+  { id: 'redact',    Icon: EyeOff,        label: 'Redact',    shortcut: 'R' },
+] as const;
+
+const ZOOM_PRESETS = [50, 75, 100, 125, 150, 200];
+
+const DRAW_COLORS = [
+  { label: 'Red',    value: '#ef4444' },
+  { label: 'Blue',   value: '#3b82f6' },
+  { label: 'Green',  value: '#10b981' },
+  { label: 'Yellow', value: '#eab308' },
+  { label: 'Purple', value: '#a855f7' },
+  { label: 'Black',  value: '#000000' },
+];
+
 function PDFEditorContent() {
-  const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { documentState, loadPDF, viewState, zoomIn, zoomOut, nextPage, previousPage, goToPage, editState, setEditState, undo, redo, canUndo, canRedo } = usePDFEditor();
+  const {
+    documentState, loadPDF, savePDF,
+    viewState, zoomIn, zoomOut, setZoom,
+    editState, setEditState,
+    documentState: { currentPage, totalPages },
+    nextPage, previousPage, goToPage,
+    undo, redo, canUndo, canRedo,
+  } = usePDFEditor();
+
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showRightPanel, setShowRightPanel] = useState(true);
+  const [showThumbnails, setShowThumbnails] = useState(true);
+  const [showZoomMenu, setShowZoomMenu] = useState(false);
+  const [selectedColor, setSelectedColor] = useState('#ef4444');
+  const [brushSize, setBrushSize] = useState(3);
   const [selectedPageForOps, setSelectedPageForOps] = useState<number | null>(null);
   const [showAddPageDialog, setShowAddPageDialog] = useState(false);
   const [showMergeDialog, setShowMergeDialog] = useState(false);
@@ -73,19 +80,15 @@ function PDFEditorContent() {
   const [showOCRDialog, setShowOCRDialog] = useState(false);
   const [showCollaborationDialog, setShowCollaborationDialog] = useState(false);
   const [showChatSidebar, setShowChatSidebar] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [pageInput, setPageInput] = useState('');
+  const [isEditingPage, setIsEditingPage] = useState(false);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type === 'application/pdf') {
       setIsLoading(true);
-      try {
-        await loadPDF(file);
-        console.log('PDF loaded successfully:', file.name);
-      } catch (error) {
-        console.error('Failed to load PDF:', error);
-      } finally {
-        setIsLoading(false);
-      }
+      try { await loadPDF(file); } catch (err) { console.error(err); } finally { setIsLoading(false); }
     }
   };
 
@@ -94,607 +97,471 @@ function PDFEditorContent() {
     const file = e.dataTransfer.files[0];
     if (file && file.type === 'application/pdf') {
       setIsLoading(true);
-      try {
-        await loadPDF(file);
-        console.log('PDF loaded successfully:', file.name);
-      } catch (error) {
-        console.error('Failed to load PDF:', error);
-      } finally {
-        setIsLoading(false);
-      }
+      try { await loadPDF(file); } catch (err) { console.error(err); } finally { setIsLoading(false); }
     }
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
+  const handleDownload = useCallback(async () => {
+    setIsSaving(true);
+    try {
+      const blob = await savePDF();
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = documentState.fileName.replace(/\.pdf$/i, '') + '_edited.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        // If no annotations, download original file
+        const url = URL.createObjectURL(documentState.pdfDoc as File);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = documentState.fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    } catch (err) {
+      console.error('Download failed:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  }, [savePDF, documentState.fileName, documentState.pdfDoc]);
 
-  // Keyboard shortcuts for undo/redo and tools
+  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Undo/Redo shortcuts
-      if ((e.ctrlKey || e.metaKey) && !e.shiftKey) {
-        if (e.key === 'z') {
-          e.preventDefault();
-          undo();
-          console.log('Undo triggered via Ctrl+Z');
-        } else if (e.key === 'y') {
-          e.preventDefault();
-          redo();
-          console.log('Redo triggered via Ctrl+Y');
-        }
-      }
-
-      // Tool shortcuts (when not in input field)
-      if (!(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
-        switch (e.key.toLowerCase()) {
-          case 't':
-            setEditState({ selectedTool: 'text' });
-            break;
-          case 'd':
-            setEditState({ selectedTool: 'draw' });
-            break;
-          case 'h':
-            setEditState({ selectedTool: 'highlight' });
-            break;
-          case 's':
-            setEditState({ selectedTool: 'select' });
-            break;
-          case 'r':
-            setEditState({ selectedTool: 'redact' });
-            break;
-          case 'escape':
-            setEditState({ selectedTool: 'select' });
-            break;
-        }
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undo(); return; }
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) { e.preventDefault(); redo(); return; }
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); handleDownload(); return; }
+      switch (e.key.toLowerCase()) {
+        case 's': setEditState({ selectedTool: 'select' }); break;
+        case 't': setEditState({ selectedTool: 'text' }); break;
+        case 'd': setEditState({ selectedTool: 'draw' }); break;
+        case 'h': setEditState({ selectedTool: 'highlight' }); break;
+        case 'g': setEditState({ selectedTool: 'shape' }); break;
+        case 'r': setEditState({ selectedTool: 'redact' }); break;
+        case 'escape': setEditState({ selectedTool: 'select' }); break;
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo, setEditState]);
+  }, [undo, redo, setEditState, handleDownload]);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-24">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-red-600 via-purple-600 to-blue-600 py-12 px-4 shadow-lg">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center">
-            <h1 className="text-5xl font-bold text-white mb-4">
-              SlimFile PDF Editor
-            </h1>
-            <p className="text-xl text-white/90 max-w-3xl mx-auto">
-              Edit, annotate, merge, split, and collaborate on PDFs in real-time.
-              Completely free. No limits.
-            </p>
-            <div className="mt-6 flex items-center justify-center gap-4 flex-wrap">
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                <Eye className="w-5 h-5 text-white" />
-                <span className="text-white font-medium">Unlimited Pages</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                <Share2 className="w-5 h-5 text-white" />
-                <span className="text-white font-medium">Real-Time Collaboration</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                <Save className="w-5 h-5 text-white" />
-                <span className="text-white font-medium">Auto-Save</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  const hasFile = !!documentState.fileName;
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
+  // Upload screen
+  if (!hasFile) {
+    return (
+      <div className="h-screen bg-zinc-900 flex flex-col items-center justify-center pt-16">
+        <input ref={fileInputRef} type="file" accept="application/pdf" onChange={handleFileSelect} className="hidden" />
+
         {isLoading ? (
-          /* Loading State */
-          <div className="bg-white rounded-2xl shadow-2xl p-12 text-center">
-            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-red-500 to-purple-600 mb-6 animate-pulse">
-              <FileUp className="w-12 h-12 text-white" />
+          <div className="text-center">
+            <div className="w-20 h-20 rounded-2xl bg-red-500/20 border border-red-500/40 flex items-center justify-center mx-auto mb-6 animate-pulse">
+              <FileUp className="w-10 h-10 text-red-400" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Loading PDF...
-            </h2>
-            <p className="text-gray-600">
-              Please wait while we prepare your document
-            </p>
-          </div>
-        ) : !documentState.fileName ? (
-          /* Upload Section */
-          <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-dashed border-gray-300 hover:border-red-500 transition-all">
-            <div
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              className="text-center"
-            >
-              <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-red-500 to-purple-600 mb-6">
-                <FileUp className="w-12 h-12 text-white" />
-              </div>
-
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Upload Your PDF
-              </h2>
-
-              <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
-                Drag and drop your PDF file here, or click the button below to browse.
-                Works with any PDF, any size, completely free.
-              </p>
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="application/pdf"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-
-              <Button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isLoading}
-                className="bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <FileUp className="w-5 h-5 mr-2" />
-                Select PDF File
-              </Button>
-
-              <p className="text-sm text-gray-500 mt-6">
-                Supported format: PDF • No file size limit • Secure & Private
-              </p>
-            </div>
+            <p className="text-white text-xl font-semibold mb-2">Loading PDF...</p>
+            <p className="text-zinc-400 text-sm">Please wait</p>
           </div>
         ) : (
-          /* Editor Interface - 3-Column Layout */
-          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden h-[calc(100vh-200px)]">
-            {/* Toolbar */}
-            <div className="bg-gradient-to-r from-gray-100 to-gray-50 border-b border-gray-300 px-4 py-3 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <h2 className="text-lg font-bold text-gray-900 truncate max-w-md">
-                  {documentState.fileName}
-                </h2>
-                <div className="text-sm text-gray-500">
-                  {(documentState.fileSize / 1024 / 1024).toFixed(2)} MB
-                  {documentState.isDirty && <span className="ml-2 text-red-600">• Unsaved</span>}
-                </div>
+          <div
+            onDrop={handleDrop}
+            onDragOver={(e) => e.preventDefault()}
+            onClick={() => fileInputRef.current?.click()}
+            className="group cursor-pointer text-center max-w-md w-full mx-4"
+          >
+            <div className="border-2 border-dashed border-zinc-600 group-hover:border-red-500 rounded-3xl p-16 transition-all duration-200 group-hover:bg-red-500/5">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-red-500/30">
+                <FileUp className="w-10 h-10 text-white" />
               </div>
-
-              <div className="flex items-center gap-2">
-                {/* Undo/Redo Buttons */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={undo}
-                  disabled={!canUndo}
-                  title="Undo (Ctrl+Z)"
-                >
-                  <Undo2 className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={redo}
-                  disabled={!canRedo}
-                  title="Redo (Ctrl+Y)"
-                >
-                  <Redo2 className="w-4 h-4" />
-                </Button>
-
-                <div className="w-px h-6 bg-gray-300 mx-1"></div>
-
-                {/* PDF Operations Buttons */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowMergeDialog(true)}
-                  title="Merge PDFs"
-                >
-                  <Combine className="w-4 h-4 mr-1" />
-                  Merge
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowSplitDialog(true)}
-                  title="Split PDF"
-                >
-                  <Scissors className="w-4 h-4 mr-1" />
-                  Split
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowWatermarkDialog(true)}
-                  title="Add Watermark"
-                >
-                  <Droplet className="w-4 h-4 mr-1" />
-                  Watermark
-                </Button>
-
-                <div className="w-px h-6 bg-gray-300 mx-1"></div>
-
-                {/* Security, Forms, and OCR Buttons */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowSecurityDialog(true)}
-                  title="Security Settings"
-                >
-                  <Lock className="w-4 h-4 mr-1" />
-                  Security
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowFormsDialog(true)}
-                  title="PDF Forms"
-                >
-                  <FileText className="w-4 h-4 mr-1" />
-                  Forms
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowOCRDialog(true)}
-                  title="OCR - Text Recognition"
-                >
-                  <FileSearch className="w-4 h-4 mr-1" />
-                  OCR
-                </Button>
-
-                <div className="w-px h-6 bg-gray-300 mx-1"></div>
-
-                <Button variant="outline" size="sm" onClick={zoomOut}>
-                  <ZoomOut className="w-4 h-4 mr-1" />
-                  {Math.round(viewState.zoom * 100)}%
-                </Button>
-                <Button variant="outline" size="sm" onClick={zoomIn}>
-                  <ZoomIn className="w-4 h-4" />
-                </Button>
-                <Button variant="outline" size="sm">
-                  <RotateCw className="w-4 h-4 mr-1" />
-                  Rotate
-                </Button>
-
-                <div className="w-px h-6 bg-gray-300 mx-1"></div>
-
-                {/* Collaboration Button */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowCollaborationDialog(true)}
-                  className="bg-purple-50 border-purple-200 hover:bg-purple-100 text-purple-700"
-                  title="Start Collaboration"
-                >
-                  <Users className="w-4 h-4 mr-1" />
-                  Collaborate
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowChatSidebar(true)}
-                  title="Team Chat"
-                >
-                  <MessageCircle className="w-4 h-4 mr-1" />
-                  Chat
-                </Button>
-
-                <div className="w-px h-6 bg-gray-300 mx-1"></div>
-
-                <Button variant="outline" size="sm">
-                  <Share2 className="w-4 h-4 mr-1" />
-                  Share
-                </Button>
-                <Button className="bg-red-600 hover:bg-red-700">
-                  <Download className="w-4 h-4 mr-1" />
-                  Download
-                </Button>
+              <h2 className="text-white text-2xl font-bold mb-3">Open a PDF</h2>
+              <p className="text-zinc-400 text-sm mb-6 leading-relaxed">
+                Drag & drop your PDF here or click to browse.<br />
+                Annotate, draw, highlight, and download — all free.
+              </p>
+              <div className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors">
+                <FileUp className="w-4 h-4" />
+                Select PDF File
               </div>
             </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
-            {/* Main Editor Layout */}
-            <div className="flex h-[calc(100%-60px)]">
-              {/* Left Sidebar - Page Thumbnails */}
-              {viewState.showThumbnails && (
-                <div className="w-60 bg-gray-50 border-r border-gray-300 overflow-y-auto">
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-semibold text-gray-700">Pages</h3>
-                      <Button variant="ghost" size="sm">
-                        <PanelLeftClose className="w-4 h-4" />
-                      </Button>
-                    </div>
+  // Editor screen
+  const zoomPercent = Math.round(viewState.zoom * 100);
+  const activeTool = editState.selectedTool;
+  const showColorPicker = activeTool === 'draw' || activeTool === 'highlight' || activeTool === 'shape';
 
-                    {/* Page Thumbnails */}
-                    <div className="space-y-3">
-                      {Array.from({ length: documentState.totalPages }, (_, i) => i + 1).map((pageNum) => (
-                        <div key={pageNum} className="relative group">
-                          <PageThumbnail
-                            pageNumber={pageNum}
-                            onClick={() => goToPage(pageNum)}
-                          />
-                          {/* Page Operations Button */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedPageForOps(pageNum);
-                            }}
-                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-lg p-1.5 shadow-lg hover:bg-gray-50"
-                          >
-                            <Settings className="w-4 h-4 text-gray-700" />
-                          </button>
-                        </div>
-                      ))}
+  return (
+    <div className="h-screen bg-zinc-900 flex flex-col pt-16 overflow-hidden">
 
-                      {/* Add Page Button */}
-                      <button
-                        onClick={() => setShowAddPageDialog(true)}
-                        className="w-full border-2 border-dashed border-gray-300 hover:border-red-500 rounded-lg p-6 flex flex-col items-center justify-center gap-2 transition-all hover:bg-red-50 group"
-                      >
-                        <div className="w-10 h-10 rounded-full bg-gray-100 group-hover:bg-red-100 flex items-center justify-center transition-colors">
-                          <FileUp className="w-5 h-5 text-gray-600 group-hover:text-red-600 transition-colors" />
-                        </div>
-                        <span className="text-sm font-medium text-gray-600 group-hover:text-red-600 transition-colors">
-                          Add Page
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
+      {/* Top Toolbar */}
+      <div className="h-12 bg-zinc-800 border-b border-zinc-700 flex items-center px-3 gap-2 flex-shrink-0">
+        {/* File name */}
+        <div className="flex items-center gap-2 min-w-0 mr-2">
+          <div className="w-5 h-5 rounded bg-red-500/20 flex items-center justify-center flex-shrink-0">
+            <FileText className="w-3 h-3 text-red-400" />
+          </div>
+          <span className="text-white text-sm font-medium truncate max-w-[200px]">{documentState.fileName}</span>
+          {documentState.isDirty && <span className="text-amber-400 text-xs font-medium flex-shrink-0">• Unsaved</span>}
+        </div>
 
-              {/* Center - Canvas */}
-              <div className="flex-1 bg-gray-200 overflow-auto relative">
-                <div className="min-h-full flex items-center justify-center p-8">
-                  {/* PDF Canvas with PDF.js Rendering */}
-                  <PDFCanvas className="max-w-full" />
-                </div>
+        <div className="w-px h-5 bg-zinc-700 mx-1" />
 
-                {/* Page Navigation Overlay */}
-                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-2xl border border-gray-300 px-6 py-3 flex items-center gap-4">
-                  <Button variant="ghost" size="sm" onClick={previousPage} disabled={documentState.currentPage <= 1}>
-                    <ChevronLeft className="w-5 h-5" />
-                  </Button>
-                  <span className="text-sm font-medium text-gray-700 min-w-[100px] text-center">
-                    Page {documentState.currentPage} / {documentState.totalPages || 0}
-                  </span>
-                  <Button variant="ghost" size="sm" onClick={nextPage} disabled={documentState.currentPage >= (documentState.totalPages || 0)}>
-                    <ChevronRight className="w-5 h-5" />
-                  </Button>
-                </div>
+        {/* Undo / Redo */}
+        <button onClick={undo} disabled={!canUndo} title="Undo (Ctrl+Z)"
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+          <Undo2 className="w-4 h-4" />
+        </button>
+        <button onClick={redo} disabled={!canRedo} title="Redo (Ctrl+Y)"
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+          <Redo2 className="w-4 h-4" />
+        </button>
+
+        <div className="w-px h-5 bg-zinc-700 mx-1" />
+
+        {/* Zoom controls */}
+        <button onClick={zoomOut} title="Zoom out"
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors">
+          <ZoomOut className="w-4 h-4" />
+        </button>
+
+        <div className="relative">
+          <button
+            onClick={() => setShowZoomMenu(!showZoomMenu)}
+            className="h-8 px-2 rounded-lg flex items-center gap-1 text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors text-sm font-medium min-w-[64px] justify-between"
+          >
+            <span>{zoomPercent}%</span>
+            <ChevronDown className="w-3 h-3" />
+          </button>
+          {showZoomMenu && (
+            <div className="absolute top-10 left-0 bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl z-50 py-1 min-w-[100px]">
+              {ZOOM_PRESETS.map((z) => (
+                <button key={z}
+                  onClick={() => { setZoom(z / 100); setShowZoomMenu(false); }}
+                  className={`w-full px-4 py-2 text-sm text-left hover:bg-zinc-700 transition-colors ${zoomPercent === z ? 'text-red-400' : 'text-zinc-300'}`}
+                >
+                  {z}%
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <button onClick={zoomIn} title="Zoom in"
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors">
+          <ZoomIn className="w-4 h-4" />
+        </button>
+
+        <div className="w-px h-5 bg-zinc-700 mx-1" />
+
+        {/* More tools dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => setShowMoreMenu(!showMoreMenu)}
+            className="h-8 px-3 rounded-lg flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors text-sm"
+          >
+            <Settings className="w-3.5 h-3.5" />
+            <span>Tools</span>
+            <ChevronDown className="w-3 h-3" />
+          </button>
+          {showMoreMenu && (
+            <div className="absolute top-10 left-0 bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl z-50 py-1 min-w-[180px]">
+              {[
+                { icon: Combine,    label: 'Merge PDFs',     action: () => setShowMergeDialog(true) },
+                { icon: Scissors,   label: 'Split PDF',      action: () => setShowSplitDialog(true) },
+                { icon: Droplet,    label: 'Watermark',      action: () => setShowWatermarkDialog(true) },
+                { icon: Lock,       label: 'Security',       action: () => setShowSecurityDialog(true) },
+                { icon: FileText,   label: 'Forms',          action: () => setShowFormsDialog(true) },
+                { icon: FileSearch, label: 'OCR',            action: () => setShowOCRDialog(true) },
+                { icon: Users,      label: 'Collaborate',    action: () => setShowCollaborationDialog(true) },
+                { icon: MessageCircle, label: 'Team Chat',   action: () => setShowChatSidebar(true) },
+              ].map(({ icon: Icon, label, action }) => (
+                <button key={label}
+                  onClick={() => { action(); setShowMoreMenu(false); }}
+                  className="w-full px-4 py-2 text-sm text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors flex items-center gap-3 text-left">
+                  <Icon className="w-4 h-4" />
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Panel toggles */}
+        <button onClick={() => setShowThumbnails(!showThumbnails)} title="Toggle pages panel"
+          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${showThumbnails ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-700'}`}>
+          <PanelRight className="w-4 h-4 scale-x-[-1]" />
+        </button>
+        <button onClick={() => setShowRightPanel(!showRightPanel)} title="Toggle properties"
+          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${showRightPanel ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-700'}`}>
+          <PanelRight className="w-4 h-4" />
+        </button>
+
+        <div className="w-px h-5 bg-zinc-700 mx-1" />
+
+        {/* Download */}
+        <button onClick={handleDownload} disabled={isSaving}
+          className="h-8 px-4 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold flex items-center gap-2 transition-colors">
+          <Download className="w-4 h-4" />
+          {isSaving ? 'Saving...' : 'Download'}
+        </button>
+      </div>
+
+      {/* Main Editor Area */}
+      <div className="flex flex-1 overflow-hidden">
+
+        {/* Left Tool Sidebar */}
+        <div className="w-14 bg-zinc-900 border-r border-zinc-800 flex flex-col items-center py-3 gap-1 flex-shrink-0">
+          {TOOLS.map(({ id, Icon, label, shortcut }) => (
+            <button key={id}
+              onClick={() => setEditState({ selectedTool: id as any })}
+              title={`${label}${shortcut ? ` (${shortcut})` : ''}`}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-150 group relative ${
+                activeTool === id
+                  ? 'bg-red-600 text-white shadow-lg shadow-red-500/30'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+              }`}>
+              <Icon className="w-5 h-5" />
+              {/* Tooltip */}
+              <div className="absolute left-12 bg-zinc-700 text-white text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                {label}{shortcut && <span className="ml-1 text-zinc-400">{shortcut}</span>}
               </div>
+            </button>
+          ))}
 
-              {/* Right Sidebar - Properties */}
-              {viewState.showProperties && (
-                <div className="w-80 bg-gray-50 border-l border-gray-300 overflow-y-auto">
-                  {/* Collaboration Components */}
-                  <OnlineUsers />
-                  <ActivityFeed />
+          <div className="flex-1" />
 
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-semibold text-gray-700">Properties</h3>
-                      <Button variant="ghost" size="sm">
-                        <PanelRightClose className="w-4 h-4" />
-                      </Button>
-                    </div>
+          {/* Rotate page */}
+          <button title="Rotate view"
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors">
+            <RotateCw className="w-4 h-4" />
+          </button>
+        </div>
 
-                    {/* Tool Selection */}
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Annotation Tools
-                        </label>
-                        <div className="grid grid-cols-3 gap-2">
-                          {[
-                            { name: 'Select', value: 'select' },
-                            { name: 'Text', value: 'text' },
-                            { name: 'Draw', value: 'draw' },
-                            { name: 'Highlight', value: 'highlight' },
-                            { name: 'Shape', value: 'shape' },
-                            { name: 'Stamp', value: 'stamp' },
-                            { name: 'Redact', value: 'redact' },
-                            { name: 'Eraser', value: 'eraser' },
-                          ].map((tool) => (
-                            <Button
-                              key={tool.value}
-                              variant={editState.selectedTool === tool.value ? 'default' : 'outline'}
-                              size="sm"
-                              className={`text-xs ${
-                                editState.selectedTool === tool.value
-                                  ? 'bg-red-600 hover:bg-red-700 text-white'
-                                  : ''
-                              }`}
-                              onClick={() => setEditState({ selectedTool: tool.value as any })}
-                            >
-                              {tool.name}
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Drawing Options */}
-                      {(editState.selectedTool === 'draw' || editState.selectedTool === 'highlight' || editState.selectedTool === 'shape') && (
-                        <div className="space-y-4 border-t pt-4">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Color
-                            </label>
-                            <div className="grid grid-cols-6 gap-2">
-                              {[
-                                { name: 'Red', value: '#ef4444' },
-                                { name: 'Blue', value: '#3b82f6' },
-                                { name: 'Green', value: '#10b981' },
-                                { name: 'Yellow', value: '#eab308' },
-                                { name: 'Purple', value: '#a855f7' },
-                                { name: 'Black', value: '#000000' },
-                              ].map((color) => (
-                                <button
-                                  key={color.value}
-                                  className="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-gray-600 transition-all hover:scale-110"
-                                  style={{ backgroundColor: color.value }}
-                                  title={color.name}
-                                  onClick={() => {
-                                    // TODO: Update annotation color
-                                    console.log('Selected color:', color.value);
-                                  }}
-                                />
-                              ))}
-                            </div>
-                          </div>
-
-                          {editState.selectedTool !== 'highlight' && (
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Thickness
-                              </label>
-                              <div className="flex items-center gap-3">
-                                <input
-                                  type="range"
-                                  min="1"
-                                  max="10"
-                                  defaultValue="3"
-                                  className="flex-1"
-                                  onChange={(e) => {
-                                    // TODO: Update line thickness
-                                    console.log('Thickness:', e.target.value);
-                                  }}
-                                />
-                                <span className="text-sm text-gray-600 w-8">3px</span>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      <div className="border-t pt-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          View Options
-                        </label>
-                        <div className="space-y-2">
-                          <Button variant="outline" size="sm" className="w-full justify-start">
-                            <Maximize2 className="w-4 h-4 mr-2" />
-                            Full Screen
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="border-t pt-4">
-                        <h4 className="font-medium text-gray-700 mb-2">Document Info</h4>
-                        <div className="text-sm text-gray-600 space-y-1">
-                          <div>Pages: {documentState.totalPages || 'Loading...'}</div>
-                          <div>Size: {(documentState.fileSize / 1024 / 1024).toFixed(2)} MB</div>
-                          <div>Zoom: {Math.round(viewState.zoom * 100)}%</div>
-                        </div>
-                      </div>
-                    </div>
+        {/* Page Thumbnails Sidebar */}
+        {showThumbnails && (
+          <div className="w-52 bg-zinc-900 border-r border-zinc-800 flex flex-col flex-shrink-0 overflow-hidden">
+            <div className="px-3 py-2 border-b border-zinc-800 flex items-center justify-between">
+              <span className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Pages</span>
+              <span className="text-zinc-500 text-xs">{totalPages}</span>
+            </div>
+            <div className="flex-1 overflow-y-auto py-2 px-2 space-y-1.5 scrollbar-hide">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                <div key={pageNum} className="relative group">
+                  <div
+                    onClick={() => goToPage(pageNum)}
+                    className={`rounded-lg overflow-hidden cursor-pointer transition-all border-2 ${
+                      pageNum === currentPage ? 'border-red-500 shadow-lg shadow-red-500/20' : 'border-transparent hover:border-zinc-600'
+                    }`}
+                  >
+                    <PageThumbnail pageNumber={pageNum} onClick={() => goToPage(pageNum)} />
+                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setSelectedPageForOps(pageNum); }}
+                    className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-zinc-800 rounded-md p-1 shadow-lg hover:bg-zinc-700"
+                  >
+                    <Settings className="w-3 h-3 text-zinc-300" />
+                  </button>
+                  <div className="text-center mt-1">
+                    <span className={`text-xs ${pageNum === currentPage ? 'text-red-400' : 'text-zinc-500'}`}>{pageNum}</span>
                   </div>
                 </div>
-              )}
+              ))}
+
+              {/* Add Page */}
+              <button
+                onClick={() => setShowAddPageDialog(true)}
+                className="w-full border border-dashed border-zinc-700 hover:border-zinc-500 rounded-lg p-3 flex flex-col items-center gap-1.5 transition-all hover:bg-zinc-800/50 group"
+              >
+                <div className="w-7 h-7 rounded-lg bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center transition-colors">
+                  <FileUp className="w-4 h-4 text-zinc-400" />
+                </div>
+                <span className="text-xs text-zinc-500 group-hover:text-zinc-400">Add Page</span>
+              </button>
             </div>
           </div>
         )}
 
-        {/* Features Section */}
-        <div className="mt-12 grid md:grid-cols-3 gap-8">
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Edit & Annotate</h3>
-            <p className="text-gray-600">
-              Add text, draw, highlight, and annotate PDFs with professional tools.
-            </p>
+        {/* Canvas Area */}
+        <div className="flex-1 bg-[#2c2c2c] overflow-auto relative flex items-start justify-center"
+          onClick={() => { setShowZoomMenu(false); setShowMoreMenu(false); }}>
+          <div className="my-8">
+            <PDFCanvas className="max-w-full" />
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Real-Time Collaboration</h3>
-            <p className="text-gray-600">
-              Work together with your team in real-time with live cursors and chat.
-            </p>
-          </div>
+          {/* Page Navigation */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-zinc-800/95 backdrop-blur border border-zinc-700 rounded-full px-4 py-2 shadow-2xl">
+            <button onClick={previousPage} disabled={currentPage <= 1}
+              className="w-7 h-7 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+              <ChevronLeft className="w-4 h-4" />
+            </button>
 
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Secure & Private</h3>
-            <p className="text-gray-600">
-              Your files are encrypted and automatically deleted after 24 hours.
-            </p>
+            {isEditingPage ? (
+              <input
+                autoFocus
+                type="number"
+                value={pageInput}
+                onChange={(e) => setPageInput(e.target.value)}
+                onBlur={() => {
+                  const n = parseInt(pageInput);
+                  if (!isNaN(n)) goToPage(n);
+                  setIsEditingPage(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') { const n = parseInt(pageInput); if (!isNaN(n)) goToPage(n); setIsEditingPage(false); }
+                  if (e.key === 'Escape') setIsEditingPage(false);
+                }}
+                className="w-10 text-center text-white text-sm bg-zinc-700 rounded-lg py-0.5 outline-none"
+              />
+            ) : (
+              <button
+                onClick={() => { setPageInput(String(currentPage)); setIsEditingPage(true); }}
+                className="text-zinc-300 text-sm font-medium hover:text-white transition-colors px-1"
+              >
+                {currentPage}
+              </button>
+            )}
+
+            <span className="text-zinc-500 text-sm">/ {totalPages}</span>
+
+            <button onClick={nextPage} disabled={currentPage >= totalPages}
+              className="w-7 h-7 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
+
+        {/* Right Properties Panel */}
+        {showRightPanel && (
+          <div className="w-64 bg-zinc-900 border-l border-zinc-800 flex flex-col flex-shrink-0 overflow-hidden">
+            <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+              <span className="text-white text-sm font-semibold">Properties</span>
+              <button onClick={() => setShowRightPanel(false)} className="text-zinc-500 hover:text-white transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto scrollbar-hide">
+              {/* Active Tool Info */}
+              <div className="px-4 py-3 border-b border-zinc-800">
+                <div className="text-zinc-500 text-xs uppercase tracking-wider mb-2">Active Tool</div>
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-red-600/20 flex items-center justify-center">
+                    {(() => {
+                      const tool = TOOLS.find(t => t.id === activeTool);
+                      if (!tool) return null;
+                      const { Icon } = tool;
+                      return <Icon className="w-4 h-4 text-red-400" />;
+                    })()}
+                  </div>
+                  <span className="text-white text-sm capitalize">{activeTool}</span>
+                </div>
+              </div>
+
+              {/* Color picker */}
+              {showColorPicker && (
+                <div className="px-4 py-3 border-b border-zinc-800">
+                  <div className="text-zinc-500 text-xs uppercase tracking-wider mb-2.5">Color</div>
+                  <div className="grid grid-cols-6 gap-2">
+                    {DRAW_COLORS.map((c) => (
+                      <button key={c.value}
+                        onClick={() => setSelectedColor(c.value)}
+                        title={c.label}
+                        className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${
+                          selectedColor === c.value ? 'border-white scale-110' : 'border-transparent'
+                        }`}
+                        style={{ backgroundColor: c.value }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Brush size */}
+              {(activeTool === 'draw' || activeTool === 'highlight') && (
+                <div className="px-4 py-3 border-b border-zinc-800">
+                  <div className="text-zinc-500 text-xs uppercase tracking-wider mb-2.5">
+                    Size — <span className="text-zinc-300">{brushSize}px</span>
+                  </div>
+                  <input
+                    type="range" min="1" max="20" value={brushSize}
+                    onChange={(e) => setBrushSize(Number(e.target.value))}
+                    className="w-full accent-red-500"
+                  />
+                </div>
+              )}
+
+              {/* Document info */}
+              <div className="px-4 py-3 border-b border-zinc-800">
+                <div className="text-zinc-500 text-xs uppercase tracking-wider mb-2.5">Document</div>
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-zinc-400">Pages</span>
+                    <span className="text-white font-medium">{totalPages}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-zinc-400">Size</span>
+                    <span className="text-white font-medium">{(documentState.fileSize / 1024 / 1024).toFixed(2)} MB</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-zinc-400">Zoom</span>
+                    <span className="text-white font-medium">{zoomPercent}%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Keyboard shortcuts */}
+              <div className="px-4 py-3">
+                <div className="text-zinc-500 text-xs uppercase tracking-wider mb-2.5">Shortcuts</div>
+                <div className="space-y-1">
+                  {[
+                    ['S', 'Select'],
+                    ['T', 'Text'],
+                    ['D', 'Draw'],
+                    ['H', 'Highlight'],
+                    ['G', 'Shape'],
+                    ['R', 'Redact'],
+                    ['Ctrl+Z', 'Undo'],
+                    ['Ctrl+S', 'Download'],
+                  ].map(([key, label]) => (
+                    <div key={key} className="flex justify-between items-center text-xs">
+                      <span className="text-zinc-400">{label}</span>
+                      <kbd className="bg-zinc-800 border border-zinc-700 text-zinc-300 px-1.5 py-0.5 rounded text-xs font-mono">{key}</kbd>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Dialogs */}
       {selectedPageForOps && (
-        <PageOperationsDialog
-          pageNumber={selectedPageForOps}
-          onClose={() => setSelectedPageForOps(null)}
-        />
+        <PageOperationsDialog pageNumber={selectedPageForOps} onClose={() => setSelectedPageForOps(null)} />
       )}
-
-      <AddPageDialog
-        isOpen={showAddPageDialog}
-        onClose={() => setShowAddPageDialog(false)}
-      />
-
-      {/* Merge PDF Dialog */}
-      <MergePDFDialog
-        isOpen={showMergeDialog}
-        onClose={() => setShowMergeDialog(false)}
-        currentPDF={documentState.pdfDoc as File}
-      />
-
-      {/* Split PDF Dialog */}
-      <SplitPDFDialog
-        isOpen={showSplitDialog}
-        onClose={() => setShowSplitDialog(false)}
-      />
-
-      {/* Watermark Dialog */}
-      <WatermarkDialog
-        isOpen={showWatermarkDialog}
-        onClose={() => setShowWatermarkDialog(false)}
-      />
-
-      {/* Security Dialog */}
-      <SecurityDialog
-        isOpen={showSecurityDialog}
-        onClose={() => setShowSecurityDialog(false)}
-      />
-
-      {/* Forms Dialog */}
-      <FormsDialog
-        isOpen={showFormsDialog}
-        onClose={() => setShowFormsDialog(false)}
-      />
-
-      {/* OCR Dialog */}
-      <OCRDialog
-        isOpen={showOCRDialog}
-        onClose={() => setShowOCRDialog(false)}
-      />
-
-      {/* Collaboration Dialog */}
-      <CollaborationDialog
-        isOpen={showCollaborationDialog}
-        onClose={() => setShowCollaborationDialog(false)}
-      />
-
-      {/* Chat Sidebar */}
-      <ChatSidebar
-        isOpen={showChatSidebar}
-        onClose={() => setShowChatSidebar(false)}
-      />
+      <AddPageDialog isOpen={showAddPageDialog} onClose={() => setShowAddPageDialog(false)} />
+      <MergePDFDialog isOpen={showMergeDialog} onClose={() => setShowMergeDialog(false)} currentPDF={documentState.pdfDoc as File} />
+      <SplitPDFDialog isOpen={showSplitDialog} onClose={() => setShowSplitDialog(false)} />
+      <WatermarkDialog isOpen={showWatermarkDialog} onClose={() => setShowWatermarkDialog(false)} />
+      <SecurityDialog isOpen={showSecurityDialog} onClose={() => setShowSecurityDialog(false)} />
+      <FormsDialog isOpen={showFormsDialog} onClose={() => setShowFormsDialog(false)} />
+      <OCRDialog isOpen={showOCRDialog} onClose={() => setShowOCRDialog(false)} />
+      <CollaborationDialog isOpen={showCollaborationDialog} onClose={() => setShowCollaborationDialog(false)} />
+      <ChatSidebar isOpen={showChatSidebar} onClose={() => setShowChatSidebar(false)} />
     </div>
   );
 }

@@ -1,15 +1,9 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  RotateCw,
-  Trash2,
-  Copy,
-  Scissors,
-  Plus,
-  Download,
-  X
-} from 'lucide-react';
+import { RotateCw, Trash2, Download, X } from 'lucide-react';
 import { usePDFEditor } from '@/contexts/PDFEditorContext';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
 interface PageOperationsDialogProps {
   pageNumber: number;
@@ -17,45 +11,56 @@ interface PageOperationsDialogProps {
 }
 
 export default function PageOperationsDialog({ pageNumber, onClose }: PageOperationsDialogProps) {
-  const { rotatePage, deletePage, documentState } = usePDFEditor();
+  const { documentState, loadPDF } = usePDFEditor();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processingLabel, setProcessingLabel] = useState('');
+
+  const reloadFromBlob = async (blob: Blob, name: string) => {
+    const file = new File([blob], name, { type: 'application/pdf' });
+    await loadPDF(file);
+  };
 
   const handleRotate = async (degrees: 90 | 180 | 270) => {
     setIsProcessing(true);
+    setProcessingLabel(`Rotating ${degrees}°...`);
     try {
-      await rotatePage(pageNumber, degrees);
-      console.log(`Rotated page ${pageNumber} by ${degrees}°`);
+      const formData = new FormData();
+      formData.append('pdf', documentState.pdfDoc as File);
+      formData.append('pageNumber', String(pageNumber));
+      formData.append('degrees', String(degrees));
+
+      const response = await fetch(`${API_BASE_URL}/pdf/rotate`, { method: 'POST', body: formData });
+      if (!response.ok) throw new Error('Rotate failed');
+
+      const blob = await response.blob();
+      await reloadFromBlob(blob, documentState.fileName);
+      onClose();
     } catch (error) {
       console.error('Error rotating page:', error);
+      alert('Failed to rotate page. Please try again.');
     } finally {
       setIsProcessing(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm(`Delete page ${pageNumber}? This action cannot be undone.`)) {
-      return;
-    }
-
+    if (!confirm(`Delete page ${pageNumber}? This cannot be undone.`)) return;
     setIsProcessing(true);
+    setProcessingLabel('Deleting page...');
     try {
-      await deletePage(pageNumber);
-      console.log(`Deleted page ${pageNumber}`);
+      const formData = new FormData();
+      formData.append('pdf', documentState.pdfDoc as File);
+      formData.append('pageNumbers', JSON.stringify([pageNumber]));
+
+      const response = await fetch(`${API_BASE_URL}/pdf/delete-pages`, { method: 'POST', body: formData });
+      if (!response.ok) throw new Error('Delete failed');
+
+      const blob = await response.blob();
+      await reloadFromBlob(blob, documentState.fileName);
       onClose();
     } catch (error) {
       console.error('Error deleting page:', error);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleDuplicate = async () => {
-    setIsProcessing(true);
-    try {
-      // TODO: Implement duplicate functionality
-      console.log(`Duplicate page ${pageNumber}`);
-    } catch (error) {
-      console.error('Error duplicating page:', error);
+      alert('Failed to delete page. Please try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -63,11 +68,29 @@ export default function PageOperationsDialog({ pageNumber, onClose }: PageOperat
 
   const handleExtract = async () => {
     setIsProcessing(true);
+    setProcessingLabel('Extracting page...');
     try {
-      // TODO: Implement extract functionality
-      console.log(`Extract page ${pageNumber}`);
+      const formData = new FormData();
+      formData.append('pdf', documentState.pdfDoc as File);
+      formData.append('startPage', String(pageNumber));
+      formData.append('endPage', String(pageNumber));
+
+      const response = await fetch(`${API_BASE_URL}/pdf/split`, { method: 'POST', body: formData });
+      if (!response.ok) throw new Error('Extract failed');
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `page-${pageNumber}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      onClose();
     } catch (error) {
       console.error('Error extracting page:', error);
+      alert('Failed to extract page. Please try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -94,79 +117,42 @@ export default function PageOperationsDialog({ pageNumber, onClose }: PageOperat
 
         {/* Loading Overlay */}
         {isProcessing && (
-          <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-xl">
+          <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-xl z-10">
             <div className="text-center">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600 mx-auto mb-2"></div>
-              <p className="text-sm text-gray-600">Processing...</p>
+              <p className="text-sm text-gray-600">{processingLabel}</p>
             </div>
           </div>
         )}
 
         {/* Operations Grid */}
         <div className="grid grid-cols-2 gap-3">
-          {/* Rotate 90° */}
-          <Button
-            onClick={() => handleRotate(90)}
-            variant="outline"
-            className="h-20 flex-col gap-2 hover:border-red-500 hover:text-red-600"
-            disabled={isProcessing}
-          >
+          <Button onClick={() => handleRotate(90)} variant="outline"
+            className="h-20 flex-col gap-2 hover:border-red-500 hover:text-red-600" disabled={isProcessing}>
             <RotateCw className="w-6 h-6" />
             <span className="text-sm font-medium">Rotate 90°</span>
           </Button>
 
-          {/* Rotate 180° */}
-          <Button
-            onClick={() => handleRotate(180)}
-            variant="outline"
-            className="h-20 flex-col gap-2 hover:border-red-500 hover:text-red-600"
-            disabled={isProcessing}
-          >
+          <Button onClick={() => handleRotate(180)} variant="outline"
+            className="h-20 flex-col gap-2 hover:border-red-500 hover:text-red-600" disabled={isProcessing}>
             <RotateCw className="w-6 h-6" />
             <span className="text-sm font-medium">Rotate 180°</span>
           </Button>
 
-          {/* Duplicate */}
-          <Button
-            onClick={handleDuplicate}
-            variant="outline"
-            className="h-20 flex-col gap-2 hover:border-blue-500 hover:text-blue-600"
-            disabled={isProcessing}
-          >
-            <Copy className="w-6 h-6" />
-            <span className="text-sm font-medium">Duplicate</span>
-          </Button>
-
-          {/* Extract */}
-          <Button
-            onClick={handleExtract}
-            variant="outline"
-            className="h-20 flex-col gap-2 hover:border-green-500 hover:text-green-600"
-            disabled={isProcessing}
-          >
+          <Button onClick={handleExtract} variant="outline"
+            className="h-20 flex-col gap-2 hover:border-green-500 hover:text-green-600" disabled={isProcessing}>
             <Download className="w-6 h-6" />
-            <span className="text-sm font-medium">Extract</span>
+            <span className="text-sm font-medium">Extract Page</span>
           </Button>
 
-          {/* Delete */}
-          <Button
-            onClick={handleDelete}
-            variant="outline"
-            className="h-20 flex-col gap-2 hover:border-red-500 hover:text-red-600 col-span-2"
-            disabled={isProcessing || documentState.totalPages <= 1}
-          >
+          <Button onClick={handleDelete} variant="outline"
+            className="h-20 flex-col gap-2 hover:border-red-500 hover:text-red-600"
+            disabled={isProcessing || documentState.totalPages <= 1}>
             <Trash2 className="w-6 h-6" />
             <span className="text-sm font-medium">
-              {documentState.totalPages <= 1 ? 'Cannot delete last page' : 'Delete Page'}
+              {documentState.totalPages <= 1 ? 'Last page' : 'Delete Page'}
             </span>
           </Button>
-        </div>
-
-        {/* Info */}
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <p className="text-xs text-gray-600">
-            <strong>Tip:</strong> These operations will modify your PDF. Make sure to save your work!
-          </p>
         </div>
       </div>
     </div>
