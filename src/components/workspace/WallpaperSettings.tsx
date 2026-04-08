@@ -304,7 +304,7 @@ export function getWallpaperStyle(
   presets: WallpaperPreset[]
 ): React.CSSProperties {
   if (!settings?.wallpaper) {
-    return { background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)' };
+    return { background: '#0e1621' };
   }
 
   const { type, value } = settings.wallpaper;
@@ -316,7 +316,7 @@ export function getWallpaperStyle(
         ? { backgroundColor: preset.value }
         : { background: preset.value };
     }
-    return { background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)' };
+    return { background: '#0e1621' };
   }
 
   if (type === 'color') {
@@ -331,5 +331,5 @@ export function getWallpaperStyle(
     };
   }
 
-  return { background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)' };
+  return { background: '#0e1621' };
 }

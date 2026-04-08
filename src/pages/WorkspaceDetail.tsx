@@ -39,6 +39,7 @@ import {
 } from 'lucide-react';
 import {
   getWorkspace,
+  getWorkspaces,
   getMessages,
   sendMessage,
   sendMessageWithAttachments,
@@ -49,6 +50,7 @@ import {
   getChatSettings,
   updateWallpaper,
   Message,
+  Workspace,
   ChatSettings,
   WallpaperPreset,
   formatMessageTime
@@ -107,6 +109,7 @@ const WorkspaceDetail = () => {
   const [wallpaperPresets, setWallpaperPresets] = useState<WallpaperPreset[]>([]);
   const [editingMessage, setEditingMessage] = useState<Message | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [mobileChatOpen, setMobileChatOpen] = useState(false);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -131,6 +134,11 @@ const WorkspaceDetail = () => {
     queryKey: ['workspace', workspaceId],
     queryFn: () => getWorkspace(workspaceId!),
     enabled: !!workspaceId,
+  });
+
+  const { data: allWorkspacesData } = useQuery({
+    queryKey: ['workspaces'],
+    queryFn: getWorkspaces,
   });
 
   const { isLoading: loadingMessages } = useQuery({
@@ -776,17 +784,115 @@ const WorkspaceDetail = () => {
 
   const { workspace, members, pendingInvites, currentUserRole } = workspaceData;
 
+  const allWorkspaces: Workspace[] = allWorkspacesData ?? [];
+
   return (
-    <div className="h-screen flex flex-col" style={{ background: '#0e1621' }}>
+    <div className="h-screen flex overflow-hidden" style={{ background: '#0e1621' }}>
+
+      {/* ─── Left panel: workspace list ───
+           Mobile: full screen when mobileChatOpen=false, hidden when mobileChatOpen=true
+           Desktop (md+): always visible, fixed 288px wide
+      ─── */}
+      <aside
+        className={`
+          flex-col flex-shrink-0
+          w-full md:w-72
+          ${mobileChatOpen ? 'hidden md:flex' : 'flex'}
+        `}
+        style={{ background: '#17212b', borderRight: '1px solid rgba(255,255,255,0.06)' }}
+      >
+        {/* Panel header */}
+        <div
+          className="flex items-center justify-between px-4 py-3.5 flex-shrink-0"
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        >
+          <span className="text-[15px] font-semibold text-white">Workspaces</span>
+          <button
+            onClick={() => navigate('/workspaces')}
+            className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
+            title="Manage workspaces"
+          >
+            <Settings className="h-4 w-4 text-white/50" />
+          </button>
+        </div>
+
+        {/* Workspace list */}
+        <div className="flex-1 overflow-y-auto">
+          {allWorkspaces.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+              <div className="h-14 w-14 rounded-full flex items-center justify-center mb-4" style={{ background: 'rgba(220,38,38,0.12)' }}>
+                <Users className="h-6 w-6 text-red-400" />
+              </div>
+              <p className="text-white/60 text-sm font-medium">No workspaces yet</p>
+              <p className="text-white/30 text-xs mt-1">Create one to start chatting</p>
+              <button
+                onClick={() => navigate('/workspaces')}
+                className="mt-4 px-4 py-2 rounded-full text-xs font-medium text-white transition-colors"
+                style={{ background: '#dc2626' }}
+              >
+                Create Workspace
+              </button>
+            </div>
+          ) : (
+            allWorkspaces.map((ws) => {
+              const isActive = ws._id === workspaceId;
+              const initials = ws.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
+              return (
+                <button
+                  key={ws._id}
+                  onClick={() => {
+                    navigate(`/workspaces/${ws._id}`);
+                    setMobileChatOpen(true);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3.5 transition-colors text-left"
+                  style={{
+                    background: isActive ? 'rgba(220,38,38,0.12)' : 'transparent',
+                    borderLeft: isActive ? '3px solid #dc2626' : '3px solid transparent',
+                  }}
+                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; }}
+                  onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                >
+                  <div className="h-11 w-11 rounded-full bg-gradient-to-br from-[#dc2626] to-[#991b1b] flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow">
+                    {initials}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className={`text-[14px] font-medium truncate leading-tight ${isActive ? 'text-white' : 'text-white/85'}`}>
+                      {ws.name}
+                    </p>
+                    {ws.description ? (
+                      <p className="text-xs text-white/35 truncate mt-0.5">{ws.description}</p>
+                    ) : (
+                      <p className="text-xs text-white/25 mt-0.5">Tap to open chat</p>
+                    )}
+                  </div>
+                  {isActive && (
+                    <div className="h-2 w-2 rounded-full bg-red-500 flex-shrink-0" />
+                  )}
+                </button>
+              );
+            })
+          )}
+        </div>
+      </aside>
+
+      {/* ─── Right panel: chat ───
+           Mobile: full screen when mobileChatOpen=true, hidden otherwise
+           Desktop (md+): always visible, takes remaining space
+      ─── */}
+      <div
+        className={`flex-col min-w-0 flex-1 ${mobileChatOpen ? 'flex' : 'hidden md:flex'}`}
+        style={{ background: '#0e1621' }}
+      >
       {/* Telegram-style Header */}
       <div
         className="flex items-center justify-between px-3 sm:px-4 py-2.5 flex-shrink-0"
         style={{ background: '#17212b', borderBottom: '1px solid #0d1723' }}
       >
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          {/* Mobile: tap to go back to workspace list */}
           <button
-            onClick={() => navigate('/workspaces')}
-            className="p-1.5 rounded-full transition-colors hover:bg-white/10 flex-shrink-0"
+            onClick={() => setMobileChatOpen(false)}
+            className="p-1.5 rounded-full transition-colors hover:bg-white/10 flex-shrink-0 md:hidden"
           >
             <ArrowLeft className="h-5 w-5 text-white/80" />
           </button>
@@ -858,7 +964,7 @@ const WorkspaceDetail = () => {
       <div
         ref={scrollContainerRef}
         className="flex-1 overflow-y-auto px-2 sm:px-4 py-3 relative"
-        style={getWallpaperStyle(chatSettings, wallpaperPresets) ?? { background: '#0e1621' }}
+        style={getWallpaperStyle(chatSettings, wallpaperPresets)}
       >
         {hasMore && (
           <div className="text-center mb-4">
@@ -1133,43 +1239,39 @@ const WorkspaceDetail = () => {
           </div>
         )}
 
-        <div className="max-w-3xl mx-auto flex items-center gap-2">
+        <div className="max-w-3xl mx-auto">
           {isRecording ? (
-            /* Recording UI */
+            /* Recording UI — full-width pill */
             <div
-              className="flex-1 flex items-center gap-3 rounded-2xl px-4 py-2.5"
-              style={{ background: 'rgba(220,38,38,0.12)', border: '1px solid rgba(220,38,38,0.3)' }}
+              className="flex items-center gap-3 rounded-full px-4 py-2.5"
+              style={{ background: '#202b36', border: '1px solid rgba(220,38,38,0.3)' }}
             >
-              <div className="flex items-center gap-2 flex-1">
-                <div className="h-2.5 w-2.5 bg-red-500 rounded-full animate-pulse" />
-                <span className="text-sm font-medium text-red-400">Recording</span>
-                <span className="text-sm text-white/50">{formatRecordingTime(recordingTime)}</span>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={cancelRecording}
-                  className="text-xs text-white/50 hover:text-white/80 px-2 py-1 rounded-lg hover:bg-white/10 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={stopRecording}
-                  className="text-xs font-medium text-white px-3 py-1 rounded-lg bg-red-600 hover:bg-red-700 transition-colors"
-                >
-                  Stop
-                </button>
-              </div>
+              <div className="h-2.5 w-2.5 bg-red-500 rounded-full animate-pulse flex-shrink-0" />
+              <span className="text-sm font-medium text-red-400">Recording</span>
+              <span className="text-sm text-white/50 flex-1">{formatRecordingTime(recordingTime)}</span>
+              <button
+                onClick={cancelRecording}
+                className="text-xs text-white/50 hover:text-white/80 px-2 py-1 rounded-lg hover:bg-white/10 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={stopRecording}
+                className="text-xs font-medium text-white px-3 py-1 rounded-full bg-red-600 hover:bg-red-700 transition-colors"
+              >
+                Stop
+              </button>
             </div>
           ) : audioChunks.length > 0 ? (
-            /* Audio Preview UI */
+            /* Audio Preview UI — full-width pill */
             <div
-              className="flex-1 flex items-center gap-3 rounded-2xl px-4 py-2.5"
-              style={{ background: 'rgba(220,38,38,0.12)', border: '1px solid rgba(220,38,38,0.3)' }}
+              className="flex items-center gap-3 rounded-full px-4 py-2.5"
+              style={{ background: '#202b36', border: '1px solid rgba(220,38,38,0.3)' }}
             >
               <Mic className="h-4 w-4 text-red-400 flex-shrink-0" />
               <div className="flex-1">
                 <p className="text-sm font-medium text-white/80">Voice message ready</p>
-                <p className="text-xs text-white/40">{formatRecordingTime(recordingTime)}</p>
+                <p className="text-[11px] text-white/40">{formatRecordingTime(recordingTime)}</p>
               </div>
               <button
                 onClick={cancelRecording}
@@ -1177,11 +1279,23 @@ const WorkspaceDetail = () => {
               >
                 <X className="h-4 w-4 text-white/40" />
               </button>
+              <button
+                onClick={sendAudioMessage}
+                disabled={sendMutation.isPending}
+                className="h-8 w-8 rounded-full flex items-center justify-center transition-all disabled:opacity-40 hover:brightness-110 flex-shrink-0"
+                style={{ background: '#dc2626' }}
+              >
+                {sendMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-white" />
+                ) : (
+                  <Send className="h-3.5 w-3.5 text-white" />
+                )}
+              </button>
             </div>
           ) : (
-            /* Normal Text Input */
+            /* Normal Text Input — all inline in one pill */
             <div
-              className="flex items-center gap-1 sm:gap-2 flex-1 rounded-2xl px-3 py-1.5 focus-within:ring-1 focus-within:ring-red-600/40 transition-all"
+              className="flex items-center gap-2 rounded-full px-3 py-1.5 focus-within:ring-1 focus-within:ring-red-600/40 transition-all"
               style={{ background: '#202b36', border: '1px solid rgba(255,255,255,0.07)' }}
             >
               <FileUploadInput
@@ -1218,25 +1332,23 @@ const WorkspaceDetail = () => {
               >
                 <Mic className="h-4 w-4 text-white/40" />
               </button>
+              <button
+                onClick={handleSendMessage}
+                disabled={
+                  (!messageText.trim() && selectedFiles.length === 0) ||
+                  sendMutation.isPending
+                }
+                className="h-8 w-8 rounded-full flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:brightness-110 flex-shrink-0"
+                style={{ background: '#dc2626' }}
+              >
+                {sendMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-white" />
+                ) : (
+                  <Send className="h-3.5 w-3.5 text-white" />
+                )}
+              </button>
             </div>
           )}
-
-          <button
-            onClick={audioChunks.length > 0 ? sendAudioMessage : handleSendMessage}
-            disabled={
-              (audioChunks.length === 0 && !messageText.trim() && selectedFiles.length === 0) ||
-              sendMutation.isPending ||
-              isRecording
-            }
-            className="h-10 w-10 flex-shrink-0 rounded-full flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110"
-            style={{ background: '#dc2626' }}
-          >
-            {sendMutation.isPending ? (
-              <Loader2 className="h-5 w-5 animate-spin text-white" />
-            ) : (
-              <Send className="h-4 w-4 text-white" />
-            )}
-          </button>
         </div>
       </div>
 
@@ -1257,6 +1369,7 @@ const WorkspaceDetail = () => {
         onSave={handleEditMessage}
         members={workspaceData?.members}
       />
+      </div>
     </div>
   );
 };
