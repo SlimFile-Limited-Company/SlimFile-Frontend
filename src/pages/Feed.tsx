@@ -235,7 +235,7 @@ export const Feed = () => {
     (async () => {
       try {
         const [fRes, sRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/feed?limit=500`),
+          fetch(`${API_BASE_URL}/feed?limit=2000`),
           fetch(`${API_BASE_URL}/feed/stats`),
         ]);
         setActivities(await fRes.json());
