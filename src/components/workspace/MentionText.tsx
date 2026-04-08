@@ -56,14 +56,14 @@ export function MentionText({ text, currentUserId, className = '', isOwnMessage 
             part.content
           ) : (
             <span
-              className={`font-semibold ${
+              className={`font-semibold px-1 py-0.5 rounded text-xs ${
                 isOwnMessage
                   ? part.userId === currentUserId
-                    ? 'text-white bg-white/20 px-1 rounded'
-                    : 'text-white underline'
+                    ? 'text-white bg-white/25'
+                    : 'text-sky-200 bg-white/15'
                   : part.userId === currentUserId
-                  ? 'text-blue-600 bg-blue-100 px-1 rounded'
-                  : 'text-blue-600'
+                  ? 'text-red-400 bg-red-500/20'
+                  : 'text-sky-400 bg-sky-500/15'
               }`}
               title={part.name}
             >

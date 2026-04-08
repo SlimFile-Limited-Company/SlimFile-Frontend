@@ -34,8 +34,7 @@ import {
   Play,
   Pause,
   ArrowDown,
-  Edit2,
-  Palette
+  Edit2
 } from 'lucide-react';
 import {
   getWorkspace,
@@ -47,12 +46,8 @@ import {
   deleteMessage,
   markMessageAsDelivered,
   markMessageAsRead,
-  getChatSettings,
-  updateWallpaper,
   Message,
   Workspace,
-  ChatSettings,
-  WallpaperPreset,
   formatMessageTime
 } from '@/services/workspaceService';
 import {
@@ -82,7 +77,6 @@ import { useInAppNotification } from '@/components/InAppNotification';
 import { FileAttachmentsList } from '@/components/workspace/FileAttachment';
 import { FileUploadInput } from '@/components/workspace/FileUploadInput';
 import { EditMessageDialog } from '@/components/workspace/EditMessageDialog';
-import { WallpaperSettings, getWallpaperStyle } from '@/components/workspace/WallpaperSettings';
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
@@ -105,8 +99,6 @@ const WorkspaceDetail = () => {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [chatSettings, setChatSettings] = useState<ChatSettings | null>(null);
-  const [wallpaperPresets, setWallpaperPresets] = useState<WallpaperPreset[]>([]);
   const [editingMessage, setEditingMessage] = useState<Message | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [mobileChatOpen, setMobileChatOpen] = useState(false);
@@ -433,17 +425,6 @@ const WorkspaceDetail = () => {
     };
   }, [messages, workspaceId, currentUserId]);
 
-  // Fetch chat settings (wallpaper)
-  useEffect(() => {
-    if (!workspaceId) return;
-
-    getChatSettings(workspaceId)
-      .then((data) => {
-        setChatSettings(data.settings);
-        setWallpaperPresets(data.presets);
-      })
-      .catch((err) => console.error('Failed to load chat settings:', err));
-  }, [workspaceId]);
 
   const handleSendMessage = async () => {
     const text = messageText.trim();
@@ -479,15 +460,6 @@ const WorkspaceDetail = () => {
     await editMessage(workspaceId!, messageId, newText);
   };
 
-  const handleUpdateWallpaper = async (
-    type: 'preset' | 'color' | 'custom',
-    value?: string,
-    file?: File
-  ) => {
-    const result = await updateWallpaper(workspaceId!, type, value, file);
-    setChatSettings(result.settings);
-    setWallpaperPresets(result.presets);
-  };
 
   const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessageText(e.target.value);
@@ -786,6 +758,10 @@ const WorkspaceDetail = () => {
 
   const allWorkspaces: Workspace[] = allWorkspacesData ?? [];
 
+  // Strip @[Name](id) → @Name for plain-text previews (reply quotes, etc.)
+  const stripMentions = (text: string) =>
+    text.replace(/@\[([^\]]+)\]\([a-f0-9]{24}\)/g, '@$1');
+
   return (
     <div className="h-screen flex overflow-hidden" style={{ background: '#0e1621' }}>
 
@@ -923,17 +899,6 @@ const WorkspaceDetail = () => {
             </button>
           )}
 
-          <WallpaperSettings
-            workspaceId={workspaceId!}
-            currentSettings={chatSettings}
-            presets={wallpaperPresets}
-            onUpdateWallpaper={handleUpdateWallpaper}
-            trigger={
-              <button className="p-2 rounded-full hover:bg-white/10 transition-colors">
-                <Palette className="h-5 w-5 text-white/70" />
-              </button>
-            }
-          />
 
           <Sheet open={membersSheetOpen} onOpenChange={setMembersSheetOpen}>
             <SheetTrigger asChild>
@@ -964,7 +929,7 @@ const WorkspaceDetail = () => {
       <div
         ref={scrollContainerRef}
         className="flex-1 overflow-y-auto px-2 sm:px-4 py-3 relative"
-        style={getWallpaperStyle(chatSettings, wallpaperPresets)}
+        style={{ background: '#0e1621' }}
       >
         {hasMore && (
           <div className="text-center mb-4">
@@ -1078,7 +1043,7 @@ const WorkspaceDetail = () => {
                           </p>
                           <p className={`text-xs truncate ${message.replyTo.deleted ? 'italic' : ''}`}
                             style={{ color: isOwnMessage ? 'rgba(255,255,255,0.6)' : 'rgba(232,232,232,0.6)' }}>
-                            {message.replyTo.deleted ? '[Message deleted]' : message.replyTo.text}
+                            {message.replyTo.deleted ? '[Message deleted]' : stripMentions(message.replyTo.text)}
                           </p>
                         </div>
                       )}
@@ -1227,7 +1192,7 @@ const WorkspaceDetail = () => {
                 {replyToMessage.senderId.name}
               </p>
               <p className="text-xs text-white/50 truncate">
-                {replyToMessage.deleted ? '[Message deleted]' : replyToMessage.text}
+                {replyToMessage.deleted ? '[Message deleted]' : stripMentions(replyToMessage.text)}
               </p>
             </div>
             <button

@@ -145,23 +145,29 @@ export function MentionInput({
       />
 
       {showSuggestions && filteredMembers.length > 0 && (
-        <div className="absolute bottom-full left-0 mb-2 w-full max-w-sm bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden z-50">
-          <div className="max-h-60 overflow-y-auto">
+        <div
+          className="absolute bottom-full left-0 mb-2 w-full max-w-sm rounded-xl shadow-2xl overflow-hidden z-50"
+          style={{ background: '#17212b', border: '1px solid rgba(255,255,255,0.08)' }}
+        >
+          <div className="max-h-48 overflow-y-auto">
             {filteredMembers.map((member, index) => (
               <button
                 key={member.user._id}
                 onClick={() => insertMention(member)}
-                className={`w-full flex items-center gap-3 px-4 py-2 hover:bg-slate-50 transition-colors ${
-                  index === selectedIndex ? 'bg-blue-50' : ''
-                }`}
+                className="w-full flex items-center gap-3 px-3 py-2.5 transition-colors text-left"
+                style={{
+                  background: index === selectedIndex ? 'rgba(220,38,38,0.15)' : 'transparent',
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = index === selectedIndex ? 'rgba(220,38,38,0.15)' : 'transparent'; }}
               >
-                <Avatar className="h-8 w-8">
+                <Avatar className="h-7 w-7 flex-shrink-0">
                   <AvatarImage src={member.user.picture} />
-                  <AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                  <AvatarFallback className="text-[10px] bg-gradient-to-br from-[#dc2626] to-[#991b1b] text-white font-bold">
                     {getInitials(member.user.name)}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-sm font-medium text-slate-900">
+                <span className="text-sm font-medium text-white/85">
                   {member.user.name}
                 </span>
               </button>

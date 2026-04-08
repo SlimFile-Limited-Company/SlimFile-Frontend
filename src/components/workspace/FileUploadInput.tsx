@@ -115,7 +115,7 @@ export function FileUploadInput({
         type="button"
         variant="ghost"
         size="icon"
-        className="h-8 w-8 text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-full flex-shrink-0"
+        className="h-8 w-8 text-white/40 hover:text-white/70 hover:bg-white/10 rounded-full flex-shrink-0"
         onClick={handleButtonClick}
         disabled={disabled || selectedFiles.length >= MAX_FILES}
         title="Attach files"
@@ -125,19 +125,20 @@ export function FileUploadInput({
 
       {/* Selected files preview */}
       {selectedFiles.length > 0 && (
-        <div className="absolute bottom-full mb-2 left-0 right-0 min-w-[250px] max-w-[350px] bg-white border border-slate-200 rounded-lg shadow-lg p-2">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-slate-700">
+        <div
+          className="absolute bottom-full mb-2 left-0 right-0 min-w-[250px] max-w-[350px] rounded-xl shadow-2xl p-2"
+          style={{ background: '#17212b', border: '1px solid rgba(255,255,255,0.08)' }}
+        >
+          <div className="flex items-center justify-between mb-2 px-1">
+            <span className="text-xs font-medium text-white/60">
               {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} selected
             </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 px-2 text-xs text-red-500 hover:text-red-700 hover:bg-red-50"
+            <button
+              className="text-xs text-red-400 hover:text-red-300 px-2 py-0.5 rounded-lg hover:bg-white/10 transition-colors"
               onClick={onClearFiles}
             >
               Clear all
-            </Button>
+            </button>
           </div>
 
           <div className="space-y-1 max-h-[150px] overflow-y-auto">
@@ -148,21 +149,22 @@ export function FileUploadInput({
               return (
                 <div
                   key={index}
-                  className="flex items-center gap-2 p-1.5 bg-slate-50 rounded group"
+                  className="flex items-center gap-2 p-1.5 rounded-lg group"
+                  style={{ background: 'rgba(255,255,255,0.05)' }}
                 >
-                  <Icon className="h-4 w-4 text-slate-500 flex-shrink-0" />
+                  <Icon className="h-4 w-4 text-white/40 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-medium text-slate-700 truncate">
+                    <div className="text-xs font-medium text-white/80 truncate">
                       {file.name}
                     </div>
-                    <div className="text-[10px] text-slate-500">
+                    <div className="text-[10px] text-white/35">
                       {formatFileSize(file.size)}
                     </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-500"
+                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-white/40 hover:text-red-400 hover:bg-white/10"
                     onClick={() => onRemoveFile(index)}
                   >
                     <X className="h-3 w-3" />
@@ -173,7 +175,7 @@ export function FileUploadInput({
           </div>
 
           {error && (
-            <div className="mt-2 text-xs text-red-500">
+            <div className="mt-2 text-xs text-red-400 px-1">
               {error}
             </div>
           )}
