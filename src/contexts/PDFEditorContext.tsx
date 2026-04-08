@@ -53,6 +53,18 @@ export interface PageCanvasState {
   height: number;
 }
 
+// Sejda-style text edit — replaces existing PDF text
+export interface TextEdit {
+  pageNumber: number;
+  originalText: string;
+  newText: string;
+  pdfX: number;      // PDF coordinate space (origin bottom-left)
+  pdfY: number;
+  pdfWidth: number;
+  pdfHeight: number;
+  fontSize: number;  // in PDF points
+}
+
 // Context State
 export interface PDFEditorContextState {
   documentState: PDFDocumentState;
@@ -65,6 +77,8 @@ export interface PDFEditorContextState {
   savePDF: () => Promise<Blob | null>;
   closePDF: () => void;
   setPageCanvasState: (pageNumber: number, json: any, width: number, height: number) => void;
+  textEdits: TextEdit[];
+  addTextEdit: (edit: TextEdit) => void;
   addPage: (position?: number) => void;
   deletePage: (pageNumber: number) => void;
   rotatePage: (pageNumber: number, degrees: 90 | 180 | 270) => void;
@@ -113,6 +127,13 @@ export const PDFEditorProvider = ({ children }: PDFEditorProviderProps) => {
     annotations: [], selectedAnnotation: null, undoStack: [], redoStack: [], clipboardData: null,
   });
 
+  // Text edits (Sejda-style: replaces existing PDF text)
+  const [textEdits, setTextEdits] = useState<TextEdit[]>([]);
+  const addTextEdit = useCallback((edit: TextEdit) => {
+    setTextEdits(prev => [...prev, edit]);
+    setDocumentStateInternal(prev => ({ ...prev, isDirty: true }));
+  }, []);
+
   // Per-page canvas state ref (mutable, doesn't trigger re-renders)
   const pageCanvasStatesRef = useRef<Map<number, PageCanvasState>>(new Map());
 
@@ -148,6 +169,7 @@ export const PDFEditorProvider = ({ children }: PDFEditorProviderProps) => {
       });
       setViewState({ zoom: 1.0, fitMode: 'width' });
       setEditState({ annotations: [], selectedAnnotation: null, undoStack: [], redoStack: [] });
+      setTextEdits([]);
       pageCanvasStatesRef.current.clear();
     } catch (error) {
       console.error('Error loading PDF:', error);
@@ -213,6 +235,42 @@ export const PDFEditorProvider = ({ children }: PDFEditorProviderProps) => {
         console.log(`[PDF Save] Page ${pageNum} annotations embedded (${pageWidth}x${pageHeight} pts)`);
       }
 
+      // Apply text edits (Sejda-style: white-out original + draw new text)
+      if (textEdits.length > 0) {
+        const { StandardFonts, rgb } = await import('pdf-lib');
+        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+        for (const edit of textEdits) {
+          const pageIndex = edit.pageNumber - 1;
+          if (pageIndex < 0 || pageIndex >= pages.length) continue;
+          const page = pages[pageIndex];
+          const { height: pageHeight } = page.getSize();
+
+          // PDF Y origin is bottom-left; pdfY from pdf.js transform is already in PDF space
+          const pdfY = edit.pdfY;
+
+          // White rectangle to cover original text
+          page.drawRectangle({
+            x: edit.pdfX - 1,
+            y: pdfY - edit.pdfHeight * 0.3,
+            width: edit.pdfWidth + 4,
+            height: edit.fontSize * 1.3,
+            color: rgb(1, 1, 1),
+            borderWidth: 0,
+          });
+
+          // Draw the new text
+          page.drawText(edit.newText, {
+            x: edit.pdfX,
+            y: pdfY,
+            size: edit.fontSize,
+            font,
+            color: rgb(0, 0, 0),
+          });
+        }
+        console.log(`[PDF Save] Applied ${textEdits.length} text edits`);
+      }
+
       const savedBytes = await pdfDoc.save();
       console.log('[PDF Save] Done!', savedBytes.length, 'bytes');
       return new Blob([savedBytes], { type: 'application/pdf' });
@@ -220,11 +278,12 @@ export const PDFEditorProvider = ({ children }: PDFEditorProviderProps) => {
       console.error('[PDF Save] Error:', error);
       return null;
     }
-  }, [documentState.pdfDoc]);
+  }, [documentState.pdfDoc, textEdits]);
 
   const closePDF = useCallback(() => {
     setDocumentState({ pdfDoc: null, fileName: '', fileSize: 0, totalPages: 0, currentPage: 1, isDirty: false, sessionId: null });
     setEditState({ annotations: [], selectedAnnotation: null, undoStack: [], redoStack: [] });
+    setTextEdits([]);
     pageCanvasStatesRef.current.clear();
   }, [setDocumentState, setEditState]);
 
@@ -317,6 +376,7 @@ export const PDFEditorProvider = ({ children }: PDFEditorProviderProps) => {
     editState, setEditState,
     loadPDF, savePDF, closePDF,
     setPageCanvasState,
+    textEdits, addTextEdit,
     addPage, deletePage, rotatePage, reorderPages,
     addAnnotation, updateAnnotation, deleteAnnotation, selectAnnotation,
     undo, redo, canUndo, canRedo,

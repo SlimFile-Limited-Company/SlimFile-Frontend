@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import { usePDFEditor } from '@/contexts/PDFEditorContext';
 import AnnotationLayer from './AnnotationLayer';
+import TextEditLayer from './TextEditLayer';
 
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@5.4.624/build/pdf.worker.min.mjs`;
@@ -15,6 +16,8 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [pdfDocument, setPdfDocument] = useState<any>(null);
+  const [currentPageObj, setCurrentPageObj] = useState<any>(null);
+  const [displayScale, setDisplayScale] = useState(1);
   const [isRendering, setIsRendering] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
@@ -62,6 +65,7 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
         setError(null);
 
         const page = await pdfDocument.getPage(documentState.currentPage);
+        setCurrentPageObj(page);
         const canvas = canvasRef.current!;
         const context = canvas.getContext('2d')!;
 
@@ -101,10 +105,10 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
         canvas.style.height = `${scaledViewport.height / dpr}px`;
 
         // Update dimensions for annotation layer (use display size)
-        setCanvasDimensions({
-          width: scaledViewport.width / dpr,
-          height: scaledViewport.height / dpr,
-        });
+        const cssW = scaledViewport.width / dpr;
+        const cssH = scaledViewport.height / dpr;
+        setCanvasDimensions({ width: cssW, height: cssH });
+        setDisplayScale(scale);
 
         // Render PDF page with high quality
         const renderContext = {
@@ -157,7 +161,17 @@ export default function PDFCanvas({ className = '' }: PDFCanvasProps) {
         className="shadow-2xl rounded-lg bg-white block"
       />
 
-      {/* Fabric.js Annotation Layer — sits exactly over the PDF canvas */}
+      {/* Text Edit Layer — Sejda-style editable text overlays */}
+      {canvasDimensions.width > 0 && currentPageObj && (
+        <TextEditLayer
+          pdfPage={currentPageObj}
+          displayScale={displayScale}
+          canvasWidth={canvasDimensions.width}
+          canvasHeight={canvasDimensions.height}
+        />
+      )}
+
+      {/* Fabric.js Annotation Layer — draw, highlight, shapes */}
       {canvasDimensions.width > 0 && canvasDimensions.height > 0 && (
         <AnnotationLayer
           pageNumber={documentState.currentPage}
