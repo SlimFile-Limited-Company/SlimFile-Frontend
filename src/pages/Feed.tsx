@@ -235,7 +235,7 @@ export const Feed = () => {
     (async () => {
       try {
         const [fRes, sRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/feed?limit=2000`),
+          fetch(`${API_BASE_URL}/feed?limit=100`),
           fetch(`${API_BASE_URL}/feed/stats`),
         ]);
         setActivities(await fRes.json());
@@ -266,12 +266,6 @@ export const Feed = () => {
     if (filter === 'convert') return a.operation.includes('convert');
     return true;
   });
-
-  const counts = {
-    all:      activities.filter(clean).length,
-    compress: activities.filter(a => clean(a) && a.operation === 'compress').length,
-    convert:  activities.filter(a => clean(a) && a.operation.includes('convert')).length,
-  };
 
   const FILTERS = [
     { key: 'all',      label: 'All' },
@@ -322,9 +316,6 @@ export const Feed = () => {
               }`}
             >
               {f.label}
-              <span className={`ml-1.5 ${filter === f.key ? 'text-white/50' : 'text-gray-400'}`}>
-                {counts[f.key]}
-              </span>
             </button>
           ))}
           <div className="ml-auto text-xs text-gray-400">
