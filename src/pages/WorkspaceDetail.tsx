@@ -1259,7 +1259,7 @@ const WorkspaceDetail = () => {
           ) : (
             /* Normal Text Input — all inline in one pill */
             <div
-              className="flex items-center gap-1.5 rounded-full px-2.5 h-9 focus-within:ring-1 focus-within:ring-[#5288c1]/40 transition-all"
+              className="flex items-center gap-1.5 rounded-full px-2.5 py-1 focus-within:ring-1 focus-within:ring-[#5288c1]/40 transition-all"
               style={{ background: '#253545', border: '1px solid rgba(255,255,255,0.07)' }}
             >
               <FileUploadInput
