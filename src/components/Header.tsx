@@ -64,7 +64,7 @@ export const Header = () => {
     { name: "OCR Tool", href: "/ocr-tool" },
     { name: "PDF Merger & Splitter", href: "/forge" },
     { name: "PDF Password Protect", href: "/lock" },
-    { name: "PDF Editor", href: "/pdf-editor" },
+
   ];
 
   const isActiveRoute = (href: string) => {

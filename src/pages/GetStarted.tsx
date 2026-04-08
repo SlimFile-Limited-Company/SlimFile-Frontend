@@ -58,11 +58,6 @@ const FEATURES = [
     href: '/lock',              description: 'Lock PDFs with a password or remove existing ones.',
     features: ['128-bit encryption', 'Remove passwords', 'Files never stored'],
   },
-  {
-    icon: FileEdit,  title: 'PDF Editor',             badge: 'New',        gradient: 'from-rose-500 to-red-600',
-    href: '/pdf-editor',        description: 'Annotate, draw, highlight and edit PDFs in your browser.',
-    features: ['Draw & highlight', 'Merge, split & rotate', 'No login required'],
-  },
 ];
 
 const GetStarted: FC = () => {
