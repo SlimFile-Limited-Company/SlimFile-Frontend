@@ -8,7 +8,6 @@ import { isAuthenticated } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { playSuccessSound } from "@/utils/sound";
-import { CloudStorageSave } from "@/components/CloudStorageSave";
 
 interface CompressionResultProps {
   originalFiles: File[];
@@ -425,13 +424,6 @@ export const CompressionResult = ({
                       </>
                     )}
                   </Button>
-                  <CloudStorageSave
-                    file={compressedFiles[idx]}
-                    fileName={compressedFiles[idx]?.name || 'compressed-file'}
-                    disabled={!compressedFiles[idx]}
-                    variant="outline"
-                    className="flex-1"
-                  />
                   <Button
                     onClick={() => handleShare(compressedFiles[idx], idx)}
                     disabled={!compressedFiles[idx]}

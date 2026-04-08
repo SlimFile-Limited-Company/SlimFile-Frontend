@@ -6,7 +6,6 @@ import { ProcessingText } from '@/components/ProcessingText';
 import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from '@/lib/auth';
 import { toast } from '@/hooks/use-toast';
-import { CloudStorageSave } from '@/components/CloudStorageSave';
 
 interface ConversionCompressionResultProps {
   originalFiles: File[];
@@ -445,13 +444,6 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
                       </>
                     )}
                   </Button>
-                  <CloudStorageSave
-                    file={processedFile}
-                    fileName={processedFile?.name || 'processed-file'}
-                    disabled={!processedFile}
-                    variant="outline"
-                    className="flex-1"
-                  />
                   <Button
                     onClick={() => handleShare(processedFile, index)}
                     disabled={!processedFile}
