@@ -213,6 +213,11 @@ export const Feed = () => {
   }, [API_BASE_URL]);
 
   const filteredActivities = activities.filter((activity) => {
+    // Strip out bad records — negative or zero compression
+    if (activity.operation !== 'convert') {
+      if (!activity.compressionRatio || activity.compressionRatio <= 0) return false;
+      if (!activity.spaceSaved || activity.spaceSaved <= 0) return false;
+    }
     if (filter === 'all') return true;
     if (filter === 'compress') return activity.operation === 'compress';
     if (filter === 'convert') return activity.operation.includes('convert');
