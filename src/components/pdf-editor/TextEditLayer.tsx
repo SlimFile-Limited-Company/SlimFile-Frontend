@@ -133,7 +133,7 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
                   height: '100%',
                   fontSize: item.cssFontSize,
                   fontFamily: 'Arial, sans-serif',
-                  border: '2px solid #3b82f6',
+                  border: 'none',
                   background: 'transparent',
                   padding: '0 2px',
                   outline: 'none',
@@ -141,7 +141,7 @@ export default function TextEditLayer({ pdfPage, displayScale, canvasWidth, canv
                   boxSizing: 'border-box',
                   borderRadius: 2,
                   color: 'transparent',
-                  caretColor: '#3b82f6',
+                  caretColor: '#000',
                 }}
               />
             ) : (
