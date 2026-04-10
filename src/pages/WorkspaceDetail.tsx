@@ -1012,7 +1012,7 @@ const WorkspaceDetail = () => {
                     )}
 
                     <div
-                      className={`group relative px-3 py-2 w-full overflow-hidden ${
+                      className={`group relative px-3 py-2 w-full ${
                         message.deleted
                           ? 'italic rounded-2xl'
                           : isOwnMessage
