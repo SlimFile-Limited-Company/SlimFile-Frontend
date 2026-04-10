@@ -228,7 +228,7 @@ export default function SummarizeDocument() {
   const stepOrder: Step[] = ['compressing', 'extracting', 'summarizing'];
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7] pt-28 pb-20 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F5F5F7] pt-36 pb-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
 
         {/* Header */}
