@@ -1,10 +1,11 @@
 import { useState, useRef, useCallback } from 'react';
 import { FileText, Upload, Sparkles, Download, RotateCcw, AlertCircle, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import mammoth from 'mammoth';
 
-// pdfjs worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+// pdfjs worker — use local bundled worker instead of CDN
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
