@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit } from 'lucide-react';
+import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit, Sparkles } from 'lucide-react';
 
 const FEATURES = [
   {
@@ -57,6 +57,11 @@ const FEATURES = [
     icon: Lock,      title: 'PDF Password Protect',  badge: 'New',        gradient: 'from-violet-500 to-violet-600',
     href: '/lock',              description: 'Lock PDFs with a password or remove existing ones.',
     features: ['128-bit encryption', 'Remove passwords', 'Files never stored'],
+  },
+  {
+    icon: Sparkles,  title: 'Summarize Document',    badge: 'AI',         gradient: 'from-purple-600 to-indigo-700',
+    href: '/summarize',         description: 'Compress and extract a smart AI summary from any PDF or DOCX.',
+    features: ['Powered by Llama 3', 'SlimFile compression', 'Structured output'],
   },
 ];
 

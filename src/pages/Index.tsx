@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { FileUpload } from "@/components/FileUpload";
 import { CompressionResult } from "@/components/CompressionResult";
 import { toast } from "@/hooks/use-toast";
@@ -195,6 +196,37 @@ const Index = () => {
               onReset={handleReset}
             />
           )}
+        </div>
+      </section>
+
+      {/* Summarize CTA Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="container mx-auto max-w-4xl">
+          <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-3xl p-8 sm:p-10 flex flex-col sm:flex-row items-center gap-6 shadow-lg">
+            <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+            </div>
+            <div className="flex-1 text-center sm:text-left">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/20 rounded-full text-white text-xs font-semibold mb-2">
+                <span>✦</span> New AI Feature
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">Summarize Documents Instantly</h2>
+              <p className="text-white/80 text-sm leading-relaxed">
+                Upload a PDF or DOCX — SlimFile compresses it, extracts the text, and generates a clear AI-powered summary using Llama 3.
+              </p>
+            </div>
+            <Link
+              to="/summarize"
+              className="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-white text-purple-700 rounded-xl font-semibold text-sm hover:bg-purple-50 transition-colors shadow-md"
+            >
+              Try it free
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
 
