@@ -3,6 +3,7 @@ import { FileText, Upload, Sparkles, Download, RotateCcw, AlertCircle, CheckCirc
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import mammoth from 'mammoth';
+import JSZip from 'jszip';
 
 // pdfjs worker — use local bundled worker instead of CDN
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -60,6 +61,26 @@ async function extractTextFromDocx(buffer: ArrayBuffer): Promise<string> {
   return result.value.trim();
 }
 
+async function extractTextFromPptx(buffer: ArrayBuffer): Promise<string> {
+  const zip = await JSZip.loadAsync(buffer);
+  const slideFiles = Object.keys(zip.files)
+    .filter(name => /^ppt\/slides\/slide[0-9]+\.xml$/.test(name))
+    .sort();
+
+  const texts: string[] = [];
+  for (const slideFile of slideFiles) {
+    const xml = await zip.files[slideFile].async('string');
+    // Extract all text runs <a:t>...</a:t>
+    const matches = xml.match(/<a:t[^>]*>([^<]*)<\/a:t>/g) || [];
+    const slideText = matches
+      .map(m => m.replace(/<[^>]+>/g, ''))
+      .filter(t => t.trim())
+      .join(' ');
+    if (slideText.trim()) texts.push(slideText);
+  }
+  return texts.join('\n').trim();
+}
+
 async function compressFile(file: File): Promise<ArrayBuffer> {
   const formData = new FormData();
   formData.append('file', file);
@@ -115,8 +136,12 @@ async function callGroq(text: string): Promise<string> {
   return data.choices?.[0]?.message?.content || 'No summary returned.';
 }
 
-const ACCEPTED_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-const ACCEPTED_EXT = '.pdf,.docx';
+const ACCEPTED_TYPES = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+];
+const ACCEPTED_EXT = '.pdf,.docx,.pptx';
 
 export default function SummarizeDocument() {
   const [step, setStep] = useState<Step>('idle');
@@ -162,6 +187,8 @@ export default function SummarizeDocument() {
       const lowerName = selectedFile.name.toLowerCase();
       if (lowerName.endsWith('.pdf') || selectedFile.type === 'application/pdf') {
         text = await extractTextFromPdf(compressedBuffer);
+      } else if (lowerName.endsWith('.pptx')) {
+        text = await extractTextFromPptx(compressedBuffer);
       } else {
         text = await extractTextFromDocx(compressedBuffer);
       }
@@ -190,7 +217,7 @@ export default function SummarizeDocument() {
     e.preventDefault();
     setIsDragging(false);
     const f = e.dataTransfer.files?.[0];
-    if (f && (ACCEPTED_TYPES.includes(f.type) || f.name.endsWith('.docx') || f.name.endsWith('.pdf'))) {
+    if (f && (ACCEPTED_TYPES.includes(f.type) || f.name.endsWith('.docx') || f.name.endsWith('.pdf') || f.name.endsWith('.pptx'))) {
       process(f);
     }
   };
@@ -260,6 +287,7 @@ export default function SummarizeDocument() {
             <div className="flex items-center gap-3">
               <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">PDF</span>
               <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">DOCX</span>
+              <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">PPTX</span>
             </div>
             <input ref={inputRef} type="file" accept={ACCEPTED_EXT} className="hidden" onChange={handleFileChange} />
           </div>
