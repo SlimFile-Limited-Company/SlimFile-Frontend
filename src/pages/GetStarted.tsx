@@ -60,8 +60,8 @@ const FEATURES = [
   },
   {
     icon: Sparkles,  title: 'Summarize Document',    badge: 'AI',         gradient: 'from-purple-600 to-indigo-700',
-    href: '/summarize',         description: 'Compress and extract a smart AI summary from any PDF or DOCX.',
-    features: ['Powered by Llama 3', 'SlimFile compression', 'Structured output'],
+    href: '/summarize',         description: 'Compress and extract a smart AI summary from any PDF, DOCX or PPTX.',
+    features: ['Powered by Llama 3', 'PDF, DOCX & PPTX', 'Structured output'],
   },
 ];
 
