@@ -233,10 +233,6 @@ export default function SummarizeDocument() {
 
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-200 rounded-full shadow-sm mb-5">
-            <Sparkles className="w-4 h-4 text-purple-500" />
-            <span className="text-sm font-medium text-gray-600">AI-Powered · Llama 3 via Groq</span>
-          </div>
           <h1 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight mb-3">
             Summarize Documents
           </h1>
