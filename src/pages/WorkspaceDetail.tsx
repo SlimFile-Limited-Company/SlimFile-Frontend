@@ -1088,8 +1088,8 @@ const WorkspaceDetail = () => {
 
                       {/* Action buttons — appear on hover */}
                       <div
-                        className={`absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex gap-0.5 rounded-xl p-0.5 z-10 ${
-                          isOwnMessage ? 'right-0' : 'left-0'
+                        className={`absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex gap-0.5 rounded-xl p-0.5 z-20 ${
+                          isOwnMessage ? '-left-24' : '-right-24'
                         }`}
                         style={{ background: '#1f2b38', border: '1px solid rgba(255,255,255,0.08)' }}
                       >
