@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit } from "lucide-react";
+import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 
 // Add keyframes for animations
@@ -44,6 +44,7 @@ const Home: FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [compressedCount, setCompressedCount] = useState<number>(0);
+  const [analyticsOpen, setAnalyticsOpen] = useState(false);
 
   useEffect(() => {
     const API_BASE = getApiBase();
@@ -94,6 +95,15 @@ const Home: FC = () => {
                     Get Started
                   </Button>
                 </Link>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => setAnalyticsOpen(true)}
+                  className="px-8 py-3 rounded-full border-gray-200 text-gray-700 hover:border-primary hover:text-primary transition-all duration-200 text-base font-medium gap-2"
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  Live Analytics
+                </Button>
                 <div className="flex items-center">
                   <a href="https://api.slim-file.com/" target="_blank" rel="noopener noreferrer">
                     <Button
@@ -630,6 +640,46 @@ const Home: FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Analytics Modal */}
+      {analyticsOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setAnalyticsOpen(false)}
+        >
+          <div
+            className="relative bg-white rounded-2xl shadow-2xl overflow-hidden"
+            style={{ width: "96vw", height: "94vh" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
+                  <BarChart3 className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">SlimFile Live Analytics</p>
+                  <p className="text-xs text-gray-400">Powered by Google Analytics</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setAnalyticsOpen(false)}
+                className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <iframe
+              src="https://lookerstudio.google.com/embed/reporting/336ae76d-a21e-493c-b697-d936274fcb5a"
+              frameBorder="0"
+              style={{ border: 0, width: "100%", height: "calc(94vh - 65px)" }}
+              allowFullScreen
+              sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+            />
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
