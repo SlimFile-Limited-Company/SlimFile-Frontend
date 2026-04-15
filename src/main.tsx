@@ -69,6 +69,80 @@ import BlogConvertWebpToJpg from './pages/blog/ConvertWebpToJpg';
 import BlogConvertDocxToPdf from './pages/blog/ConvertDocxToPdf';
 import BlogConvertPdfToPptx from './pages/blog/ConvertPdfToPptx';
 import BlogConvertPdfToXlsx from './pages/blog/ConvertPdfToXlsx';
+
+// New Blog Pages — Batch 1: PDF Compression
+import BlogCompressPdfWithoutAdobe from './pages/blog/CompressPdfWithoutAdobe';
+import BlogReducePdfSizeBelow1MB from './pages/blog/ReducePdfSizeBelow1MB';
+import BlogBatchCompressMultiplePdfs from './pages/blog/BatchCompressMultiplePdfs';
+import BlogCompressScannedPdf from './pages/blog/CompressScannedPdf';
+import BlogWhyIsMypdfSoLarge from './pages/blog/WhyIsMypdfSoLarge';
+import BlogCompressPdfInChrome from './pages/blog/CompressPdfInChrome';
+import BlogCompressPdfForPrinting from './pages/blog/CompressPdfForPrinting';
+
+// New Blog Pages — Batch 2: Image Compression
+import BlogCompressImagesForInstagram from './pages/blog/CompressImagesForInstagram';
+import BlogCompressImagesForFacebook from './pages/blog/CompressImagesForFacebook';
+import BlogCompressImagesForWordpress from './pages/blog/CompressImagesForWordpress';
+import BlogCompressImagesForShopify from './pages/blog/CompressImagesForShopify';
+import BlogCompressImagesForEmail from './pages/blog/CompressImagesForEmail';
+import BlogReducePhotoSizeOnIphone from './pages/blog/ReducePhotoSizeOnIphone';
+import BlogReducePhotoSizeOnAndroid from './pages/blog/ReducePhotoSizeOnAndroid';
+import BlogCompressGifFilesOnline from './pages/blog/CompressGifFilesOnline';
+
+// New Blog Pages — Batch 3: Office Documents
+import BlogCompressWordDocumentOnline from './pages/blog/CompressWordDocumentOnline';
+import BlogCompressExcelFiles from './pages/blog/CompressExcelFiles';
+import BlogCompressPowerpointWithoutLosingQuality from './pages/blog/CompressPowerpointWithoutLosingQuality';
+import BlogReduceWordFileSize from './pages/blog/ReduceWordFileSize';
+import BlogCompressFilesOnWindows11 from './pages/blog/CompressFilesOnWindows11';
+
+// New Blog Pages — Batch 4: File Sharing
+import BlogCompressFilesForWhatsapp from './pages/blog/CompressFilesForWhatsapp';
+import BlogCompressFilesForGoogleDrive from './pages/blog/CompressFilesForGoogleDrive';
+import BlogCompressFilesForSlack from './pages/blog/CompressFilesForSlack';
+import BlogCompressFilesForDropbox from './pages/blog/CompressFilesForDropbox';
+import BlogSendLargeFilesViaEmail from './pages/blog/SendLargeFilesViaEmail';
+import BlogShareLargePdfFilesOnline from './pages/blog/ShareLargePdfFilesOnline';
+
+// New Blog Pages — Batch 5: PDF Conversion
+import BlogConvertWordToPdf from './pages/blog/ConvertWordToPdf';
+import BlogConvertExcelToPdf from './pages/blog/ConvertExcelToPdf';
+import BlogConvertPngToPdf from './pages/blog/ConvertPngToPdf';
+import BlogConvertPdfToPng from './pages/blog/ConvertPdfToPng';
+import BlogConvertPptxToPdf from './pages/blog/ConvertPptxToPdf';
+import BlogConvertPdfToJpeg from './pages/blog/ConvertPdfToJpeg';
+import BlogConvertPdfToText from './pages/blog/ConvertPdfToText';
+import BlogConvertHeicToJpg from './pages/blog/ConvertHeicToJpg';
+
+// New Blog Pages — Batch 6: Tool How-Tos
+import BlogExtractTextFromPdfUsingOcr from './pages/blog/ExtractTextFromPdfUsingOcr';
+import BlogMergePdfFilesOnlineFree from './pages/blog/MergePdfFilesOnlineFree';
+import BlogSplitPdfIntoSeparatePages from './pages/blog/SplitPdfIntoSeparatePages';
+import BlogPasswordProtectPdf from './pages/blog/PasswordProtectPdf';
+import BlogRemovePasswordFromPdf from './pages/blog/RemovePasswordFromPdf';
+import BlogSummarizePdfWithAi from './pages/blog/SummarizePdfWithAi';
+import BlogExtractPagesFromPdf from './pages/blog/ExtractPagesFromPdf';
+import BlogRotatePdfPagesOnline from './pages/blog/RotatePdfPagesOnline';
+
+// New Blog Pages — Batch 7: Comparisons
+import BlogBestFreeAlternativesToAdobeAcrobat from './pages/blog/BestFreeAlternativesToAdobeAcrobat';
+import BlogSlimfileVsIlovepdf from './pages/blog/SlimfileVsIlovepdf';
+import BlogSlimfileVsSmallpdf from './pages/blog/SlimfileVsSmallpdf';
+import BlogBestFreePdfCompressorOnline from './pages/blog/BestFreePdfCompressorOnline';
+import BlogBestFreeImageCompressorOnline from './pages/blog/BestFreeImageCompressorOnline';
+import BlogBestOcrToolsOnline from './pages/blog/BestOcrToolsOnline';
+import BlogBestAiDocumentSummarizersFree from './pages/blog/BestAiDocumentSummarizersFree';
+import BlogBestPdfToolsForStudents from './pages/blog/BestPdfToolsForStudents';
+
+// New Blog Pages — Batch 8: Educational / Evergreen
+import BlogLosslessVsLossyCompression from './pages/blog/LosslessVsLossyCompression';
+import BlogWhatIsAPdf from './pages/blog/WhatIsAPdf';
+import BlogWhatIsWebp from './pages/blog/WhatIsWebp';
+import BlogWhatIsOcr from './pages/blog/WhatIsOcr';
+import BlogHowDpiAffectsPdfFileSize from './pages/blog/HowDpiAffectsPdfFileSize';
+import BlogUnderstandingPdfCompressionAlgorithms from './pages/blog/UnderstandingPdfCompressionAlgorithms';
+import BlogWhyFileCompressionMattersForSeo from './pages/blog/WhyFileCompressionMattersForSeo';
+
 import OurBlogs from './pages/OurBlogs';
 import Feed from './pages/Feed';
 import Portals from './pages/Portals';
@@ -175,6 +249,80 @@ ReactDOM.createRoot(root).render(
           <Route path="blog/convert-docx-to-pdf" element={<BlogConvertDocxToPdf />} />
           <Route path="blog/convert-pdf-to-pptx" element={<BlogConvertPdfToPptx />} />
           <Route path="blog/convert-pdf-to-xlsx" element={<BlogConvertPdfToXlsx />} />
+
+          {/* New Blog Routes — Batch 1: PDF Compression */}
+          <Route path="blog/compress-pdf-without-adobe" element={<BlogCompressPdfWithoutAdobe />} />
+          <Route path="blog/reduce-pdf-size-below-1mb" element={<BlogReducePdfSizeBelow1MB />} />
+          <Route path="blog/batch-compress-multiple-pdfs" element={<BlogBatchCompressMultiplePdfs />} />
+          <Route path="blog/compress-scanned-pdf" element={<BlogCompressScannedPdf />} />
+          <Route path="blog/why-is-my-pdf-so-large" element={<BlogWhyIsMypdfSoLarge />} />
+          <Route path="blog/compress-pdf-in-chrome" element={<BlogCompressPdfInChrome />} />
+          <Route path="blog/compress-pdf-for-printing" element={<BlogCompressPdfForPrinting />} />
+
+          {/* New Blog Routes — Batch 2: Image Compression */}
+          <Route path="blog/compress-images-for-instagram" element={<BlogCompressImagesForInstagram />} />
+          <Route path="blog/compress-images-for-facebook" element={<BlogCompressImagesForFacebook />} />
+          <Route path="blog/compress-images-for-wordpress" element={<BlogCompressImagesForWordpress />} />
+          <Route path="blog/compress-images-for-shopify" element={<BlogCompressImagesForShopify />} />
+          <Route path="blog/compress-images-for-email" element={<BlogCompressImagesForEmail />} />
+          <Route path="blog/reduce-photo-size-on-iphone" element={<BlogReducePhotoSizeOnIphone />} />
+          <Route path="blog/reduce-photo-size-on-android" element={<BlogReducePhotoSizeOnAndroid />} />
+          <Route path="blog/compress-gif-files-online" element={<BlogCompressGifFilesOnline />} />
+
+          {/* New Blog Routes — Batch 3: Office Documents */}
+          <Route path="blog/compress-word-document-online" element={<BlogCompressWordDocumentOnline />} />
+          <Route path="blog/compress-excel-files" element={<BlogCompressExcelFiles />} />
+          <Route path="blog/compress-powerpoint-without-losing-quality" element={<BlogCompressPowerpointWithoutLosingQuality />} />
+          <Route path="blog/reduce-word-file-size" element={<BlogReduceWordFileSize />} />
+          <Route path="blog/compress-files-on-windows-11" element={<BlogCompressFilesOnWindows11 />} />
+
+          {/* New Blog Routes — Batch 4: File Sharing */}
+          <Route path="blog/compress-files-for-whatsapp" element={<BlogCompressFilesForWhatsapp />} />
+          <Route path="blog/compress-files-for-google-drive" element={<BlogCompressFilesForGoogleDrive />} />
+          <Route path="blog/compress-files-for-slack" element={<BlogCompressFilesForSlack />} />
+          <Route path="blog/compress-files-for-dropbox" element={<BlogCompressFilesForDropbox />} />
+          <Route path="blog/send-large-files-via-email" element={<BlogSendLargeFilesViaEmail />} />
+          <Route path="blog/share-large-pdf-files-online" element={<BlogShareLargePdfFilesOnline />} />
+
+          {/* New Blog Routes — Batch 5: PDF Conversion */}
+          <Route path="blog/convert-word-to-pdf" element={<BlogConvertWordToPdf />} />
+          <Route path="blog/convert-excel-to-pdf" element={<BlogConvertExcelToPdf />} />
+          <Route path="blog/convert-png-to-pdf" element={<BlogConvertPngToPdf />} />
+          <Route path="blog/convert-pdf-to-png" element={<BlogConvertPdfToPng />} />
+          <Route path="blog/convert-pptx-to-pdf" element={<BlogConvertPptxToPdf />} />
+          <Route path="blog/convert-pdf-to-jpeg" element={<BlogConvertPdfToJpeg />} />
+          <Route path="blog/convert-pdf-to-text" element={<BlogConvertPdfToText />} />
+          <Route path="blog/convert-heic-to-jpg" element={<BlogConvertHeicToJpg />} />
+
+          {/* New Blog Routes — Batch 6: Tool How-Tos */}
+          <Route path="blog/extract-text-from-pdf-using-ocr" element={<BlogExtractTextFromPdfUsingOcr />} />
+          <Route path="blog/merge-pdf-files-online-free" element={<BlogMergePdfFilesOnlineFree />} />
+          <Route path="blog/split-pdf-into-separate-pages" element={<BlogSplitPdfIntoSeparatePages />} />
+          <Route path="blog/password-protect-pdf" element={<BlogPasswordProtectPdf />} />
+          <Route path="blog/remove-password-from-pdf" element={<BlogRemovePasswordFromPdf />} />
+          <Route path="blog/summarize-pdf-with-ai" element={<BlogSummarizePdfWithAi />} />
+          <Route path="blog/extract-pages-from-pdf" element={<BlogExtractPagesFromPdf />} />
+          <Route path="blog/rotate-pdf-pages-online" element={<BlogRotatePdfPagesOnline />} />
+
+          {/* New Blog Routes — Batch 7: Comparisons */}
+          <Route path="blog/best-free-alternatives-to-adobe-acrobat" element={<BlogBestFreeAlternativesToAdobeAcrobat />} />
+          <Route path="blog/slimfile-vs-ilovepdf" element={<BlogSlimfileVsIlovepdf />} />
+          <Route path="blog/slimfile-vs-smallpdf" element={<BlogSlimfileVsSmallpdf />} />
+          <Route path="blog/best-free-pdf-compressor-online" element={<BlogBestFreePdfCompressorOnline />} />
+          <Route path="blog/best-free-image-compressor-online" element={<BlogBestFreeImageCompressorOnline />} />
+          <Route path="blog/best-ocr-tools-online" element={<BlogBestOcrToolsOnline />} />
+          <Route path="blog/best-ai-document-summarizers-free" element={<BlogBestAiDocumentSummarizersFree />} />
+          <Route path="blog/best-pdf-tools-for-students" element={<BlogBestPdfToolsForStudents />} />
+
+          {/* New Blog Routes — Batch 8: Educational */}
+          <Route path="blog/lossless-vs-lossy-compression" element={<BlogLosslessVsLossyCompression />} />
+          <Route path="blog/what-is-a-pdf" element={<BlogWhatIsAPdf />} />
+          <Route path="blog/what-is-webp" element={<BlogWhatIsWebp />} />
+          <Route path="blog/what-is-ocr" element={<BlogWhatIsOcr />} />
+          <Route path="blog/how-dpi-affects-pdf-file-size" element={<BlogHowDpiAffectsPdfFileSize />} />
+          <Route path="blog/understanding-pdf-compression-algorithms" element={<BlogUnderstandingPdfCompressionAlgorithms />} />
+          <Route path="blog/why-file-compression-matters-for-seo" element={<BlogWhyFileCompressionMattersForSeo />} />
+
           <Route path="blog" element={<OurBlogs />} />
           <Route path="terms" element={<TermsOfService />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
