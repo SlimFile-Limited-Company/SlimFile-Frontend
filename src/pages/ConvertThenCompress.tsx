@@ -6,8 +6,13 @@ import { isAuthenticated, getToken } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image, ArrowRight } from "lucide-react";
 import { notifyConversionCompressionComplete } from "@/services/pushNotificationService";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useSEO } from "@/hooks/useSEO";
 
 const ConvertThenCompress = () => {
+  useSEO({
+    title: 'Convert Then Compress — Optimize Files in One Step | SlimFile',
+    description: 'Convert your file to a new format and compress it in one seamless step. Save time and reduce file size with SlimFile.',
+  });
   const { t } = useTranslation();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);

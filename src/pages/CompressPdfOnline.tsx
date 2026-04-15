@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   FileText,
@@ -24,6 +25,11 @@ import {
 } from "lucide-react";
 
 export default function CompressPdfOnline() {
+  useSEO({
+    title: 'Compress PDF Online Free — Shrink PDFs Instantly | SlimFile',
+    description: 'Reduce PDF file sizes instantly without losing quality. Free, fast, and secure PDF compression — no signup required.',
+    canonical: 'https://slim-file.com/compress-pdf-online',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

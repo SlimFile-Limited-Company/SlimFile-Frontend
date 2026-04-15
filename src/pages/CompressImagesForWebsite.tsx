@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Globe,
@@ -35,6 +36,11 @@ import {
 } from "lucide-react";
 
 export default function CompressImagesForWebsite() {
+  useSEO({
+    title: 'Compress Images for Website — Boost Page Speed | SlimFile',
+    description: 'Optimize images for your website to improve Core Web Vitals and load speed. Free image compression for JPEG, PNG, and WebP.',
+    canonical: 'https://slim-file.com/compress-images-for-website',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

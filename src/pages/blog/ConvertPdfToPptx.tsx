@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   FileText,
@@ -20,6 +21,11 @@ import {
 } from "lucide-react";
 
 export default function BlogConvertPdfToPptx() {
+  useSEO({
+    title: 'How to Convert PDF to PowerPoint (PPTX) Free | SlimFile Blog',
+    description: 'Convert PDF files to editable PowerPoint presentations. Turn static PDFs into slides you can edit, update, and present.',
+    canonical: 'https://slim-file.com/blog/convert-pdf-to-pptx',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

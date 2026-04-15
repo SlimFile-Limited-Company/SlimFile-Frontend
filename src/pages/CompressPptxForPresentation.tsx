@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Monitor,
@@ -35,6 +36,11 @@ import {
 } from "lucide-react";
 
 export default function CompressPptxForPresentation() {
+  useSEO({
+    title: 'Compress PPTX for Presentation — Lighter Slides | SlimFile',
+    description: 'Reduce your PowerPoint file size before presenting. SlimFile compresses PPTX files so they load faster on any device or projector.',
+    canonical: 'https://slim-file.com/compress-pptx-for-presentation',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

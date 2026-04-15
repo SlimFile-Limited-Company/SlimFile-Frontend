@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Image,
@@ -20,6 +21,11 @@ import {
 } from "lucide-react";
 
 export default function BlogConvertJpgToPng() {
+  useSEO({
+    title: 'How to Convert JPG to PNG Free | SlimFile Blog',
+    description: 'Convert JPG images to PNG format online for free. Get lossless quality and transparent background support in seconds.',
+    canonical: 'https://slim-file.com/blog/convert-jpg-to-png',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

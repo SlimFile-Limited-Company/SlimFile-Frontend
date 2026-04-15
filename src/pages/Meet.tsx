@@ -1,8 +1,13 @@
 import { useState } from 'react';
+import { useSEO } from '@/hooks/useSEO';
 import { useNavigate } from 'react-router-dom';
 import { Video, Plus, Link2, Shield, Users, Monitor } from 'lucide-react';
 
 export default function Meet() {
+  useSEO({
+    title: 'SlimFile Meet — Free Video Meetings for Teams',
+    description: 'Start or join a video meeting instantly with SlimFile Meet. No downloads required — collaborate with your team in real time.',
+  });
   const navigate = useNavigate();
   const [joinCode, setJoinCode] = useState('');
   const [isJoining, setIsJoining] = useState(false);

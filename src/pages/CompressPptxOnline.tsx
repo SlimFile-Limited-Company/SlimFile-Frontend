@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Presentation,
@@ -34,6 +35,11 @@ import {
 } from "lucide-react";
 
 export default function CompressPptxOnline() {
+  useSEO({
+    title: 'Compress PPTX Online Free — Shrink PowerPoint Files | SlimFile',
+    description: 'Compress PowerPoint presentations online for free. Make your PPTX files smaller and easier to share without losing visual quality.',
+    canonical: 'https://slim-file.com/compress-pptx-online',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

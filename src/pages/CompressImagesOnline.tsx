@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Image,
@@ -28,6 +29,11 @@ import {
 } from "lucide-react";
 
 export default function CompressImagesOnline() {
+  useSEO({
+    title: 'Compress Images Online Free — JPEG, PNG & WebP | SlimFile',
+    description: 'Compress JPEG, PNG, and WebP images online for free. Reduce image file sizes while maintaining visual quality for web and email.',
+    canonical: 'https://slim-file.com/compress-images-online',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

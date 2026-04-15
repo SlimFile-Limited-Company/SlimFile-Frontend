@@ -9,6 +9,11 @@ import { useTranslation } from "@/hooks/useTranslation";
 
 const Compress = () => {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = 'Compress Files Instantly | SlimFile';
+  }, []);
+
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isCompressing, setIsCompressing] = useState(false);
   const [compressionProgress, setCompressionProgress] = useState<number[]>([]); // per file
@@ -206,6 +211,7 @@ const Compress = () => {
                 <span className="block text-gray-900 mb-2">
                   {t('compress.heroTitle')}
                 </span>
+                {' '}
                 <span className="block bg-gradient-to-r from-red-600 via-red-500 to-orange-500 bg-clip-text text-transparent">
                   {t('compress.heroSubtitle')}
                 </span>

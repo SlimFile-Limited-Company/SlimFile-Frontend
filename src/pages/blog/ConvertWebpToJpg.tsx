@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Image,
@@ -19,6 +20,11 @@ import {
 } from "lucide-react";
 
 export default function BlogConvertWebpToJpg() {
+  useSEO({
+    title: 'How to Convert WebP to JPG Free | SlimFile Blog',
+    description: 'Convert WebP images to JPG format for broader compatibility. Works in all apps, email clients, and older browsers.',
+    canonical: 'https://slim-file.com/blog/convert-webp-to-jpg',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

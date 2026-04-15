@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import { useSEO } from '@/hooks/useSEO';
 import { FileText, Upload, Sparkles, Download, RotateCcw, AlertCircle, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -144,6 +145,10 @@ const ACCEPTED_TYPES = [
 const ACCEPTED_EXT = '.pdf,.docx,.pptx';
 
 export default function SummarizeDocument() {
+  useSEO({
+    title: 'Summarize Documents with AI — PDF, DOCX & PPTX | SlimFile',
+    description: 'Upload a PDF, Word, or PowerPoint file and get an AI-generated summary in seconds. Free, fast, and private — files are never stored.',
+  });
   const [step, setStep] = useState<Step>('idle');
   const [file, setFile] = useState<File | null>(null);
   const [errorMsg, setErrorMsg] = useState('');

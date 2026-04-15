@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useSEO } from '@/hooks/useSEO';
 import { Mail, KeyRound, FileText, Lock, Layers, User, HelpCircle, BookOpen, Zap } from "lucide-react";
 
 const Section = ({ icon: Icon, title, children, bg }) => (
@@ -107,7 +108,12 @@ const apiDocs = [
   }
 ];
 
-const Api = () => (
+const Api = () => {
+  useSEO({
+    title: 'SlimFile API — Integrate File Compression Into Your App',
+    description: 'Use the SlimFile API to compress PDFs, images, and Office files programmatically. Fast, secure REST API with simple integration.',
+  });
+  return (
   <div className="min-h-screen pt-28 bg-gray-50">
     {/* Hero Section */}
     <div className="bg-gradient-to-br from-primary/10 via-white to-secondary/10 py-16 px-4 sm:px-6 lg:px-8 mb-12">
@@ -183,6 +189,7 @@ const Api = () => (
       ))}
     </div>
   </div>
-);
+  );
+};
 
 export default Api;

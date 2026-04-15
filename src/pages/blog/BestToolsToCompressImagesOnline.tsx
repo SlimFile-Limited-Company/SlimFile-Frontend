@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Image,
@@ -31,6 +32,11 @@ import {
 } from "lucide-react";
 
 export default function BlogBestToolsToCompressImagesOnline() {
+  useSEO({
+    title: 'Best Tools to Compress Images Online in 2025 | SlimFile Blog',
+    description: 'Compare the top free tools for compressing JPEG, PNG, and WebP images online. Find the best image optimizer for speed, quality, and ease of use.',
+    canonical: 'https://slim-file.com/blog/best-tools-to-compress-images-online',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

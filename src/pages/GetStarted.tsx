@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useSEO } from '@/hooks/useSEO';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit, Sparkles } from 'lucide-react';
 
@@ -66,6 +67,10 @@ const FEATURES = [
 ];
 
 const GetStarted: FC = () => {
+  useSEO({
+    title: 'Get Started with SlimFile — Choose Your Tool',
+    description: 'Pick the right SlimFile tool for your task. Compress, convert, summarize, OCR, meet, collaborate — everything you need to manage files smarter.',
+  });
   return (
     <div className="min-h-screen bg-[#F5F5F7] pt-36 pb-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">

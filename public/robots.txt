@@ -1,17 +1,22 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
+
+# Block private/authenticated routes
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /dashboard-old
+Disallow: /portals
+Disallow: /workspaces
+Disallow: /workspaces/
+Disallow: /my-whiteboards
+Disallow: /my-whiteboards/
+Disallow: /documents
+Disallow: /documents/
+Disallow: /drive
+Disallow: /messages
+Disallow: /admin/
+Disallow: /login
+Disallow: /logout
 
 # Sitemap
 Sitemap: https://slim-file.com/sitemap.xml

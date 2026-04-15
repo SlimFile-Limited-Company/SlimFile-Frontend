@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Smartphone,
@@ -33,6 +34,11 @@ import {
 } from "lucide-react";
 
 export default function CompressPdfOnIphone() {
+  useSEO({
+    title: 'Compress PDF on iPhone — Free, No App Needed | SlimFile',
+    description: 'Compress PDF files on your iPhone using Safari — no app download required. Shrink PDFs directly in your mobile browser for free.',
+    canonical: 'https://slim-file.com/compress-pdf-on-iphone',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

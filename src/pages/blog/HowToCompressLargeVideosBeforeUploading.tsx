@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Video,
@@ -42,6 +43,11 @@ import {
 } from "lucide-react";
 
 export default function BlogHowToCompressLargeVideosBeforeUploading() {
+  useSEO({
+    title: 'How to Compress Large Videos Before Uploading | SlimFile Blog',
+    description: 'Reduce video file size before uploading to YouTube, Vimeo, or sharing via email. Tips for compressing MP4 and other formats without losing quality.',
+    canonical: 'https://slim-file.com/blog/how-to-compress-large-videos-before-uploading',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

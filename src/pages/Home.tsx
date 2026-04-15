@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useSEO } from "@/hooks/useSEO";
 
 // Add keyframes for animations
 const style = document.createElement('style');
@@ -41,6 +42,10 @@ const getApiBase = (): string => {
 };
 
 const Home: FC = () => {
+  useSEO({
+    title: 'SlimFile — Compress, Convert & Collaborate on Files',
+    description: 'Compress PDFs, images, and Office files for free. Convert formats, summarize documents with AI, and collaborate with your team — all in one place.',
+  });
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [compressedCount, setCompressedCount] = useState<number>(0);
@@ -644,38 +649,45 @@ const Home: FC = () => {
       {/* Analytics Modal */}
       {analyticsOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4"
           onClick={() => setAnalyticsOpen(false)}
         >
           <div
-            className="relative bg-white rounded-2xl shadow-2xl overflow-hidden"
-            style={{ width: "96vw", height: "94vh" }}
+            className="relative bg-white w-full h-full sm:rounded-2xl sm:shadow-2xl overflow-hidden sm:w-[96vw] sm:h-[94vh]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100 bg-white">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center shrink-0">
                   <BarChart3 className="w-4 h-4 text-primary" />
                 </div>
                 <div>
                   <p className="font-semibold text-gray-900 text-sm">SlimFile Live Analytics</p>
-                  <p className="text-xs text-gray-400">Powered by Google Analytics</p>
+                  <p className="text-xs text-gray-400 hidden sm:block">Powered by Google Analytics</p>
                 </div>
               </div>
-              <button
-                onClick={() => setAnalyticsOpen(false)}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                {/* Mobile scroll hint */}
+                <p className="text-xs text-gray-400 sm:hidden">Scroll horizontally to explore</p>
+                <button
+                  onClick={() => setAnalyticsOpen(false)}
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-            <iframe
-              src="https://lookerstudio.google.com/embed/reporting/336ae76d-a21e-493c-b697-d936274fcb5a"
-              frameBorder="0"
-              style={{ border: 0, width: "100%", height: "calc(94vh - 65px)" }}
-              allowFullScreen
-              sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-            />
+            {/* iframe wrapper — horizontal scroll on mobile */}
+            <div className="overflow-auto w-full" style={{ height: "calc(100% - 53px)" }}>
+              <iframe
+                src="https://lookerstudio.google.com/embed/reporting/336ae76d-a21e-493c-b697-d936274fcb5a"
+                frameBorder="0"
+                style={{ border: 0, minWidth: "800px", width: "100%", height: "100%" }}
+                allowFullScreen
+                sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+              />
+            </div>
           </div>
         </div>
       )}

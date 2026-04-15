@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSEO } from '@/hooks/useSEO';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import io from 'socket.io-client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,6 +38,10 @@ const fetchGlobalStats = async (): Promise<GlobalStats> => {
 };
 
 export const GlobalDashboard = () => {
+  useSEO({
+    title: 'Global Dashboard — SlimFile Live Impact Stats',
+    description: 'Watch SlimFile\'s live global impact: total files compressed, data saved, and CO₂ reduced in real time by users around the world.',
+  });
   const queryClient = useQueryClient();
   const [isConnected, setIsConnected] = useState(false);
   const [hasUpdate, setHasUpdate] = useState(false);
@@ -110,7 +115,7 @@ export const GlobalDashboard = () => {
       <div className="min-h-screen bg-gray-50 pt-36 pb-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Unable to load global statistics</h1>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Unable to load global statistics</h2>
             <p className="text-gray-600">Please try refreshing the page.</p>
           </div>
         </div>

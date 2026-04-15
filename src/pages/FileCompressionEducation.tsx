@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSEO } from '@/hooks/useSEO';
 import {
   BookOpen, Zap, Cloud, Lock, Globe, FileText,
   HelpCircle, TrendingUp, Shield, ExternalLink, ChevronDown,
@@ -58,6 +59,10 @@ const FAQItem = ({ q, a }: { q: string; a: string }) => {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 const FileCompressionEducation = () => {
+  useSEO({
+    title: 'File Compression Education — How Compression Works | SlimFile',
+    description: 'Learn how file compression works, the science behind lossless and lossy formats, and how SlimFile reduces PDF, image, and Office file sizes without losing quality.',
+  });
   const faqs = [
     {
       q: "Will compressing my files delete anything?",

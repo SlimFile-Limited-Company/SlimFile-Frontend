@@ -34,6 +34,7 @@ import {
   FileImage
 } from "lucide-react";
 import { useState } from "react";
+import { useSEO } from '@/hooks/useSEO';
 
 const blogPosts = [
   {
@@ -311,6 +312,10 @@ const blogPosts = [
 const categories = ["All", "PDF", "Images", "Presentations", "Mobile", "Web Performance", "Remote Work", "Video", "Conversion"];
 
 export default function OurBlogs() {
+  useSEO({
+    title: 'Blog — File Compression & Conversion Guides | SlimFile',
+    description: 'Browse SlimFile\'s guides on compressing PDFs, converting images, reducing file sizes for email, and optimizing files for the web.',
+  });
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 

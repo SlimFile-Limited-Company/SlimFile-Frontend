@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useSEO } from '@/hooks/useSEO';
 import { useDropzone } from 'react-dropzone';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -228,6 +229,10 @@ function RemovePasswordTab() {
 
 // ── Page ───────────────────────────────────────────────────────────────────
 const SlimFileLock = () => {
+  useSEO({
+    title: 'SlimFile Lock — Password Protect & Unlock PDF Files',
+    description: 'Add or remove password protection from PDF files instantly. SlimFile Lock keeps your documents secure without any software installation.',
+  });
   const [tab, setTab] = useState<'protect' | 'remove'>('protect');
 
   return (

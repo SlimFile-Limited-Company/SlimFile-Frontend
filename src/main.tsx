@@ -25,7 +25,6 @@ import Home from './pages/Home';
 import Compress from './pages/Compress';
 import CaseStudies from './pages/CaseStudies';
 import About from './pages/About';
-import Teams from './pages/Teams';
 import Features from './pages/Features';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
@@ -143,7 +142,6 @@ ReactDOM.createRoot(root).render(
           <Route path="convert-compress" element={<ConvertThenCompress />} />
           <Route path="case-studies" element={<CaseStudies />} />
           <Route path="about" element={<About />} />
-          <Route path="teams" element={<Teams />} />
           <Route path="features" element={<Features />} />
           <Route path="contact" element={<Contact />} />
           <Route path="api" element={<Api />} />

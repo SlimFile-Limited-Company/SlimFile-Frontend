@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   TrendingUp,
@@ -43,6 +44,11 @@ import {
 } from "lucide-react";
 
 export default function BlogHowToCompressFilesForFasterWebsiteLoading() {
+  useSEO({
+    title: 'How to Compress Files for Faster Website Loading | SlimFile Blog',
+    description: 'Speed up your website by compressing images and documents. Learn which file types to optimize and how compression improves Core Web Vitals.',
+    canonical: 'https://slim-file.com/blog/how-to-compress-files-for-faster-website-loading',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

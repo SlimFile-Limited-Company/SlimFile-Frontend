@@ -1,3 +1,4 @@
+import { useSEO } from '@/hooks/useSEO';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -55,6 +56,10 @@ const supportCategories = [
 ];
 
 export default function Contact() {
+  useSEO({
+    title: 'Contact SlimFile — Get Help or Send Feedback',
+    description: 'Reach out to the SlimFile team for support, partnership inquiries, or feedback. We\'re here to help.',
+  });
   return (
     <div className="min-h-screen bg-white pt-28">
       {/* Hero Section */}

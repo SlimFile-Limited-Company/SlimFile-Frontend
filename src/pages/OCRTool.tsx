@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useSEO } from '@/hooks/useSEO';
 import { useDropzone } from 'react-dropzone';
 import { createWorker } from 'tesseract.js';
 import { Button } from '@/components/ui/button';
@@ -44,6 +45,10 @@ const LANGUAGES = [
 ];
 
 const OCRTool = () => {
+  useSEO({
+    title: 'OCR Tool — Extract Text From Images & PDFs | SlimFile',
+    description: 'Convert scanned images and PDFs to editable text with SlimFile\'s free OCR tool. Supports 100+ languages, no signup required.',
+  });
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);

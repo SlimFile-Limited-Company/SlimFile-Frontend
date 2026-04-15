@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useSEO } from '@/hooks/useSEO';
 import { useDropzone } from 'react-dropzone';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -256,6 +257,10 @@ function SplitTab() {
 
 // ── Page ───────────────────────────────────────────────────────────────────
 const SlimFileForge = () => {
+  useSEO({
+    title: 'SlimFile Forge — Merge & Split PDF Files Online',
+    description: 'Merge multiple PDFs into one or split a PDF into separate pages. Free, fast, and secure — no uploads to third-party servers.',
+  });
   const [tab, setTab] = useState<'merge' | 'split'>('merge');
 
   return (

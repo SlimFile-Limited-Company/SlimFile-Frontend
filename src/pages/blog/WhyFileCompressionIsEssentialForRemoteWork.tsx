@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Users,
@@ -45,6 +46,11 @@ import {
 } from "lucide-react";
 
 export default function BlogWhyFileCompressionIsEssentialForRemoteWork() {
+  useSEO({
+    title: 'Why File Compression Is Essential for Remote Work | SlimFile Blog',
+    description: 'Remote teams share more files than ever. Learn how file compression speeds up collaboration, reduces storage costs, and improves productivity.',
+    canonical: 'https://slim-file.com/blog/why-file-compression-is-essential-for-remote-work',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

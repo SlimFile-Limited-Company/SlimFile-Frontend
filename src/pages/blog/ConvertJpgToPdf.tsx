@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Image,
@@ -26,6 +27,11 @@ import {
 } from "lucide-react";
 
 export default function BlogConvertJpgToPdf() {
+  useSEO({
+    title: 'How to Convert JPG to PDF Free — Complete Guide 2025 | SlimFile Blog',
+    description: 'Turn JPG images into a PDF document in seconds. Perfect for portfolios, document archiving, and sharing multiple photos as one file.',
+    canonical: 'https://slim-file.com/blog/convert-jpg-to-pdf',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useSEO } from '@/hooks/useSEO';
 import { FileText, User, Shield, AlertTriangle, BookOpen, Lock, Gavel, Mail, RefreshCcw } from "lucide-react";
 
 const Section = ({ icon: Icon, title, children, bg }) => (
@@ -13,6 +14,10 @@ const Section = ({ icon: Icon, title, children, bg }) => (
 
 // Define the component as a function
 const TermsOfService = () => {
+  useSEO({
+    title: 'Terms of Service | SlimFile',
+    description: 'Read SlimFile\'s Terms of Service. Learn about your rights and responsibilities when using our file compression and conversion platform.',
+  });
   return (
     <div className="min-h-screen pt-28 bg-gray-50">
       {/* Hero Section */}

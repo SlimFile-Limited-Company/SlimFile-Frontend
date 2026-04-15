@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Newspaper,
@@ -85,6 +86,10 @@ const newsItems: NewsItem[] = [
 ];
 
 export default function News() {
+  useSEO({
+    title: 'SlimFile News — Latest Updates & Press',
+    description: 'Stay up to date with the latest SlimFile news, product updates, press coverage, and announcements.',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero */}

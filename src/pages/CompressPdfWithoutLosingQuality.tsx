@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Target,
@@ -35,6 +36,11 @@ import {
 } from "lucide-react";
 
 export default function CompressPdfWithoutLosingQuality() {
+  useSEO({
+    title: 'Compress PDF Without Losing Quality — Smart PDF Optimizer | SlimFile',
+    description: 'Compress PDF files while preserving text sharpness and image quality. SlimFile\'s smart optimizer reduces size without visible degradation.',
+    canonical: 'https://slim-file.com/compress-pdf-without-losing-quality',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

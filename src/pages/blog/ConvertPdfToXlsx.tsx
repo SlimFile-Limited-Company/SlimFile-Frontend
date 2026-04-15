@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   FileText,
@@ -20,6 +21,11 @@ import {
 } from "lucide-react";
 
 export default function BlogConvertPdfToXlsx() {
+  useSEO({
+    title: 'How to Convert PDF to Excel (XLSX) Free | SlimFile Blog',
+    description: 'Extract tables and data from PDFs into an editable Excel spreadsheet. Convert PDF to XLSX online — free and no signup needed.',
+    canonical: 'https://slim-file.com/blog/convert-pdf-to-xlsx',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

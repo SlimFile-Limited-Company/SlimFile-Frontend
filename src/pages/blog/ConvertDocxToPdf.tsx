@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   FileText,
@@ -20,6 +21,11 @@ import {
 } from "lucide-react";
 
 export default function BlogConvertDocxToPdf() {
+  useSEO({
+    title: 'How to Convert DOCX to PDF Free — Complete Guide | SlimFile Blog',
+    description: 'Convert Word documents to PDF format for free. Preserve formatting, fonts, and layout when converting DOCX to PDF online.',
+    canonical: 'https://slim-file.com/blog/convert-docx-to-pdf',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

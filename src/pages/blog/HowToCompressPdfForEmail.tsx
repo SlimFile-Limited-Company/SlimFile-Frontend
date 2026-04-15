@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Mail,
@@ -35,6 +36,11 @@ import {
 } from "lucide-react";
 
 export default function BlogHowToCompressPdfForEmail() {
+  useSEO({
+    title: 'How to Compress PDF for Email — Step-by-Step Guide | SlimFile Blog',
+    description: 'Shrink PDF files to fit Gmail, Outlook, and other email attachment limits. Free, instant PDF compression with no quality loss.',
+    canonical: 'https://slim-file.com/blog/how-to-compress-pdf-for-email',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

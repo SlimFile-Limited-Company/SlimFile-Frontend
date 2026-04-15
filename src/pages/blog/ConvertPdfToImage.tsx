@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   FileText,
@@ -24,6 +25,11 @@ import {
 } from "lucide-react";
 
 export default function BlogConvertPdfToImage() {
+  useSEO({
+    title: 'How to Convert PDF to Image (JPG/PNG) Free 2025 | SlimFile Blog',
+    description: 'Extract PDF pages as high-quality JPG or PNG images. Perfect for social media, presentations, and sharing PDF content as photos.',
+    canonical: 'https://slim-file.com/blog/convert-pdf-to-image',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

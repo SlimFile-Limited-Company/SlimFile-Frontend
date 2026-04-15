@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSEO } from '@/hooks/useSEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import io from 'socket.io-client';
 import { FileText, Image, Archive, TrendingUp, HardDrive, Zap, ArrowRight, BarChart2, Monitor } from 'lucide-react';
@@ -224,6 +225,10 @@ const HeroStat = ({ icon: Icon, label, value, sub }: { icon: typeof TrendingUp; 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 export const Feed = () => {
+  useSEO({
+    title: 'Live Feed — See Files Being Compressed Right Now | SlimFile',
+    description: 'Watch SlimFile\'s real-time feed showing files being compressed around the world. Live stats, file types, and compression ratios.',
+  });
   const [activities, setActivities] = useState<FeedActivity[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);

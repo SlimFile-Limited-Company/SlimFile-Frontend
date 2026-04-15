@@ -1,4 +1,5 @@
 import React from "react";
+import { useSEO } from '@/hooks/useSEO';
 import {
   Leaf,
   Zap,
@@ -49,6 +50,10 @@ const SDGCard = ({ icon: Icon, number, title, objective, children, color = "blue
 );
 
 const SlimFileSDGs = () => {
+  useSEO({
+    title: 'SlimFile & the UN Sustainable Development Goals',
+    description: 'Discover how SlimFile supports the United Nations SDGs through digital sustainability, reduced data waste, and eco-friendly file compression.',
+  });
   return (
     <div className="min-h-screen bg-white pt-28 pb-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">

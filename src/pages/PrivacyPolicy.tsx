@@ -1,4 +1,5 @@
 import React from "react";
+import { useSEO } from '@/hooks/useSEO';
 import { Lock, User, FileText, Cloud, Shield, RefreshCcw, Mail, AlertTriangle } from "lucide-react";
 
 const Section = ({ icon: Icon, title, children, bg }) => (
@@ -12,6 +13,10 @@ const Section = ({ icon: Icon, title, children, bg }) => (
 );
 
 const PrivacyPolicy = () => {
+  useSEO({
+    title: 'Privacy Policy | SlimFile',
+    description: 'Read SlimFile\'s Privacy Policy. We are committed to protecting your data — files are never stored or shared.',
+  });
   return (
     <div className="min-h-screen pt-28 bg-gray-50">
       {/* Hero Section */}

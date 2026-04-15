@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Smartphone,
@@ -37,6 +38,11 @@ import {
 } from "lucide-react";
 
 export default function BlogReducePdfFileSizeOnMobile() {
+  useSEO({
+    title: 'How to Reduce PDF File Size on Mobile (iPhone & Android) | SlimFile Blog',
+    description: 'Compress PDF files directly from your iPhone or Android using SlimFile in your browser. No app download required.',
+    canonical: 'https://slim-file.com/blog/reduce-pdf-file-size-on-mobile',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

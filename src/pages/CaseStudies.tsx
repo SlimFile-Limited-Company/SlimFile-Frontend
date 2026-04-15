@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { X, Star, TrendingUp, Users, Award } from "lucide-react";
+import { useSEO } from '@/hooks/useSEO';
 
 interface Testimonial {
   image: string;
 }
 
 const CaseStudies: React.FC = () => {
+  useSEO({
+    title: 'Case Studies — Real Results with SlimFile',
+    description: 'See how businesses and individuals use SlimFile to reduce file sizes, speed up workflows, and save storage costs.',
+  });
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [animatedStats, setAnimatedStats] = useState({

@@ -1,3 +1,4 @@
+import { useSEO } from '@/hooks/useSEO';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -108,6 +109,10 @@ const features = [
 const categories = ["All", "Performance", "Security", "User Experience", "Compatibility", "Technology", "Accessibility", "Freedom", "Efficiency", "Simplicity"];
 
 export default function Features() {
+  useSEO({
+    title: 'Features — Everything SlimFile Can Do',
+    description: 'Explore all SlimFile features: compress PDFs, convert images, OCR, PDF locking, document summarization, real-time collaboration, and more.',
+  });
   return (
     <div className="min-h-screen bg-white pt-28">
       {/* Hero Section */}

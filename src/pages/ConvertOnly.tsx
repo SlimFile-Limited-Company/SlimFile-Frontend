@@ -6,8 +6,13 @@ import { isAuthenticated, getToken } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image } from "lucide-react";
 import { notifyConversionComplete } from "@/services/pushNotificationService";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useSEO } from "@/hooks/useSEO";
 
 const ConvertOnly = () => {
+  useSEO({
+    title: 'Convert Files Online — Free Format Converter | SlimFile',
+    description: 'Convert PDFs, images, and Office documents between formats for free. JPG to PDF, PDF to Word, PNG to WebP, and more — fast and secure.',
+  });
   const { t } = useTranslation();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isConverting, setIsConverting] = useState(false);

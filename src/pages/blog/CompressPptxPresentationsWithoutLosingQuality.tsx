@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Presentation,
@@ -35,6 +36,11 @@ import {
 } from "lucide-react";
 
 export default function BlogCompressPptxPresentationsWithoutLosingQuality() {
+  useSEO({
+    title: 'How to Compress PPTX Without Losing Quality | SlimFile Blog',
+    description: 'Step-by-step guide to shrinking PowerPoint files while keeping slides sharp. Compress PPTX presentations for email, sharing, and faster loading.',
+    canonical: 'https://slim-file.com/blog/compress-pptx-presentations-without-losing-quality',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

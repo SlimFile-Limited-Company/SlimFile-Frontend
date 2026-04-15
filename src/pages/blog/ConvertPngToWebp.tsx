@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Image,
@@ -23,6 +24,11 @@ import {
 } from "lucide-react";
 
 export default function BlogConvertPngToWebp() {
+  useSEO({
+    title: 'How to Convert PNG to WebP Free 2025 | SlimFile Blog',
+    description: 'Reduce image file sizes by up to 30% by converting PNG to WebP. Faster websites, better Core Web Vitals, same visual quality.',
+    canonical: 'https://slim-file.com/blog/convert-png-to-webp',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

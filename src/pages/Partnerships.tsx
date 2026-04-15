@@ -1,8 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Handshake } from "lucide-react";
+import { useSEO } from '@/hooks/useSEO';
 
 const Partnerships: React.FC = () => {
+  useSEO({
+    title: 'Partnerships — Work With SlimFile',
+    description: 'Explore partnership and integration opportunities with SlimFile. Join our ecosystem of tools built around fast, secure file compression.',
+  });
   return (
     <div className="min-h-screen pt-28 bg-gray-50">
       {/* Hero Section */}

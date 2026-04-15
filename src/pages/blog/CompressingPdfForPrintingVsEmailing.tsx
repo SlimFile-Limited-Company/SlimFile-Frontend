@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
   Printer,
@@ -38,6 +39,11 @@ import {
 } from "lucide-react";
 
 export default function BlogCompressingPdfForPrintingVsEmailing() {
+  useSEO({
+    title: 'Compressing PDF for Printing vs Emailing — What\'s the Difference? | SlimFile Blog',
+    description: 'Learn the difference between compressing a PDF for print and for email. Choose the right settings to preserve quality for each use case.',
+    canonical: 'https://slim-file.com/blog/compressing-pdf-for-printing-vs-emailing',
+  });
   return (
     <div className="min-h-screen pt-28">
       {/* Hero Section */}

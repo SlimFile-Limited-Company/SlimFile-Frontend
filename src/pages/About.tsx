@@ -1,6 +1,11 @@
 import { Minimize2, RefreshCw, Users, FileImage, FileText, FileType, Scan, GitMerge, Lock, Rss, PenLine, Video, LayoutDashboard, CheckCircle2 } from "lucide-react";
+import { useSEO } from '@/hooks/useSEO';
 
 const About: React.FC = () => {
+  useSEO({
+    title: 'About SlimFile — Our Mission & Story',
+    description: 'Learn about SlimFile, our mission to make file compression fast, free, and sustainable, and the team building the future of digital file management.',
+  });
   return (
     <div className="min-h-screen pt-28 bg-white">
 
