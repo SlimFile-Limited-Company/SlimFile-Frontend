@@ -681,7 +681,7 @@ const Home: FC = () => {
             {/* iframe wrapper — horizontal scroll on mobile */}
             <div className="overflow-auto w-full" style={{ height: "calc(100% - 53px)" }}>
               <iframe
-                src="https://lookerstudio.google.com/embed/reporting/336ae76d-a21e-493c-b697-d936274fcb5a"
+                src="https://datastudio.google.com/embed/reporting/336ae76d-a21e-493c-b697-d936274fcb5a/page/kIV1C"
                 frameBorder="0"
                 style={{ border: 0, minWidth: "800px", width: "100%", height: "100%" }}
                 allowFullScreen
