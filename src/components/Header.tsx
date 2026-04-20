@@ -299,7 +299,7 @@ export const Header = () => {
               onMouseEnter={() => handleDropdownHover('devtools')}
               onMouseLeave={() => handleDropdownHover(null)}
             >
-              <button className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 px-3 py-1.5 rounded-full">
+              <button className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap">
                 <span>Dev Tools</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
