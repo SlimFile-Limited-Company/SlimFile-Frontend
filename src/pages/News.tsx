@@ -8,7 +8,7 @@ import {
   Calendar,
   ArrowRight,
   Image as ImageIcon,
-  ExternalLink,
+
   Package,
   Terminal,
 } from "lucide-react";
@@ -217,13 +217,12 @@ export default function News() {
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
             {newsItems.map((item) => {
               const Icon = item.icon;
-              return (
-                <article
-                  key={item.id}
-                  className="rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden"
-                >
-                  <div className="aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative">
-                    <div className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-white/90 backdrop-blur px-3 py-1 text-xs font-semibold text-gray-700 border border-gray-200">
+              const cardInner = (
+                <article className="rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group h-full">
+                  {/* Image */}
+                  <div className="aspect-[16/9] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative overflow-hidden">
+                    {/* Category badge */}
+                    <div className="absolute top-4 left-4 z-10 inline-flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur px-3 py-1 text-xs font-semibold text-gray-700 border border-white/60 shadow-sm">
                       <Icon className="w-3.5 h-3.5 text-red-600" />
                       {item.category}
                     </div>
@@ -232,7 +231,7 @@ export default function News() {
                       <img
                         src={item.imageUrl}
                         alt={item.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
                       />
                     ) : (
@@ -243,62 +242,55 @@ export default function News() {
                           </div>
                         </div>
                         <p className="text-sm text-gray-600">{item.imageHint}</p>
-                        <p className="text-xs text-gray-500 mt-2">
-                          Image will be added later.
-                        </p>
                       </div>
                     )}
+
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+
+                    {/* Image CTA */}
+                    <div className="absolute bottom-4 right-4 z-10">
+                      <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur text-gray-800 text-xs font-semibold px-3 py-1.5 rounded-full border border-white/60 shadow-sm group-hover:bg-red-600 group-hover:text-white transition-all duration-200">
+                        {item.externalCtaLabel ?? "Read more"}
+                        <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-200" />
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="p-6">
-                    <div className="flex items-center justify-between gap-3 mb-2">
-                      <h3 className="text-lg font-bold text-gray-900 leading-snug">
-                        {item.title}
-                      </h3>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-600 mb-4">
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 font-medium">
-                        <Calendar className="w-3.5 h-3.5 mr-1.5" />
+                  {/* Body */}
+                  <div className="p-5">
+                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                      <span className="inline-flex items-center gap-1">
+                        <Calendar className="w-3.5 h-3.5" />
                         {item.dateLabel}
                       </span>
-                      <span className="inline-flex items-center rounded-full bg-red-50 text-red-700 px-2.5 py-1 font-medium">
-                        SlimFile
-                      </span>
+                      <span className="text-gray-300">·</span>
+                      <span className="text-red-600 font-medium">SlimFile</span>
                     </div>
-
-                    <p className="text-sm text-gray-700 leading-relaxed mb-4">
+                    <h3 className="text-base font-bold text-gray-900 leading-snug mb-2 group-hover:text-red-600 transition-colors duration-200">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
                       {item.subtitle}
                     </p>
-
-                    <ul className="space-y-3 text-sm">
-                      {item.highlights.map((h) => (
-                        <li key={h.title} className="flex items-start gap-2">
-                          <span className="mt-2 inline-block w-1.5 h-1.5 shrink-0 rounded-full bg-red-600" />
-                          <div>
-                            <p className="font-medium text-gray-900">{h.title}</p>
-                            <p className="text-gray-600 mt-0.5 leading-relaxed">{h.note}</p>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {item.externalUrl ? (
-                      <div className="mt-5">
-                        <a
-                          href={item.externalUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block"
-                        >
-                          <Button className="w-full justify-center">
-                            <ExternalLink className="w-4 h-4 mr-2" />
-                            {item.externalCtaLabel ?? "View"}
-                          </Button>
-                        </a>
-                      </div>
-                    ) : null}
                   </div>
                 </article>
+              );
+
+              return item.externalUrl ? (
+                <a
+                  key={item.id}
+                  href={item.externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block h-full"
+                >
+                  {cardInner}
+                </a>
+              ) : (
+                <a key={item.id} href={`#${item.id}`} className="block h-full">
+                  {cardInner}
+                </a>
               );
             })}
           </div>
