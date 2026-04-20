@@ -115,23 +115,34 @@ export const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
-      {/* CLI announcement banner */}
+      {/* SDK announcement banner */}
       <a
-        href="https://api.slim-file.com/cli"
+        href="https://www.npmjs.com/package/@slimfile/sdk"
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center gap-3 bg-gray-900 px-6 py-2.5 text-white hover:bg-gray-800 transition-colors duration-200 group"
+        className="relative flex items-center justify-center gap-3 px-6 py-2.5 text-white overflow-hidden group"
+        style={{ background: "linear-gradient(90deg, #b91c1c 0%, #dc2626 40%, #b91c1c 100%)" }}
       >
-        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" />
-        </svg>
-        <span className="text-sm font-medium tracking-wide">
-          <span className="font-semibold">Introducing SlimFile CLI</span>
-          <span className="hidden sm:inline opacity-80"> — </span>
-          <code className="hidden sm:inline font-mono bg-white/10 px-1.5 py-0.5 rounded text-xs">npm install -g @slimfile/cli</code>
-          <span className="hidden sm:inline opacity-80"> · v1.0.0 Live on npm</span>
+        {/* Animated shimmer */}
+        <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)" }}
+        />
+
+        {/* Badge */}
+        <span className="hidden sm:inline-flex items-center gap-1 bg-white/20 text-white text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 tracking-wide">
+          ✦ NEW
         </span>
-        <span className="text-sm opacity-75 group-hover:translate-x-0.5 transition-transform duration-150">›</span>
+
+        {/* Message */}
+        <span className="text-sm font-medium tracking-wide flex items-center gap-2">
+          <span className="font-semibold">@slimfile/sdk is live</span>
+          <span className="hidden sm:inline opacity-80">—</span>
+          <code className="hidden sm:inline font-mono bg-white/15 px-2 py-0.5 rounded text-xs tracking-tight">npm install @slimfile/sdk</code>
+          <span className="hidden md:inline opacity-75 text-xs">· Zero dependencies · TypeScript · Node.js</span>
+        </span>
+
+        {/* Arrow */}
+        <span className="text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-200 text-sm shrink-0">→</span>
       </a>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
