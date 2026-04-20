@@ -58,6 +58,8 @@ export const Footer = () => {
         { label: "Developer Program", path: "https://api.slim-file.com/developer-program", external: true },
         { label: "API Pricing", path: "https://api.slim-file.com/pricing", external: true },
         { label: "Documentation", path: "https://api.slim-file.com/", external: true },
+        { label: "SlimFile SDK", path: "https://www.npmjs.com/package/@slimfile/sdk", external: true },
+        { label: "SlimFile CLI", path: "https://www.npmjs.com/package/@slimfile/cli", external: true },
       ],
     },
     {
