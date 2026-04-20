@@ -109,26 +109,6 @@ const Home: FC = () => {
                   <BarChart3 className="w-4 h-4" />
                   Live Analytics
                 </Button>
-                <div className="flex items-center">
-                  <a href="https://api.slim-file.com/" target="_blank" rel="noopener noreferrer">
-                    <Button
-                      variant="link"
-                      size="lg"
-                      className="text-primary hover:text-primary/80 transition-all duration-200 text-base font-medium px-2"
-                    >
-                      SlimFile API <ArrowRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </a>
-                  <a href="https://api.slim-file.com/cli" target="_blank" rel="noopener noreferrer">
-                    <Button
-                      variant="link"
-                      size="lg"
-                      className="text-primary hover:text-primary/80 transition-all duration-200 text-base font-medium px-2"
-                    >
-                      SlimFile CLI <ArrowRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </a>
-                </div>
               </div>
 
             </div>

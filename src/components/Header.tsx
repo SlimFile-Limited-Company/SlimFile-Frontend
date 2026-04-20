@@ -19,12 +19,14 @@ export const Header = () => {
     dashboard: boolean;
     connect: boolean;
     suites: boolean;
+    devtools: boolean;
   }>({
     company: false,
     api: false,
     dashboard: false,
     connect: false,
     suites: false,
+    devtools: false,
   });
 
   const companyNavigation = [
@@ -55,6 +57,13 @@ export const Header = () => {
     ...(isAuthenticated() ? [{ name: "Documents", href: "/documents" }] : []),
     ...(isAuthenticated() ? [{ name: "My Whiteboards", href: "/my-whiteboards" }] : []),
     { name: "Meet", href: "/meet" },
+  ];
+
+  const devToolsNavigation = [
+    { name: "SlimFile SDK", href: "https://www.npmjs.com/package/@slimfile/sdk", external: true },
+    { name: "SlimFile CLI", href: "https://www.npmjs.com/package/@slimfile/cli", external: true },
+    { name: "SDK on GitHub", href: "https://github.com/ikaydreams-dev/SlimFile-SDK", external: true },
+    { name: "CLI on GitHub", href: "https://github.com/ikaydreams-dev/slimfile-cli", external: true },
   ];
 
   const suitesNavigation = [
@@ -88,7 +97,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'company' | 'api' | 'dashboard' | 'connect' | 'suites') => {
+  const toggleMobileDropdown = (dropdown: 'company' | 'api' | 'dashboard' | 'connect' | 'suites' | 'devtools') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -279,6 +288,33 @@ export const Header = () => {
                     >
                       <span>{item.name}</span>
                     </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Dev Tools Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => handleDropdownHover('devtools')}
+              onMouseLeave={() => handleDropdownHover(null)}
+            >
+              <button className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 px-3 py-1.5 rounded-full">
+                <span>Dev Tools</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              {hoveredDropdown === 'devtools' && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
+                  {devToolsNavigation.map((item) => (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200"
+                    >
+                      {item.name}
+                    </a>
                   ))}
                 </div>
               )}
@@ -521,6 +557,38 @@ export const Header = () => {
                       >
                         <span>{item.name}</span>
                       </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile Dev Tools Dropdown */}
+              <div className="px-4">
+                <button
+                  onClick={() => toggleMobileDropdown('devtools')}
+                  className="w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium text-gray-700 hover:text-red-600 transition-all duration-300 rounded-lg"
+                >
+                  <span>Dev Tools</span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      mobileDropdownsOpen.devtools && "transform rotate-180"
+                    )}
+                  />
+                </button>
+                {mobileDropdownsOpen.devtools && (
+                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
+                    {devToolsNavigation.map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-300 rounded-lg"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {item.name}
+                      </a>
                     ))}
                   </div>
                 )}
