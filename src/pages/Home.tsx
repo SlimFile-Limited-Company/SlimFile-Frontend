@@ -114,21 +114,22 @@ const Home: FC = () => {
               {/* macOS App Banner */}
               <div className="mt-10 flex justify-center">
                 <a
-                  href="https://slim-file.com/downloads/SlimFile-OS_0.1.0_x64.dmg"
-                  className="group flex items-center gap-4 bg-gray-950 hover:bg-gray-800 transition-all duration-200 rounded-2xl px-6 py-4 shadow-xl"
-                  style={{ textDecoration: 'none' }}
+                  href="/SlimFileOS_0.1.0_x64.dmg"
+                  download
+                  className="group flex items-center gap-4 transition-all duration-200 rounded-2xl px-6 py-4 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                  style={{ textDecoration: 'none', background: 'linear-gradient(135deg, #e63946 0%, #c1121f 100%)', border: '1px solid #e63946' }}
                 >
-                  <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-white/10 flex-shrink-0">
+                  <div className="flex items-center justify-center w-11 h-11 rounded-xl flex-shrink-0" style={{ background: 'rgba(255,255,255,0.15)' }}>
                     <svg width="22" height="22" viewBox="0 0 814 1000" fill="white" xmlns="http://www.w3.org/2000/svg">
                       <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 790.7 0 663 0 541.8c0-207.5 135.4-317.3 269-317.3 70.1 0 128.4 46.2 172.5 46.2 43.1 0 110.7-49 192.8-49 31.1 0 108.2 2.6 158.3 99.8zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z"/>
                     </svg>
                   </div>
                   <div className="text-left">
-                    <p className="text-white/60 text-xs font-medium tracking-wide uppercase">Download for</p>
-                    <p className="text-white font-bold text-base leading-tight">SlimFile for macOS</p>
-                    <p className="text-white/50 text-xs mt-0.5">Auto-compresses files silently in the background</p>
+                    <p className="text-xs font-medium tracking-wide uppercase" style={{ color: 'rgba(255,255,255,0.75)' }}>Free Download</p>
+                    <p className="font-bold text-base leading-tight text-white">SlimFile for macOS</p>
+                    <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.65)' }}>Auto-compresses your files silently in the background</p>
                   </div>
-                  <div className="ml-2 flex items-center justify-center w-8 h-8 rounded-full bg-white/10 group-hover:bg-white/20 transition-all flex-shrink-0">
+                  <div className="ml-2 flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 transition-all" style={{ background: 'rgba(255,255,255,0.2)' }}>
                     <Download className="w-4 h-4 text-white" />
                   </div>
                 </a>
