@@ -124,7 +124,7 @@ const Home: FC = () => {
   ];
   const [tipIndex, setTipIndex] = useState(0);
   const [tipVisible, setTipVisible] = useState(true);
-  const [mascotDismissed, setMascotDismissed] = useState(false);
+  const [mascotDismissed, setMascotDismissed] = useState(true);
 
   useEffect(() => {
     if (mascotDismissed) return;
@@ -162,7 +162,7 @@ const Home: FC = () => {
   ];
   const [leftTipIndex, setLeftTipIndex] = useState(0);
   const [leftTipVisible, setLeftTipVisible] = useState(true);
-  const [leftMascotDismissed, setLeftMascotDismissed] = useState(false);
+  const [leftMascotDismissed, setLeftMascotDismissed] = useState(true);
 
   useEffect(() => {
     if (leftMascotDismissed) return;
