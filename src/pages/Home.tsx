@@ -30,6 +30,44 @@ style.textContent = `
     animation-delay: 4s;
   }
 
+  /* Mascot */
+  @keyframes mascot-bounce {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-6px) rotate(-3deg); }
+    75% { transform: translateY(-3px) rotate(3deg); }
+  }
+  @keyframes slide-in-right {
+    from { opacity: 0; transform: translateX(60px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slide-in-left {
+    from { opacity: 0; transform: translateX(-60px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes bubble-pop {
+    0%   { opacity: 0; transform: scale(0.7) translateY(8px); }
+    70%  { transform: scale(1.05) translateY(-2px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); }
+    50%       { box-shadow: 0 0 0 10px rgba(220,38,38,0); }
+  }
+  @keyframes pulse-glow-blue {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4); }
+    50%       { box-shadow: 0 0 0 10px rgba(59,130,246,0); }
+  }
+  .pulse-glow-blue { animation: pulse-glow-blue 2s ease-in-out infinite; }
+  @keyframes tool-shine {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  .mascot-bounce { animation: mascot-bounce 3s ease-in-out infinite; }
+  .slide-in-right { animation: slide-in-right 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+  .slide-in-left  { animation: slide-in-left  0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+  .bubble-pop     { animation: bubble-pop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+  .pulse-glow     { animation: pulse-glow 2s ease-in-out infinite; }
+
   /* Flip card */
   .flip-card { perspective: 1000px; }
   .flip-card-inner {
@@ -71,6 +109,78 @@ const Home: FC = () => {
   const [compressedCount, setCompressedCount] = useState<number>(0);
   const [analyticsOpen, setAnalyticsOpen] = useState(false);
 
+  // Right mascot — fun file compression tips
+  const mascotTips = [
+    { icon: Zap,        title: "ZIP was born in 1989 🎂",      desc: "Phil Katz invented the ZIP format over 35 years ago — and it's still one of the most widely used compression formats on the planet.",  features: ["Used by billions daily", "Lossless compression", "Cross-platform support"],  gradient: "from-red-500 to-orange-400",    href: "/compress"        },
+    { icon: FileImage,  title: "Images eat your bandwidth 🍽️", desc: "Images account for over 60% of the average webpage's total size. Compressing them is the single fastest way to speed up any website.",   features: ["Cut page weight by 60%+", "Faster load times", "Better SEO scores"],         gradient: "from-blue-500 to-cyan-500",     href: "/compress"        },
+    { icon: Sparkles,   title: "WebP beats JPEG 🏆",           desc: "Google's WebP format is ~30% smaller than JPEG at the same visual quality — and ~25% smaller than PNG for images with transparency.",   features: ["30% smaller than JPEG", "Supports transparency", "Free to convert here"],    gradient: "from-purple-500 to-pink-500",   href: "/compress"        },
+    { icon: FileText,   title: "PDFs can shrink 90% 🤯",       desc: "A scanned PDF with embedded images can often be compressed by up to 90% without any noticeable loss — just smarter encoding under the hood.", features: ["No visible quality loss", "Smaller email attachments", "Faster uploads"],   gradient: "from-emerald-500 to-teal-500",  href: "/compress"        },
+    { icon: Globe,      title: "Speed = Revenue 💰",           desc: "Amazon found that every 100ms of latency cost them 1% in sales. Smaller files = faster sites = more money. It really is that simple.",   features: ["100ms = 1% more sales", "Lower bounce rates", "Higher conversions"],         gradient: "from-amber-500 to-orange-500",  href: "/compress"        },
+    { icon: Shield,     title: "Lossless vs Lossy 🔬",         desc: "Lossless compression (ZIP, PNG) keeps every single bit. Lossy (JPEG, MP3) throws away data you can't see or hear — that's how it gets so small.", features: ["ZIP & PNG = lossless", "JPEG & MP3 = lossy", "Both free on SlimFile"],    gradient: "from-indigo-500 to-violet-500", href: "/compress"        },
+    { icon: CheckCircle2, title: "Compression saves the planet 🌍", desc: "Data centres consume ~1–2% of global electricity. Smaller files mean fewer bytes transferred, less energy burned, and a smaller carbon footprint.", features: ["Less energy per transfer", "Fewer server resources", "Part of our SDGs"], gradient: "from-green-500 to-emerald-500", href: "/compress"        },
+    { icon: FileSpreadsheet, title: "DOCX hides bloat 📊",    desc: "A DOCX file is actually a ZIP archive. Microsoft Office embeds full-resolution images and unused styles that can inflate your file 10×.",  features: ["Hidden ZIP structure", "Embedded images bloat it", "Compress free here"],    gradient: "from-sky-500 to-blue-500",      href: "/compress"        },
+    { icon: Minimize2,  title: "The 95% club 🎖️",             desc: "SlimFile users regularly hit 90–95% size reduction on image-heavy PDFs. That's a 20 MB file shrinking to just 1 MB — still crystal clear.",  features: ["Up to 95% reduction", "Crystal-clear output", "Takes seconds"],              gradient: "from-rose-500 to-red-500",      href: "/compress"        },
+    { icon: RefreshCw,  title: "Convert then compress 🔄",     desc: "Switching a PNG to WebP AND compressing it in one step can cut your image size by up to 70%. SlimFile does both simultaneously.",          features: ["One-step workflow", "Up to 70% smaller", "No quality compromise"],           gradient: "from-fuchsia-500 to-purple-500", href: "/convert-compress" },
+  ];
+  const [tipIndex, setTipIndex] = useState(0);
+  const [tipVisible, setTipVisible] = useState(true);
+  const [mascotDismissed, setMascotDismissed] = useState(false);
+
+  useEffect(() => {
+    if (mascotDismissed) return;
+    const interval = setInterval(() => {
+      setTipVisible(false);
+      setTimeout(() => {
+        setTipIndex(i => (i + 1) % mascotTips.length);
+        setTipVisible(true);
+      }, 300);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [mascotDismissed]);
+
+  const nextTip = () => {
+    setTipVisible(false);
+    setTimeout(() => { setTipIndex(i => (i + 1) % mascotTips.length); setTipVisible(true); }, 200);
+  };
+
+  // Left mascot — motivational quotes & file tips
+  const leftTips = [
+    { emoji: "💪", title: "Keep It Up!",          gradient: "from-blue-500 to-blue-600",      text: "Every file you compress saves real bandwidth and makes the web faster for everyone.", bullets: ["Saves bandwidth costs", "Faster page loads", "Happier users"] },
+    { emoji: "🎯", title: "WebP Wins",            gradient: "from-cyan-500 to-blue-500",      text: "WebP is ~30% smaller than JPEG at the same visual quality — and supports transparency like PNG.", bullets: ["Lossless & lossy modes", "Supported in all browsers", "Convert free with SlimFile"] },
+    { emoji: "🚀", title: "Speed = Rankings",     gradient: "from-indigo-500 to-purple-500",  text: "Small files load faster and Google rewards it. Pages under 3 MB consistently rank higher.", bullets: ["Boosts SEO ranking", "Lower bounce rates", "Better Core Web Vitals"] },
+    { emoji: "🧠", title: "PDF Secret",           gradient: "from-purple-500 to-pink-500",    text: "Compressing a PDF by 80% still looks identical on screen — smarter encoding, same quality.", bullets: ["No visible quality loss", "Easy to email & share", "Saves storage space"] },
+    { emoji: "⚡", title: "Batch It!",            gradient: "from-amber-500 to-orange-500",   text: "Batch compress all your images before uploading — process dozens at once and save hours.", bullets: ["Process dozens at once", "Consistent output quality", "One-click download"] },
+    { emoji: "🌍", title: "Go Green",             gradient: "from-green-500 to-emerald-500",  text: "Smaller files mean fewer bytes transferred and less energy burned in data centres worldwide.", bullets: ["Less server energy used", "Fewer data transfers", "Part of our SDG goals"] },
+    { emoji: "📱", title: "Mobile First",         gradient: "from-sky-500 to-cyan-500",       text: "Lighter files load 4× faster on 4G networks — your mobile users will thank you every time.", bullets: ["Improve mobile UX", "Reduce data usage", "Reach more users"] },
+    { emoji: "🔐", title: "Stay Safe",            gradient: "from-violet-500 to-purple-500",  text: "Always password-protect sensitive PDFs before sharing via email or public links.", bullets: ["128-bit encryption", "Remove passwords too", "Files never stored"] },
+    { emoji: "🗜️", title: "Slim That PPTX",      gradient: "from-rose-500 to-red-500",       text: "PPTX files can be 10× smaller after compression — perfect for email attachments and sharing.", bullets: ["Keeps fonts & layouts", "Works with Google Slides", "Email-ready in seconds"] },
+    { emoji: "📊", title: "Unlock Scanned Docs",  gradient: "from-teal-500 to-green-500",     text: "OCR turns scanned PDFs and images into fully searchable, editable text in seconds.", bullets: ["Multiple languages", "Export as text or PDF", "Works on images too"] },
+    { emoji: "✨", title: "AI to the Rescue",     gradient: "from-fuchsia-500 to-purple-600", text: "AI Summarizer can condense a 50-page report into 5 clear bullet points — instantly.", bullets: ["Powered by Llama 3", "PDF, DOCX & PPTX", "Structured key points"] },
+    { emoji: "🤝", title: "Share Smarter",        gradient: "from-blue-500 to-indigo-500",    text: "Share a compressed file link instead of a bulky attachment — always faster, no inbox clutter.", bullets: ["No inbox clutter", "Instant access", "Works on any device"] },
+    { emoji: "🎨", title: "PNG → WebP Magic",     gradient: "from-pink-500 to-rose-500",      text: "Converting PNG to WebP cuts image size by up to 50% with zero visible quality drop.", bullets: ["Alpha transparency kept", "Smaller than PNG & JPEG", "Convert free here"] },
+    { emoji: "📁", title: "Forge Your PDFs",      gradient: "from-orange-500 to-amber-500",   text: "Merge all your project PDFs into one tidy file, then split or reorder pages freely.", bullets: ["Merge up to 20 PDFs", "Drag to reorder pages", "Split by page ranges"] },
+  ];
+  const [leftTipIndex, setLeftTipIndex] = useState(0);
+  const [leftTipVisible, setLeftTipVisible] = useState(true);
+  const [leftMascotDismissed, setLeftMascotDismissed] = useState(false);
+
+  useEffect(() => {
+    if (leftMascotDismissed) return;
+    const interval = setInterval(() => {
+      setLeftTipVisible(false);
+      setTimeout(() => {
+        setLeftTipIndex(i => (i + 1) % leftTips.length);
+        setLeftTipVisible(true);
+      }, 300);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [leftMascotDismissed]);
+
+  const nextLeftTip = () => {
+    setLeftTipVisible(false);
+    setTimeout(() => { setLeftTipIndex(i => (i + 1) % leftTips.length); setLeftTipVisible(true); }, 200);
+  };
+
   useEffect(() => {
     const API_BASE = getApiBase();
     fetch(`${API_BASE}/api/stats`, { credentials: 'omit' })
@@ -96,6 +206,133 @@ const Home: FC = () => {
     <div className="min-h-screen bg-white overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative pt-32 sm:pt-44 md:pt-56 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
+
+        {/* 💡 Left Mascot — motivational quotes & file tips */}
+        {!leftMascotDismissed && (
+          <div className="slide-in-left absolute top-28 left-4 z-30 hidden lg:flex items-start gap-2">
+            {/* Avatar */}
+            <div className="flex flex-col items-center gap-1 shrink-0">
+              <button
+                onClick={() => setLeftMascotDismissed(true)}
+                className="text-[9px] text-gray-300 hover:text-gray-500 transition-colors self-end leading-none mb-0.5"
+              >✕</button>
+              <div
+                className="mascot-bounce w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-xl flex items-center justify-center cursor-pointer border-2 border-white pulse-glow-blue"
+                onClick={nextLeftTip}
+                title="Click for next tip"
+              >
+                <img src="/logo.gif" alt="SlimFile tips mascot" className="w-9 h-9 object-contain rounded-lg" />
+              </div>
+              <span className="text-[9px] text-gray-400 font-medium tracking-wide">SlimFile</span>
+            </div>
+
+            {/* Speech bubble — opens to the right */}
+            {leftTipVisible && (() => {
+              const lt = leftTips[leftTipIndex];
+              return (
+                <div className="bubble-pop bg-white border border-gray-100 shadow-2xl rounded-2xl rounded-tl-none px-3 py-3 relative flex flex-col" style={{ width: 220, height: 240 }}>
+                  {/* Tail pointing left */}
+                  <div className="absolute -left-2 top-0 w-0 h-0" style={{ borderTop: '0px solid transparent', borderBottom: '10px solid transparent', borderRight: '10px solid white' }} />
+                  {/* Gradient header strip */}
+                  <div className={`bg-gradient-to-r ${lt.gradient} rounded-xl px-3 py-2 mb-2 flex items-center gap-2 shrink-0`}>
+                    <span className="text-lg leading-none">{lt.emoji}</span>
+                    <p className="text-white font-bold text-xs leading-tight">{lt.title}</p>
+                  </div>
+                  {/* Tip text */}
+                  <p className="text-gray-600 text-[11px] leading-relaxed mb-2 px-1 flex-1 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>{lt.text}</p>
+                  {/* Bullet tips */}
+                  <ul className="space-y-1 mb-2 px-1 shrink-0">
+                    {lt.bullets.map((b, i) => (
+                      <li key={i} className="flex items-center gap-1.5 text-[10px] text-gray-500">
+                        <CheckCircle2 className="w-3 h-3 text-blue-400 shrink-0" />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                  {/* Progress dots + next */}
+                  <div className="flex items-center justify-between px-1 shrink-0">
+                    <div className="flex gap-1">
+                      {leftTips.map((_, i) => (
+                        <div key={i} className={`h-1 rounded-full transition-all duration-300 ${i === leftTipIndex ? 'bg-blue-500 w-4' : 'bg-gray-200 w-1.5'}`} />
+                      ))}
+                    </div>
+                    <button onClick={nextLeftTip} className="text-[10px] text-gray-400 hover:text-gray-600 font-bold transition-colors">
+                      next →
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
+        {/* 😺 Mascot — far top-right */}
+        {!mascotDismissed && (
+          <div className="slide-in-right absolute top-28 right-4 z-30 hidden lg:flex items-start gap-2">
+            {/* Speech bubble */}
+            {tipVisible && (() => {
+              const tip = mascotTips[tipIndex];
+              const TipIcon = tip.icon;
+              return (
+                <div className="bubble-pop bg-white border border-gray-100 shadow-2xl rounded-2xl rounded-tr-none px-3 py-3 relative flex flex-col" style={{ width: 220, height: 240 }}>
+                  {/* Gradient header strip */}
+                  <div className={`bg-gradient-to-r ${tip.gradient} rounded-xl px-3 py-2 mb-2 flex items-center gap-2 shrink-0`}>
+                    <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                      <TipIcon className="w-4 h-4 text-white" />
+                    </div>
+                    <p className="text-white font-bold text-xs leading-tight">{tip.title}</p>
+                  </div>
+                  {/* Description */}
+                  <p className="text-gray-600 text-[11px] leading-relaxed mb-2 px-1 flex-1 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>{tip.desc}</p>
+                  {/* Features */}
+                  <ul className="space-y-1 mb-2 px-1 shrink-0">
+                    {tip.features.map((f, i) => (
+                      <li key={i} className="flex items-center gap-1.5 text-[10px] text-gray-500">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  {/* Try + progress */}
+                  <div className="flex items-center justify-between px-1 shrink-0">
+                    <div className="flex gap-1">
+                      {mascotTips.map((_, i) => (
+                        <div key={i} className={`h-1 rounded-full transition-all duration-300 ${i === tipIndex ? 'bg-red-500 w-4' : 'bg-gray-200 w-1.5'}`} />
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Link to={tip.href} className="text-[10px] text-red-500 hover:text-red-600 font-bold flex items-center gap-0.5">
+                        Try <ArrowRight className="w-2.5 h-2.5" />
+                      </Link>
+                      <button onClick={nextTip} className="text-[10px] text-gray-400 hover:text-gray-600 font-bold transition-colors">
+                        next →
+                      </button>
+                    </div>
+                  </div>
+                  {/* Tail pointing right */}
+                  <div className="absolute -right-2 top-0 w-0 h-0" style={{ borderTop: '0px solid transparent', borderBottom: '10px solid transparent', borderLeft: '10px solid white' }} />
+                </div>
+              );
+            })()}
+
+            {/* Mascot avatar */}
+            <div className="flex flex-col items-center gap-1 shrink-0">
+              <button
+                onClick={() => setMascotDismissed(true)}
+                className="text-[9px] text-gray-300 hover:text-gray-500 transition-colors self-end leading-none mb-0.5"
+              >✕</button>
+              <div
+                className="mascot-bounce w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500 to-orange-400 shadow-xl flex items-center justify-center cursor-pointer border-2 border-white"
+                onClick={nextTip}
+                title="Click for next tip"
+              >
+                <img src="/logo.gif" alt="SlimFile mascot" className="w-9 h-9 object-contain rounded-lg" />
+              </div>
+              <span className="text-[9px] text-gray-400 font-medium tracking-wide">SlimFile</span>
+            </div>
+          </div>
+        )}
+
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto">
             {/* Main Hero Content */}
@@ -142,18 +379,18 @@ const Home: FC = () => {
         <div className="container mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
             {[
-              { icon: FileImage,      title: "Compress Files",          description: "Shrink images, PDFs, DOCX & XLSX while keeping quality.",     features: ["JPEG, PNG, WebP, PDF", "DOCX & XLSX support", "Up to 95% reduction"],       gradient: "from-blue-500 to-blue-600",    href: "/compress",        badge: "Popular" },
-              { icon: FileText,       title: "Convert Formats",         description: "Transform files between formats — no quality loss.",           features: ["Images, Office to PDF", "PDF to Images ZIP", "No quality loss"],              gradient: "from-purple-500 to-purple-600", href: "/convert-only",   badge: "New" },
-              { icon: Zap,            title: "Convert & Compress",      description: "Convert format AND reduce size in one single step.",           features: ["All conversion features", "Max size reduction", "One-step processing"],       gradient: "from-red-500 to-red-600",      href: "/convert-compress", badge: "Best Value" },
-              { icon: Users,          title: "Team Workspaces",         description: "Collaborate in real-time with your team in shared spaces.",    features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600",  href: "/workspaces",      badge: "Team" },
-              { icon: ScanText,       title: "OCR Tool",                description: "Extract editable text from images and scanned documents.",     features: ["Scan images & PDFs", "Multiple languages", "Export as text/PDF"],            gradient: "from-orange-500 to-orange-600", href: "/ocr-tool",       badge: "New" },
-              { icon: Radio,          title: "Activity Feed",           description: "Stay updated with live activity across all your workspaces.",  features: ["Real-time updates", "Activity tracking", "Team notifications"],              gradient: "from-indigo-500 to-indigo-600", href: "/feed",           badge: "Live" },
-              { icon: Video,          title: "Video Meetings",          description: "Host HD video calls and share your screen instantly.",         features: ["HD video calls", "Screen sharing", "No downloads needed"],                   gradient: "from-cyan-500 to-cyan-600",    href: "/meet",            badge: "New" },
-              { icon: PenTool,        title: "Whiteboards",             description: "Brainstorm ideas and sketch concepts on visual boards.",       features: ["Drawing tools", "Text & shapes", "Multiple boards"],                         gradient: "from-pink-500 to-pink-600",    href: "/my-whiteboards",  badge: "New" },
-              { icon: FileType,       title: "My Documents",            description: "Write and edit documents with a rich text editor.",            features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600",      href: "/documents",       badge: "New" },
-              { icon: FilePlus2,      title: "PDF Merger & Splitter",   description: "Combine multiple PDFs or split one into custom sections.",     features: ["Merge up to 20 PDFs", "Split by page ranges", "Drag to reorder"],           gradient: "from-amber-500 to-orange-500", href: "/forge",           badge: "New" },
-              { icon: Lock,           title: "PDF Password Protect",    description: "Lock PDFs with a password or remove existing ones.",          features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", href: "/lock",           badge: "New" },
-              { icon: Sparkles,      title: "Summarize Document",      description: "Compress and extract a smart AI summary from any PDF, DOCX or PPTX.", features: ["Powered by Llama 3", "PDF, DOCX & PPTX", "Structured output"],           gradient: "from-purple-600 to-indigo-700", href: "/summarize",      badge: "AI" },
+              { icon: FileImage,  title: "Compress Files",        description: "Shrink images, PDFs, DOCX & XLSX while keeping quality.",               features: ["JPEG, PNG, WebP, PDF", "DOCX & XLSX support", "Up to 95% reduction"],       gradient: "from-blue-500 to-blue-600",     href: "/compress",        badge: "Popular",   flip: "Sneaky peek! 👀"          },
+              { icon: FileText,  title: "Convert Formats",       description: "Transform files between formats — no quality loss.",                     features: ["Images, Office to PDF", "PDF to Images ZIP", "No quality loss"],              gradient: "from-purple-500 to-purple-600", href: "/convert-only",    badge: "New",       flip: "Oh you curious one! 🐱"   },
+              { icon: Zap,       title: "Convert & Compress",    description: "Convert format AND reduce size in one single step.",                     features: ["All conversion features", "Max size reduction", "One-step processing"],       gradient: "from-red-500 to-red-600",       href: "/convert-compress", badge: "Best Value", flip: "You snooped! 🕵️"          },
+              { icon: Users,     title: "Team Workspaces",       description: "Collaborate in real-time with your team in shared spaces.",               features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600",   href: "/workspaces",      badge: "Team",      flip: "Caught ya! 😄"             },
+              { icon: ScanText,  title: "OCR Tool",              description: "Extract editable text from images and scanned documents.",               features: ["Scan images & PDFs", "Multiple languages", "Export as text/PDF"],            gradient: "from-orange-500 to-orange-600", href: "/ocr-tool",        badge: "New",       flip: "Well well well... 😏"      },
+              { icon: Radio,     title: "Activity Feed",         description: "Stay updated with live activity across all your workspaces.",             features: ["Real-time updates", "Activity tracking", "Team notifications"],              gradient: "from-indigo-500 to-indigo-600", href: "/feed",            badge: "Live",      flip: "Look who's here! 👋"       },
+              { icon: Video,     title: "Video Meetings",        description: "Host HD video calls and share your screen instantly.",                   features: ["HD video calls", "Screen sharing", "No downloads needed"],                   gradient: "from-cyan-500 to-cyan-600",     href: "/meet",            badge: "New",       flip: "You found me! 🙈"          },
+              { icon: PenTool,   title: "Whiteboards",           description: "Brainstorm ideas and sketch concepts on visual boards.",                 features: ["Drawing tools", "Text & shapes", "Multiple boards"],                         gradient: "from-pink-500 to-pink-600",     href: "/my-whiteboards",  badge: "New",       flip: "Peek-a-boo! 🫣"            },
+              { icon: FileType,  title: "My Documents",          description: "Write and edit documents with a rich text editor.",                      features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600",       href: "/documents",       badge: "New",       flip: "Gotcha! 😏"                },
+              { icon: FilePlus2, title: "PDF Merger & Splitter", description: "Combine multiple PDFs or split one into custom sections.",               features: ["Merge up to 20 PDFs", "Split by page ranges", "Drag to reorder"],           gradient: "from-amber-500 to-orange-500",  href: "/forge",           badge: "New",       flip: "Busted! 🫢"                },
+              { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", href: "/lock",            badge: "New",       flip: "Oh snap! 😮"               },
+              { icon: Sparkles,  title: "Summarize Document",    description: "Compress and extract a smart AI summary from any PDF, DOCX or PPTX.",   features: ["Powered by Llama 3", "PDF, DOCX & PPTX", "Structured output"],              gradient: "from-purple-600 to-indigo-700", href: "/summarize",       badge: "AI",        flip: "Well hello there! 🤫"      },
             ].map((feature) => (
               <div key={feature.title} className="flip-card" style={{ minHeight: "300px" }}>
                 <div className="flip-card-inner">
@@ -200,7 +437,7 @@ const Home: FC = () => {
                         <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
                           <feature.icon className="w-8 h-8 text-white" />
                         </div>
-                        <p className="text-white text-2xl font-black tracking-tight">Haha! 😄</p>
+                        <p className="text-white text-2xl font-black tracking-tight">{feature.flip}</p>
                         <p className="text-white/90 text-sm font-medium leading-snug max-w-[180px]">
                           You found <span className="font-bold">{feature.title}</span>!
                         </p>
