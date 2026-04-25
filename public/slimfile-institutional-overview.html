@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SlimFile — Institutional Overview & Compression API</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 11.5px;
+      color: #1a1a1a;
+      background: #fff;
+      line-height: 1.65;
+    }
+
+    /* ── Brand tokens ── */
+    :root {
+      --red:    #dc2626;
+      --red-lt: #fef2f2;
+      --red-bdr:#fecaca;
+      --dark:   #111827;
+      --gray:   #6b7280;
+      --light:  #f9fafb;
+      --border: #e5e7eb;
+    }
+
+    .page { width: 210mm; margin: 0 auto; }
+
+    /* ══════ COVER ══════ */
+    .cover {
+      min-height: 235mm;
+      background: #fff;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+    }
+
+    /* Red top bar — like the app's primary accent */
+    .cover-topbar {
+      background: var(--red);
+      height: 6px;
+      width: 100%;
+    }
+
+    .cover-inner {
+      padding: 36px 44px 40px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Logo row */
+    .cover-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 52px;
+    }
+    .cover-logo img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+    .cover-logo-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -0.5px;
+    }
+    .cover-logo-name span { color: var(--red); }
+
+    /* App headline — exactly as it appears on slim-file.com */
+    .cover-headline {
+      font-size: 46px;
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+    .cover-headline .accent { color: var(--red); }
+
+    .cover-sub {
+      font-size: 15px;
+      color: var(--gray);
+      font-weight: 400;
+      margin-bottom: 32px;
+    }
+
+    /* Divider */
+    .cover-divider {
+      width: 56px;
+      height: 4px;
+      background: var(--red);
+      border-radius: 2px;
+      margin-bottom: 28px;
+    }
+
+    .cover-doc-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--dark);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 6px;
+    }
+    .cover-doc-sub {
+      font-size: 11px;
+      color: var(--gray);
+      margin-bottom: 36px;
+    }
+
+    /* Audience pills */
+    .cover-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: auto;
+    }
+    .cover-pill {
+      background: var(--red-lt);
+      border: 1px solid var(--red-bdr);
+      color: var(--red);
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    /* Cover footer strip */
+    .cover-footer {
+      margin-top: 48px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cover-footer p { font-size: 9.5px; color: #aaa; }
+    .cover-footer .conf {
+      font-size: 8.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--red);
+      border: 1px solid var(--red-bdr);
+      padding: 3px 12px;
+      border-radius: 4px;
+    }
+
+    /* ══════ BODY PAGES ══════ */
+    .body-page {
+      padding: 36px 44px;
+      border-top: 1px solid #eee;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 26px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .page-header-left img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      border-radius: 5px;
+    }
+    .page-header-left span {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #aaa;
+    }
+    .page-header-right {
+      font-size: 9px;
+      color: #ccc;
+      font-weight: 600;
+    }
+
+    /* ══════ TYPOGRAPHY ══════ */
+    h2 {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -0.4px;
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+    h2 .red { color: var(--red); }
+    h3 { font-size: 12px; font-weight: 800; color: var(--dark); margin-bottom: 5px; }
+    .section-tag {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--red);
+      margin-bottom: 8px;
+    }
+    .lead {
+      font-size: 12.5px;
+      color: #555;
+      line-height: 1.75;
+      margin-bottom: 18px;
+    }
+    p { color: #555; line-height: 1.7; margin-bottom: 10px; font-size: 11.5px; }
+
+    /* ══════ HIGHLIGHT BOXES ══════ */
+    .hl {
+      background: var(--red-lt);
+      border-left: 4px solid var(--red);
+      border-radius: 0 10px 10px 0;
+      padding: 13px 16px;
+      margin: 16px 0;
+    }
+    .hl p { color: #7f1d1d; font-weight: 600; margin: 0; font-size: 11px; }
+
+    .hl-blue {
+      background: #eff6ff;
+      border-left: 4px solid #2563eb;
+    }
+    .hl-blue p { color: #1e3a8a; }
+
+    .hl-dark {
+      background: var(--dark);
+      border-left: none;
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .hl-dark p { color: rgba(255,255,255,0.7); margin: 0; font-size: 11px; }
+    .hl-dark strong { color: #fff; }
+
+    /* ══════ STATS ROW ══════ */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 18px 0;
+    }
+    .stat-card {
+      background: var(--dark);
+      border-radius: 10px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .stat-card .val {
+      font-size: 22px;
+      font-weight: 900;
+      color: #fca5a5;
+      letter-spacing: -0.5px;
+    }
+    .stat-card .lbl {
+      font-size: 9px;
+      color: rgba(255,255,255,0.45);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+
+    /* ══════ CAPABILITY STRIP ══════ */
+    .cap-strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .cap-item {
+      background: var(--light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 6px;
+      text-align: center;
+    }
+    .cap-item .cap-icon { font-size: 15px; margin-bottom: 4px; }
+    .cap-item .cap-lbl {
+      font-size: 8.5px;
+      font-weight: 700;
+      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    /* ══════ TWO-COL ══════ */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 14px 0; }
+    .two-col-wide { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; margin: 14px 0; }
+
+    /* ══════ FEATURE LIST ══════ */
+    .feature-list { list-style: none; padding: 0; }
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 10.5px;
+      color: #444;
+    }
+    .feature-list li:last-child { border-bottom: none; }
+    .feature-list li .chk { color: var(--red); font-weight: 900; flex-shrink: 0; }
+
+    /* ══════ INSTITUTION CARDS ══════ */
+    .inst-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .inst-card {
+      border-radius: 12px;
+      padding: 15px;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .inst-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--red);
+    }
+    .inst-card .inst-icon { font-size: 20px; margin-bottom: 7px; display: block; }
+    .inst-card .inst-sub {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--red);
+      margin-bottom: 5px;
+    }
+    .inst-card ul { list-style: none; padding: 0; }
+    .inst-card ul li {
+      font-size: 10px;
+      color: #555;
+      padding: 2px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 5px;
+    }
+    .inst-card ul li::before { content: '→'; font-weight: 700; color: var(--red); flex-shrink: 0; }
+
+    /* ══════ CODE BOX ══════ */
+    .code-box {
+      background: #0f172a;
+      border-radius: 10px;
+      padding: 13px 15px;
+      margin: 10px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      color: #94a3b8;
+      line-height: 1.8;
+    }
+    .code-box .code-label {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 8.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #475569;
+      margin-bottom: 8px;
+    }
+    .code-box .kw  { color: #7dd3fc; }
+    .code-box .str { color: #86efac; }
+    .code-box .cm  { color: #475569; }
+    .code-box .fn  { color: #fbbf24; }
+
+    /* ══════ DEV TOOL ROWS ══════ */
+    .tool-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 15px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .tool-card .tool-icon { font-size: 19px; flex-shrink: 0; }
+    .tool-card h3 { font-size: 11.5px; margin-bottom: 3px; }
+    .tool-card p { font-size: 10px; color: #888; margin: 0 0 5px; }
+    .tool-cmd {
+      display: inline-block;
+      background: var(--light);
+      color: var(--dark);
+      font-family: 'Courier New', monospace;
+      font-size: 9.5px;
+      padding: 2px 8px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+    }
+
+    /* ══════ TV3 SPOTLIGHT ══════ */
+    .spotlight {
+      background: var(--dark);
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin: 16px 0;
+    }
+    .spotlight h3 { color: #fff; font-size: 14px; margin-bottom: 5px; }
+    .spotlight > p { color: rgba(255,255,255,0.6); margin-bottom: 14px; font-size: 10.5px; }
+    .spotlight-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .spotlight-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 11px;
+    }
+    .spotlight-item .s-val { font-size: 18px; font-weight: 900; color: #fca5a5; margin-bottom: 2px; }
+    .spotlight-item .s-lbl { font-size: 8.5px; color: rgba(255,255,255,0.45); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+    .spotlight-item p { font-size: 9.5px; color: rgba(255,255,255,0.55); margin: 4px 0 0; }
+
+    /* ══════ DOCUMENT FOOTER ══════ */
+    .doc-footer {
+      background: var(--dark);
+      padding: 18px 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .doc-footer-brand { display: flex; align-items: center; gap: 8px; }
+    .doc-footer-brand img {
+      width: 24px; height: 24px;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+    .doc-footer-brand span { font-size: 13px; font-weight: 800; color: #fff; }
+    .doc-footer p { font-size: 9.5px; color: rgba(255,255,255,0.3); }
+    .doc-footer .footer-url { font-size: 9px; color: #fca5a5; font-weight: 700; }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══════════════════ COVER ══════════════════ -->
+  <div class="cover">
+    <div class="cover-topbar"></div>
+    <div class="cover-inner">
+
+      <!-- Logo -->
+      <div class="cover-logo">
+        <img src="./logo.gif" alt="SlimFile Logo" />
+        <span class="cover-logo-name">Slim<span>File</span></span>
+      </div>
+
+      <!-- App headline — exactly as on slim-file.com -->
+      <div class="cover-headline">
+        Compress.<br />Convert.<br /><span class="accent">Collaborate.</span>
+      </div>
+      <p class="cover-sub">Your complete workspace for files and teams</p>
+
+      <div class="cover-divider"></div>
+
+      <p class="cover-doc-title">Institutional Overview &amp; Compression API</p>
+      <p class="cover-doc-sub">
+        What SlimFile is — and why its Compression API is essential infrastructure
+        for broadcasting stations, government bodies, schools, healthcare, and beyond.
+      </p>
+
+      <div class="cover-pills">
+        <span class="cover-pill">📺 Broadcasting</span>
+        <span class="cover-pill">🏛️ Government</span>
+        <span class="cover-pill">🎓 Schools &amp; Universities</span>
+        <span class="cover-pill">🏥 Healthcare</span>
+        <span class="cover-pill">🏦 Banking &amp; Fintech</span>
+        <span class="cover-pill">⚖️ Legal</span>
+      </div>
+
+      <div class="cover-footer">
+        <p>slim-file.com &nbsp;|&nbsp; api.slim-file.com &nbsp;|&nbsp; 2026</p>
+        <span class="conf">Institutional Edition</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════ PAGE 1 — WHAT IS SLIMFILE ══════════════════ -->
+  <div class="body-page">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="./logo.gif" alt="SlimFile" />
+        <span>What is SlimFile</span>
+      </div>
+      <span class="page-header-right">slim-file.com</span>
+    </div>
+
+    <div class="section-tag">Platform Overview</div>
+    <h2>SlimFile is a <span class="red">complete file intelligence</span> platform</h2>
+    <p class="lead">
+      SlimFile is a cloud-based platform that combines powerful file compression, PDF and document tools,
+      format conversion, AI-powered document summarization, a full developer API, and a real-time team
+      collaboration suite — all under one roof. It is used by individuals, businesses, developers,
+      and institutions across the globe to handle files faster, smarter, and more efficiently.
+    </p>
+
+    <div class="hl">
+      <p>"SlimFile is not just a compression tool. It is infrastructure — the same way email is infrastructure.
+      Every organisation that handles digital files needs SlimFile."</p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="val">95%</div>
+        <div class="lbl">Max size reduction</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">1 GB</div>
+        <div class="lbl">Max file size</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">15+</div>
+        <div class="lbl">File formats</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">6</div>
+        <div class="lbl">Core capabilities</div>
+      </div>
+    </div>
+
+    <h3>The Six Pillars of SlimFile</h3>
+    <div class="cap-strip">
+      <div class="cap-item"><div class="cap-icon">🗜️</div><div class="cap-lbl">Compression</div></div>
+      <div class="cap-item"><div class="cap-icon">📄</div><div class="cap-lbl">PDF Tools</div></div>
+      <div class="cap-item"><div class="cap-icon">🔄</div><div class="cap-lbl">Conversion</div></div>
+      <div class="cap-item"><div class="cap-icon">✨</div><div class="cap-lbl">AI Summarizer</div></div>
+      <div class="cap-item"><div class="cap-icon">⚙️</div><div class="cap-lbl">Developer API</div></div>
+      <div class="cap-item"><div class="cap-icon">🤝</div><div class="cap-lbl">Collaboration</div></div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3>Compression &amp; PDF Tools</h3>
+        <ul class="feature-list">
+          <li><span class="chk">✓</span> Compress images: JPEG, PNG, WebP — up to 95% reduction</li>
+          <li><span class="chk">✓</span> Compress PDFs, DOCX, XLSX, PPTX — no visible quality loss</li>
+          <li><span class="chk">✓</span> OCR — extract editable text from scanned documents &amp; images</li>
+          <li><span class="chk">✓</span> PDF Merge: combine up to 20 PDFs into one file</li>
+          <li><span class="chk">✓</span> PDF Split: divide by custom page ranges</li>
+          <li><span class="chk">✓</span> Password protect PDFs with 128-bit AES encryption</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Conversion, AI &amp; Collaboration</h3>
+        <ul class="feature-list">
+          <li><span class="chk">✓</span> Convert PDF ↔ DOCX, JPEG, PNG, WebP</li>
+          <li><span class="chk">✓</span> Convert PPTX, XLSX to PDF in one step</li>
+          <li><span class="chk">✓</span> AI Summarizer powered by Meta Llama 3</li>
+          <li><span class="chk">✓</span> Team Workspaces &amp; Live Activity Feed</li>
+          <li><span class="chk">✓</span> Built-in Video Meetings &amp; Whiteboards</li>
+          <li><span class="chk">✓</span> Rich document editor &amp; personal dashboard</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ PAGE 2 — THE COMPRESSION API ══════════════════ -->
+  <div class="body-page" style="border-top: 3px solid #f3f4f6;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="./logo.gif" alt="SlimFile" />
+        <span>The SlimFile Compression API</span>
+      </div>
+      <span class="page-header-right">api.slim-file.com</span>
+    </div>
+
+    <div class="section-tag">Developer Infrastructure</div>
+    <h2>One API. <span class="red">Infinite integration</span> possibilities.</h2>
+    <p class="lead">
+      The SlimFile API is a RESTful HTTP interface that gives developers and institutions direct programmatic
+      access to SlimFile's entire compression and conversion engine. Integrate it once into your
+      system and your platform gains the full power of SlimFile — without your users ever leaving your product.
+    </p>
+
+    <div class="two-col-wide">
+      <div>
+        <h3>How it works</h3>
+        <p>Send a file to the API endpoint with your API key. SlimFile compresses or converts it on the
+        server and returns the processed file or a download link — all within seconds. No file is stored
+        permanently. All transfers are encrypted over HTTPS.</p>
+
+        <div class="code-box">
+          <div class="code-label">REST API — Compress a PDF</div>
+          <span class="cm"># POST to compress a PDF</span><br/>
+          <span class="kw">curl</span> -X POST https://api.slim-file.com/v1/compress \<br/>
+          &nbsp;&nbsp;-H <span class="str">"Authorization: Bearer YOUR_API_KEY"</span> \<br/>
+          &nbsp;&nbsp;-F <span class="str">"file=@report.pdf"</span> \<br/>
+          &nbsp;&nbsp;-F <span class="str">"quality=80"</span> \<br/>
+          &nbsp;&nbsp;--output compressed_report.pdf
+        </div>
+
+        <div class="code-box">
+          <div class="code-label">JavaScript SDK — Compress &amp; Summarize</div>
+          <span class="kw">import</span> SlimFile <span class="kw">from</span> <span class="str">'@slimfile/sdk'</span>;<br/><br/>
+          <span class="kw">const</span> sf = <span class="kw">new</span> <span class="fn">SlimFile</span>({ apiKey: <span class="str">'YOUR_KEY'</span> });<br/><br/>
+          <span class="cm">// Compress a PDF</span><br/>
+          <span class="kw">const</span> result = <span class="kw">await</span> sf.compress.<span class="fn">pdf</span>(file, { quality: 80 });<br/><br/>
+          <span class="cm">// AI Summarize a document</span><br/>
+          <span class="kw">const</span> summary = <span class="kw">await</span> sf.ai.<span class="fn">summarize</span>(file);
+        </div>
+      </div>
+
+      <div>
+        <h3>Developer Tools</h3>
+        <div class="tool-card">
+          <span class="tool-icon">🔌</span>
+          <div>
+            <h3>REST API</h3>
+            <p>Standard HTTP endpoints. Works with any language or framework — Python, PHP, Java, Go, and more.</p>
+            <span class="tool-cmd">api.slim-file.com/v1/</span>
+          </div>
+        </div>
+        <div class="tool-card">
+          <span class="tool-icon">📦</span>
+          <div>
+            <h3>SlimFile SDK</h3>
+            <p>Official JavaScript / TypeScript SDK. Works in Node.js and the browser. Full TypeScript types included.</p>
+            <span class="tool-cmd">npm install @slimfile/sdk</span>
+          </div>
+        </div>
+        <div class="tool-card">
+          <span class="tool-icon">💻</span>
+          <div>
+            <h3>SlimFile CLI</h3>
+            <p>Command-line tool for developers and IT teams. Compress files directly from the terminal or CI/CD pipelines.</p>
+            <span class="tool-cmd">npm install -g @slimfile/cli</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hl hl-blue">
+      <p>🔒 Security: All API requests are encrypted via HTTPS. Files are processed in isolated environments
+      and never stored permanently. Institutions can request a dedicated on-premise deployment for
+      complete data sovereignty and compliance.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════ PAGE 3 — INSTITUTIONS ══════════════════ -->
+  <div class="body-page" style="border-top: 3px solid #f3f4f6;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="./logo.gif" alt="SlimFile" />
+        <span>Why Institutions Need SlimFile</span>
+      </div>
+      <span class="page-header-right">slim-file.com</span>
+    </div>
+
+    <div class="section-tag">Institutional Impact</div>
+    <h2>Every organisation that handles files <span class="red">needs this.</span></h2>
+    <p class="lead">
+      Data volumes are growing faster than storage budgets. Every institution — from a broadcasting
+      station transmitting media assets to a government ministry archiving national records — faces
+      the same challenge: too many files, too large, too slow. SlimFile solves this at the infrastructure level.
+    </p>
+
+    <div class="inst-grid">
+
+      <div class="inst-card">
+        <span class="inst-icon">📺</span>
+        <div class="inst-sub">Broadcasting Stations — TV3, GTV, Citi TV, etc.</div>
+        <h3>Reduce media assets without losing broadcast quality</h3>
+        <ul>
+          <li>Reduce video thumbnails and promotional images for web — 70% smaller</li>
+          <li>Optimise PDF press kits and schedules for fast team distribution</li>
+          <li>Use the API to auto-compress all assets uploaded to your CMS</li>
+          <li>Reduce bandwidth costs for streaming preview assets by up to 60%</li>
+          <li>Archive documentary stills and promo photos at a fraction of storage cost</li>
+        </ul>
+      </div>
+
+      <div class="inst-card">
+        <span class="inst-icon">🏛️</span>
+        <div class="inst-sub">Government Ministries &amp; Agencies</div>
+        <h3>Digitise, compress, and archive national documents at scale</h3>
+        <ul>
+          <li>Compress millions of scanned government records via the API batch endpoint</li>
+          <li>Use OCR to make physical records fully searchable and digital</li>
+          <li>Reduce e-government portal document sizes for faster citizen access</li>
+          <li>Integrate into national document management systems via REST API</li>
+          <li>Password-protect classified PDFs with 128-bit AES encryption</li>
+        </ul>
+      </div>
+
+      <div class="inst-card">
+        <span class="inst-icon">🎓</span>
+        <div class="inst-sub">Schools, Universities &amp; EdTech Platforms</div>
+        <h3>Make learning materials load faster on every device</h3>
+        <ul>
+          <li>Reduce course PDFs and lecture slides by up to 80% for easy downloads</li>
+          <li>Use AI Summarizer to condense lengthy research papers into key points</li>
+          <li>Optimise student portal images for mobile users on slow networks</li>
+          <li>Batch-compress an entire semester's materials via the API</li>
+          <li>Reduce e-library storage costs without degrading document quality</li>
+        </ul>
+      </div>
+
+      <div class="inst-card">
+        <span class="inst-icon">🏥</span>
+        <div class="inst-sub">Hospitals &amp; Healthcare Providers</div>
+        <h3>Efficiently archive patient records and medical reports</h3>
+        <ul>
+          <li>Compress scanned medical records and discharge summaries without data loss</li>
+          <li>OCR digitises handwritten patient forms into searchable records</li>
+          <li>Reduce storage overhead for radiology image previews and PDF reports</li>
+          <li>API integration into hospital management systems for auto-compression</li>
+          <li>Password-protect confidential patient documents before sharing</li>
+        </ul>
+      </div>
+
+      <div class="inst-card">
+        <span class="inst-icon">🏦</span>
+        <div class="inst-sub">Banks, Fintech &amp; Financial Institutions</div>
+        <h3>Streamline compliance documents and client statements</h3>
+        <ul>
+          <li>Auto-compress monthly statements before emailing to customers</li>
+          <li>Reduce PDF sizes of KYC documents and loan agreements by 80%</li>
+          <li>Use AI Summarizer on lengthy financial reports and audit documents</li>
+          <li>API integration with core banking platforms for document handling</li>
+          <li>Encrypt and protect sensitive financial PDFs before distribution</li>
+        </ul>
+      </div>
+
+      <div class="inst-card">
+        <span class="inst-icon">⚖️</span>
+        <div class="inst-sub">Law Firms &amp; Legal Bodies</div>
+        <h3>Compress and manage high-volume legal documentation</h3>
+        <ul>
+          <li>Reduce court briefs, contracts, and case files for fast digital filing</li>
+          <li>AI Summarizer extracts key clauses from lengthy legal documents</li>
+          <li>Merge multiple case documents into one organised PDF with Forge</li>
+          <li>Password-protect confidential briefs before sharing with clients</li>
+          <li>OCR scanning for digitising historical physical case records</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════ PAGE 4 — TV3 SPOTLIGHT ══════════════════ -->
+  <div class="body-page" style="border-top: 3px solid #f3f4f6;">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="./logo.gif" alt="SlimFile" />
+        <span>Spotlight — Broadcasting Stations</span>
+      </div>
+      <span class="page-header-right">slim-file.com</span>
+    </div>
+
+    <div class="section-tag">Tailored Use Case</div>
+    <h2>What SlimFile means for <span class="red">TV3 and Ghana's broadcasters</span></h2>
+    <p class="lead">
+      A broadcasting station like TV3 handles an enormous volume of digital files every day —
+      show thumbnails, promotional graphics, press releases, broadcast scripts, media schedules, news PDFs,
+      and digital content for social and web. Without a compression and file management strategy, these
+      assets bloat servers, slow websites, consume bandwidth, and create operational inefficiency.
+      SlimFile eliminates all of that.
+    </p>
+
+    <div class="spotlight">
+      <h3>📺 The TV3 Challenge — and how SlimFile solves it</h3>
+      <p>A typical broadcaster uploads hundreds of image and document assets weekly across their website,
+      social media, internal systems, and external partners. Without compression, storage costs rise,
+      website speeds drop, and sharing becomes cumbersome.</p>
+      <div class="spotlight-grid">
+        <div class="spotlight-item">
+          <div class="s-val">70%</div>
+          <div class="s-lbl">Storage saved</div>
+          <p>By compressing show thumbnails, promotional stills, and PDF press kits via the API</p>
+        </div>
+        <div class="spotlight-item">
+          <div class="s-val">3×</div>
+          <div class="s-lbl">Faster web pages</div>
+          <p>Optimised images load faster on TV3's website, reducing bounce rates significantly</p>
+        </div>
+        <div class="spotlight-item">
+          <div class="s-val">60%</div>
+          <div class="s-lbl">Less bandwidth</div>
+          <p>Compressed assets transferred to partners and social platforms consume far less data</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 18px;">How TV3 integrates SlimFile</h3>
+    <div class="two-col">
+      <ul class="feature-list">
+        <li><span class="chk">✓</span> <strong>Website CMS:</strong> Auto-compress all uploads via API before going live</li>
+        <li><span class="chk">✓</span> <strong>Press Releases:</strong> Reduce PDF media kits before sending to journalists</li>
+        <li><span class="chk">✓</span> <strong>Show Archives:</strong> Batch-compress thousands of historical thumbnails &amp; stills</li>
+        <li><span class="chk">✓</span> <strong>Script Management:</strong> Merge broadcast scripts into organised PDFs</li>
+      </ul>
+      <ul class="feature-list">
+        <li><span class="chk">✓</span> <strong>Social Media:</strong> Optimise images to WebP for faster loading everywhere</li>
+        <li><span class="chk">✓</span> <strong>Internal Docs:</strong> AI Summarizer on programme reports and board documents</li>
+        <li><span class="chk">✓</span> <strong>OCR:</strong> Digitise printed broadcast schedules and legacy documents</li>
+        <li><span class="chk">✓</span> <strong>Collaboration:</strong> Shared workspaces, whiteboards and video meetings for teams</li>
+      </ul>
+    </div>
+
+    <div class="hl">
+      <p>💡 TV3 and any broadcaster can get started with the SlimFile Developer Program at
+      <strong>api.slim-file.com/developer-program</strong> — including dedicated onboarding, custom API
+      rate limits, and a tailored integration plan for media and broadcasting workflows.</p>
+    </div>
+
+    <div class="stats-row" style="margin-top: 18px;">
+      <div class="stat-card"><div class="val">🌍</div><div class="lbl">SDG Aligned</div></div>
+      <div class="stat-card"><div class="val">🔒</div><div class="lbl">HTTPS Encrypted</div></div>
+      <div class="stat-card"><div class="val">⚡</div><div class="lbl">Real-time API</div></div>
+      <div class="stat-card"><div class="val">💳</div><div class="lbl">Pay-as-you-use</div></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ FOOTER ══════════════════ -->
+  <div class="doc-footer">
+    <div class="doc-footer-brand">
+      <img src="./logo.gif" alt="SlimFile" />
+      <span>SlimFile</span>
+    </div>
+    <div style="text-align:center;">
+      <p>Institutional Overview &amp; API Guide — 2026</p>
+      <p class="footer-url">slim-file.com &nbsp;|&nbsp; api.slim-file.com</p>
+    </div>
+    <p>Confidential — Institutional Edition</p>
+  </div>
+
+</div>
+</body>
+</html>
