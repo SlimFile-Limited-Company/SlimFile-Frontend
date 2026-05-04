@@ -47,7 +47,7 @@ const About: React.FC = () => {
               <ul className="space-y-2.5">
                 {[
                   'Up to 95% file size reduction',
-                  'Supports files up to 1GB',
+                  'Supports files up to 1GB per file',
                   'Batch compress multiple files at once',
                   'No visible quality loss on output',
                   'Works on images, PDFs, and Office files',
