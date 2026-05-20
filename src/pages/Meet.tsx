@@ -46,7 +46,7 @@ export default function Meet() {
           Video calls for <span className="font-medium">everyone</span>
         </h1>
         <p className="text-lg text-gray-500 max-w-xl mx-auto">
-          Connect instantly. No downloads, no sign-in required.
+          Connect instantly. No downloads required.
         </p>
       </div>
 

@@ -346,7 +346,7 @@ ReactDOM.createRoot(root).render(
               <WorkspaceInvitations />
             </ProtectedRoute>
           } />
-          <Route path="meet" element={<Meet />} />
+          <Route path="meet" element={<ProtectedRoute><Meet /></ProtectedRoute>} />
           <Route path="ocr-tool" element={<OCRTool />} />
           <Route path="forge" element={<SlimFileForge />} />
           <Route path="lock" element={<SlimFileLock />} />
@@ -403,7 +403,7 @@ ReactDOM.createRoot(root).render(
         } />
 
         {/* Meeting room - Full screen without header/footer */}
-        <Route path="meet/:meetingCode" element={<MeetingRoom />} />
+        <Route path="meet/:meetingCode" element={<ProtectedRoute><MeetingRoom /></ProtectedRoute>} />
 
         {/* Messages - Full screen DM chat without header/footer */}
         <Route path="messages" element={
