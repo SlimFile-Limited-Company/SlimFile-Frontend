@@ -115,8 +115,8 @@ export const ProcessingText = ({ mode = 'compress', progress }: ProcessingTextPr
         >
           {verbs[index]}
           <motion.span
-            animate={{ opacity: [1, 0, 1] }}
-            transition={{ duration: 1, repeat: Infinity, ease: 'steps(1)' }}
+            animate={{ opacity: [1, 1, 0, 0, 1] }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'linear', times: [0, 0.49, 0.5, 0.99, 1] }}
             className="inline-block w-0.5 h-3.5 bg-gray-400 ml-0.5 align-middle"
           />
         </motion.span>
