@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +12,12 @@ import {
   Package,
   Terminal,
   Radio,
+  Share2,
+  Twitter,
+  Facebook,
+  Linkedin,
+  Copy,
+  Check,
 } from "lucide-react";
 
 type Highlight = {
@@ -189,10 +196,63 @@ const newsItems: NewsItem[] = [
 ];
 
 export default function News() {
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
   useSEO({
     title: 'SlimFile News — Latest Updates & Press',
     description: 'Stay up to date with the latest SlimFile news, product updates, press coverage, and announcements.',
   });
+
+  const handleShare = async (item: NewsItem) => {
+    const shareUrl = item.externalUrl || `${window.location.origin}/news#${item.id}`;
+    const shareText = `${item.title} - ${item.subtitle}`;
+
+    // Try native share API first (mobile devices)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: item.title,
+          text: shareText,
+          url: shareUrl,
+        });
+        return;
+      } catch (err) {
+        // User cancelled or share failed, fall through to custom share
+        console.log('Native share cancelled or failed');
+      }
+    }
+  };
+
+  const handleSocialShare = (platform: 'twitter' | 'facebook' | 'linkedin', item: NewsItem) => {
+    const shareUrl = item.externalUrl || `${window.location.origin}/news#${item.id}`;
+    const shareText = `${item.title} - ${item.subtitle}`;
+
+    let url = '';
+    switch (platform) {
+      case 'twitter':
+        url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+        break;
+      case 'facebook':
+        url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+        break;
+      case 'linkedin':
+        url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+        break;
+    }
+    window.open(url, '_blank', 'width=600,height=400');
+  };
+
+  const handleCopyLink = async (item: NewsItem) => {
+    const shareUrl = item.externalUrl || `${window.location.origin}/news#${item.id}`;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedId(item.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+    }
+  };
+
   return (
     <div className="min-h-screen pt-28">
       {/* Hero */}
@@ -290,13 +350,25 @@ export default function News() {
 
                   {/* Body */}
                   <div className="p-5">
-                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
-                      <span className="inline-flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5" />
-                        {item.dateLabel}
-                      </span>
-                      <span className="text-gray-300">·</span>
-                      <span className="text-red-600 font-medium">SlimFile</span>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <span className="inline-flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {item.dateLabel}
+                        </span>
+                        <span className="text-gray-300">·</span>
+                        <span className="text-red-600 font-medium">SlimFile</span>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleShare(item);
+                        }}
+                        className="p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200 group/share"
+                        title="Share this news"
+                      >
+                        <Share2 className="w-4 h-4 text-gray-400 group-hover/share:text-red-600 transition-colors duration-200" />
+                      </button>
                     </div>
                     <h3 className="text-base font-bold text-gray-900 leading-snug mb-2 group-hover:text-red-600 transition-colors duration-200">
                       {item.title}
@@ -344,14 +416,51 @@ export default function News() {
                     <Icon className="w-6 h-6 text-red-600" />
                   </div>
                   <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
-                        <Calendar className="w-3.5 h-3.5 mr-1.5" />
-                        {item.dateLabel}
-                      </span>
-                      <span className="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 border border-gray-200">
-                        {item.category}
-                      </span>
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
+                          <Calendar className="w-3.5 h-3.5 mr-1.5" />
+                          {item.dateLabel}
+                        </span>
+                        <span className="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 border border-gray-200">
+                          {item.category}
+                        </span>
+                      </div>
+                      {/* Share buttons */}
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleSocialShare('twitter', item)}
+                          className="p-2 rounded-full hover:bg-blue-50 transition-colors duration-200 group/twitter"
+                          title="Share on Twitter"
+                        >
+                          <Twitter className="w-4 h-4 text-gray-400 group-hover/twitter:text-blue-500 transition-colors duration-200" />
+                        </button>
+                        <button
+                          onClick={() => handleSocialShare('facebook', item)}
+                          className="p-2 rounded-full hover:bg-blue-50 transition-colors duration-200 group/facebook"
+                          title="Share on Facebook"
+                        >
+                          <Facebook className="w-4 h-4 text-gray-400 group-hover/facebook:text-blue-600 transition-colors duration-200" />
+                        </button>
+                        <button
+                          onClick={() => handleSocialShare('linkedin', item)}
+                          className="p-2 rounded-full hover:bg-blue-50 transition-colors duration-200 group/linkedin"
+                          title="Share on LinkedIn"
+                        >
+                          <Linkedin className="w-4 h-4 text-gray-400 group-hover/linkedin:text-blue-700 transition-colors duration-200" />
+                        </button>
+                        <button
+                          onClick={() => handleCopyLink(item)}
+                          className="p-2 rounded-full hover:bg-gray-50 transition-colors duration-200 group/copy"
+                          title="Copy link"
+                        >
+                          {copiedId === item.id ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <Copy className="w-4 h-4 text-gray-400 group-hover/copy:text-gray-600 transition-colors duration-200" />
+                          )}
+                        </button>
+                      </div>
                     </div>
                     <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                       {item.title}
