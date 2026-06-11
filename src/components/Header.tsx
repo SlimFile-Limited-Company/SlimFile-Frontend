@@ -45,7 +45,6 @@ export const Header = () => {
   const apiNavigation = [
     { name: "API Dashboard", href: "https://api.slim-file.com/", external: true },
     { name: "Developer Program", href: "https://api.slim-file.com/developer-program", external: true },
-    { name: "API Pricing", href: "https://api.slim-file.com/pricing", external: true },
   ];
 
   const dashboardNavigation = [
