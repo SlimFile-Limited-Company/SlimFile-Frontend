@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
 import {
@@ -197,10 +197,25 @@ const newsItems: NewsItem[] = [
 
 export default function News() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [currentHash, setCurrentHash] = useState(window.location.hash.slice(1));
+
+  // Update hash when it changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      setCurrentHash(window.location.hash.slice(1));
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Get the current news item if viewing a specific anchor
+  const currentNewsItem = currentHash ? newsItems.find(item => item.id === currentHash) : null;
 
   useSEO({
-    title: 'SlimFile News — Latest Updates & Press',
-    description: 'Stay up to date with the latest SlimFile news, product updates, press coverage, and announcements.',
+    title: currentNewsItem ? `${currentNewsItem.title} — SlimFile News` : 'SlimFile News — Latest Updates & Press',
+    description: currentNewsItem?.subtitle || 'Stay up to date with the latest SlimFile news, product updates, press coverage, and announcements.',
+    ogImage: currentNewsItem?.imageUrl || 'https://slim-file.com/lovable-uploads/logo.png',
+    ogType: currentNewsItem ? 'article' : 'website',
   });
 
   const handleShare = async (item: NewsItem) => {
@@ -210,11 +225,27 @@ export default function News() {
     // Try native share API first (mobile devices)
     if (navigator.share) {
       try {
-        await navigator.share({
+        const shareData: ShareData = {
           title: item.title,
           text: shareText,
           url: shareUrl,
-        });
+        };
+
+        // Try to include image if available (not widely supported yet, but future-proof)
+        if (item.imageUrl && navigator.canShare) {
+          try {
+            // For external images, we can still share the URL
+            // The native share will use the Open Graph image from the URL
+            if (navigator.canShare(shareData)) {
+              await navigator.share(shareData);
+              return;
+            }
+          } catch (e) {
+            // Fall back to sharing without image
+          }
+        }
+
+        await navigator.share(shareData);
         return;
       } catch (err) {
         // User cancelled or share failed, fall through to custom share
