@@ -20,6 +20,7 @@ export const Header = () => {
     connect: boolean;
     suites: boolean;
     devtools: boolean;
+    audio: boolean;
   }>({
     company: false,
     api: false,
@@ -27,6 +28,7 @@ export const Header = () => {
     connect: false,
     suites: false,
     devtools: false,
+    audio: false,
   });
 
   const companyNavigation = [
@@ -66,6 +68,11 @@ export const Header = () => {
     { name: "CLI on GitHub", href: "https://github.com/ikaydreams-dev/slimfile-cli", external: true },
   ];
 
+  const audioNavigation = [
+    { name: "Audio Compression", href: "https://audio.slim-file.com", external: true },
+    { name: "Audio API", href: "https://system.slim-file.com", external: true },
+  ];
+
   const suitesNavigation = [
     { name: "Compress", href: "/compress" },
     { name: "Convert", href: "/convert-only" },
@@ -97,7 +104,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'company' | 'api' | 'dashboard' | 'connect' | 'suites' | 'devtools') => {
+  const toggleMobileDropdown = (dropdown: 'company' | 'api' | 'dashboard' | 'connect' | 'suites' | 'devtools' | 'audio') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -115,9 +122,9 @@ export const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
-      {/* SDK announcement banner */}
+      {/* Audio compression announcement banner */}
       <a
-        href="https://www.npmjs.com/package/@slimfile/sdk"
+        href="https://audio.slim-file.com"
         target="_blank"
         rel="noopener noreferrer"
         className="relative flex items-center justify-center gap-3 px-6 py-2.5 text-white overflow-hidden group"
@@ -135,10 +142,10 @@ export const Header = () => {
 
         {/* Message */}
         <span className="text-sm font-medium tracking-wide flex items-center gap-2">
-          <span className="font-semibold">@slimfile/sdk is live</span>
+          <span className="font-semibold">SlimAudio is now live</span>
           <span className="hidden sm:inline opacity-80">—</span>
-          <code className="hidden sm:inline font-mono bg-white/15 px-2 py-0.5 rounded text-xs tracking-tight">npm install @slimfile/sdk</code>
-          <span className="hidden md:inline opacity-75 text-xs">· Zero dependencies · TypeScript · Node.js</span>
+          <span className="hidden sm:inline">Compress audio files effortlessly</span>
+          <span className="hidden md:inline opacity-75 text-xs">· MP3 · WAV · FLAC · M4A · More formats</span>
         </span>
 
         {/* Arrow */}
@@ -317,6 +324,33 @@ export const Header = () => {
               {hoveredDropdown === 'devtools' && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
                   {devToolsNavigation.map((item) => (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200"
+                    >
+                      {item.name}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* SlimAudio Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => handleDropdownHover('audio')}
+              onMouseLeave={() => handleDropdownHover(null)}
+            >
+              <button className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap">
+                <span>SlimAudio</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              {hoveredDropdown === 'audio' && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
+                  {audioNavigation.map((item) => (
                     <a
                       key={item.name}
                       href={item.href}
@@ -590,6 +624,38 @@ export const Header = () => {
                 {mobileDropdownsOpen.devtools && (
                   <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
                     {devToolsNavigation.map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-300 rounded-lg"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {item.name}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile SlimAudio Dropdown */}
+              <div className="px-4">
+                <button
+                  onClick={() => toggleMobileDropdown('audio')}
+                  className="w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium text-gray-700 hover:text-red-600 transition-all duration-300 rounded-lg"
+                >
+                  <span>SlimAudio</span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      mobileDropdownsOpen.audio && "transform rotate-180"
+                    )}
+                  />
+                </button>
+                {mobileDropdownsOpen.audio && (
+                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
+                    {audioNavigation.map((item) => (
                       <a
                         key={item.name}
                         href={item.href}

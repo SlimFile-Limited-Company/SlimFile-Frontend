@@ -8,9 +8,9 @@ import {
   Calendar,
   ArrowRight,
   Image as ImageIcon,
-
   Package,
   Terminal,
+  Radio,
 } from "lucide-react";
 
 type Highlight = {
@@ -41,6 +41,37 @@ type NewsItem = {
 };
 
 const newsItems: NewsItem[] = [
+  {
+    id: "slimaudio-launch",
+    title: "SlimAudio — Audio Compression is Now Live",
+    subtitle:
+      "SlimFile expands beyond documents and images with SlimAudio — a powerful audio compression platform supporting MP3, WAV, FLAC, M4A, and more.",
+    dateLabel: "June 2026",
+    category: "Product",
+    icon: Radio,
+    imageHint: "SlimAudio audio compression platform",
+    imageUrl: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800&auto=format&fit=crop",
+    externalUrl: "https://audio.slim-file.com",
+    externalCtaLabel: "Try SlimAudio",
+    ctas: [
+      { label: "Try SlimAudio", href: "https://audio.slim-file.com", external: true, variant: "default" },
+      { label: "Audio API Docs", href: "https://system.slim-file.com", external: true, variant: "outline" },
+    ],
+    highlights: [
+      {
+        title: "Multiple audio formats supported",
+        note: "Compress MP3, WAV, FLAC, M4A, AAC, OGG, and more — all while maintaining excellent audio quality.",
+      },
+      {
+        title: "Dedicated API for developers",
+        note: "Integrate audio compression into your apps with our robust API at system.slim-file.com.",
+      },
+      {
+        title: "Optimized for podcasters and creators",
+        note: "Reduce file sizes for faster uploads, streaming, and distribution without sacrificing sound quality.",
+      },
+    ],
+  },
   {
     id: "gtv-ghana",
     title: "SlimFile Featured on GTV Ghana",
