@@ -54,8 +54,8 @@ function RemoteVideoCard({ participantId, stream, participant, isPinned, onPin, 
 
   return (
     <div
-      className={`relative bg-[#3C4043] overflow-hidden flex items-center justify-center group cursor-pointer
-        ${compact ? 'rounded-xl' : 'rounded-2xl'}
+      className={`relative bg-[#3C4043] overflow-hidden flex items-center justify-center group cursor-pointer min-h-[120px] sm:min-h-[180px]
+        ${compact ? 'rounded-xl' : 'rounded-xl sm:rounded-2xl'}
         ${fill ? 'w-full h-full' : ''}
         ${isActiveSpeaker ? 'ring-2 ring-[#1a73e8]' : isPinned ? 'ring-2 ring-white/40' : ''}`}
       style={fill ? undefined : { aspectRatio: '16/9' }}
@@ -65,24 +65,29 @@ function RemoteVideoCard({ participantId, stream, participant, isPinned, onPin, 
       {!hasVideo && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="rounded-full flex items-center justify-center text-white font-medium shadow-lg"
-            style={{ backgroundColor: color, width: compact ? 48 : 72, height: compact ? 48 : 72, fontSize: compact ? 20 : 30 }}>
+            style={{
+              backgroundColor: color,
+              width: compact ? 40 : (window.innerWidth < 640 ? 48 : 72),
+              height: compact ? 40 : (window.innerWidth < 640 ? 48 : 72),
+              fontSize: compact ? 16 : (window.innerWidth < 640 ? 20 : 30)
+            }}>
             {initial}
           </div>
         </div>
       )}
       {!compact && (
         <button onClick={e => { e.stopPropagation(); onPin?.(); }}
-          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-full p-1.5">
-          <Pin className={`w-3.5 h-3.5 ${isPinned ? 'text-[#1a73e8]' : 'text-white'}`} />
+          className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-full p-1 sm:p-1.5">
+          <Pin className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${isPinned ? 'text-[#1a73e8]' : 'text-white'}`} />
         </button>
       )}
-      <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-lg flex items-center gap-1.5">
-        <span className="text-white text-xs font-medium">{name}</span>
-        {participant?.isMuted && <MicOff className="w-3 h-3 text-red-400" />}
+      <div className="absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg flex items-center gap-1">
+        <span className="text-white text-[10px] sm:text-xs font-medium truncate max-w-[100px] sm:max-w-[200px]">{name}</span>
+        {participant?.isMuted && <MicOff className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-400 flex-shrink-0" />}
       </div>
-      {participant?.isHandRaised && <div className="absolute top-2 left-2 text-base animate-bounce">✋</div>}
-      {participant?.isScreenSharing && <div className="absolute top-2 left-2 bg-[#1a73e8] text-white text-[10px] px-2 py-0.5 rounded-md font-medium flex items-center gap-1"><Monitor className="w-3 h-3" /> Presenting</div>}
-      {isActiveSpeaker && !participant?.isScreenSharing && <div className="absolute top-2 right-2 w-2 h-2 bg-[#1a73e8] rounded-full animate-pulse" />}
+      {participant?.isHandRaised && <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 text-sm sm:text-base animate-bounce">✋</div>}
+      {participant?.isScreenSharing && <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 bg-[#1a73e8] text-white text-[9px] sm:text-[10px] px-1.5 py-0.5 sm:px-2 rounded-md font-medium flex items-center gap-0.5 sm:gap-1"><Monitor className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> <span className="hidden sm:inline">Presenting</span><span className="sm:hidden">Present</span></div>}
+      {isActiveSpeaker && !participant?.isScreenSharing && <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1a73e8] rounded-full animate-pulse" />}
     </div>
   );
 }
@@ -408,6 +413,9 @@ export default function MeetingRoom() {
 
     const onAdmitRequest = (data: { socketId: string; userId: string; userName: string }) => {
       setAdmitRequests(prev => prev.some(r => r.socketId === data.socketId) ? prev : [...prev, data]);
+      // Play sound and show toast when someone requests to join
+      if (notificationSounds) playSound('join');
+      showToast(`${data.userName} wants to join`, 'info');
     };
 
     socket.on('meeting:chat-message', onChat);
@@ -678,28 +686,28 @@ export default function MeetingRoom() {
   // ── Video layout
   const renderVideos = () => {
     if (total === 1) return (
-      <div className="relative w-full h-full">
-        <div className="absolute inset-0 bg-[#3C4043] rounded-2xl overflow-hidden">
+      <div className="relative w-full h-full p-1">
+        <div className="absolute inset-1 bg-[#3C4043] rounded-xl sm:rounded-2xl overflow-hidden">
           <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" style={isBackgroundBlurred ? { filter: 'blur(8px)', transform: 'scaleX(-1)' } : undefined} />
           {!isCameraOn && (
             <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]">
-              <div className="w-24 h-24 rounded-full flex items-center justify-center text-white text-4xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div>
+              <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div>
             </div>
           )}
-          <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-lg flex items-center gap-1.5">
-            <span className="text-white text-xs font-medium">{currentUserName} (You)</span>
-            {!isMicOn && <MicOff className="w-3 h-3 text-red-400" />}
+          <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-black/60 backdrop-blur-sm px-2 py-1 sm:px-2.5 rounded-md sm:rounded-lg flex items-center gap-1 sm:gap-1.5">
+            <span className="text-white text-[10px] sm:text-xs font-medium truncate max-w-[150px] sm:max-w-none">{currentUserName} (You)</span>
+            {!isMicOn && <MicOff className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-400 flex-shrink-0" />}
           </div>
-          {isHandRaised && <div className="absolute top-3 left-3 text-xl animate-bounce">✋</div>}
-          {isScreenSharing && <div className="absolute top-3 right-3 bg-[#1a73e8] text-white text-xs px-2 py-1 rounded-md font-medium">Sharing screen</div>}
+          {isHandRaised && <div className="absolute top-2 left-2 sm:top-3 sm:left-3 text-lg sm:text-xl animate-bounce">✋</div>}
+          {isScreenSharing && <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-[#1a73e8] text-white text-[10px] sm:text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md font-medium">Sharing</div>}
         </div>
         {/* Waiting overlay — sits above controls */}
-        <div className="absolute bottom-24 sm:bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-10 w-full px-4">
-          <div className="flex items-center gap-3 bg-[#3C4043]/90 backdrop-blur-sm px-6 py-3 rounded-full">
-            <Users className="w-5 h-5 text-[#BDC1C6] flex-shrink-0" />
-            <span className="text-[#BDC1C6] text-sm font-medium whitespace-nowrap">Waiting for others to join…</span>
+        <div className="absolute bottom-20 sm:bottom-24 md:bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 sm:gap-2 pointer-events-none z-10 w-full px-4">
+          <div className="flex items-center gap-2 sm:gap-3 bg-[#3C4043]/90 backdrop-blur-sm px-4 py-2 sm:px-6 sm:py-3 rounded-full">
+            <Users className="w-4 h-4 sm:w-5 sm:h-5 text-[#BDC1C6] flex-shrink-0" />
+            <span className="text-[#BDC1C6] text-xs sm:text-sm font-medium">Waiting for others to join…</span>
           </div>
-          <p className="text-[#9AA0A6] text-xs">Share the meeting link to invite people</p>
+          <p className="text-[#9AA0A6] text-[10px] sm:text-xs text-center">Share the meeting link to invite people</p>
         </div>
       </div>
     );
@@ -707,24 +715,23 @@ export default function MeetingRoom() {
     if (total === 2 && viewMode === 'grid') {
       const [[rid, rs]] = Array.from(remoteStreams.entries());
       const remoteParticipant = participants.get(rid);
-      const isRemoteSharing = remoteParticipant && isScreenSharing === false; // Check if remote is sharing
 
       // If someone is screen sharing, show their stream full screen
       return (
-        <div className="relative w-full h-full">
+        <div className="relative w-full h-full p-1">
           <RemoteVideoCard participantId={rid} stream={rs} participant={remoteParticipant}
             isPinned={pinnedParticipant === rid} onPin={() => setPinnedParticipant(p => p === rid ? null : rid)}
             fill isActiveSpeaker={activeSpeaker === rid} />
-          <div className="absolute bottom-4 right-4 w-48 sm:w-56 rounded-xl overflow-hidden shadow-2xl border-2 border-white/20 bg-[#3C4043]" style={{ aspectRatio: '16/9' }}>
+          <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 w-32 sm:w-48 md:w-56 rounded-lg sm:rounded-xl overflow-hidden shadow-2xl border border-white/20 sm:border-2 bg-[#3C4043]" style={{ aspectRatio: '16/9' }}>
             <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" style={isBackgroundBlurred ? { filter: 'blur(8px)', transform: 'scaleX(-1)' } : undefined} />
             {!isCameraOn && (
               <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div>
+                <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white text-base sm:text-xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div>
               </div>
             )}
-            <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded text-white text-xs font-medium">You</div>
-            {!isMicOn && <MicOff className="absolute top-2 right-2 w-3.5 h-3.5 text-red-400" />}
-            {isScreenSharing && <div className="absolute top-2 left-2 bg-[#1a73e8] text-white text-[10px] px-2 py-0.5 rounded-md font-medium">Sharing</div>}
+            <div className="absolute bottom-1 left-1 sm:bottom-2 sm:left-2 bg-black/60 backdrop-blur-sm px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded text-white text-[10px] sm:text-xs font-medium">You</div>
+            {!isMicOn && <MicOff className="absolute top-1 right-1 sm:top-2 sm:right-2 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 text-red-400" />}
+            {isScreenSharing && <div className="absolute top-1 left-1 sm:top-2 sm:left-2 bg-[#1a73e8] text-white text-[9px] sm:text-[10px] px-1.5 py-0.5 sm:px-2 rounded-md font-medium">Sharing</div>}
           </div>
         </div>
       );
@@ -734,20 +741,21 @@ export default function MeetingRoom() {
       const sid = pinnedParticipant || Array.from(remoteStreams.keys())[0];
       const ss = sid ? remoteStreams.get(sid) : null;
       return (
-        <div className="w-full h-full flex flex-col gap-2">
+        <div className="w-full h-full flex flex-col gap-1.5 sm:gap-2 p-1">
           <div className="flex-1 min-h-0">
             {ss && sid
               ? <RemoteVideoCard participantId={sid} stream={ss} participant={participants.get(sid)} isPinned onPin={() => setPinnedParticipant(null)} fill isActiveSpeaker={activeSpeaker === sid} />
-              : <div className="w-full h-full bg-[#3C4043] rounded-2xl flex items-center justify-center"><p className="text-[#9AA0A6]">No active speaker</p></div>}
+              : <div className="w-full h-full bg-[#3C4043] rounded-xl sm:rounded-2xl flex items-center justify-center"><p className="text-[#9AA0A6] text-sm">No active speaker</p></div>}
           </div>
-          <div className="h-24 flex gap-2 overflow-x-auto pb-1">
-            <div className="relative bg-[#3C4043] rounded-xl overflow-hidden flex-shrink-0" style={{ aspectRatio: '16/9', height: '100%' }}>
+          <div className="h-20 sm:h-24 flex gap-1.5 sm:gap-2 overflow-x-auto pb-1 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div className="relative bg-[#3C4043] rounded-lg sm:rounded-xl overflow-hidden flex-shrink-0" style={{ aspectRatio: '16/9', height: '100%' }}>
               <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" style={isBackgroundBlurred ? { filter: 'blur(8px)', transform: 'scaleX(-1)' } : undefined} />
-              {!isCameraOn && <div className="absolute inset-0 flex items-center justify-center"><div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div></div>}
-              <div className="absolute bottom-1 left-1 bg-black/60 px-1.5 py-0.5 rounded text-[10px] text-white">You</div>
+              {!isCameraOn && <div className="absolute inset-0 flex items-center justify-center"><div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div></div>}
+              <div className="absolute bottom-0.5 left-0.5 sm:bottom-1 sm:left-1 bg-black/60 px-1 py-0.5 sm:px-1.5 rounded text-[9px] sm:text-[10px] text-white">You</div>
+              {!isMicOn && <MicOff className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-400" />}
             </div>
             {Array.from(remoteStreams.entries()).filter(([id]) => id !== sid).map(([pid, st]) => (
-              <div key={pid} className="relative bg-[#3C4043] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer hover:ring-2 ring-[#1a73e8]"
+              <div key={pid} className="relative bg-[#3C4043] rounded-lg sm:rounded-xl overflow-hidden flex-shrink-0 cursor-pointer active:ring-2 sm:hover:ring-2 ring-[#1a73e8] transition-all"
                 style={{ aspectRatio: '16/9', height: '100%' }} onClick={() => setPinnedParticipant(pid)}>
                 <RemoteVideoCard participantId={pid} stream={st} participant={participants.get(pid)} compact isActiveSpeaker={activeSpeaker === pid} />
               </div>
@@ -757,17 +765,24 @@ export default function MeetingRoom() {
       );
     }
 
-    const cols = total <= 4 ? 2 : total <= 9 ? 3 : 4;
+    // Responsive grid: 1 col on mobile for 2-3 people, 2 cols for 4+
+    const cols = total <= 1 ? 1 : total <= 3 ? (window.innerWidth < 640 ? 1 : 2) : total <= 4 ? 2 : total <= 9 ? (window.innerWidth < 640 ? 2 : 3) : (window.innerWidth < 640 ? 2 : window.innerWidth < 1024 ? 3 : 4);
+
     return (
-      <div className="grid gap-2 w-full h-full" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridAutoRows: '1fr' }}>
-        <div className="relative bg-[#3C4043] rounded-2xl overflow-hidden">
+      <div className="grid gap-2 sm:gap-3 w-full h-full p-1" style={{
+        gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+        gridAutoRows: 'minmax(0, 1fr)',
+        maxHeight: '100%'
+      }}>
+        <div className="relative bg-[#3C4043] rounded-xl sm:rounded-2xl overflow-hidden min-h-[120px] sm:min-h-[180px]">
           <video ref={localVideoRef} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover scale-x-[-1]" style={isBackgroundBlurred ? { filter: 'blur(8px)', transform: 'scaleX(-1)' } : undefined} />
-          {!isCameraOn && <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]"><div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div></div>}
-          <div className="absolute bottom-2 left-2 bg-black/60 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
-            <span className="text-white text-xs font-medium">{currentUserName} (You)</span>
-            {!isMicOn && <MicOff className="w-3 h-3 text-red-400" />}
+          {!isCameraOn && <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]"><div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-white text-xl sm:text-2xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div></div>}
+          <div className="absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg flex items-center gap-1">
+            <span className="text-white text-[10px] sm:text-xs font-medium truncate max-w-[100px] sm:max-w-none">{currentUserName} (You)</span>
+            {!isMicOn && <MicOff className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-400 flex-shrink-0" />}
           </div>
-          {isHandRaised && <div className="absolute top-2 left-2 text-lg animate-bounce">✋</div>}
+          {isHandRaised && <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 text-base sm:text-lg animate-bounce">✋</div>}
+          {isScreenSharing && <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-[#1a73e8] text-white text-[9px] sm:text-[10px] px-1.5 py-0.5 sm:px-2 rounded-md font-medium">Sharing</div>}
         </div>
         {Array.from(remoteStreams.entries()).map(([pid, st]) => (
           <RemoteVideoCard key={pid} participantId={pid} stream={st} participant={participants.get(pid)}
