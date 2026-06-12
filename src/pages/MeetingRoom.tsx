@@ -4,7 +4,7 @@ import {
   Mic, MicOff, Video, VideoOff, Monitor, MonitorOff, PhoneOff,
   Users, MessageSquare, Hand, Smile, Grid, User, Settings,
   Bell, Radio, Square, Maximize2, Minimize2,
-  Copy, Circle, Pin,
+  Copy, Circle, Pin, X,
 } from 'lucide-react';
 import { getToken } from '@/lib/auth';
 import { meetingService } from '@/services/meetingService';
@@ -972,11 +972,22 @@ export default function MeetingRoom() {
 
         {/* Participants sidebar */}
         {showParticipants && (
-          <div className="fixed inset-0 z-40 sm:static sm:inset-auto sm:w-72 bg-[#292B2F] border-l border-[#3C4043] flex flex-col flex-shrink-0">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#3C4043]">
-              <span className="text-white font-medium text-sm">People ({participants.size})</span>
-              <button onClick={() => setShowParticipants(false)} className="text-[#9AA0A6] hover:text-white text-xl leading-none">×</button>
-            </div>
+          <>
+            {/* Mobile backdrop */}
+            <div className="fixed inset-0 bg-black/50 z-40 sm:hidden" onClick={() => setShowParticipants(false)} />
+
+            {/* Participants panel */}
+            <div className="fixed inset-x-0 bottom-0 top-16 z-50 sm:static sm:inset-auto sm:w-72 bg-[#292B2F] border-l border-[#3C4043] flex flex-col flex-shrink-0 rounded-t-2xl sm:rounded-none">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-[#3C4043] flex-shrink-0">
+                <span className="text-white font-medium text-sm">People ({participants.size})</span>
+                <button
+                  onClick={() => setShowParticipants(false)}
+                  className="text-[#9AA0A6] hover:text-white transition-colors p-1 hover:bg-[#3C4043] rounded-full"
+                  aria-label="Close participants"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             <div className="flex-1 overflow-y-auto p-3 space-y-1">
               {/* Self */}
               <div className="flex items-center gap-3 p-2.5 rounded-xl bg-[#3C4043]/50">
@@ -1033,53 +1044,102 @@ export default function MeetingRoom() {
                 ))}
             </div>
           </div>
+          </>
         )}
 
         {/* Chat sidebar */}
         {showChat && (
-          <div className="fixed inset-0 z-40 sm:static sm:inset-auto sm:w-80 bg-[#292B2F] border-l border-[#3C4043] flex flex-col flex-shrink-0">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#3C4043]">
-              <span className="text-white font-medium text-sm">In-call messages</span>
-              <button onClick={() => setShowChat(false)} className="text-[#9AA0A6] hover:text-white text-xl leading-none">×</button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
-              {chatMessages.length === 0
-                ? <p className="text-[#9AA0A6] text-xs text-center mt-8">Messages can only be seen by people in the call</p>
-                : chatMessages.map((msg, i) => {
+          <>
+            {/* Mobile backdrop */}
+            <div className="fixed inset-0 bg-black/50 z-40 sm:hidden" onClick={() => setShowChat(false)} />
+
+            {/* Chat panel */}
+            <div className="fixed inset-x-0 bottom-0 top-16 z-50 sm:static sm:inset-auto sm:w-80 bg-[#292B2F] border-l border-[#3C4043] flex flex-col flex-shrink-0 rounded-t-2xl sm:rounded-none">
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-[#3C4043] flex-shrink-0">
+                <span className="text-white font-medium text-sm">In-call messages</span>
+                <button
+                  onClick={() => setShowChat(false)}
+                  className="text-[#9AA0A6] hover:text-white transition-colors p-1 hover:bg-[#3C4043] rounded-full"
+                  aria-label="Close chat"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Messages area */}
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 min-h-0">
+                {chatMessages.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full gap-2">
+                    <MessageSquare className="w-12 h-12 text-[#5F6368]" />
+                    <p className="text-[#9AA0A6] text-xs text-center">
+                      Messages can only be seen by<br />people in the call
+                    </p>
+                  </div>
+                ) : (
+                  chatMessages.map((msg, i) => {
                     const isMe = msg.userId === currentUserId;
                     return (
-                      <div key={i} className={`flex flex-col gap-1 ${isMe ? 'items-end' : 'items-start'}`}>
-                        {!isMe && <span className="text-[#9AA0A6] text-xs px-1">{msg.userName}</span>}
-                        <div className={`max-w-[85%] px-3 py-2 rounded-2xl text-sm text-white ${isMe ? 'bg-[#1a73e8] rounded-tr-sm' : 'bg-[#3C4043] rounded-tl-sm'}`}>
+                      <div key={i} className={`flex flex-col gap-0.5 ${isMe ? 'items-end' : 'items-start'}`}>
+                        {!isMe && <span className="text-[#9AA0A6] text-[10px] px-2">{msg.userName}</span>}
+                        <div className={`max-w-[85%] sm:max-w-[75%] px-3 py-2 rounded-2xl text-sm break-words ${
+                          isMe
+                            ? 'bg-[#1a73e8] text-white rounded-tr-md'
+                            : 'bg-[#3C4043] text-white rounded-tl-md'
+                        }`}>
                           {msg.message}
                         </div>
-                        <span className="text-[#9AA0A6] text-[10px] px-1">
+                        <span className="text-[#9AA0A6] text-[9px] px-2">
                           {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                     );
-                  })}
-              {typingUsers.size > 0 && (
-                <div className="flex items-center gap-2 text-[#9AA0A6] text-xs">
-                  <div className="flex gap-0.5">
-                    {[0, 150, 300].map(d => <span key={d} className="w-1.5 h-1.5 bg-[#9AA0A6] rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
+                  })
+                )}
+
+                {/* Typing indicator */}
+                {typingUsers.size > 0 && (
+                  <div className="flex items-center gap-2 text-[#9AA0A6] text-xs px-2">
+                    <div className="flex gap-0.5">
+                      {[0, 150, 300].map(d => (
+                        <span
+                          key={d}
+                          className="w-1.5 h-1.5 bg-[#9AA0A6] rounded-full animate-bounce"
+                          style={{ animationDelay: `${d}ms` }}
+                        />
+                      ))}
+                    </div>
+                    <span className="truncate">
+                      {Array.from(typingUsers).slice(0, 2).join(', ')} typing…
+                    </span>
                   </div>
-                  <span>{Array.from(typingUsers).slice(0, 2).join(', ')} typing…</span>
-                </div>
-              )}
-              <div ref={chatEndRef} />
-            </div>
-            <form onSubmit={sendChatMessage} className="p-3 border-t border-[#3C4043]">
-              <div className="flex gap-2">
-                <input value={chatInput} onChange={handleChatInput} placeholder="Send a message…"
-                  className="flex-1 bg-[#3C4043] text-white text-sm px-3 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#1a73e8] placeholder-[#9AA0A6]" />
-                <button type="submit" disabled={!chatInput.trim()}
-                  className="px-4 py-2 bg-[#1a73e8] hover:bg-[#1765cc] disabled:opacity-40 text-white text-sm font-medium rounded-full transition-colors">
-                  Send
-                </button>
+                )}
+
+                {/* Scroll anchor */}
+                <div ref={chatEndRef} />
               </div>
-            </form>
-          </div>
+
+              {/* Input area */}
+              <form onSubmit={sendChatMessage} className="p-3 border-t border-[#3C4043] flex-shrink-0 bg-[#292B2F]">
+                <div className="flex gap-2">
+                  <input
+                    value={chatInput}
+                    onChange={handleChatInput}
+                    placeholder="Send a message…"
+                    autoComplete="off"
+                    className="flex-1 bg-[#3C4043] text-white text-sm px-3 sm:px-4 py-2 sm:py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#1a73e8] placeholder-[#9AA0A6] transition-all"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!chatInput.trim()}
+                    className="px-3 sm:px-4 py-2 bg-[#1a73e8] hover:bg-[#1765cc] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-full transition-all active:scale-95 flex-shrink-0"
+                  >
+                    Send
+                  </button>
+                </div>
+              </form>
+            </div>
+          </>
         )}
       </div>
 
