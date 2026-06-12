@@ -11,7 +11,7 @@ import { meetingService } from '@/services/meetingService';
 import { initializeSocket, getSocket } from '@/services/socketService';
 
 interface ChatMessage { userId: string; userName: string; message: string; timestamp: string; }
-interface Participant { userId: string; userName: string; isHandRaised: boolean; isMuted: boolean; isCameraOff: boolean; }
+interface Participant { userId: string; userName: string; isHandRaised: boolean; isMuted: boolean; isCameraOff: boolean; isScreenSharing?: boolean; }
 interface Reaction { userId: string; userName: string; emoji: string; timestamp: number; }
 
 // ─── Avatar ──────────────────────────────────────────────────────────────────
@@ -81,7 +81,8 @@ function RemoteVideoCard({ participantId, stream, participant, isPinned, onPin, 
         {participant?.isMuted && <MicOff className="w-3 h-3 text-red-400" />}
       </div>
       {participant?.isHandRaised && <div className="absolute top-2 left-2 text-base animate-bounce">✋</div>}
-      {isActiveSpeaker && <div className="absolute top-2 right-2 w-2 h-2 bg-[#1a73e8] rounded-full animate-pulse" />}
+      {participant?.isScreenSharing && <div className="absolute top-2 left-2 bg-[#1a73e8] text-white text-[10px] px-2 py-0.5 rounded-md font-medium flex items-center gap-1"><Monitor className="w-3 h-3" /> Presenting</div>}
+      {isActiveSpeaker && !participant?.isScreenSharing && <div className="absolute top-2 right-2 w-2 h-2 bg-[#1a73e8] rounded-full animate-pulse" />}
     </div>
   );
 }
@@ -479,6 +480,23 @@ export default function MeetingRoom() {
     return () => clearInterval(id);
   }, []);
 
+  // ── Auto-focus on screen share
+  useEffect(() => {
+    // Check if anyone is screen sharing
+    const sharingParticipant = Array.from(participants.entries()).find(([id, p]) => p.isScreenSharing && id !== currentUserId);
+
+    if (sharingParticipant) {
+      const [sharingId] = sharingParticipant;
+      // Auto-switch to speaker view and pin the sharing participant
+      setViewMode('speaker');
+      setPinnedParticipant(sharingId);
+      showToast(`${sharingParticipant[1].userName} is sharing their screen`, 'info');
+    } else if (isScreenSharing) {
+      // If I'm sharing, show toast
+      showToast('You are now presenting', 'success');
+    }
+  }, [participants, isScreenSharing, currentUserId, showToast]);
+
   const playSound = (type: 'join' | 'leave' | 'message') => {
     try {
       const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -517,6 +535,7 @@ export default function MeetingRoom() {
     if (isScreenSharing) {
       await meetingService.stopScreenShare();
       setIsScreenSharing(false);
+      getSocket()?.emit('meeting:participant-update', { meetingId: meetingCode, userId: currentUserId, isScreenSharing: false });
       if (localVideoRef.current && localStream.current) {
         localVideoRef.current.srcObject = localStream.current;
         localVideoRef.current.play().catch(() => {});
@@ -525,12 +544,14 @@ export default function MeetingRoom() {
       try {
         const screenStream = await meetingService.startScreenShare();
         setIsScreenSharing(true);
+        getSocket()?.emit('meeting:participant-update', { meetingId: meetingCode, userId: currentUserId, isScreenSharing: true });
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = screenStream;
           localVideoRef.current.play().catch(() => {});
         }
         screenStream.getVideoTracks()[0].onended = () => {
           setIsScreenSharing(false);
+          getSocket()?.emit('meeting:participant-update', { meetingId: meetingCode, userId: currentUserId, isScreenSharing: false });
           meetingService.stopScreenShare().catch(() => {});
           if (localVideoRef.current && localStream.current) {
             localVideoRef.current.srcObject = localStream.current;
@@ -685,20 +706,25 @@ export default function MeetingRoom() {
 
     if (total === 2 && viewMode === 'grid') {
       const [[rid, rs]] = Array.from(remoteStreams.entries());
+      const remoteParticipant = participants.get(rid);
+      const isRemoteSharing = remoteParticipant && isScreenSharing === false; // Check if remote is sharing
+
+      // If someone is screen sharing, show their stream full screen
       return (
         <div className="relative w-full h-full">
-          <RemoteVideoCard participantId={rid} stream={rs} participant={participants.get(rid)}
+          <RemoteVideoCard participantId={rid} stream={rs} participant={remoteParticipant}
             isPinned={pinnedParticipant === rid} onPin={() => setPinnedParticipant(p => p === rid ? null : rid)}
             fill isActiveSpeaker={activeSpeaker === rid} />
-          <div className="absolute bottom-4 right-4 w-36 sm:w-44 rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-[#3C4043]" style={{ aspectRatio: '16/9' }}>
+          <div className="absolute bottom-4 right-4 w-48 sm:w-56 rounded-xl overflow-hidden shadow-2xl border-2 border-white/20 bg-[#3C4043]" style={{ aspectRatio: '16/9' }}>
             <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" style={isBackgroundBlurred ? { filter: 'blur(8px)', transform: 'scaleX(-1)' } : undefined} />
             {!isCameraOn && (
               <div className="absolute inset-0 flex items-center justify-center bg-[#3C4043]">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div>
+                <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl font-medium" style={{ backgroundColor: myColor }}>{myInitial}</div>
               </div>
             )}
-            <div className="absolute bottom-1.5 left-1.5 bg-black/60 px-2 py-0.5 rounded text-white text-[10px]">You</div>
-            {!isMicOn && <MicOff className="absolute top-1.5 right-1.5 w-3 h-3 text-red-400" />}
+            <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded text-white text-xs font-medium">You</div>
+            {!isMicOn && <MicOff className="absolute top-2 right-2 w-3.5 h-3.5 text-red-400" />}
+            {isScreenSharing && <div className="absolute top-2 left-2 bg-[#1a73e8] text-white text-[10px] px-2 py-0.5 rounded-md font-medium">Sharing</div>}
           </div>
         </div>
       );
@@ -968,6 +994,7 @@ export default function MeetingRoom() {
                     </div>
                     <div className="flex gap-1 items-center">
                       {p.isHandRaised && <span className="text-sm animate-bounce">✋</span>}
+                      {p.isScreenSharing && <Monitor className="w-4 h-4 text-[#1a73e8]" />}
                       {p.isMuted && <MicOff className="w-4 h-4 text-red-400" />}
                       {p.isCameraOff && <VideoOff className="w-4 h-4 text-red-400" />}
                       {pinnedParticipant === pid && <Pin className="w-3.5 h-3.5 text-[#1a73e8]" />}
