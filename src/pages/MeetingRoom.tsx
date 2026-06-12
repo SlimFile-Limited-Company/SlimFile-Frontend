@@ -97,13 +97,13 @@ function CtrlBtn({ onClick, active = true, danger = false, label, children }: {
   onClick: () => void; active?: boolean; danger?: boolean; label?: string; children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-1 flex-shrink-0">
+    <div className="flex flex-col items-center gap-0.5 flex-shrink-0">
       <button onClick={onClick} title={label}
-        className={`w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all duration-150 focus:outline-none
+        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-150 focus:outline-none shadow-lg
           ${danger ? 'bg-red-600 hover:bg-red-500 text-white' : active ? 'bg-[#3C4043] hover:bg-[#4A4D51] text-white' : 'bg-red-600 hover:bg-red-500 text-white'}`}>
         {children}
       </button>
-      {label && <span className="text-[#BDC1C6] text-[10px] font-medium hidden sm:block">{label}</span>}
+      {label && <span className="text-[#E8EAED] text-[9px] font-medium hidden lg:block drop-shadow-md">{label}</span>}
     </div>
   );
 }
@@ -150,6 +150,8 @@ export default function MeetingRoom() {
   const [viewMode, setViewMode] = useState<'grid' | 'speaker'>('grid');
   const [pinnedParticipant, setPinnedParticipant] = useState<string | null>(null);
   const [activeSpeaker, setActiveSpeaker] = useState<string | null>(null);
+  const [showControls, setShowControls] = useState(true);
+  const hideControlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ── Chat
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -487,6 +489,44 @@ export default function MeetingRoom() {
     }, 3000);
     return () => clearInterval(id);
   }, []);
+
+  // ── Auto-hide controls on mouse inactivity
+  useEffect(() => {
+    if (!isJoined) return;
+
+    const handleMouseMove = () => {
+      setShowControls(true);
+      if (hideControlsTimeoutRef.current) {
+        clearTimeout(hideControlsTimeoutRef.current);
+      }
+      hideControlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(false);
+      }, 3000);
+    };
+
+    const handleMouseLeave = () => {
+      if (hideControlsTimeoutRef.current) {
+        clearTimeout(hideControlsTimeoutRef.current);
+      }
+      hideControlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(false);
+      }, 1000);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseleave', handleMouseLeave);
+
+    // Initial timer
+    handleMouseMove();
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseleave', handleMouseLeave);
+      if (hideControlsTimeoutRef.current) {
+        clearTimeout(hideControlsTimeoutRef.current);
+      }
+    };
+  }, [isJoined]);
 
   // ── Auto-focus on screen share
   useEffect(() => {
@@ -907,10 +947,10 @@ export default function MeetingRoom() {
 
   // ── Main meeting room
   return (
-    <div className="h-screen bg-[#202124] flex flex-col overflow-hidden select-none">
+    <div className="h-screen bg-[#202124] relative overflow-hidden select-none">
 
-      {/* Header */}
-      <div className="flex items-center justify-between px-3 sm:px-5 py-2 sm:py-2.5 flex-shrink-0">
+      {/* Header - Overlay */}
+      <div className={`absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-3 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-b from-black/60 to-transparent transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <span className="text-white font-medium text-xs sm:text-sm whitespace-nowrap">SlimFile Meet</span>
           <span className="text-[#9AA0A6] text-sm hidden sm:inline">·</span>
@@ -954,11 +994,11 @@ export default function MeetingRoom() {
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 flex overflow-hidden min-h-0">
+      {/* Main content - Full screen */}
+      <div className="absolute inset-0 flex overflow-hidden">
 
         {/* Video area */}
-        <div className="flex-1 p-2 overflow-hidden min-h-0">
+        <div className="flex-1 p-2 overflow-hidden">
           {renderVideos()}
         </div>
 
@@ -1143,9 +1183,10 @@ export default function MeetingRoom() {
         )}
       </div>
 
-      {/* Controls bar */}
-      <div className="flex-shrink-0 pb-6 pt-2">
-        <div className="flex items-end justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto px-4 sm:px-0 pb-1 scrollbar-hide"
+      {/* Controls bar - Overlay */}
+      <div className={`absolute bottom-0 left-0 right-0 z-30 pb-4 sm:pb-6 pt-6 bg-gradient-to-t from-black/60 to-transparent transition-all duration-300 ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
+        onMouseEnter={() => setShowControls(true)}>
+        <div className="flex items-end justify-start sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto px-3 sm:px-0 scrollbar-hide"
           style={{ WebkitOverflowScrolling: 'touch' }}>
 
           <CtrlBtn onClick={toggleMic} active={isMicOn} label={isMicOn ? 'Mute' : 'Unmute'}>
@@ -1172,9 +1213,9 @@ export default function MeetingRoom() {
             </button>
             <span className="text-[#BDC1C6] text-[10px] font-medium hidden sm:block">React</span>
             {showReactions && (
-              <div className="fixed bottom-28 sm:absolute sm:bottom-20 left-1/2 -translate-x-1/2 bg-[#292B2F] border border-[#3C4043] rounded-2xl p-3 shadow-2xl flex gap-2 z-50">
+              <div className="absolute bottom-16 sm:bottom-20 left-1/2 -translate-x-1/2 bg-[#292B2F] border border-[#3C4043] rounded-2xl p-2 sm:p-3 shadow-2xl flex gap-1.5 sm:gap-2 z-50">
                 {['👍','❤️','😂','😮','👏','🎉'].map(e => (
-                  <button key={e} onClick={() => sendReaction(e)} className="text-2xl hover:scale-125 transition-transform p-1.5 rounded-xl hover:bg-[#3C4043]">{e}</button>
+                  <button key={e} onClick={() => sendReaction(e)} className="text-xl sm:text-2xl hover:scale-125 transition-transform p-1 sm:p-1.5 rounded-xl hover:bg-[#3C4043]">{e}</button>
                 ))}
               </div>
             )}
@@ -1203,8 +1244,8 @@ export default function MeetingRoom() {
           </CtrlBtn>
         </div>
 
-        <p className="hidden sm:block text-center text-[#5F6368] text-xs mt-3">
-          Meeting ID: <span className="font-mono text-[#9AA0A6]">{meetingCode}</span>
+        <p className="hidden sm:block text-center text-[#E8EAED] text-[10px] mt-2 drop-shadow-md">
+          Meeting ID: <span className="font-mono">{meetingCode}</span>
         </p>
       </div>
 
@@ -1243,7 +1284,7 @@ export default function MeetingRoom() {
 
       {/* Admit requests */}
       {admitRequests.length > 0 && (
-        <div className="fixed bottom-28 sm:bottom-36 left-2 right-2 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-50 flex flex-col gap-2 items-stretch sm:items-center">
+        <div className="absolute bottom-24 sm:bottom-28 left-2 right-2 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-40 flex flex-col gap-2 items-stretch sm:items-center">
           {admitRequests.map(req => (
             <div key={req.socketId} className="flex items-center gap-3 sm:gap-4 bg-[#292B2F] border border-[#3C4043] rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 shadow-2xl sm:min-w-[340px]">
               <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0"
