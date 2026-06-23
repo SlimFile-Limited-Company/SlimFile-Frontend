@@ -113,6 +113,12 @@ export default function MeetingRoom() {
   const { meetingCode } = useParams<{ meetingCode: string }>();
   const navigate = useNavigate();
 
+  // ✅ TRAINING APP INTEGRATION: Read query params
+  const urlParams = new URLSearchParams(window.location.search);
+  const trainingId = urlParams.get('trainingId');
+  const urlUserId = urlParams.get('userId');
+  const urlUserName = urlParams.get('userName');
+
   // ── Pre-join lobby
   const [inLobby, setInLobby] = useState(true);
   const lobbyVideoRef = useRef<HTMLVideoElement>(null);
@@ -267,6 +273,8 @@ export default function MeetingRoom() {
     const token = getToken();
     let userId = `guest-${Date.now()}`;
     let userName = 'Guest';
+
+    // 1. Try to get from JWT token
     if (token) {
       try {
         const p = JSON.parse(atob(token.split('.')[1]));
@@ -274,7 +282,21 @@ export default function MeetingRoom() {
         userName = p.name || p.email || userName;
       } catch {}
     }
-    console.log('[Meet] Phase 1: identity —', { userId, userName });
+
+    // 2. ✅ TRAINING APP INTEGRATION: Override with URL params if provided
+    if (urlUserId) {
+      userId = urlUserId;
+      console.log('[Meet] Phase 1: userId from Training App URL:', userId);
+    }
+    if (urlUserName) {
+      userName = urlUserName;
+      console.log('[Meet] Phase 1: userName from Training App URL:', userName);
+    }
+    if (trainingId) {
+      console.log('[Meet] Phase 1: trainingId from URL:', trainingId);
+    }
+
+    console.log('[Meet] Phase 1: identity —', { userId, userName, trainingId });
     setCurrentUserId(userId);
     setCurrentUserName(userName);
     userIdRef.current = userId;
@@ -348,8 +370,9 @@ export default function MeetingRoom() {
     meetingService.onError = (msg) => { console.error('[Meet] meetingService error:', msg); showToast(msg, 'warning'); };
 
     try {
-      meetingService.joinMeeting(meetingCode, userId, userName);
-      console.log('[Meet] Phase 2: joinMeeting() called');
+      // ✅ TRAINING APP INTEGRATION: Pass trainingId if available
+      meetingService.joinMeeting(meetingCode, userId, userName, trainingId);
+      console.log('[Meet] Phase 2: joinMeeting() called', trainingId ? `with trainingId: ${trainingId}` : '');
     } catch (e) {
       console.error('[Meet] Phase 2: joinMeeting() threw:', e);
     }

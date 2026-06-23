@@ -98,8 +98,9 @@ class MeetingService {
 
   /**
    * Join a meeting room
+   * @param trainingId - Optional training ID from external Training App for attendance tracking
    */
-  joinMeeting(meetingId: string, userId: string, userName?: string) {
+  joinMeeting(meetingId: string, userId: string, userName?: string, trainingId?: string | null) {
     this.currentMeetingId = meetingId;
     const socket = getSocket();
 
@@ -118,8 +119,15 @@ class MeetingService {
 
     // Wait for socket to be connected before emitting
     const emitJoin = () => {
-      console.log(`📡 Emitting meeting:join for meeting ${meetingId} as ${userName} (${userId})`);
-      socket.emit('meeting:join', { meetingId, userId, userName });
+      // ✅ TRAINING APP INTEGRATION: Include trainingId if provided
+      const payload: any = { meetingId, userId, userName };
+      if (trainingId) {
+        payload.trainingId = trainingId;
+        console.log(`📡 Emitting meeting:join for Training App meeting ${meetingId} as ${userName} (${userId}), trainingId: ${trainingId}`);
+      } else {
+        console.log(`📡 Emitting meeting:join for meeting ${meetingId} as ${userName} (${userId})`);
+      }
+      socket.emit('meeting:join', payload);
     };
 
     if (socket.connected) {
