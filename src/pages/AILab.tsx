@@ -215,15 +215,30 @@ export default function AILab() {
         .filter(m => m.role === 'user' || m.role === 'assistant')
         .map(m => ({ role: m.role, content: m.content }));
 
-      const response = await fetch('/api/ai/grok', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          feature: selectedFeature,
-          message: finalMessage,
-          conversationHistory: JSON.stringify(conversationHistory),
-        }),
-      });
+      // Use FormData if file is uploaded, otherwise JSON
+      let response;
+      if (uploadedFile) {
+        const formData = new FormData();
+        formData.append('file', uploadedFile);
+        formData.append('feature', selectedFeature || '');
+        formData.append('message', finalMessage);
+        formData.append('conversationHistory', JSON.stringify(conversationHistory));
+
+        response = await fetch('/api/ai/grok', {
+          method: 'POST',
+          body: formData,
+        });
+      } else {
+        response = await fetch('/api/ai/grok', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            feature: selectedFeature,
+            message: finalMessage,
+            conversationHistory: JSON.stringify(conversationHistory),
+          }),
+        });
+      }
 
       const data = await response.json();
 
