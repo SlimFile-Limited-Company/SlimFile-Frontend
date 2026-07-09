@@ -284,6 +284,7 @@ export default function AILab() {
 
   // Chat Interface
   const currentFeature = features.find(f => f.id === selectedFeature);
+  const sidebarOpen = true; // Always show sidebar on desktop
 
   return (
     <div className="flex flex-col h-screen bg-white">
@@ -307,8 +308,58 @@ export default function AILab() {
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Main Content with Sidebar */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <div className={`${sidebarOpen ? 'w-64' : 'w-0'} hidden lg:block border-r border-gray-200 bg-gray-50 transition-all duration-300 overflow-hidden`}>
+          <div className="p-4 space-y-4 h-full overflow-y-auto">
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 uppercase mb-3">Switch Feature</h3>
+              <div className="space-y-2">
+                {features.map((feature) => {
+                  const Icon = feature.icon;
+                  return (
+                    <button
+                      key={feature.id}
+                      onClick={() => handleFeatureSelect(feature.id)}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                        selectedFeature === feature.id
+                          ? 'bg-red-100 text-red-700'
+                          : 'hover:bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span className="text-sm font-medium truncate">{feature.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-200">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase mb-3">Recent Activity</h3>
+              <div className="space-y-2">
+                {messages.length === 0 ? (
+                  <p className="text-xs text-gray-400">No messages yet</p>
+                ) : (
+                  messages.slice(-3).reverse().map((msg, idx) => (
+                    <div key={idx} className="text-xs text-gray-600 p-2 bg-white rounded border border-gray-100">
+                      <p className="font-medium text-gray-700 mb-1">
+                        {msg.role === 'user' ? 'You' : 'AI'}
+                      </p>
+                      <p className="truncate">{msg.content.substring(0, 50)}...</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Area */}
+        <div className="flex-1 flex flex-col">
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50 to-white">
         {messages.map((message, index) => (
           <div
             key={index}
@@ -349,54 +400,56 @@ export default function AILab() {
             </div>
           </div>
         )}
-      </div>
-
-      {/* Input Area */}
-      <div className="border-t border-gray-200 p-4 bg-white">
-        {uploadedFile && (
-          <div className="mb-3 flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2">
-            <Upload className="w-4 h-4 text-gray-600" />
-            <span className="text-sm text-gray-700 flex-1 truncate">
-              {uploadedFile.name}
-            </span>
-            <button
-              onClick={() => setUploadedFile(null)}
-              className="p-1 hover:bg-gray-200 rounded transition-colors"
-            >
-              <X className="w-4 h-4 text-gray-600" />
-            </button>
           </div>
-        )}
 
-        <div className="flex gap-2">
-          <label className="flex items-center justify-center p-3 border-2 border-gray-300 rounded-xl hover:border-red-600 hover:bg-red-50 transition-colors cursor-pointer">
-            <Upload className="w-5 h-5 text-gray-600" />
-            <input
-              type="file"
-              onChange={handleFileUpload}
-              className="hidden"
-              accept=".txt,.pdf,.doc,.docx"
-            />
-          </label>
+          {/* Input Area */}
+          <div className="border-t border-gray-200 p-4 bg-white">
+            {uploadedFile && (
+              <div className="mb-3 flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2">
+                <Upload className="w-4 h-4 text-gray-600" />
+                <span className="text-sm text-gray-700 flex-1 truncate">
+                  {uploadedFile.name}
+                </span>
+                <button
+                  onClick={() => setUploadedFile(null)}
+                  className="p-1 hover:bg-gray-200 rounded transition-colors"
+                >
+                  <X className="w-4 h-4 text-gray-600" />
+                </button>
+              </div>
+            )}
 
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-            placeholder="Type your message..."
-            className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-red-600 transition-colors text-sm sm:text-base"
-            disabled={isLoading}
-          />
+            <div className="flex gap-2">
+              <label className="flex items-center justify-center p-3 border-2 border-gray-300 rounded-xl hover:border-red-600 hover:bg-red-50 transition-colors cursor-pointer">
+                <Upload className="w-5 h-5 text-gray-600" />
+                <input
+                  type="file"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  accept=".txt,.pdf,.doc,.docx"
+                />
+              </label>
 
-          <button
-            onClick={handleSend}
-            disabled={isLoading || (!input.trim() && !uploadedFile)}
-            className="px-4 sm:px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
-          >
-            <Send className="w-5 h-5" />
-            <span className="hidden sm:inline font-medium">Send</span>
-          </button>
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+                placeholder="Type your message..."
+                className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-red-600 transition-colors text-sm sm:text-base"
+                disabled={isLoading}
+              />
+
+              <button
+                onClick={handleSend}
+                disabled={isLoading || (!input.trim() && !uploadedFile)}
+                className="px-4 sm:px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+              >
+                <Send className="w-5 h-5" />
+                <span className="hidden sm:inline font-medium">Send</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
