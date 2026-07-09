@@ -18,6 +18,7 @@ import {
   Linkedin,
   Copy,
   Check,
+  TrendingUp,
 } from "lucide-react";
 
 type Highlight = {
@@ -48,6 +49,31 @@ type NewsItem = {
 };
 
 const newsItems: NewsItem[] = [
+  {
+    id: "10k-users-milestone",
+    title: "SlimFile Reaches 10K New Users Milestone",
+    subtitle:
+      "A major growth milestone as SlimFile reaches 10,000 new users with 9,700 active users, marking 468,113 total events and 59,332 views — a testament to our commitment to making file compression accessible to everyone.",
+    dateLabel: "July 2026",
+    category: "Milestone",
+    icon: TrendingUp,
+    imageHint: "SlimFile 10K users analytics",
+    imageUrl: "/news/10k-milestone.jpeg",
+    highlights: [
+      {
+        title: "10,000 New Users",
+        note: "Up 62,456% from the previous period, showing massive adoption and growth across our platform.",
+      },
+      {
+        title: "9,700 Active Users",
+        note: "Strong user engagement with 9.7K active users consistently using SlimFile for their compression needs.",
+      },
+      {
+        title: "468,113 Total Events",
+        note: "Up 10.1% with users actively compressing, converting, and managing files across all our tools and features.",
+      },
+    ],
+  },
   {
     id: "slimaudio-launch",
     title: "SlimAudio — Audio Compression is Now Live",

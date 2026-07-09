@@ -121,11 +121,9 @@ export const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
-      {/* Audio compression announcement banner */}
-      <a
-        href="https://audio.slim-file.com"
-        target="_blank"
-        rel="noopener noreferrer"
+      {/* 10K Users Milestone banner */}
+      <Link
+        to="/news#10k-users-milestone"
         className="relative flex items-center justify-center gap-3 px-6 py-2.5 text-white overflow-hidden group"
         style={{ background: "linear-gradient(90deg, #b91c1c 0%, #dc2626 40%, #b91c1c 100%)" }}
       >
@@ -136,20 +134,20 @@ export const Header = () => {
 
         {/* Badge */}
         <span className="hidden sm:inline-flex items-center gap-1 bg-white/20 text-white text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 tracking-wide">
-          ✦ NEW
+          🎉 MILESTONE
         </span>
 
         {/* Message */}
         <span className="text-sm font-medium tracking-wide flex items-center gap-2">
-          <span className="font-semibold">SlimAudio is now live</span>
+          <span className="font-semibold">We hit 10K new users!</span>
           <span className="hidden sm:inline opacity-80">—</span>
-          <span className="hidden sm:inline">Compress audio files effortlessly</span>
-          <span className="hidden md:inline opacity-75 text-xs">· MP3 · WAV · FLAC · M4A · More formats</span>
+          <span className="hidden sm:inline">9.7K active users · 468K+ events</span>
+          <span className="hidden md:inline opacity-75 text-xs">· Thank you for being part of our journey</span>
         </span>
 
         {/* Arrow */}
         <span className="text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-200 text-sm shrink-0">→</span>
-      </a>
+      </Link>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
