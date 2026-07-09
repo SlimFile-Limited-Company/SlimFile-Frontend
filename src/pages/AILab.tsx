@@ -359,7 +359,7 @@ export default function AILab() {
         {/* Chat Area */}
         <div className="flex-1 flex flex-col">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50 to-white">
+          <div className="flex-1 overflow-y-auto px-6 pt-12 pb-6 space-y-4 bg-gradient-to-b from-gray-50 to-white">
         {messages.map((message, index) => (
           <div
             key={index}
