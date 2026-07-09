@@ -124,8 +124,49 @@ export default function AILab() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // TODO: Check if file > 10MB, compress first
-    setUploadedFile(file);
+    const maxSize = 10 * 1024 * 1024; // 10 MB
+
+    // If file > 10MB, compress it first
+    if (file.size > maxSize) {
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: 'Your file is larger than 10MB. Compressing it first...',
+        timestamp: new Date(),
+      }]);
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch('/api/compress', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Compression failed');
+        }
+
+        const blob = await response.blob();
+        const compressedFile = new File([blob], file.name, { type: file.type });
+
+        setUploadedFile(compressedFile);
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: `File compressed from ${(file.size / 1024 / 1024).toFixed(2)} MB to ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB. Ready to process!`,
+          timestamp: new Date(),
+        }]);
+      } catch (error) {
+        console.error('Compression error:', error);
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: 'Failed to compress file. Please try a smaller file.',
+          timestamp: new Date(),
+        }]);
+      }
+    } else {
+      setUploadedFile(file);
+    }
   };
 
   const handleSend = async () => {
@@ -351,7 +392,7 @@ export default function AILab() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
             placeholder="Type your message..."
             className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-red-600 transition-colors text-sm sm:text-base"
             disabled={isLoading}
