@@ -90,6 +90,8 @@ export default function AILab() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [targetLanguage, setTargetLanguage] = useState('Spanish');
+  const [compareText2, setCompareText2] = useState('');
 
   useSEO({
     title: 'AI Lab — Intelligent Text Processing | SlimFile',
@@ -169,16 +171,42 @@ export default function AILab() {
   };
 
   const handleSend = async () => {
-    if (!input.trim() && !uploadedFile) return;
+    // Validation based on feature
+    if (selectedFeature === 'compare') {
+      if (!input.trim() || !compareText2.trim()) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: 'Please provide both texts to compare.',
+          timestamp: new Date(),
+        }]);
+        return;
+      }
+    } else if (!input.trim() && !uploadedFile) {
+      return;
+    }
+
+    // Build the message based on feature
+    let finalMessage = input;
+
+    // For translation, add target language
+    if (selectedFeature === 'translate' && !input.toLowerCase().includes('to ')) {
+      finalMessage = `Translate this to ${targetLanguage}: ${input}`;
+    }
+
+    // For comparison, add second text if provided
+    if (selectedFeature === 'compare' && compareText2.trim()) {
+      finalMessage = `Text 1: ${input}\n\nText 2: ${compareText2}`;
+    }
 
     const userMessage: Message = {
       role: 'user',
-      content: input || `Uploaded: ${uploadedFile?.name}`,
+      content: finalMessage || `Uploaded: ${uploadedFile?.name}`,
       timestamp: new Date(),
     };
 
     setMessages(prev => [...prev, userMessage]);
     setInput('');
+    setCompareText2('');
     setIsLoading(true);
 
     try {
@@ -192,7 +220,7 @@ export default function AILab() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           feature: selectedFeature,
-          message: input,
+          message: finalMessage,
           conversationHistory: JSON.stringify(conversationHistory),
         }),
       });
@@ -221,15 +249,6 @@ export default function AILab() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
-    });
   };
 
   // Feature Selection Screen
@@ -427,36 +446,102 @@ export default function AILab() {
               </div>
             )}
 
-            <div className="flex gap-2">
-              <label className="flex items-center justify-center p-3 border-2 border-gray-300 rounded-xl hover:border-red-600 hover:bg-red-50 transition-colors cursor-pointer">
-                <Upload className="w-5 h-5 text-gray-600" />
-                <input
-                  type="file"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                  accept=".txt,.pdf,.doc,.docx"
+            {/* Language selector for Translation */}
+            {selectedFeature === 'translate' && (
+              <div className="mb-3">
+                <label className="block text-xs font-medium text-gray-600 mb-1">Target Language</label>
+                <select
+                  value={targetLanguage}
+                  onChange={(e) => setTargetLanguage(e.target.value)}
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-600 transition-colors text-sm"
+                >
+                  <option value="Spanish">Spanish</option>
+                  <option value="French">French</option>
+                  <option value="German">German</option>
+                  <option value="Italian">Italian</option>
+                  <option value="Portuguese">Portuguese</option>
+                  <option value="Chinese">Chinese</option>
+                  <option value="Japanese">Japanese</option>
+                  <option value="Korean">Korean</option>
+                  <option value="Arabic">Arabic</option>
+                  <option value="Russian">Russian</option>
+                  <option value="Hindi">Hindi</option>
+                  <option value="English">English</option>
+                </select>
+              </div>
+            )}
+
+            {/* Second text input for Compare */}
+            {selectedFeature === 'compare' && (
+              <div className="mb-3">
+                <label className="block text-xs font-medium text-gray-600 mb-1">Text 1</label>
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Enter first text..."
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-600 transition-colors text-sm resize-none"
+                  rows={3}
+                  disabled={isLoading}
                 />
-              </label>
+                <label className="block text-xs font-medium text-gray-600 mb-1 mt-3">Text 2</label>
+                <textarea
+                  value={compareText2}
+                  onChange={(e) => setCompareText2(e.target.value)}
+                  placeholder="Enter second text to compare..."
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-600 transition-colors text-sm resize-none"
+                  rows={3}
+                  disabled={isLoading}
+                />
+              </div>
+            )}
 
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-                placeholder="Type your message..."
-                className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-red-600 transition-colors text-sm sm:text-base"
-                disabled={isLoading}
-              />
+            {/* Hide normal input for compare feature (uses textareas above) */}
+            {selectedFeature !== 'compare' && (
+              <div className="flex gap-2">
+                <label className="flex items-center justify-center p-3 border-2 border-gray-300 rounded-xl hover:border-red-600 hover:bg-red-50 transition-colors cursor-pointer">
+                  <Upload className="w-5 h-5 text-gray-600" />
+                  <input
+                    type="file"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    accept=".txt,.pdf,.doc,.docx"
+                  />
+                </label>
 
-              <button
-                onClick={handleSend}
-                disabled={isLoading || (!input.trim() && !uploadedFile)}
-                className="px-4 sm:px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
-              >
-                <Send className="w-5 h-5" />
-                <span className="hidden sm:inline font-medium">Send</span>
-              </button>
-            </div>
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+                  placeholder="Type your message..."
+                  className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-red-600 transition-colors text-sm sm:text-base"
+                  disabled={isLoading}
+                />
+
+                <button
+                  onClick={handleSend}
+                  disabled={isLoading || (!input.trim() && !uploadedFile)}
+                  className="px-4 sm:px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+                >
+                  <Send className="w-5 h-5" />
+                  <span className="hidden sm:inline font-medium">Send</span>
+                </button>
+              </div>
+            )}
+
+            {/* Send button for compare feature */}
+            {selectedFeature === 'compare' && (
+              <div className="flex justify-end">
+                <button
+                  onClick={handleSend}
+                  disabled={isLoading || !input.trim() || !compareText2.trim()}
+                  className="px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+                >
+                  <Send className="w-5 h-5" />
+                  <span className="font-medium">Compare Texts</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
