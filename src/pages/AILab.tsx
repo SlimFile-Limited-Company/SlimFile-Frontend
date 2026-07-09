@@ -182,18 +182,26 @@ export default function AILab() {
     setIsLoading(true);
 
     try {
-      // TODO: Call backend API with Grok
+      // Build conversation history (only user and assistant messages, no system)
+      const conversationHistory = messages
+        .filter(m => m.role === 'user' || m.role === 'assistant')
+        .map(m => ({ role: m.role, content: m.content }));
+
       const response = await fetch('/api/ai/grok', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           feature: selectedFeature,
           message: input,
-          file: uploadedFile ? await fileToBase64(uploadedFile) : null,
+          conversationHistory: JSON.stringify(conversationHistory),
         }),
       });
 
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'API request failed');
+      }
 
       const assistantMessage: Message = {
         role: 'assistant',
@@ -203,11 +211,11 @@ export default function AILab() {
 
       setMessages(prev => [...prev, assistantMessage]);
       setUploadedFile(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('AI Lab error:', error);
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Sorry, something went wrong. Please try again.',
+        content: `Error: ${error.message || 'Something went wrong. Please try again.'}`,
         timestamp: new Date(),
       }]);
     } finally {
