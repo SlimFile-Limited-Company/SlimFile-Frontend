@@ -165,6 +165,7 @@ import PushListener from './components/PushListener';
 import SlimFileForge from './pages/SlimFileForge';
 import SlimFileLock from './pages/SlimFileLock';
 import SummarizeDocument from './pages/SummarizeDocument';
+import AILab from './pages/AILab';
 import { NotificationProvider } from './components/InAppNotification';
 import UpdatePrompt from './components/UpdatePrompt';
 
@@ -351,6 +352,7 @@ ReactDOM.createRoot(root).render(
           <Route path="forge" element={<SlimFileForge />} />
           <Route path="lock" element={<SlimFileLock />} />
           <Route path="summarize" element={<SummarizeDocument />} />
+          <Route path="ai-lab" element={<AILab />} />
         </Route>
 
         {/* Workspace chat - Full screen without header/footer */}

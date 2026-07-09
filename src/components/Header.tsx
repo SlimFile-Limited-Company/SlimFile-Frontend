@@ -80,6 +80,7 @@ export const Header = () => {
     { name: "PDF Merger & Splitter", href: "/forge" },
     { name: "PDF Password Protect", href: "/lock" },
     { name: "Summarize Document", href: "/summarize" },
+    { name: "AI Lab", href: "/ai-lab" },
   ];
 
   const isActiveRoute = (href: string) => {

@@ -357,6 +357,16 @@ const Home: FC = () => {
                     Get Started
                   </Button>
                 </Link>
+                <Link to="/ai-lab">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="px-8 py-3 rounded-full border-purple-200 text-purple-700 hover:border-purple-500 hover:text-purple-900 hover:bg-purple-50 transition-all duration-200 text-base font-medium gap-2"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    AI Lab
+                  </Button>
+                </Link>
                 <Button
                   size="lg"
                   variant="outline"
