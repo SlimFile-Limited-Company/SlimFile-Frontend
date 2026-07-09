@@ -215,6 +215,9 @@ export default function AILab() {
         .filter(m => m.role === 'user' || m.role === 'assistant')
         .map(m => ({ role: m.role, content: m.content }));
 
+      // Get API base URL from environment
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
       // Use FormData if file is uploaded, otherwise JSON
       let response;
       if (uploadedFile) {
@@ -224,12 +227,12 @@ export default function AILab() {
         formData.append('message', finalMessage);
         formData.append('conversationHistory', JSON.stringify(conversationHistory));
 
-        response = await fetch('/api/ai/grok', {
+        response = await fetch(`${API_BASE_URL}/ai/grok`, {
           method: 'POST',
           body: formData,
         });
       } else {
-        response = await fetch('/api/ai/grok', {
+        response = await fetch(`${API_BASE_URL}/ai/grok`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
