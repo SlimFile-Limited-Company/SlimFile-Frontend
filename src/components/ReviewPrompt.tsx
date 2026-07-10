@@ -104,7 +104,7 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
         <button
           onClick={onClose}
@@ -144,7 +144,7 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
                     onClick={() => setRating(star)}
                     onMouseEnter={() => setHoveredRating(star)}
                     onMouseLeave={() => setHoveredRating(0)}
-                    className="transition-transform hover:scale-110"
+                    className="cursor-pointer"
                   >
                     <Star
                       className={`w-8 h-8 ${
