@@ -531,14 +531,6 @@ export default function AILab() {
             </p>
           </div>
         </div>
-        {/* Mobile features button */}
-        <button
-          onClick={() => setMobileMenuOpen(true)}
-          className="lg:hidden p-2 hover:bg-white/20 rounded-lg transition-colors"
-          title="Switch Feature"
-        >
-          <LayoutGrid className="w-5 h-5 text-white" />
-        </button>
       </div>
 
       {/* Main Content with Sidebar */}
@@ -939,6 +931,15 @@ export default function AILab() {
           </div>
         </div>
       </div>
+
+      {/* Floating features button for mobile */}
+      <button
+        onClick={() => setMobileMenuOpen(true)}
+        className="lg:hidden fixed bottom-24 right-6 z-20 p-4 bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 transition-all"
+        title="Switch Feature"
+      >
+        <LayoutGrid className="w-6 h-6" />
+      </button>
     </div>
   );
 }
