@@ -595,9 +595,18 @@ export default function AILab() {
               </div>
             )}
 
-            {/* Send button for compare feature */}
+            {/* Send button for compare feature with upload support */}
             {selectedFeature === 'compare' && (
-              <div className="flex justify-end">
+              <div className="flex gap-2 justify-end">
+                <label className="flex items-center justify-center p-3 border-2 border-gray-300 rounded-xl hover:border-red-600 hover:bg-red-50 transition-colors cursor-pointer">
+                  <Upload className="w-5 h-5 text-gray-600" />
+                  <input
+                    type="file"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    accept=".txt,.pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  />
+                </label>
                 <button
                   onClick={handleSend}
                   disabled={isLoading || !input.trim() || !compareText2.trim()}
