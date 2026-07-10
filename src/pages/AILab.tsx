@@ -18,7 +18,7 @@ import {
   Check,
   Mail,
   Shield,
-  Menu
+  LayoutGrid
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSEO } from '@/hooks/useSEO';
@@ -531,12 +531,13 @@ export default function AILab() {
             </p>
           </div>
         </div>
-        {/* Mobile menu button */}
+        {/* Mobile features button */}
         <button
           onClick={() => setMobileMenuOpen(true)}
           className="lg:hidden p-2 hover:bg-white/20 rounded-lg transition-colors"
+          title="Switch Feature"
         >
-          <Menu className="w-5 h-5 text-white" />
+          <LayoutGrid className="w-5 h-5 text-white" />
         </button>
       </div>
 
