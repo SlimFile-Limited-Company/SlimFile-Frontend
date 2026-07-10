@@ -130,6 +130,26 @@ export default function AILab() {
   // Mobile sidebar state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Floating button position
+  const [fabPosition, setFabPosition] = useState({ bottom: 180, right: 24 });
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleFabDrag = (e: React.TouchEvent | React.MouseEvent) => {
+    if (!isDragging) return;
+
+    const touch = 'touches' in e ? e.touches[0] : e as React.MouseEvent;
+    const windowHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
+
+    const newBottom = windowHeight - touch.clientY - 28; // 28 = half button size
+    const newRight = windowWidth - touch.clientX - 28;
+
+    setFabPosition({
+      bottom: Math.max(100, Math.min(newBottom, windowHeight - 100)),
+      right: Math.max(24, Math.min(newRight, windowWidth - 80))
+    });
+  };
+
   useSEO({
     title: 'AI Lab — Intelligent Text Processing | SlimFile',
     description: 'Access powerful AI tools for translation, summarization, rewriting, and more. Process text and documents with advanced AI capabilities.',
@@ -932,11 +952,18 @@ export default function AILab() {
         </div>
       </div>
 
-      {/* Floating features button for mobile */}
+      {/* Floating features button for mobile - draggable */}
       <button
-        onClick={() => setMobileMenuOpen(true)}
-        className="lg:hidden fixed bottom-24 right-6 z-20 p-4 bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 transition-all"
-        title="Switch Feature"
+        onClick={() => !isDragging && setMobileMenuOpen(true)}
+        onTouchStart={() => setIsDragging(true)}
+        onTouchMove={handleFabDrag}
+        onTouchEnd={() => setIsDragging(false)}
+        onMouseDown={() => setIsDragging(true)}
+        onMouseMove={handleFabDrag}
+        onMouseUp={() => setIsDragging(false)}
+        className="lg:hidden fixed z-20 p-4 bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 transition-colors cursor-move touch-none"
+        style={{ bottom: `${fabPosition.bottom}px`, right: `${fabPosition.right}px` }}
+        title="Switch Feature (Drag to move)"
       >
         <LayoutGrid className="w-6 h-6" />
       </button>
