@@ -8,6 +8,7 @@ import {
   Loader2, Trash2, GripVertical, FilePlus2,
   Scissors, FileText, Download, ShieldCheck, MergeIcon,
 } from 'lucide-react';
+import { ReviewPrompt } from '@/components/ReviewPrompt';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -29,7 +30,7 @@ async function downloadBlob(blob: Blob, filename: string) {
 }
 
 // ── Merge Tab ──────────────────────────────────────────────────────────────
-function MergeTab() {
+function MergeTab({ onSuccess }: { onSuccess?: () => void }) {
   const { toast } = useToast();
   const [files, setFiles]       = useState<PdfFile[]>([]);
   const [merging, setMerging]   = useState(false);
@@ -76,6 +77,7 @@ function MergeTab() {
       await downloadBlob(blob, 'merged.pdf');
       toast({ title: 'Merged!', description: `${files.length} PDFs combined into one file.` });
       setFiles([]);
+      onSuccess?.();
     } catch (err: any) {
       toast({ title: 'Error', description: err.message, variant: 'destructive' });
     } finally {
@@ -153,7 +155,7 @@ function MergeTab() {
 }
 
 // ── Split Tab ──────────────────────────────────────────────────────────────
-function SplitTab() {
+function SplitTab({ onSuccess }: { onSuccess?: () => void }) {
   const { toast } = useToast();
   const [file, setFile]         = useState<File | null>(null);
   const [ranges, setRanges]     = useState('');
@@ -183,6 +185,7 @@ function SplitTab() {
       await downloadBlob(blob, 'split_pages.zip');
       toast({ title: 'Split complete!', description: 'Your PDF pages are ready — check the downloaded ZIP.' });
       setFile(null); setRanges('');
+      onSuccess?.();
     } catch (err: any) {
       toast({ title: 'Error', description: err.message, variant: 'destructive' });
     } finally {
@@ -262,6 +265,7 @@ const SlimFileForge = () => {
     description: 'Merge multiple PDFs into one or split a PDF into separate pages. Free, fast, and secure — no uploads to third-party servers.',
   });
   const [tab, setTab] = useState<'merge' | 'split'>('merge');
+  const [showReviewPrompt, setShowReviewPrompt] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-32 pb-20">
@@ -323,7 +327,7 @@ const SlimFileForge = () => {
 
         {/* Card */}
         <div className="bg-white rounded-3xl border border-gray-200/80 p-7 shadow-sm">
-          {tab === 'merge' ? <MergeTab /> : <SplitTab />}
+          {tab === 'merge' ? <MergeTab onSuccess={() => setTimeout(() => setShowReviewPrompt(true), 1500)} /> : <SplitTab onSuccess={() => setTimeout(() => setShowReviewPrompt(true), 1500)} />}
         </div>
 
         {/* Footer */}
@@ -332,6 +336,13 @@ const SlimFileForge = () => {
           <span>Files are processed securely and never stored on our servers</span>
         </div>
       </div>
+
+      {/* Review Prompt */}
+      <ReviewPrompt
+        isOpen={showReviewPrompt}
+        onClose={() => setShowReviewPrompt(false)}
+        operationType="forge"
+      />
     </div>
   );
 };

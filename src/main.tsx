@@ -166,6 +166,7 @@ import SlimFileForge from './pages/SlimFileForge';
 import SlimFileLock from './pages/SlimFileLock';
 import SummarizeDocument from './pages/SummarizeDocument';
 import AILab from './pages/AILab';
+import Reviews from './pages/Reviews';
 import { NotificationProvider } from './components/InAppNotification';
 import UpdatePrompt from './components/UpdatePrompt';
 
@@ -332,6 +333,7 @@ ReactDOM.createRoot(root).render(
           <Route path="news" element={<News />} />
           <Route path="global-dashboard" element={<GlobalDashboard />} />
           <Route path="feed" element={<Feed />} />
+          <Route path="reviews" element={<Reviews />} />
           <Route path="portals" element={
             <ProtectedRoute>
               <Portals />

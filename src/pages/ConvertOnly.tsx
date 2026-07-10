@@ -7,6 +7,7 @@ import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image } from "lu
 import { notifyConversionComplete } from "@/services/pushNotificationService";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useSEO } from "@/hooks/useSEO";
+import { ReviewPrompt } from "@/components/ReviewPrompt";
 
 const ConvertOnly = () => {
   useSEO({
@@ -25,6 +26,7 @@ const ConvertOnly = () => {
   const [selectedFormat, setSelectedFormat] = useState<string>('pdf');
   const [availableFormats, setAvailableFormats] = useState<string[]>([]);
   const [showFormatSelector, setShowFormatSelector] = useState(false);
+  const [showReviewPrompt, setShowReviewPrompt] = useState(false);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
@@ -218,8 +220,13 @@ const ConvertOnly = () => {
         });
       }
     }
-    
+
     setIsConverting(false);
+
+    // Show review prompt after successful conversion
+    setTimeout(() => {
+      setShowReviewPrompt(true);
+    }, 1500);
   };
 
   // UPDATED: Handle file selection - don't start processing yet
@@ -585,6 +592,13 @@ const ConvertOnly = () => {
           </div>
         </section>
       </main>
+
+      {/* Review Prompt */}
+      <ReviewPrompt
+        isOpen={showReviewPrompt}
+        onClose={() => setShowReviewPrompt(false)}
+        operationType="convert"
+      />
     </div>
   );
 };

@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { CompressionResult } from "@/components/CompressionResult";
 import { toast } from "@/hooks/use-toast";
-import { isAuthenticated } from "@/lib/auth";
+import { isAuthenticated, getUserProfile } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2 } from "lucide-react";
 import { notifyCompressionComplete } from "@/services/pushNotificationService";
 import { useTranslation } from "@/hooks/useTranslation";
+import { ReviewPrompt } from "@/components/ReviewPrompt";
 
 const Compress = () => {
   const { t } = useTranslation();
@@ -20,6 +21,7 @@ const Compress = () => {
   const [compressedFiles, setCompressedFiles] = useState<(File | null)[]>([]);
   const [compressedSizes, setCompressedSizes] = useState<number[]>([]);
   const [pdfWarnings, setPdfWarnings] = useState<string[]>([]);
+  const [showReviewPrompt, setShowReviewPrompt] = useState(false);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
@@ -177,6 +179,11 @@ const Compress = () => {
       }
     }
     setIsCompressing(false);
+
+    // Show review prompt after successful compression
+    setTimeout(() => {
+      setShowReviewPrompt(true);
+    }, 1500);
   };
 
   const handleFilesSelect = (files: File[]) => {
@@ -475,6 +482,13 @@ const Compress = () => {
           </div>
         </section>
       </main>
+
+      {/* Review Prompt */}
+      <ReviewPrompt
+        isOpen={showReviewPrompt}
+        onClose={() => setShowReviewPrompt(false)}
+        operationType="compress"
+      />
     </div>
   );
 };
