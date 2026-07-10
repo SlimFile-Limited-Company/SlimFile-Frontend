@@ -40,7 +40,6 @@ export const Header = () => {
 
   const dashboardNavigation = [
     { name: "My Dashboard", href: "/dashboard" },
-    { name: "Global Stats", href: "/global-dashboard" },
   ];
 
   const connectNavigation = [
