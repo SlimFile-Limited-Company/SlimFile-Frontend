@@ -18,7 +18,8 @@ import {
   Check,
   Mail,
   Shield,
-  LayoutGrid
+  LayoutGrid,
+  Home
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSEO } from '@/hooks/useSEO';
@@ -285,13 +286,6 @@ export default function AILab() {
     loadConversations(featureId);
   };
 
-  const handleBack = () => {
-    setSelectedFeature(null);
-    setMessages([]);
-    setInput('');
-    setUploadedFile(null);
-  };
-
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -547,26 +541,23 @@ export default function AILab() {
     <>
       <style>{`
         .ai-lab-container {
-          height: calc(100vh - 120px);
-          margin-top: 80px;
+          height: 100vh;
         }
-        @media (min-width: 1024px) {
-          .ai-lab-container {
-            height: calc(100vh - 80px);
-            margin-top: 80px;
-          }
+        /* Hide main app header on AI Lab page */
+        body:has(.ai-lab-container) header {
+          display: none;
         }
       `}</style>
       <div className="flex flex-col bg-white ai-lab-container">
       {/* Header */}
-      <div className="sticky top-20 z-10 flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-red-600">
+      <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-red-600">
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleBack}
+          <Link
+            to="/"
             className="p-2 hover:bg-white/20 rounded-lg transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-white" />
-          </button>
+            <Home className="w-5 h-5 text-white" />
+          </Link>
           <div>
             <h2 className="text-white font-semibold text-sm sm:text-base">
               {currentFeature?.name}
