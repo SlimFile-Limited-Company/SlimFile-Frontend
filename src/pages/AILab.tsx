@@ -718,28 +718,45 @@ export default function AILab() {
 
             {/* Email Type & Tone selectors */}
             {selectedFeature === 'email' && (
-              <div className="mb-3 grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Email Type</label>
-                  <button
-                    onClick={() => setShowEmailTypeModal(true)}
-                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-red-600 focus:outline-none focus:border-red-600 transition-colors text-sm text-left flex items-center justify-between"
-                  >
-                    <span>{emailType}</span>
-                    <span className="text-gray-400">▼</span>
-                  </button>
+              <>
+                <div className="mb-3 grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Email Type</label>
+                    <button
+                      onClick={() => setShowEmailTypeModal(true)}
+                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-red-600 focus:outline-none focus:border-red-600 transition-colors text-sm text-left flex items-center justify-between"
+                    >
+                      <span>{emailType}</span>
+                      <span className="text-gray-400">▼</span>
+                    </button>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Tone</label>
+                    <button
+                      onClick={() => setShowEmailToneModal(true)}
+                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-red-600 focus:outline-none focus:border-red-600 transition-colors text-sm text-left flex items-center justify-between"
+                    >
+                      <span>{emailTone}</span>
+                      <span className="text-gray-400">▼</span>
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Tone</label>
-                  <button
-                    onClick={() => setShowEmailToneModal(true)}
-                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-red-600 focus:outline-none focus:border-red-600 transition-colors text-sm text-left flex items-center justify-between"
-                  >
-                    <span>{emailTone}</span>
-                    <span className="text-gray-400">▼</span>
-                  </button>
+
+                {/* Helper text based on email type */}
+                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-xs font-medium text-blue-900 mb-1">What to include:</p>
+                  <p className="text-xs text-blue-700">
+                    {emailType === 'Job Application' && '• Position applying for • Company name • Your relevant experience • Why you\'re interested'}
+                    {emailType === 'Apology Letter' && '• What happened • Why you\'re sorry • How you\'ll fix it • What you\'ll do differently'}
+                    {emailType === 'Thank You Email' && '• What you\'re thanking for • Specific details • Impact it had • Your appreciation'}
+                    {emailType === 'Business Proposal' && '• What you\'re proposing • Key benefits • Timeline • Next steps'}
+                    {emailType === 'Meeting Request' && '• Purpose of meeting • Preferred date/time • Duration • What you\'ll discuss'}
+                    {emailType === 'Follow-up Email' && '• Previous conversation reference • What you\'re following up on • Your question or request'}
+                    {emailType === 'Customer Service' && '• Issue or question • Order/Account details • What resolution you need'}
+                    {emailType === 'Professional Inquiry' && '• What information you need • Why you\'re asking • Any relevant context'}
+                  </p>
                 </div>
-              </div>
+              </>
             )}
 
             {/* Language Modal */}
