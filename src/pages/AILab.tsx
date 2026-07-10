@@ -108,7 +108,7 @@ export default function AILab() {
 
   // Load conversation history when feature changes
   useEffect(() => {
-    if (selectedFeature && localStorage.getItem('token')) {
+    if (selectedFeature && localStorage.getItem('jwt')) {
       loadConversations(selectedFeature);
     }
   }, [selectedFeature]);
@@ -138,7 +138,7 @@ export default function AILab() {
   const loadConversations = async (feature: AIFeature) => {
     setLoadingHistory(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('jwt');
       if (!token) return;
 
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/ai/conversations?feature=${feature}&limit=10`, {
@@ -159,7 +159,7 @@ export default function AILab() {
   // Load a specific conversation
   const loadConversation = async (id: string) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('jwt');
       if (!token) return;
 
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/ai/conversations/${id}`, {
@@ -328,7 +328,7 @@ export default function AILab() {
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
       // Get auth token if available
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('jwt');
       const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {};
 
       // Use FormData if file is uploaded, otherwise JSON
