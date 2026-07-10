@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
@@ -108,6 +108,7 @@ const features = [
 ];
 
 export default function AILab() {
+  const [searchParams] = useSearchParams();
   const [selectedFeature, setSelectedFeature] = useState<AIFeature>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -154,6 +155,17 @@ export default function AILab() {
     title: 'AI Lab — Intelligent Text Processing | SlimFile',
     description: 'Access powerful AI tools for translation, summarization, rewriting, and more. Process text and documents with advanced AI capabilities.',
   });
+
+  // Auto-select feature from URL parameter
+  useEffect(() => {
+    const featureParam = searchParams.get('feature');
+    if (featureParam && !selectedFeature) {
+      const validFeature = features.find(f => f.id === featureParam);
+      if (validFeature) {
+        handleFeatureSelect(featureParam as AIFeature);
+      }
+    }
+  }, [searchParams]);
 
   // Load conversation history when feature changes
   useEffect(() => {
