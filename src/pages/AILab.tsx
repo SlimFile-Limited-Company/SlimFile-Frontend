@@ -532,7 +532,7 @@ export default function AILab() {
   const sidebarOpen = true; // Always show sidebar on desktop
 
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col bg-white" style={{ height: 'calc(100vh - 120px)' }}>
       {/* Header */}
       <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gradient-to-r from-red-600 to-orange-600">
         <div className="flex items-center gap-3">
