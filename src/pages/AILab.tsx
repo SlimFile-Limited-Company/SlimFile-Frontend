@@ -17,7 +17,8 @@ import {
   Copy,
   Check,
   Mail,
-  Shield
+  Shield,
+  Menu
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSEO } from '@/hooks/useSEO';
@@ -125,6 +126,9 @@ export default function AILab() {
   const [emailTone, setEmailTone] = useState('Professional');
   const [showEmailTypeModal, setShowEmailTypeModal] = useState(false);
   const [showEmailToneModal, setShowEmailToneModal] = useState(false);
+
+  // Mobile sidebar state
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useSEO({
     title: 'AI Lab — Intelligent Text Processing | SlimFile',
@@ -234,6 +238,7 @@ export default function AILab() {
     setMessages([]);
     setInput('');
     setUploadedFile(null);
+    setMobileMenuOpen(false); // Close mobile menu
 
     const feature = features.find(f => f.id === featureId);
     if (feature) {
@@ -526,12 +531,27 @@ export default function AILab() {
             </p>
           </div>
         </div>
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setMobileMenuOpen(true)}
+          className="lg:hidden p-2 hover:bg-white/20 rounded-lg transition-colors"
+        >
+          <Menu className="w-5 h-5 text-white" />
+        </button>
       </div>
 
       {/* Main Content with Sidebar */}
       <div className="flex flex-1 overflow-hidden">
+        {/* Mobile sidebar overlay */}
+        {mobileMenuOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
-        <div className={`${sidebarOpen ? 'w-64' : 'w-0'} hidden lg:block border-r border-gray-200 bg-gray-50 transition-all duration-300 overflow-hidden`}>
+        <div className={`${sidebarOpen ? 'w-64' : 'w-0'} fixed lg:static inset-y-0 left-0 z-50 lg:z-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 border-r border-gray-200 bg-gray-50 transition-all duration-300 overflow-hidden lg:block`}>
           <div className="p-4 space-y-4 h-full overflow-y-auto">
             <div>
               <h3 className="text-xs font-semibold text-gray-500 uppercase mb-3">Switch Feature</h3>
