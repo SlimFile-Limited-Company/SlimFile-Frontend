@@ -559,7 +559,7 @@ export default function AILab() {
       `}</style>
       <div className="flex flex-col bg-white ai-lab-container">
       {/* Header */}
-      <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gradient-to-r from-red-600 to-orange-600">
+      <div className="sticky top-20 z-10 flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-red-600">
         <div className="flex items-center gap-3">
           <button
             onClick={handleBack}
