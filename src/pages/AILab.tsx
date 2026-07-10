@@ -11,7 +11,9 @@ import {
   Send,
   ArrowLeft,
   Upload,
-  X
+  X,
+  Copy,
+  Check
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSEO } from '@/hooks/useSEO';
@@ -92,11 +94,33 @@ export default function AILab() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [targetLanguage, setTargetLanguage] = useState('Spanish');
   const [compareText2, setCompareText2] = useState('');
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   useSEO({
     title: 'AI Lab — Intelligent Text Processing | SlimFile',
     description: 'Access powerful AI tools for translation, summarization, rewriting, and more. Process text and documents with advanced AI capabilities.',
   });
+
+  // Helper to extract the main answer from AI response
+  const extractAnswer = (content: string, feature: AIFeature): string => {
+    // For translation, extract the translated text
+    if (feature === 'translate') {
+      const match = content.match(/(?:is|would be|:)\s*["']([^"']+)["']/);
+      if (match) return match[1];
+      // Try to find quoted text
+      const quoted = content.match(/["']([^"']{2,})["']/);
+      if (quoted) return quoted[1];
+    }
+    // For other features, return the full content
+    return content;
+  };
+
+  const handleCopy = async (content: string, index: number) => {
+    const answer = extractAnswer(content, selectedFeature);
+    await navigator.clipboard.writeText(answer);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 2000);
+  };
 
   const handleFeatureSelect = (featureId: AIFeature) => {
     setSelectedFeature(featureId);
@@ -420,25 +444,40 @@ export default function AILab() {
             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-3 ${
+              className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-3 relative group ${
                 message.role === 'user'
                   ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-tr-sm'
                   : 'bg-gray-100 text-gray-900 rounded-tl-sm'
               }`}
             >
-              <p className="text-sm sm:text-base whitespace-pre-wrap break-words">
+              <p className="text-sm sm:text-base whitespace-pre-wrap break-words pr-8">
                 {message.content}
               </p>
-              <p
-                className={`text-xs mt-1 ${
-                  message.role === 'user' ? 'text-white/70' : 'text-gray-500'
-                }`}
-              >
-                {message.timestamp.toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </p>
+              <div className="flex items-center justify-between mt-1">
+                <p
+                  className={`text-xs ${
+                    message.role === 'user' ? 'text-white/70' : 'text-gray-500'
+                  }`}
+                >
+                  {message.timestamp.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </p>
+                {message.role === 'assistant' && (
+                  <button
+                    onClick={() => handleCopy(message.content, index)}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-200 rounded"
+                    title="Copy answer"
+                  >
+                    {copiedIndex === index ? (
+                      <Check className="w-4 h-4 text-green-600" />
+                    ) : (
+                      <Copy className="w-4 h-4 text-gray-600" />
+                    )}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ))}

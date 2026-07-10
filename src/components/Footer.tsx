@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { trackEvent } from "@/lib/utils";
 import { useTranslation } from "@/hooks/useTranslation";
 import { FaLinkedinIn, FaInstagram, FaXTwitter, FaTiktok } from "react-icons/fa6";
@@ -7,6 +7,12 @@ import { SiTrustpilot } from "react-icons/si";
 export const Footer = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Hide footer on AI Lab page
+  if (location.pathname === '/ai-lab') {
+    return null;
+  }
 
   const handleFooterClick = (path: string, label: string) => {
     trackEvent('footer_link_click', { path, label });
