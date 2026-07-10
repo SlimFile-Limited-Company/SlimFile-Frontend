@@ -570,7 +570,7 @@ export default function AILab() {
                     type="file"
                     onChange={handleFileUpload}
                     className="hidden"
-                    accept=".txt,.pdf,.doc,.docx"
+                    accept=".txt,.pdf,.doc,.docx,.jpg,.jpeg,.png"
                   />
                 </label>
 
