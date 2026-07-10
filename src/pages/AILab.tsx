@@ -548,10 +548,12 @@ export default function AILab() {
       <style>{`
         .ai-lab-container {
           height: calc(100vh - 120px);
+          margin-top: 80px;
         }
         @media (min-width: 1024px) {
           .ai-lab-container {
-            height: 100vh;
+            height: calc(100vh - 80px);
+            margin-top: 80px;
           }
         }
       `}</style>
