@@ -727,7 +727,7 @@ export default function AILab() {
                 <button
                   onClick={handleSend}
                   disabled={isLoading || (!input.trim() && !uploadedFile)}
-                  className="px-4 sm:px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+                  className="px-4 sm:px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-black hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
                 >
                   <Send className="w-5 h-5" />
                   <span className="hidden sm:inline font-medium">Send</span>
@@ -750,7 +750,7 @@ export default function AILab() {
                 <button
                   onClick={handleSend}
                   disabled={isLoading || !input.trim() || !compareText2.trim()}
-                  className="px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+                  className="px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-black hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
                 >
                   <Send className="w-5 h-5" />
                   <span className="font-medium">Compare Texts</span>
