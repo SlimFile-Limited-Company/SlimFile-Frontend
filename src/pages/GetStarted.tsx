@@ -1,7 +1,7 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit, Sparkles } from 'lucide-react';
+import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit, Sparkles, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, Shield } from 'lucide-react';
 
 const FEATURES = [
   {
@@ -66,7 +66,56 @@ const FEATURES = [
   },
 ];
 
+const AI_LAB_FEATURES = [
+  {
+    icon: Languages, title: 'Translate Text', badge: 'AI', gradient: 'from-blue-500 to-cyan-500',
+    href: '/ai-lab', description: 'Translate text to any language instantly with AI.',
+    features: ['12+ languages', 'Preserves context', 'File upload support'],
+  },
+  {
+    icon: FileText, title: 'Summarize Document', badge: 'AI', gradient: 'from-purple-500 to-pink-500',
+    href: '/ai-lab', description: 'Get key points and summaries from any document.',
+    features: ['PDF, DOCX support', 'Smart extraction', 'Structured output'],
+  },
+  {
+    icon: PenTool, title: 'Rewrite Content', badge: 'AI', gradient: 'from-green-500 to-emerald-500',
+    href: '/ai-lab', description: 'Improve, formalize, or simplify your text.',
+    features: ['Multiple styles', 'Tone adjustment', 'Quality improvement'],
+  },
+  {
+    icon: MessageCircleQuestion, title: 'Ask Questions', badge: 'AI', gradient: 'from-orange-500 to-red-500',
+    href: '/ai-lab', description: 'Get answers about your documents and text.',
+    features: ['Document analysis', 'Detailed answers', 'Context-aware'],
+  },
+  {
+    icon: Tags, title: 'Extract Keywords', badge: 'AI', gradient: 'from-yellow-500 to-orange-500',
+    href: '/ai-lab', description: 'Identify key terms, topics, and tags automatically.',
+    features: ['Topic analysis', 'Tag generation', 'Categorization'],
+  },
+  {
+    icon: Smile, title: 'Analyze Sentiment', badge: 'AI', gradient: 'from-pink-500 to-rose-500',
+    href: '/ai-lab', description: 'Detect tone, emotions, and sentiment in text.',
+    features: ['Emotion detection', 'Tone analysis', 'Detailed breakdown'],
+  },
+  {
+    icon: GitCompare, title: 'Compare Texts', badge: 'AI', gradient: 'from-indigo-500 to-purple-500',
+    href: '/ai-lab', description: 'Find differences and similarities between texts.',
+    features: ['Side-by-side analysis', 'Change detection', 'Structured report'],
+  },
+  {
+    icon: Mail, title: 'Email Generator', badge: 'AI', gradient: 'from-blue-600 to-cyan-600',
+    href: '/ai-lab', description: 'Generate professional emails from bullet points.',
+    features: ['8 email types', '6 tone options', 'Instant generation'],
+  },
+  {
+    icon: Shield, title: 'Remove Plagiarism', badge: 'AI', gradient: 'from-teal-500 to-green-500',
+    href: '/ai-lab', description: 'Rewrite text to make it 100% original.',
+    features: ['Complete rewrite', 'Meaning preserved', 'Pass plagiarism checks'],
+  },
+];
+
 const GetStarted: FC = () => {
+  const [activeTab, setActiveTab] = useState<'general' | 'ai'>('general');
   useSEO({
     title: 'Get Started with SlimFile — Choose Your Tool',
     description: 'Pick the right SlimFile tool for your task. Compress, convert, summarize, OCR, meet, collaborate — everything you need to manage files smarter.',
@@ -83,9 +132,35 @@ const GetStarted: FC = () => {
           <p className="text-gray-500 text-base">Pick a tool and get started in seconds.</p>
         </div>
 
+        {/* Tabs */}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex bg-white rounded-xl p-1 shadow-sm border border-gray-200">
+            <button
+              onClick={() => setActiveTab('general')}
+              className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                activeTab === 'general'
+                  ? 'bg-red-600 text-white shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              General Features
+            </button>
+            <button
+              onClick={() => setActiveTab('ai')}
+              className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                activeTab === 'ai'
+                  ? 'bg-red-600 text-white shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              AI Lab
+            </button>
+          </div>
+        </div>
+
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {FEATURES.map((f) => (
+          {(activeTab === 'general' ? FEATURES : AI_LAB_FEATURES).map((f) => (
             <Link to={f.href} key={f.title} className="group block">
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-200 h-full flex flex-col">
 
