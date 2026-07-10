@@ -15,7 +15,9 @@ import {
   Upload,
   X,
   Copy,
-  Check
+  Check,
+  Mail,
+  Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSEO } from '@/hooks/useSEO';
@@ -28,6 +30,8 @@ type AIFeature =
   | 'keywords'
   | 'sentiment'
   | 'compare'
+  | 'email'
+  | 'plagiarism'
   | null;
 
 interface Message {
@@ -86,6 +90,20 @@ const features = [
     icon: GitCompare,
     color: 'from-indigo-500 to-purple-500',
   },
+  {
+    id: 'email' as AIFeature,
+    name: 'Email Generator',
+    description: 'Generate professional emails from bullet points',
+    icon: Mail,
+    color: 'from-blue-500 to-cyan-500',
+  },
+  {
+    id: 'plagiarism' as AIFeature,
+    name: 'Remove Plagiarism',
+    description: 'Rewrite text to make it 100% original',
+    icon: Shield,
+    color: 'from-teal-500 to-green-500',
+  },
 ];
 
 export default function AILab() {
@@ -101,6 +119,12 @@ export default function AILab() {
   const [conversations, setConversations] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
+
+  // Email Generator state
+  const [emailType, setEmailType] = useState('Professional Inquiry');
+  const [emailTone, setEmailTone] = useState('Professional');
+  const [showEmailTypeModal, setShowEmailTypeModal] = useState(false);
+  const [showEmailToneModal, setShowEmailToneModal] = useState(false);
 
   useSEO({
     title: 'AI Lab — Intelligent Text Processing | SlimFile',
@@ -306,6 +330,11 @@ export default function AILab() {
     // For comparison, add second text if provided
     if (selectedFeature === 'compare' && compareText2.trim()) {
       finalMessage = `Text 1: ${input}\n\nText 2: ${compareText2}`;
+    }
+
+    // For email generator, add type and tone
+    if (selectedFeature === 'email') {
+      finalMessage = `Generate a ${emailTone.toLowerCase()} email for: ${emailType}\n\nKey points:\n${input}`;
     }
 
     const userMessage: Message = {
@@ -667,6 +696,32 @@ export default function AILab() {
               </div>
             )}
 
+            {/* Email Type & Tone selectors */}
+            {selectedFeature === 'email' && (
+              <div className="mb-3 grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Email Type</label>
+                  <button
+                    onClick={() => setShowEmailTypeModal(true)}
+                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-red-600 focus:outline-none focus:border-red-600 transition-colors text-sm text-left flex items-center justify-between"
+                  >
+                    <span>{emailType}</span>
+                    <span className="text-gray-400">▼</span>
+                  </button>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Tone</label>
+                  <button
+                    onClick={() => setShowEmailToneModal(true)}
+                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-red-600 focus:outline-none focus:border-red-600 transition-colors text-sm text-left flex items-center justify-between"
+                  >
+                    <span>{emailTone}</span>
+                    <span className="text-gray-400">▼</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Language Modal */}
             {showLanguageModal && (
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowLanguageModal(false)}>
@@ -692,6 +747,70 @@ export default function AILab() {
                         }`}
                       >
                         {lang}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Email Type Modal */}
+            {showEmailTypeModal && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowEmailTypeModal(false)}>
+                <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center justify-center mb-4">
+                    <h3 className="text-lg font-semibold">Select Email Type</h3>
+                    <button onClick={() => setShowEmailTypeModal(false)} className="p-1 hover:bg-gray-100 rounded">
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
+                    {['Job Application', 'Apology Letter', 'Thank You Email', 'Business Proposal', 'Meeting Request', 'Follow-up Email', 'Customer Service', 'Professional Inquiry'].map((type) => (
+                      <button
+                        key={type}
+                        onClick={() => {
+                          setEmailType(type);
+                          setShowEmailTypeModal(false);
+                        }}
+                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                          emailType === type
+                            ? 'bg-red-600 text-white'
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
+                      >
+                        {type}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Email Tone Modal */}
+            {showEmailToneModal && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowEmailToneModal(false)}>
+                <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">Select Tone</h3>
+                    <button onClick={() => setShowEmailToneModal(false)} className="p-1 hover:bg-gray-100 rounded">
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Formal', 'Professional', 'Friendly', 'Casual', 'Apologetic', 'Persuasive'].map((tone) => (
+                      <button
+                        key={tone}
+                        onClick={() => {
+                          setEmailTone(tone);
+                          setShowEmailToneModal(false);
+                        }}
+                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                          emailTone === tone
+                            ? 'bg-red-600 text-white'
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
+                      >
+                        {tone}
                       </button>
                     ))}
                   </div>
