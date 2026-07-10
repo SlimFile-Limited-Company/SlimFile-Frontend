@@ -467,7 +467,7 @@ export default function AILab() {
                 {message.role === 'assistant' && (
                   <button
                     onClick={() => handleCopy(message.content, index)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-200 rounded"
+                    className="p-1 hover:bg-gray-200 rounded transition-colors"
                     title="Copy answer"
                   >
                     {copiedIndex === index ? (
