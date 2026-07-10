@@ -19,14 +19,12 @@ export const Header = () => {
     connect: boolean;
     suites: boolean;
     devtools: boolean;
-    audio: boolean;
   }>({
     company: false,
     dashboard: false,
     connect: false,
     suites: false,
     devtools: false,
-    audio: false,
   });
 
   const companyNavigation = [
@@ -56,21 +54,18 @@ export const Header = () => {
   const devToolsNavigation = [
     { name: "API Dashboard", href: "https://api.slim-file.com/", external: true },
     { name: "Developer Program", href: "https://api.slim-file.com/developer-program", external: true },
+    { name: "Audio API", href: "https://system.slim-file.com", external: true },
     { name: "SlimFile SDK", href: "https://www.npmjs.com/package/@slimfile/sdk", external: true },
     { name: "SlimFile CLI", href: "https://www.npmjs.com/package/@slimfile/cli", external: true },
     { name: "SDK on GitHub", href: "https://github.com/ikaydreams-dev/SlimFile-SDK", external: true },
     { name: "CLI on GitHub", href: "https://github.com/ikaydreams-dev/slimfile-cli", external: true },
   ];
 
-  const audioNavigation = [
-    { name: "Audio Compression", href: "https://audio.slim-file.com", external: true },
-    { name: "Audio API", href: "https://system.slim-file.com", external: true },
-  ];
-
   const suitesNavigation = [
     { name: "Compress", href: "/compress" },
     { name: "Convert", href: "/convert-only" },
     { name: "Compress and Convert", href: "/convert-compress" },
+    { name: "Audio Compression", href: "https://audio.slim-file.com", external: true },
     { name: "OCR Tool", href: "/ocr-tool" },
     { name: "PDF Merger & Splitter", href: "/forge" },
     { name: "PDF Password Protect", href: "/lock" },
@@ -99,7 +94,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'company' | 'dashboard' | 'connect' | 'suites' | 'devtools' | 'audio') => {
+  const toggleMobileDropdown = (dropdown: 'company' | 'dashboard' | 'connect' | 'suites' | 'devtools') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -287,33 +282,6 @@ export const Header = () => {
               {hoveredDropdown === 'devtools' && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
                   {devToolsNavigation.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200"
-                    >
-                      {item.name}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* SlimAudio Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleDropdownHover('audio')}
-              onMouseLeave={() => handleDropdownHover(null)}
-            >
-              <button className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap">
-                <span>SlimAudio</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              {hoveredDropdown === 'audio' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
-                  {audioNavigation.map((item) => (
                     <a
                       key={item.name}
                       href={item.href}
@@ -552,38 +520,6 @@ export const Header = () => {
                 {mobileDropdownsOpen.devtools && (
                   <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
                     {devToolsNavigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-300 rounded-lg"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {item.name}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Mobile SlimAudio Dropdown */}
-              <div className="px-4">
-                <button
-                  onClick={() => toggleMobileDropdown('audio')}
-                  className="w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium text-gray-700 hover:text-red-600 transition-all duration-300 rounded-lg"
-                >
-                  <span>SlimAudio</span>
-                  <ChevronDown
-                    className={cn(
-                      "w-4 h-4 transition-transform duration-200",
-                      mobileDropdownsOpen.audio && "transform rotate-180"
-                    )}
-                  />
-                </button>
-                {mobileDropdownsOpen.audio && (
-                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
-                    {audioNavigation.map((item) => (
                       <a
                         key={item.name}
                         href={item.href}
