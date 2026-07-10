@@ -578,7 +578,7 @@ export default function AILab() {
             <div
               className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-3 relative group ${
                 message.role === 'user'
-                  ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-tr-sm'
+                  ? 'bg-gray-900 text-white rounded-tr-sm'
                   : 'bg-gray-100 text-gray-900 rounded-tl-sm'
               }`}
             >
