@@ -100,6 +100,7 @@ export default function AILab() {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [conversations, setConversations] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
 
   useSEO({
     title: 'AI Lab — Intelligent Text Processing | SlimFile',
@@ -656,24 +657,45 @@ export default function AILab() {
             {selectedFeature === 'translate' && (
               <div className="mb-3">
                 <label className="block text-xs font-medium text-gray-600 mb-1">Target Language</label>
-                <select
-                  value={targetLanguage}
-                  onChange={(e) => setTargetLanguage(e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-600 transition-colors text-sm"
+                <button
+                  onClick={() => setShowLanguageModal(true)}
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-red-600 focus:outline-none focus:border-red-600 transition-colors text-sm text-left flex items-center justify-between"
                 >
-                  <option value="Spanish">Spanish</option>
-                  <option value="French">French</option>
-                  <option value="German">German</option>
-                  <option value="Italian">Italian</option>
-                  <option value="Portuguese">Portuguese</option>
-                  <option value="Chinese">Chinese</option>
-                  <option value="Japanese">Japanese</option>
-                  <option value="Korean">Korean</option>
-                  <option value="Arabic">Arabic</option>
-                  <option value="Russian">Russian</option>
-                  <option value="Hindi">Hindi</option>
-                  <option value="English">English</option>
-                </select>
+                  <span>{targetLanguage}</span>
+                  <span className="text-gray-400">▼</span>
+                </button>
+              </div>
+            )}
+
+            {/* Language Modal */}
+            {showLanguageModal && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowLanguageModal(false)}>
+                <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">Select Target Language</h3>
+                    <button onClick={() => setShowLanguageModal(false)} className="p-1 hover:bg-gray-100 rounded">
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
+                    {['Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Chinese', 'Japanese', 'Korean', 'Arabic', 'Russian', 'Hindi', 'English'].map((lang) => (
+                      <button
+                        key={lang}
+                        onClick={() => {
+                          setTargetLanguage(lang);
+                          setShowLanguageModal(false);
+                        }}
+                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                          targetLanguage === lang
+                            ? 'bg-red-600 text-white'
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
+                      >
+                        {lang}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 
