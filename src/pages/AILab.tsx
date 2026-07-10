@@ -61,7 +61,7 @@ const features = [
   {
     id: 'question' as AIFeature,
     name: 'Ask Questions',
-    description: 'Get answers about your text or document',
+    description: 'Upload a document or paste text, then ask me anything about it',
     icon: MessageCircleQuestion,
     color: 'from-orange-500 to-red-500',
   },
