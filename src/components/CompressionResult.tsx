@@ -6,7 +6,6 @@ import { ProcessingText } from "@/components/ProcessingText";
 import { useNavigate } from "react-router-dom";
 import { isAuthenticated } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
-import { motion } from "framer-motion";
 import { playSuccessSound } from "@/utils/sound";
 
 interface CompressionResultProps {
@@ -221,21 +220,12 @@ export const CompressionResult = ({
   return (
     <div className="w-full space-y-6">
       {originalFiles.map((file, idx) => (
-        <motion.div
-          key={file.name + idx}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: idx * 0.1 }}
-        >
+        <div key={file.name + idx}>
           {isCompressing && (!compressedFiles[idx]) ? (
             <Card className="bg-white shadow-lg border border-gray-100 mb-6">
               <CardContent className="p-6">
                 <div className="text-center">
-                  <motion.div
-                    className="h-8 w-8 border-2 border-red-600 border-r-transparent rounded-full mx-auto mb-4"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  />
+                  <div className="h-8 w-8 border-2 border-red-600 border-r-transparent rounded-full mx-auto mb-4 animate-spin" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Compressing: {file.name}
                   </h3>
@@ -247,13 +237,7 @@ export const CompressionResult = ({
             <Card className="bg-white shadow-lg border border-red-100 mb-6">
               <CardContent className="p-4 sm:p-6">
                 <div className="text-center mb-6">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                  >
-                    <CheckCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
-                  </motion.div>
+                  <CheckCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
                     Compression Complete!
                   </h3>
@@ -325,11 +309,7 @@ export const CompressionResult = ({
                   >
                     {(isDownloading && downloadingIndex === idx) ? (
                       <>
-                        <motion.div
-                          className="h-4 w-4 border-2 border-white border-r-transparent rounded-full mr-2"
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        />
+                        <div className="h-4 w-4 border-2 border-white border-r-transparent rounded-full mr-2 animate-spin" />
                         Downloading...
                       </>
                     ) : (
@@ -352,15 +332,11 @@ export const CompressionResult = ({
               </CardContent>
             </Card>
           ) : null}
-        </motion.div>
+        </div>
       ))}
       {/* Total Compression Stats for Multiple Files */}
       {compressedFiles.filter(Boolean).length > 1 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
+        <div>
           <Card className="bg-white shadow-lg border border-gray-100 mb-6">
             <CardContent className="p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">
@@ -398,16 +374,11 @@ export const CompressionResult = ({
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
       )}
       {/* Download All Button */}
       {compressedFiles.filter(Boolean).length > 1 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex justify-center mt-2"
-        >
+        <div className="flex justify-center mt-2">
           <Button
             onClick={handleDownloadAll}
             className="bg-red-600 text-white hover:bg-red-700"
@@ -416,14 +387,9 @@ export const CompressionResult = ({
             <Download className="h-4 w-4 mr-2" />
             Download All Compressed Files
           </Button>
-        </motion.div>
+        </div>
       )}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-        className="flex justify-center mt-4"
-      >
+      <div className="flex justify-center mt-4">
         <Button 
           variant="outline" 
           onClick={() => {
@@ -435,7 +401,7 @@ export const CompressionResult = ({
           <RotateCcw className="h-4 w-4 mr-2" />
           Compress Another File
         </Button>
-      </motion.div>
+      </div>
     </div>
   );
 };

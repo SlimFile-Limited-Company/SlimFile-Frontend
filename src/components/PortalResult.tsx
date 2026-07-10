@@ -3,7 +3,6 @@ import { Download, CheckCircle, RotateCcw, FileText, Archive, TrendingDown } fro
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { motion } from "framer-motion";
 import { playSuccessSound } from "@/utils/sound";
 
 interface CompressionStats {
@@ -102,13 +101,13 @@ export const PortalResult = ({
         <Card className="bg-white shadow-xl border border-gray-100">
           <CardContent className="p-8">
             <div className="text-center">
-              <motion.div
+              <div
                 className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-2xl flex items-center justify-center"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                
+                
               >
                 <Archive className="w-8 h-8 text-white" />
-              </motion.div>
+              </div>
 
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
                 Compressing Your Files
@@ -177,20 +176,20 @@ export const PortalResult = ({
     return (
       <div className="w-full max-w-3xl mx-auto space-y-6">
         {/* Success Header */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+        <div
+          
+          
+          
         >
           <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 shadow-xl">
             <CardContent className="p-8 text-center">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+              <div
+                
+                
+                
               >
                 <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-              </motion.div>
+              </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 Compression Complete!
               </h2>
@@ -199,13 +198,13 @@ export const PortalResult = ({
               </p>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
         {/* Stats Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+        <div
+          
+          
+          
           className="grid grid-cols-1 md:grid-cols-3 gap-4"
         >
           <Card className="bg-white border border-gray-200">
@@ -246,13 +245,13 @@ export const PortalResult = ({
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
         {/* Size Comparison */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+        <div
+          
+          
+          
         >
           <Card className="bg-white border border-gray-200">
             <CardContent className="p-6">
@@ -285,13 +284,13 @@ export const PortalResult = ({
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
         {/* Download Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
+        <div
+          
+          
+          
           className="flex flex-col sm:flex-row gap-4"
         >
           {compressedBlob ? (
@@ -302,10 +301,10 @@ export const PortalResult = ({
             >
               {isDownloading ? (
                 <>
-                  <motion.div
-                    className="h-5 w-5 border-2 border-white border-r-transparent rounded-full mr-2"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  <div
+                    className="h-5 w-5 border-2 border-white border-r-transparent rounded animate-spin-full mr-2"
+                    
+                    
                   />
                   Downloading...
                 </>
@@ -333,7 +332,7 @@ export const PortalResult = ({
             <RotateCcw className="w-5 h-5 mr-2" />
             Compress Another Folder
           </Button>
-        </motion.div>
+        </div>
       </div>
     );
   }

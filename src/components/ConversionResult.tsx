@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { CheckCircle2, Download, RefreshCw, FileText, Image, File, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProcessingText } from '@/components/ProcessingText';
@@ -188,20 +187,11 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
         const isComplete = progress === 100 && convertedFile;
 
         return (
-          <motion.div
-            key={`${originalFile.name}-${index}`}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-          >
+          <div key={`${originalFile.name}-${index}`}>
             {!isComplete ? (
               <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-lg">
                 <div className="text-center">
-                  <motion.div
-                    className="h-8 w-8 border-2 border-blue-600 border-r-transparent rounded-full mx-auto mb-4"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  />
+                  <div className="h-8 w-8 border-2 border-blue-600 border-r-transparent rounded-full mx-auto mb-4 animate-spin" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Converting: {originalFile.name}
                   </h3>
@@ -211,13 +201,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
             ) : (
               <div className="bg-white rounded-2xl p-6 border-2 border-blue-100 shadow-lg">
                 <div className="text-center mb-6">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                  >
-                    <CheckCircle2 className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                  </motion.div>
+                  <CheckCircle2 className="h-12 w-12 text-blue-600 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
                     Conversion Complete!
                   </h3>
@@ -277,11 +261,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
                   >
                     {(isDownloading && downloadingIndex === index) ? (
                       <>
-                        <motion.div
-                          className="h-4 w-4 border-2 border-white border-r-transparent rounded-full mr-2"
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        />
+                        <div className="h-4 w-4 border-2 border-white border-r-transparent rounded-full mr-2 animate-spin" />
                         Downloading...
                       </>
                     ) : (
@@ -303,13 +283,13 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
                 </div>
               </div>
             )}
-          </motion.div>
+          </div>
         );
       })}
 
       {/* Download All Button */}
       {convertedFiles.filter(Boolean).length > 1 && allComplete && (
-        <motion.div
+        <div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -323,12 +303,12 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
             <Download className="h-4 w-4 mr-2" />
             Download All Converted Files
           </Button>
-        </motion.div>
+        </div>
       )}
 
       {/* Conversion Stats Summary */}
       {allComplete && convertedFiles.length > 1 && (
-        <motion.div
+        <div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -359,11 +339,11 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
               <p className="text-sm text-gray-600">Total Size</p>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Reset Button */}
-      <motion.div
+      <div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
@@ -377,7 +357,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
           <RefreshCw className="h-4 w-4 mr-2" />
           Convert Another File
         </Button>
-      </motion.div>
+      </div>
     </div>
   );
 };
