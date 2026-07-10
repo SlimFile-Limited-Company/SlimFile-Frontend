@@ -15,7 +15,6 @@ export const Header = () => {
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
   const [mobileDropdownsOpen, setMobileDropdownsOpen] = useState<{
     company: boolean;
-    api: boolean;
     dashboard: boolean;
     connect: boolean;
     suites: boolean;
@@ -23,7 +22,6 @@ export const Header = () => {
     audio: boolean;
   }>({
     company: false,
-    api: false,
     dashboard: false,
     connect: false,
     suites: false,
@@ -42,11 +40,6 @@ export const Header = () => {
     { name: "Contact", href: "/contact" },
   ];
 
-  const apiNavigation = [
-    { name: "API Dashboard", href: "https://api.slim-file.com/", external: true },
-    { name: "Developer Program", href: "https://api.slim-file.com/developer-program", external: true },
-  ];
-
   const dashboardNavigation = [
     { name: "My Dashboard", href: "/dashboard" },
     { name: "Global Stats", href: "/global-dashboard" },
@@ -61,6 +54,8 @@ export const Header = () => {
   ];
 
   const devToolsNavigation = [
+    { name: "API Dashboard", href: "https://api.slim-file.com/", external: true },
+    { name: "Developer Program", href: "https://api.slim-file.com/developer-program", external: true },
     { name: "SlimFile SDK", href: "https://www.npmjs.com/package/@slimfile/sdk", external: true },
     { name: "SlimFile CLI", href: "https://www.npmjs.com/package/@slimfile/cli", external: true },
     { name: "SDK on GitHub", href: "https://github.com/ikaydreams-dev/SlimFile-SDK", external: true },
@@ -104,7 +99,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'company' | 'api' | 'dashboard' | 'connect' | 'suites' | 'devtools' | 'audio') => {
+  const toggleMobileDropdown = (dropdown: 'company' | 'dashboard' | 'connect' | 'suites' | 'devtools' | 'audio') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -204,36 +199,6 @@ export const Header = () => {
                     >
                       {item.name}
                     </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* SlimFile API Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleDropdownHover('api')}
-              onMouseLeave={() => handleDropdownHover(null)}
-            >
-              <button className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 px-3 py-1.5 rounded-full">
-                <span>API</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              {hoveredDropdown === 'api' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
-                  {apiNavigation.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={cn(
-                        "block px-4 py-2 text-sm transition-colors duration-200",
-                        "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                      )}
-                    >
-                      {item.name}
-                    </a>
                   ))}
                 </div>
               )}
@@ -485,41 +450,6 @@ export const Header = () => {
                       >
                         {item.name}
                       </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Mobile SlimFile API Dropdown */}
-              <div className="px-4">
-                <button
-                  onClick={() => toggleMobileDropdown('api')}
-                  className="w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium text-gray-700 hover:text-red-600 transition-all duration-300 rounded-lg"
-                >
-                  <span>API</span>
-                  <ChevronDown
-                    className={cn(
-                      "w-4 h-4 transition-transform duration-200",
-                      mobileDropdownsOpen.api && "transform rotate-180"
-                    )}
-                  />
-                </button>
-                {mobileDropdownsOpen.api && (
-                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
-                    {apiNavigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={cn(
-                          "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
-                          "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                        )}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {item.name}
-                      </a>
                     ))}
                   </div>
                 )}
