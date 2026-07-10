@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Languages,
@@ -95,11 +95,21 @@ export default function AILab() {
   const [targetLanguage, setTargetLanguage] = useState('Spanish');
   const [compareText2, setCompareText2] = useState('');
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
 
   useSEO({
     title: 'AI Lab — Intelligent Text Processing | SlimFile',
     description: 'Access powerful AI tools for translation, summarization, rewriting, and more. Process text and documents with advanced AI capabilities.',
   });
+
+  // Load conversation history when feature changes
+  useEffect(() => {
+    if (selectedFeature && localStorage.getItem('token')) {
+      loadConversations(selectedFeature);
+    }
+  }, [selectedFeature]);
 
   // Helper to extract the main answer from AI response
   const extractAnswer = (content: string, feature: AIFeature): string => {
@@ -122,8 +132,78 @@ export default function AILab() {
     setTimeout(() => setCopiedIndex(null), 2000);
   };
 
+  // Load conversation history for selected feature
+  const loadConversations = async (feature: AIFeature) => {
+    setLoadingHistory(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/ai/conversations?feature=${feature}&limit=10`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setConversations(data.conversations || []);
+      }
+    } catch (error) {
+      console.error('Failed to load conversations:', error);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  // Load a specific conversation
+  const loadConversation = async (id: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/ai/conversations/${id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const conv = data.conversation;
+
+        setConversationId(conv._id);
+        setMessages(conv.messages.map((m: any) => ({
+          role: m.role,
+          content: m.content,
+          timestamp: new Date(m.timestamp)
+        })));
+
+        if (conv.targetLanguage) {
+          setTargetLanguage(conv.targetLanguage);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load conversation:', error);
+    }
+  };
+
+  // Start new conversation
+  const startNewConversation = () => {
+    setConversationId(null);
+    setMessages([]);
+    setInput('');
+    setUploadedFile(null);
+
+    const feature = features.find(f => f.id === selectedFeature);
+    if (feature) {
+      setMessages([{
+        role: 'assistant',
+        content: `Welcome to ${feature.name}! ${feature.description}. How can I help you today?`,
+        timestamp: new Date(),
+      }]);
+    }
+  };
+
   const handleFeatureSelect = (featureId: AIFeature) => {
     setSelectedFeature(featureId);
+    setConversationId(null);
     setMessages([]);
     setInput('');
     setUploadedFile(null);
@@ -136,6 +216,9 @@ export default function AILab() {
         timestamp: new Date(),
       }]);
     }
+
+    // Load conversation history for this feature
+    loadConversations(featureId);
   };
 
   const handleBack = () => {
@@ -242,6 +325,10 @@ export default function AILab() {
       // Get API base URL from environment
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
+      // Get auth token if available
+      const token = localStorage.getItem('token');
+      const headers: HeadersInit = token ? { 'Authorization': `Bearer ${token}` } : {};
+
       // Use FormData if file is uploaded, otherwise JSON
       let response;
       if (uploadedFile) {
@@ -251,18 +338,31 @@ export default function AILab() {
         formData.append('message', finalMessage);
         formData.append('conversationHistory', JSON.stringify(conversationHistory));
 
+        // Include conversationId if continuing existing conversation
+        if (conversationId) {
+          formData.append('conversationId', conversationId);
+        }
+
+        // Include targetLanguage for translation feature
+        if (selectedFeature === 'translate') {
+          formData.append('targetLanguage', targetLanguage);
+        }
+
         response = await fetch(`${API_BASE_URL}/ai/grok`, {
           method: 'POST',
+          headers,
           body: formData,
         });
       } else {
         response = await fetch(`${API_BASE_URL}/ai/grok`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { ...headers, 'Content-Type': 'application/json' },
           body: JSON.stringify({
             feature: selectedFeature,
             message: finalMessage,
             conversationHistory: JSON.stringify(conversationHistory),
+            conversationId: conversationId || undefined,
+            targetLanguage: selectedFeature === 'translate' ? targetLanguage : undefined,
           }),
         });
       }
@@ -290,6 +390,16 @@ export default function AILab() {
 
       setMessages(prev => [...prev, assistantMessage]);
       setUploadedFile(null);
+
+      // Update conversationId if returned (for new conversations)
+      if (data.conversationId && !conversationId) {
+        setConversationId(data.conversationId);
+      }
+
+      // Reload conversation history to show the new/updated conversation
+      if (data.conversationId && selectedFeature) {
+        loadConversations(selectedFeature);
+      }
     } catch (error: any) {
       console.error('AI Lab error:', error);
       setMessages(prev => [...prev, {
@@ -415,18 +525,38 @@ export default function AILab() {
             </div>
 
             <div className="pt-4 border-t border-gray-200">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase mb-3">Recent Activity</h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase">History</h3>
+                <button
+                  onClick={startNewConversation}
+                  className="text-xs text-red-600 hover:text-red-700 font-medium"
+                >
+                  New Chat
+                </button>
+              </div>
               <div className="space-y-2">
-                {messages.length === 0 ? (
-                  <p className="text-xs text-gray-400">No messages yet</p>
+                {loadingHistory ? (
+                  <p className="text-xs text-gray-400">Loading...</p>
+                ) : conversations.length === 0 ? (
+                  <p className="text-xs text-gray-400">No saved conversations</p>
                 ) : (
-                  messages.slice(-3).reverse().map((msg, idx) => (
-                    <div key={idx} className="text-xs text-gray-600 p-2 bg-white rounded border border-gray-100">
-                      <p className="font-medium text-gray-700 mb-1">
-                        {msg.role === 'user' ? 'You' : 'AI'}
+                  conversations.map((conv) => (
+                    <button
+                      key={conv._id}
+                      onClick={() => loadConversation(conv._id)}
+                      className={`w-full text-left text-xs p-2 bg-white rounded border transition-colors ${
+                        conversationId === conv._id
+                          ? 'border-red-200 bg-red-50'
+                          : 'border-gray-100 hover:border-red-100 hover:bg-gray-50'
+                      }`}
+                    >
+                      <p className="font-medium text-gray-700 mb-1 truncate">
+                        {conv.title}
                       </p>
-                      <p className="truncate">{msg.content.substring(0, 50)}...</p>
-                    </div>
+                      <p className="text-gray-500 text-[10px]">
+                        {new Date(conv.lastMessageAt).toLocaleDateString()} • {conv.messages.length} msgs
+                      </p>
+                    </button>
                   ))
                 )}
               </div>
