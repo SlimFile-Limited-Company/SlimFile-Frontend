@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import {
   Languages,
   FileText,
@@ -580,9 +582,17 @@ export default function AILab() {
                   : 'bg-gray-100 text-gray-900 rounded-tl-sm'
               }`}
             >
-              <p className="text-sm sm:text-base whitespace-pre-wrap break-words pr-8">
-                {message.content}
-              </p>
+              {message.role === 'assistant' ? (
+                <div className="text-sm sm:text-base break-words pr-8 prose prose-sm max-w-none prose-headings:mt-3 prose-headings:mb-2 prose-p:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {message.content}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <p className="text-sm sm:text-base whitespace-pre-wrap break-words pr-8">
+                  {message.content}
+                </p>
+              )}
               <div className="flex items-center justify-between mt-1">
                 <p
                   className={`text-xs ${
