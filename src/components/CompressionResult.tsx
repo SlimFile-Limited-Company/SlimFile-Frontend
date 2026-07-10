@@ -1,4 +1,4 @@
-import { useState, Fragment, useEffect, useRef } from "react";
+import { useState, Fragment, useEffect } from "react";
 import { Download, FileText, Image as ImageIcon, RotateCcw, CheckCircle, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,10 +29,9 @@ export const CompressionResult = ({
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
   const [hasPlayedSound, setHasPlayedSound] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const navigate = useNavigate();
 
-  // Play sound and trigger confetti when compression is complete
+  // Play sound when compression is complete
   useEffect(() => {
     const allFilesCompressed = compressedFiles.length > 0 &&
                              compressedFiles.every(file => file !== null) &&
@@ -40,88 +39,11 @@ export const CompressionResult = ({
                              !hasPlayedSound;
 
     if (allFilesCompressed && compressedFiles.length === originalFiles.length) {
-      console.log('🎯 Compression completed! Playing success sound and confetti...');
+      console.log('🎯 Compression completed! Playing success sound...');
       playSuccessSound();
       setHasPlayedSound(true);
-      triggerConfetti();
     }
   }, [isCompressing, compressedFiles, originalFiles.length, hasPlayedSound]);
-
-  // Confetti animation
-  const triggerConfetti = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const confettiPieces: Array<{
-      x: number;
-      y: number;
-      rotation: number;
-      rotationSpeed: number;
-      speed: number;
-      color: string;
-      width: number;
-      height: number;
-      velocityX: number;
-      velocityY: number;
-    }> = [];
-
-    const colors = ['#ef4444', '#f97316', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
-    const confettiCount = 150;
-
-    for (let i = 0; i < confettiCount; i++) {
-      confettiPieces.push({
-        x: Math.random() * canvas.width,
-        y: -20 - Math.random() * canvas.height,
-        rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 10,
-        speed: Math.random() * 3 + 2,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        width: Math.random() * 10 + 5,
-        height: Math.random() * 10 + 5,
-        velocityX: (Math.random() - 0.5) * 2,
-        velocityY: Math.random() * 3 + 2,
-      });
-    }
-
-    let animationId: number;
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      confettiPieces.forEach((piece, index) => {
-        ctx.save();
-        ctx.translate(piece.x, piece.y);
-        ctx.rotate((piece.rotation * Math.PI) / 180);
-        ctx.fillStyle = piece.color;
-        ctx.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
-        ctx.restore();
-
-        piece.y += piece.velocityY;
-        piece.x += piece.velocityX;
-        piece.rotation += piece.rotationSpeed;
-        piece.velocityY += 0.1; // gravity
-
-        if (piece.y > canvas.height) {
-          confettiPieces.splice(index, 1);
-        }
-      });
-
-      if (confettiPieces.length > 0) {
-        animationId = requestAnimationFrame(animate);
-      } else {
-        canvas.style.display = 'none';
-      }
-    };
-
-    canvas.style.display = 'block';
-    animate();
-  };
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -298,13 +220,6 @@ export const CompressionResult = ({
 
   return (
     <div className="w-full space-y-6">
-      {/* Confetti Canvas */}
-      <canvas
-        ref={canvasRef}
-        className="fixed top-0 left-0 w-full h-full pointer-events-none z-50"
-        style={{ display: 'none' }}
-      />
-      
       {originalFiles.map((file, idx) => (
         <motion.div
           key={file.name + idx}

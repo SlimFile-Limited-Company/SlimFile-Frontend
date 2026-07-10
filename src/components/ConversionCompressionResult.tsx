@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Download, RefreshCw, FileText, Image, File, Zap, ArrowRight, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -30,116 +30,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
 }) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
-  const [completedFiles, setCompletedFiles] = useState<Set<number>>(new Set());
   const navigate = useNavigate();
-  const hasTriggeredAllCompleteConfetti = useRef(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  // Confetti animation function
-  const triggerConfetti = (colors: string[], particleCount: number = 150) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const confettiPieces: Array<{
-      x: number;
-      y: number;
-      rotation: number;
-      rotationSpeed: number;
-      speed: number;
-      color: string;
-      width: number;
-      height: number;
-      velocityX: number;
-      velocityY: number;
-    }> = [];
-
-    for (let i = 0; i < particleCount; i++) {
-      confettiPieces.push({
-        x: Math.random() * canvas.width,
-        y: -20 - Math.random() * canvas.height,
-        rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 10,
-        speed: Math.random() * 3 + 2,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        width: Math.random() * 10 + 5,
-        height: Math.random() * 10 + 5,
-        velocityX: (Math.random() - 0.5) * 2,
-        velocityY: Math.random() * 3 + 2,
-      });
-    }
-
-    let animationId: number;
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      confettiPieces.forEach((piece, index) => {
-        ctx.save();
-        ctx.translate(piece.x, piece.y);
-        ctx.rotate((piece.rotation * Math.PI) / 180);
-        ctx.fillStyle = piece.color;
-        ctx.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
-        ctx.restore();
-
-        piece.y += piece.velocityY;
-        piece.x += piece.velocityX;
-        piece.rotation += piece.rotationSpeed;
-        piece.velocityY += 0.1; // gravity
-
-        if (piece.y > canvas.height) {
-          confettiPieces.splice(index, 1);
-        }
-      });
-
-      if (confettiPieces.length > 0) {
-        animationId = requestAnimationFrame(animate);
-      } else {
-        canvas.style.display = 'none';
-      }
-    };
-
-    canvas.style.display = 'block';
-    animate();
-  };
-
-  // Trigger confetti when individual files complete
-  useEffect(() => {
-    processedFiles.forEach((file, index) => {
-      const isComplete = processingProgress[index] === 100 && file !== null;
-      if (isComplete && !completedFiles.has(index)) {
-        setCompletedFiles(prev => new Set(prev).add(index));
-        
-        // Individual file completion confetti
-        triggerConfetti(['#9333EA', '#A855F7', '#C084FC', '#E9D5FF'], 60);
-      }
-    });
-  }, [processedFiles, processingProgress, completedFiles]);
-
-  // Trigger big confetti when all files complete
-  useEffect(() => {
-    const allComplete = processedFiles.every((f, i) => processingProgress[i] === 100 && f !== null);
-    
-    if (allComplete && processedFiles.length > 0 && !hasTriggeredAllCompleteConfetti.current) {
-      hasTriggeredAllCompleteConfetti.current = true;
-      
-      // Big celebration confetti with purple theme
-      triggerConfetti(['#9333EA', '#A855F7', '#C084FC', '#E9D5FF', '#10B981', '#34D399'], 200);
-    }
-  }, [processedFiles, processingProgress]);
-
-  // Reset confetti trigger when component resets
-  useEffect(() => {
-    if (processedFiles.length === 0) {
-      hasTriggeredAllCompleteConfetti.current = false;
-      setCompletedFiles(new Set());
-    }
-  }, [processedFiles.length]);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -312,13 +203,6 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
 
   return (
     <div className="w-full space-y-6">
-      {/* Confetti Canvas */}
-      <canvas
-        ref={canvasRef}
-        className="fixed top-0 left-0 w-full h-full pointer-events-none z-50"
-        style={{ display: 'none' }}
-      />
-      
       {originalFiles.map((originalFile, index) => {
         const processedFile = processedFiles[index];
         const progress = processingProgress[index];

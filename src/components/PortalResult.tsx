@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Download, CheckCircle, RotateCcw, FileText, Archive, TrendingDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -53,7 +53,6 @@ export const PortalResult = ({
 
   const [isDownloading, setIsDownloading] = useState(false);
   const [hasPlayedSound, setHasPlayedSound] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -63,88 +62,13 @@ export const PortalResult = ({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  // Play sound and trigger confetti when compression is complete
+  // Play sound when compression is complete
   useEffect(() => {
     if (!isCompressing && stats && !hasPlayedSound) {
       playSuccessSound();
       setHasPlayedSound(true);
-      triggerConfetti();
     }
   }, [isCompressing, stats, hasPlayedSound]);
-
-  // Confetti animation
-  const triggerConfetti = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const confettiPieces: Array<{
-      x: number;
-      y: number;
-      rotation: number;
-      rotationSpeed: number;
-      speed: number;
-      color: string;
-      width: number;
-      height: number;
-      velocityX: number;
-      velocityY: number;
-    }> = [];
-
-    const colors = ['#ef4444', '#f97316', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
-    const confettiCount = 200;
-
-    for (let i = 0; i < confettiCount; i++) {
-      confettiPieces.push({
-        x: Math.random() * canvas.width,
-        y: -20 - Math.random() * canvas.height,
-        rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 10,
-        speed: Math.random() * 3 + 2,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        width: Math.random() * 10 + 5,
-        height: Math.random() * 10 + 5,
-        velocityX: (Math.random() - 0.5) * 2,
-        velocityY: Math.random() * 3 + 2,
-      });
-    }
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      confettiPieces.forEach((piece, index) => {
-        ctx.save();
-        ctx.translate(piece.x, piece.y);
-        ctx.rotate((piece.rotation * Math.PI) / 180);
-        ctx.fillStyle = piece.color;
-        ctx.fillRect(-piece.width / 2, -piece.height / 2, piece.width, piece.height);
-        ctx.restore();
-
-        piece.y += piece.velocityY;
-        piece.x += piece.velocityX;
-        piece.rotation += piece.rotationSpeed;
-        piece.velocityY += 0.1;
-
-        if (piece.y > canvas.height) {
-          confettiPieces.splice(index, 1);
-        }
-      });
-
-      if (confettiPieces.length > 0) {
-        requestAnimationFrame(animate);
-      } else {
-        canvas.style.display = 'none';
-      }
-    };
-
-    canvas.style.display = 'block';
-    animate();
-  };
 
   const handleDownload = () => {
     if (!compressedBlob) return;
@@ -252,13 +176,6 @@ export const PortalResult = ({
 
     return (
       <div className="w-full max-w-3xl mx-auto space-y-6">
-        {/* Confetti Canvas */}
-        <canvas
-          ref={canvasRef}
-          className="fixed top-0 left-0 w-full h-full pointer-events-none z-50"
-          style={{ display: 'none' }}
-        />
-
         {/* Success Header */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
