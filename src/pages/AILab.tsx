@@ -544,7 +544,18 @@ export default function AILab() {
   const sidebarOpen = true; // Always show sidebar on desktop
 
   return (
-    <div className="flex flex-col bg-white" style={{ height: 'calc(100vh - 120px)' }}>
+    <>
+      <style>{`
+        .ai-lab-container {
+          height: calc(100vh - 120px);
+        }
+        @media (min-width: 1024px) {
+          .ai-lab-container {
+            height: 100vh;
+          }
+        }
+      `}</style>
+      <div className="flex flex-col bg-white ai-lab-container">
       {/* Header */}
       <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gradient-to-r from-red-600 to-orange-600">
         <div className="flex items-center gap-3">
@@ -980,5 +991,6 @@ export default function AILab() {
         <LayoutGrid className="w-6 h-6" />
       </button>
     </div>
+    </>
   );
 }
