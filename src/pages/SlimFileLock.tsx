@@ -8,6 +8,7 @@ import {
   Loader2, FileText, Lock, LockOpen, Eye, EyeOff,
   Trash2, ShieldCheck, Upload,
 } from 'lucide-react';
+import { ReviewPrompt } from '@/components/ReviewPrompt';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -100,7 +101,7 @@ function PasswordInput({ value, onChange, placeholder }: {
 }
 
 // ── Protect tab ────────────────────────────────────────────────────────────
-function ProtectTab() {
+function ProtectTab({ onSuccess }: { onSuccess?: () => void }) {
   const { toast } = useToast();
   const [file, setFile]         = useState<File | null>(null);
   const [password, setPassword] = useState('');
@@ -128,6 +129,7 @@ function ProtectTab() {
       await downloadBlob(blob, file.name.replace(/\.pdf$/i, '') + '_locked.pdf');
       toast({ title: 'PDF protected!', description: 'Your password-protected PDF has been downloaded.' });
       setPassword(''); setConfirm(''); setFile(null);
+      onSuccess?.();
     } catch (err: any) {
       toast({ title: 'Error', description: err.message, variant: 'destructive' });
     } finally {
@@ -173,7 +175,7 @@ function ProtectTab() {
 }
 
 // ── Remove password tab ────────────────────────────────────────────────────
-function RemovePasswordTab() {
+function RemovePasswordTab({ onSuccess }: { onSuccess?: () => void }) {
   const { toast } = useToast();
   const [file, setFile]         = useState<File | null>(null);
   const [password, setPassword] = useState('');
@@ -198,6 +200,7 @@ function RemovePasswordTab() {
       await downloadBlob(blob, name);
       toast({ title: 'Password removed!', description: 'Your PDF can now be opened without a password.' });
       setPassword(''); setFile(null);
+      onSuccess?.();
     } catch (err: any) {
       toast({ title: 'Error', description: err.message, variant: 'destructive' });
     } finally {
@@ -234,6 +237,7 @@ const SlimFileLock = () => {
     description: 'Add or remove password protection from PDF files instantly. SlimFile Lock keeps your documents secure without any software installation.',
   });
   const [tab, setTab] = useState<'protect' | 'remove'>('protect');
+  const [showReviewPrompt, setShowReviewPrompt] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-32 pb-20">
@@ -301,7 +305,7 @@ const SlimFileLock = () => {
 
         {/* Card */}
         <div className="bg-white rounded-3xl border border-gray-200/80 p-7 shadow-sm">
-          {tab === 'protect' ? <ProtectTab /> : <RemovePasswordTab />}
+          {tab === 'protect' ? <ProtectTab onSuccess={() => setTimeout(() => setShowReviewPrompt(true), 1500)} /> : <RemovePasswordTab onSuccess={() => setTimeout(() => setShowReviewPrompt(true), 1500)} />}
         </div>
 
         {/* Footer */}
@@ -310,6 +314,13 @@ const SlimFileLock = () => {
           <span>Encrypted in transit · Files are never stored</span>
         </div>
       </div>
+
+      {/* Review Prompt */}
+      <ReviewPrompt
+        isOpen={showReviewPrompt}
+        onClose={() => setShowReviewPrompt(false)}
+        operationType="lock"
+      />
     </div>
   );
 };

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Star } from 'lucide-react';
-import { isAuthenticated, getUserProfile } from '@/utils/auth';
+import { isAuthenticated } from '@/lib/auth';
 
 interface ReviewPromptProps {
   isOpen: boolean;
@@ -16,9 +16,34 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [userName, setUserName] = useState<string>('');
+  const [userDataFetched, setUserDataFetched] = useState(false);
 
-  const user = isAuthenticated() ? getUserProfile() : null;
-  const firstName = user?.name?.split(' ')[0] || '';
+  // Get user name if authenticated
+  useEffect(() => {
+    if (isOpen && isAuthenticated() && !userDataFetched) {
+      const fetchUserName = async () => {
+        try {
+          const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
+          const token = localStorage.getItem('jwt');
+          const response = await fetch(`${API_BASE_URL}/protected/dashboard`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            const fullName = data.user?.name || '';
+            const firstName = fullName.split(' ')[0];
+            setUserName(firstName);
+            setName(fullName);
+          }
+        } catch (error) {
+          console.error('Error fetching user:', error);
+        }
+        setUserDataFetched(true);
+      };
+      fetchUserName();
+    }
+  }, [isOpen, userDataFetched]);
 
   if (!isOpen) return null;
 
@@ -30,7 +55,7 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
       return;
     }
 
-    if (!user && !name.trim()) {
+    if (!isAuthenticated() && !name.trim()) {
       alert('Please provide your name');
       return;
     }
@@ -48,8 +73,8 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
         },
         body: JSON.stringify({
-          name: user ? user.name : name.trim(),
-          email: user ? user.email : email.trim() || null,
+          name: name.trim(),
+          email: email.trim() || null,
           rating,
           comment: comment.trim(),
           operationType
@@ -94,12 +119,12 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
               <Star className="w-8 h-8 text-green-600 fill-green-600" />
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">Thank You!</h3>
-            <p className="text-gray-600">Your review has been submitted and will be published after approval.</p>
+            <p className="text-gray-600">Your review has been published. Check out all reviews on our Reviews page!</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {user ? `Hi ${firstName}` : 'Hi there'}!
+              {userName ? `Hi ${userName}` : 'Hi there'}!
             </h2>
             <p className="text-gray-600 mb-6">
               This is Isaac Abakah, the Founder of SlimFile. We appreciate you using SlimFile.
@@ -134,7 +159,7 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
             </div>
 
             {/* Name (if not authenticated) */}
-            {!user && (
+            {!isAuthenticated() && (
               <div className="mb-4">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Your Name *
@@ -151,7 +176,7 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
             )}
 
             {/* Email (optional, if not authenticated) */}
-            {!user && (
+            {!isAuthenticated() && (
               <div className="mb-4">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Email (Optional)

@@ -39,7 +39,6 @@ export const Footer = () => {
       links: [
         { label: "About", path: "/about" },
         { label: "Features", path: "/features" },
-        { label: "Case Studies", path: "/case-studies" },
         { label: "Partnerships", path: "/partnerships" },
         { label: "SDGs", path: "/sdgs" },
         { label: "News", path: "/news" },
