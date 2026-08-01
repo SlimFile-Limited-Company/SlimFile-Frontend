@@ -7,6 +7,14 @@ import { useNavigate } from "react-router-dom";
 import { isAuthenticated } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { playSuccessSound } from "@/utils/sound";
+import {
+  trackGuestActivity,
+  canGuestDownload,
+  incrementDownloadCount,
+  hasReviewed,
+  getRemainingDownloads
+} from "@/utils/guestTracking";
+import { GuestDownloadLimitModal } from "@/components/GuestDownloadLimitModal";
 
 interface CompressionResultProps {
   originalFiles: File[];
@@ -28,6 +36,8 @@ export const CompressionResult = ({
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
   const [hasPlayedSound, setHasPlayedSound] = useState(false);
+  const [showGuestLimitModal, setShowGuestLimitModal] = useState(false);
+  const [showReviewPrompt, setShowReviewPrompt] = useState(false);
   const navigate = useNavigate();
 
   // Play sound when compression is complete
@@ -41,8 +51,23 @@ export const CompressionResult = ({
       console.log('🎯 Compression completed! Playing success sound...');
       playSuccessSound();
       setHasPlayedSound(true);
+
+      // Track guest compression activity if not authenticated
+      if (!isAuthenticated()) {
+        originalFiles.forEach((file, idx) => {
+          const compressedFile = compressedFiles[idx];
+          if (compressedFile) {
+            trackGuestActivity(
+              'compress',
+              file.type,
+              file.size,
+              compressedFile.size
+            );
+          }
+        });
+      }
     }
-  }, [isCompressing, compressedFiles, originalFiles.length, hasPlayedSound]);
+  }, [isCompressing, compressedFiles, originalFiles, hasPlayedSound]);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -83,29 +108,39 @@ export const CompressionResult = ({
 
   const handleDownload = async (compressedFile: File | null, fileIndex?: number) => {
     if (!compressedFile) return;
-    
+
+    // Check if guest or authenticated user
     if (!isAuthenticated()) {
-      const downloadKey = fileIndex !== undefined ? `pendingDownload_${fileIndex}` : 'pendingDownload';
-      
-      sessionStorage.setItem(downloadKey, JSON.stringify({
-        fileName: compressedFile.name,
-        fileType: compressedFile.type,
-        fileSize: compressedFile.size,
-        originalFileIndex: fileIndex
-      }));
-      sessionStorage.setItem('redirectAfterLogin', '/compress');
-      sessionStorage.setItem('pendingDownloadIndex', fileIndex?.toString() || '0');
-      
-      toast({
-        title: "Login Required",
-        description: "Please login to download your compressed file.",
-        variant: "default"
-      });
-      
-      navigate('/login');
-      return;
+      // Guest user - check download limit
+      if (!canGuestDownload()) {
+        setShowGuestLimitModal(true);
+        return;
+      }
+
+      // Increment download count and track
+      const newCount = incrementDownloadCount();
+      await trackGuestActivity('download', compressedFile.type, 0, compressedFile.size);
+
+      const remaining = getRemainingDownloads();
+      if (remaining === 1) {
+        toast({
+          title: "1 download remaining",
+          description: hasReviewed()
+            ? "Sign in for unlimited downloads"
+            : "Leave a review to get 2 more downloads!",
+          variant: "default"
+        });
+      } else if (remaining === 0) {
+        toast({
+          title: "Last free download used",
+          description: hasReviewed()
+            ? "Sign in to continue downloading"
+            : "Leave a review or sign in to continue",
+          variant: "default"
+        });
+      }
     }
-    
+
     setIsDownloading(true);
     setDownloadingIndex(fileIndex || 0);
     try {
@@ -402,6 +437,14 @@ export const CompressionResult = ({
           Compress Another File
         </Button>
       </div>
+
+      {/* Guest Download Limit Modal */}
+      <GuestDownloadLimitModal
+        isOpen={showGuestLimitModal}
+        onClose={() => setShowGuestLimitModal(false)}
+        onReview={() => setShowReviewPrompt(true)}
+        hasReviewed={hasReviewed()}
+      />
     </div>
   );
 };
