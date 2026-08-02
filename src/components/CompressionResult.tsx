@@ -329,9 +329,10 @@ export const CompressionResult = ({
                     </div>
                   </div>
                   {!isAuthenticated() && (
-                    <div className="mt-3 inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-3 sm:px-4 py-2 rounded-full">
+                    <div className="mt-3 inline-flex items-center space-x-2 bg-green-100 text-green-800 px-3 sm:px-4 py-2 rounded-full">
                       <span className="text-xs sm:text-sm font-medium">
-                        Login required to download or share compressed files
+                        {getRemainingDownloads()} free download{getRemainingDownloads() !== 1 ? 's' : ''} remaining
+                        {!hasReviewed() && getRemainingDownloads() === 0 && " - Review for 2 more!"}
                       </span>
                     </div>
                   )}
@@ -350,7 +351,7 @@ export const CompressionResult = ({
                     ) : (
                       <>
                         <Download className="h-4 w-4 mr-2" />
-                        {isAuthenticated() ? 'Download' : 'Login to Download'}
+                        Download
                       </>
                     )}
                   </Button>
@@ -361,7 +362,7 @@ export const CompressionResult = ({
                     className="flex-1"
                   >
                     <Share2 className="h-4 w-4 mr-2" />
-                    {isAuthenticated() ? (navigator.share ? 'Share' : 'Copy Link') : 'Login to Share'}
+                    {navigator.share ? 'Share' : 'Copy Link'}
                   </Button>
                 </div>
               </CardContent>
