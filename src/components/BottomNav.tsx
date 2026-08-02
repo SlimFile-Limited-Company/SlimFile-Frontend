@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
   Home, Rss, Minimize2, RefreshCw, LayoutDashboard,
-  GitMerge, Lock, Layers, Users, FileText, PenLine, Video, Scan,
+  GitMerge, Lock, Layers, Users, FileText, PenLine, Video, Scan, Sparkles,
 } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
@@ -14,7 +14,7 @@ function isHiddenRoute(pathname: string) {
 }
 
 const tabs = [
-  { label: 'Home',       icon: Home,            to: '/',                section: null },
+  { label: 'Home',       icon: Home,            to: '/',                section: 'home' },
   { label: 'Compress',   icon: Minimize2,       to: '/compress',        section: 'suite' },
   { label: 'Convert',    icon: RefreshCw,       to: '/convert-only',    section: 'suite' },
   { label: 'Both',       icon: Layers,          to: '/convert-compress',section: 'suite' },
@@ -26,17 +26,22 @@ const tabs = [
   { label: 'Documents',  icon: FileText,        to: '/documents',       section: 'connect' },
   { label: 'Boards',     icon: PenLine,         to: '/my-whiteboards',  section: 'connect' },
   { label: 'Meet',       icon: Video,           to: '/meet',            section: 'connect' },
+  { label: 'AI Lab',     icon: Sparkles,        to: '/ai-lab',          section: 'ai' },
   { label: 'Dashboard',  icon: LayoutDashboard, to: '/dashboard',       section: null },
 ];
 
 // Section accent colours
 const sectionColor: Record<string, string> = {
+  home:    'bg-red-500   shadow-[0_3px_10px_rgba(239,68,68,0.35)]',
   suite:   'bg-red-500   shadow-[0_3px_10px_rgba(239,68,68,0.35)]',
   connect: 'bg-violet-500 shadow-[0_3px_10px_rgba(139,92,246,0.35)]',
+  ai:      'bg-blue-500  shadow-[0_3px_10px_rgba(59,130,246,0.35)]',
 };
 const sectionLabel: Record<string, string> = {
+  home:    'text-red-500',
   suite:   'text-red-500',
   connect: 'text-violet-500',
+  ai:      'text-blue-500',
 };
 
 export default function BottomNav() {
