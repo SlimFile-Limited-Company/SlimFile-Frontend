@@ -95,50 +95,50 @@ export default function Leaderboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4">
+    <div className="min-h-screen bg-white pt-32 pb-12 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+        <div className="text-center mb-8 md:mb-12">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">
             Compression Leaderboard
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
             Top compression champions ranked by total space saved
           </p>
         </div>
 
         {/* Top 3 Podium */}
         {leaderboard.length >= 3 && (
-          <div className="mb-12">
-            <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto">
+          <div className="mb-8 md:mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 max-w-4xl mx-auto">
               {/* 2nd Place */}
-              <div className="flex flex-col items-center pt-8">
+              <div className="flex flex-col items-center md:pt-8 md:order-1">
                 <Card className="w-full border-2 border-gray-300 shadow-lg relative">
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gray-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shadow-md">
                     2
                   </div>
-                  <CardContent className="p-4 text-center pt-6">
+                  <CardContent className="p-4 md:p-4 text-center pt-6">
                     <div className="flex justify-center mb-3">
-                      <Medal className="w-10 h-10 text-gray-400" />
+                      <Medal className="w-8 h-8 md:w-10 md:h-10 text-gray-400" />
                     </div>
                     {leaderboard[1].picture ? (
                       <img
                         src={leaderboard[1].picture}
                         alt={leaderboard[1].name}
-                        className="w-16 h-16 rounded-full mx-auto mb-2 border-2 border-gray-300"
+                        className="w-20 h-20 md:w-16 md:h-16 rounded-full mx-auto mb-2 border-2 border-gray-300"
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-gray-200 mx-auto mb-2 flex items-center justify-center">
+                      <div className="w-20 h-20 md:w-16 md:h-16 rounded-full bg-gray-200 mx-auto mb-2 flex items-center justify-center">
                         <span className="text-2xl font-bold text-gray-500">
                           {leaderboard[1].name.charAt(0)}
                         </span>
                       </div>
                     )}
-                    <h3 className="font-bold text-gray-900 truncate">{leaderboard[1].name}</h3>
-                    <p className="text-2xl font-bold text-gray-600 mt-2">
+                    <h3 className="font-bold text-gray-900 truncate text-lg md:text-base">{leaderboard[1].name}</h3>
+                    <p className="text-2xl md:text-2xl font-bold text-gray-600 mt-2">
                       {formatFileSize(leaderboard[1].totalSpaceSaved)}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-sm md:text-xs text-gray-500 mt-1">
                       {leaderboard[1].totalFiles} files
                     </p>
                   </CardContent>
@@ -146,33 +146,33 @@ export default function Leaderboard() {
               </div>
 
               {/* 1st Place */}
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center md:order-2">
                 <Card className="w-full border-2 border-yellow-400 shadow-2xl relative">
                   <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl shadow-lg">
                     1
                   </div>
-                  <CardContent className="p-6 text-center pt-8">
+                  <CardContent className="p-6 md:p-6 text-center pt-8">
                     <div className="flex justify-center mb-3">
-                      <Trophy className="w-12 h-12 text-yellow-500" />
+                      <Trophy className="w-14 h-14 md:w-12 md:h-12 text-yellow-500" />
                     </div>
                     {leaderboard[0].picture ? (
                       <img
                         src={leaderboard[0].picture}
                         alt={leaderboard[0].name}
-                        className="w-20 h-20 rounded-full mx-auto mb-3 border-4 border-yellow-400"
+                        className="w-24 h-24 md:w-20 md:h-20 rounded-full mx-auto mb-3 border-4 border-yellow-400"
                       />
                     ) : (
-                      <div className="w-20 h-20 rounded-full bg-yellow-100 mx-auto mb-3 flex items-center justify-center border-4 border-yellow-400">
-                        <span className="text-3xl font-bold text-yellow-600">
+                      <div className="w-24 h-24 md:w-20 md:h-20 rounded-full bg-yellow-100 mx-auto mb-3 flex items-center justify-center border-4 border-yellow-400">
+                        <span className="text-4xl md:text-3xl font-bold text-yellow-600">
                           {leaderboard[0].name.charAt(0)}
                         </span>
                       </div>
                     )}
-                    <h3 className="font-bold text-gray-900 text-lg truncate">{leaderboard[0].name}</h3>
-                    <p className="text-3xl font-bold text-yellow-600 mt-2">
+                    <h3 className="font-bold text-gray-900 text-xl md:text-lg truncate">{leaderboard[0].name}</h3>
+                    <p className="text-3xl md:text-3xl font-bold text-yellow-600 mt-2">
                       {formatFileSize(leaderboard[0].totalSpaceSaved)}
                     </p>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-base md:text-sm text-gray-500 mt-1">
                       {leaderboard[0].totalFiles} files
                     </p>
                   </CardContent>
@@ -180,33 +180,33 @@ export default function Leaderboard() {
               </div>
 
               {/* 3rd Place */}
-              <div className="flex flex-col items-center pt-8">
+              <div className="flex flex-col items-center md:pt-8 md:order-3">
                 <Card className="w-full border-2 border-amber-300 shadow-lg relative">
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-amber-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shadow-md">
                     3
                   </div>
-                  <CardContent className="p-4 text-center pt-6">
+                  <CardContent className="p-4 md:p-4 text-center pt-6">
                     <div className="flex justify-center mb-3">
-                      <Award className="w-10 h-10 text-amber-700" />
+                      <Award className="w-8 h-8 md:w-10 md:h-10 text-amber-700" />
                     </div>
                     {leaderboard[2].picture ? (
                       <img
                         src={leaderboard[2].picture}
                         alt={leaderboard[2].name}
-                        className="w-16 h-16 rounded-full mx-auto mb-2 border-2 border-amber-300"
+                        className="w-20 h-20 md:w-16 md:h-16 rounded-full mx-auto mb-2 border-2 border-amber-300"
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-amber-100 mx-auto mb-2 flex items-center justify-center">
+                      <div className="w-20 h-20 md:w-16 md:h-16 rounded-full bg-amber-100 mx-auto mb-2 flex items-center justify-center">
                         <span className="text-2xl font-bold text-amber-700">
                           {leaderboard[2].name.charAt(0)}
                         </span>
                       </div>
                     )}
-                    <h3 className="font-bold text-gray-900 truncate">{leaderboard[2].name}</h3>
-                    <p className="text-2xl font-bold text-amber-700 mt-2">
+                    <h3 className="font-bold text-gray-900 truncate text-lg md:text-base">{leaderboard[2].name}</h3>
+                    <p className="text-2xl md:text-2xl font-bold text-amber-700 mt-2">
                       {formatFileSize(leaderboard[2].totalSpaceSaved)}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-sm md:text-xs text-gray-500 mt-1">
                       {leaderboard[2].totalFiles} files
                     </p>
                   </CardContent>
