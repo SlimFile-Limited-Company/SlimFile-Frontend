@@ -463,8 +463,6 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
       <GuestDownloadLimitModal
         isOpen={showGuestLimitModal}
         onClose={() => setShowGuestLimitModal(false)}
-        onReview={() => setShowReviewPrompt(true)}
-        hasReviewed={hasReviewed()}
       />
     </div>
   );

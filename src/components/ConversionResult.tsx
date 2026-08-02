@@ -389,8 +389,6 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
       <GuestDownloadLimitModal
         isOpen={showGuestLimitModal}
         onClose={() => setShowGuestLimitModal(false)}
-        onReview={() => setShowReviewPrompt(true)}
-        hasReviewed={hasReviewed()}
       />
     </div>
   );

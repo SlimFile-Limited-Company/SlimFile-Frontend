@@ -5,15 +5,11 @@ import { useNavigate } from 'react-router-dom';
 interface GuestDownloadLimitModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onReview: () => void;
-  hasReviewed: boolean;
 }
 
 export const GuestDownloadLimitModal = ({
   isOpen,
-  onClose,
-  onReview,
-  hasReviewed
+  onClose
 }: GuestDownloadLimitModalProps) => {
   const navigate = useNavigate();
 
@@ -37,51 +33,26 @@ export const GuestDownloadLimitModal = ({
         <div className="text-center">
           {/* Icon */}
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">🎉</span>
+            <span className="text-3xl">🔒</span>
           </div>
 
           {/* Title */}
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            You've used your free downloads!
+            Sign in to continue
           </h2>
 
           {/* Description */}
           <p className="text-gray-600 mb-6">
-            {hasReviewed
-              ? "You've already used your review bonus downloads. Sign in to continue using SlimFile."
-              : "You've used 2 free downloads. To continue, please sign in or leave a quick review to get 2 more free downloads."}
+            Please sign in to continue downloading files
           </p>
 
           {/* Actions */}
-          <div className="space-y-3">
-            <Button
-              onClick={handleSignIn}
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-6 text-lg font-semibold"
-            >
-              Sign In to Continue
-            </Button>
-
-            {!hasReviewed && (
-              <>
-                <div className="flex items-center gap-3 my-4">
-                  <div className="flex-1 h-px bg-gray-200"></div>
-                  <span className="text-sm text-gray-500 font-medium">OR</span>
-                  <div className="flex-1 h-px bg-gray-200"></div>
-                </div>
-
-                <Button
-                  onClick={() => {
-                    onClose();
-                    onReview();
-                  }}
-                  variant="outline"
-                  className="w-full border-2 border-red-600 text-red-600 hover:bg-red-50 py-6 text-lg font-semibold"
-                >
-                  Leave a Review for 2 More Downloads
-                </Button>
-              </>
-            )}
-          </div>
+          <Button
+            onClick={handleSignIn}
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-6 text-lg font-semibold"
+          >
+            Sign In
+          </Button>
 
           {/* Footer note */}
           <p className="text-xs text-gray-500 mt-6">
