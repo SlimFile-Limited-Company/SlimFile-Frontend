@@ -223,8 +223,59 @@ export default function Leaderboard() {
               key={`${entry.type}-${entry.userId || entry.guestId}`}
               className={`border-2 ${getRankBadge(entry.rank)} transition-all hover:shadow-md`}
             >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
+              <CardContent className="p-2 md:p-4">
+                {/* Mobile Layout - Single Line */}
+                <div className="md:hidden flex items-center gap-2">
+                  {/* Rank Icon */}
+                  <div className="flex-shrink-0">
+                    {entry.rank <= 3 ? (
+                      <div className="w-6 h-6">
+                        {getRankIcon(entry.rank)}
+                      </div>
+                    ) : (
+                      <span className="text-sm font-bold text-gray-400 w-6 inline-block">
+                        #{entry.rank}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Avatar */}
+                  <div className="flex-shrink-0">
+                    {entry.picture ? (
+                      <img
+                        src={entry.picture}
+                        alt={entry.name}
+                        className="w-8 h-8 rounded-full border border-gray-200"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-xs font-bold text-gray-500">
+                          {entry.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Name */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm text-gray-900 truncate">
+                      {entry.name}
+                    </h3>
+                  </div>
+
+                  {/* Space Saved & Percentage */}
+                  <div className="flex-shrink-0 text-right">
+                    <p className="text-base font-bold text-red-600">
+                      {formatFileSize(entry.totalSpaceSaved)}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {entry.avgCompressionRatio}%
+                    </p>
+                  </div>
+                </div>
+
+                {/* Desktop Layout */}
+                <div className="hidden md:flex items-center gap-4">
                   {/* Rank */}
                   <div className="flex-shrink-0 w-16 text-center">
                     {entry.rank <= 3 ? (
@@ -264,7 +315,7 @@ export default function Leaderboard() {
                   </div>
 
                   {/* Stats */}
-                  <div className="hidden md:flex items-center gap-6">
+                  <div className="flex items-center gap-6">
                     <div className="text-center">
                       <div className="flex items-center gap-1 text-gray-500 text-xs mb-1">
                         <FileArchive className="w-3 h-3" />
@@ -274,12 +325,9 @@ export default function Leaderboard() {
                     </div>
                     <div className="text-center">
                       <div className="flex items-center gap-1 text-gray-500 text-xs mb-1">
-                        <HardDrive className="w-3 h-3" />
-                        <span>Saved</span>
+                        <span>{entry.avgCompressionRatio}%</span>
                       </div>
-                      <p className="font-semibold text-gray-900">
-                        {formatFileSize(entry.totalSpaceSaved)}
-                      </p>
+                      <p className="text-xs text-gray-500">Compression</p>
                     </div>
                   </div>
 
@@ -291,20 +339,6 @@ export default function Leaderboard() {
                         {formatFileSize(entry.totalSpaceSaved)}
                       </span>
                     </div>
-                  </div>
-                </div>
-
-                {/* Mobile Stats */}
-                <div className="md:hidden mt-3 pt-3 border-t border-gray-200 flex justify-around text-center">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Files</p>
-                    <p className="font-semibold text-gray-900">{entry.totalFiles}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Space Saved</p>
-                    <p className="font-semibold text-gray-900">
-                      {formatFileSize(entry.totalSpaceSaved)}
-                    </p>
                   </div>
                 </div>
               </CardContent>
