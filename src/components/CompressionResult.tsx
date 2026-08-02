@@ -328,20 +328,6 @@ export const CompressionResult = ({
                       </span>
                     </div>
                   </div>
-                  {!isAuthenticated() && getRemainingDownloads() > 0 && (
-                    <div className="mt-3 inline-flex items-center space-x-2 bg-green-100 text-green-800 px-3 sm:px-4 py-2 rounded-full">
-                      <span className="text-xs sm:text-sm font-medium">
-                        You have {getRemainingDownloads()} download{getRemainingDownloads() !== 1 ? 's' : ''} left
-                      </span>
-                    </div>
-                  )}
-                  {!isAuthenticated() && getRemainingDownloads() === 0 && (
-                    <div className="mt-3 inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-3 sm:px-4 py-2 rounded-full">
-                      <span className="text-xs sm:text-sm font-medium">
-                        {hasReviewed() ? "Sign in for unlimited downloads" : "Review to get 2 more downloads!"}
-                      </span>
-                    </div>
-                  )}
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button
