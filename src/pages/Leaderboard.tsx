@@ -103,7 +103,7 @@ export default function Leaderboard() {
             Compression Leaderboard
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Top compression champions ranked by average compression percentage
+            Top compression champions ranked by total space saved
           </p>
         </div>
 
@@ -113,8 +113,11 @@ export default function Leaderboard() {
             <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto">
               {/* 2nd Place */}
               <div className="flex flex-col items-center pt-8">
-                <Card className="w-full border-2 border-gray-300 shadow-lg">
-                  <CardContent className="p-4 text-center">
+                <Card className="w-full border-2 border-gray-300 shadow-lg relative">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gray-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shadow-md">
+                    2
+                  </div>
+                  <CardContent className="p-4 text-center pt-6">
                     <div className="flex justify-center mb-3">
                       <Medal className="w-10 h-10 text-gray-400" />
                     </div>
@@ -133,7 +136,7 @@ export default function Leaderboard() {
                     )}
                     <h3 className="font-bold text-gray-900 truncate">{leaderboard[1].name}</h3>
                     <p className="text-2xl font-bold text-gray-600 mt-2">
-                      {leaderboard[1].avgCompressionRatio}%
+                      {formatFileSize(leaderboard[1].totalSpaceSaved)}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
                       {leaderboard[1].totalFiles} files
@@ -144,8 +147,11 @@ export default function Leaderboard() {
 
               {/* 1st Place */}
               <div className="flex flex-col items-center">
-                <Card className="w-full border-2 border-yellow-400 shadow-2xl">
-                  <CardContent className="p-6 text-center">
+                <Card className="w-full border-2 border-yellow-400 shadow-2xl relative">
+                  <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl shadow-lg">
+                    1
+                  </div>
+                  <CardContent className="p-6 text-center pt-8">
                     <div className="flex justify-center mb-3">
                       <Trophy className="w-12 h-12 text-yellow-500" />
                     </div>
@@ -164,7 +170,7 @@ export default function Leaderboard() {
                     )}
                     <h3 className="font-bold text-gray-900 text-lg truncate">{leaderboard[0].name}</h3>
                     <p className="text-3xl font-bold text-yellow-600 mt-2">
-                      {leaderboard[0].avgCompressionRatio}%
+                      {formatFileSize(leaderboard[0].totalSpaceSaved)}
                     </p>
                     <p className="text-sm text-gray-500 mt-1">
                       {leaderboard[0].totalFiles} files
@@ -175,8 +181,11 @@ export default function Leaderboard() {
 
               {/* 3rd Place */}
               <div className="flex flex-col items-center pt-8">
-                <Card className="w-full border-2 border-amber-300 shadow-lg">
-                  <CardContent className="p-4 text-center">
+                <Card className="w-full border-2 border-amber-300 shadow-lg relative">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-amber-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shadow-md">
+                    3
+                  </div>
+                  <CardContent className="p-4 text-center pt-6">
                     <div className="flex justify-center mb-3">
                       <Award className="w-10 h-10 text-amber-700" />
                     </div>
@@ -195,7 +204,7 @@ export default function Leaderboard() {
                     )}
                     <h3 className="font-bold text-gray-900 truncate">{leaderboard[2].name}</h3>
                     <p className="text-2xl font-bold text-amber-700 mt-2">
-                      {leaderboard[2].avgCompressionRatio}%
+                      {formatFileSize(leaderboard[2].totalSpaceSaved)}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
                       {leaderboard[2].totalFiles} files
@@ -274,12 +283,12 @@ export default function Leaderboard() {
                     </div>
                   </div>
 
-                  {/* Compression % */}
+                  {/* Space Saved */}
                   <div className="flex-shrink-0">
                     <div className="flex items-center gap-2 bg-white rounded-lg px-4 py-2 border border-gray-200">
-                      <TrendingUp className="w-5 h-5 text-red-600" />
-                      <span className="text-2xl font-bold text-red-600">
-                        {entry.avgCompressionRatio}%
+                      <HardDrive className="w-5 h-5 text-red-600" />
+                      <span className="text-xl font-bold text-red-600">
+                        {formatFileSize(entry.totalSpaceSaved)}
                       </span>
                     </div>
                   </div>
