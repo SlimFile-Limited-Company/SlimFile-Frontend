@@ -112,7 +112,7 @@ export default function Leaderboard() {
           <div className="mb-4 md:mb-12">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto">
               {/* 2nd Place */}
-              <div className="flex flex-col items-center md:pt-8 md:order-1">
+              <div className="flex flex-col items-center order-2 md:pt-8 md:order-1">
                 <Card className="w-full border-2 border-gray-300 shadow-lg relative">
                   {/* Mobile Slim Layout */}
                   <CardContent className="p-2 md:hidden">
@@ -179,7 +179,7 @@ export default function Leaderboard() {
               </div>
 
               {/* 1st Place */}
-              <div className="flex flex-col items-center md:order-2">
+              <div className="flex flex-col items-center order-1 md:order-2">
                 <Card className="w-full border-2 border-yellow-400 shadow-2xl relative">
                   {/* Mobile Slim Layout */}
                   <CardContent className="p-2 md:hidden bg-yellow-50">
@@ -246,7 +246,7 @@ export default function Leaderboard() {
               </div>
 
               {/* 3rd Place */}
-              <div className="flex flex-col items-center md:pt-8 md:order-3">
+              <div className="flex flex-col items-center order-3 md:pt-8 md:order-3">
                 <Card className="w-full border-2 border-amber-300 shadow-lg relative">
                   {/* Mobile Slim Layout */}
                   <CardContent className="p-2 md:hidden">
@@ -315,9 +315,9 @@ export default function Leaderboard() {
           </div>
         )}
 
-        {/* Full Leaderboard List */}
+        {/* Full Leaderboard List - Skip top 3 (already shown in podium) */}
         <div className="space-y-2">
-          {leaderboard.map((entry) => (
+          {leaderboard.slice(3).map((entry) => (
             <Card
               key={`${entry.type}-${entry.userId || entry.guestId}`}
               className={`border-2 ${getRankBadge(entry.rank)} transition-all hover:shadow-md`}
