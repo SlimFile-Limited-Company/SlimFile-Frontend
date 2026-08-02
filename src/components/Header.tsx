@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Trophy } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isAuthenticated, logout } from "@/lib/auth";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -15,13 +15,11 @@ export const Header = () => {
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
   const [mobileDropdownsOpen, setMobileDropdownsOpen] = useState<{
     company: boolean;
-    dashboard: boolean;
     connect: boolean;
     suites: boolean;
     devtools: boolean;
   }>({
     company: false,
-    dashboard: false,
     connect: false,
     suites: false,
     devtools: false,
@@ -36,10 +34,6 @@ export const Header = () => {
     { name: "Why Compression?", href: "/file-compression-education" },
     { name: "Our Blogs", href: "/blog" },
     { name: "Contact", href: "/contact" },
-  ];
-
-  const dashboardNavigation = [
-    { name: "My Dashboard", href: "/dashboard" },
   ];
 
   const connectNavigation = [
@@ -93,7 +87,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'company' | 'dashboard' | 'connect' | 'suites' | 'devtools') => {
+  const toggleMobileDropdown = (dropdown: 'company' | 'connect' | 'suites' | 'devtools') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -295,40 +289,19 @@ export const Header = () => {
               )}
             </div>
 
-            {/* Dashboard Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleDropdownHover('dashboard')}
-              onMouseLeave={() => handleDropdownHover(null)}
-            >
-              <button className={cn(
-                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full",
-                dashboardNavigation.some(item => location.pathname === item.href || (item.href === '/dashboard' && location.pathname.startsWith('/dashboard')))
-                  ? "text-white bg-red-600 shadow-md font-semibold"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              )}>
-                <span>{t('header.dashboard')}</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              {hoveredDropdown === 'dashboard' && (
-                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
-                  {dashboardNavigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={cn(
-                        "flex items-center justify-between px-4 py-2 text-sm transition-colors duration-200",
-                        (location.pathname === item.href || (item.href === '/dashboard' && location.pathname.startsWith('/dashboard') && item.href === '/dashboard'))
-                          ? "text-red-600 bg-red-50"
-                          : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                      )}
-                    >
-                      <span>{item.name}</span>
-                    </Link>
-                  ))}
-                </div>
+            {/* Leaderboard Link */}
+            <Link
+              to="/leaderboard"
+              className={cn(
+                "flex items-center space-x-1.5 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full",
+                location.pathname === "/leaderboard"
+                  ? "text-white bg-yellow-500 shadow-md font-semibold"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-yellow-50"
               )}
-            </div>
+            >
+              <Trophy className="w-4 h-4" />
+              <span>Leaderboard</span>
+            </Link>
 
             {isAuthenticated() ? (
               <Button
@@ -534,45 +507,20 @@ export const Header = () => {
                 )}
               </div>
 
-              {/* Mobile Dashboard Dropdown */}
-              <div className="px-4">
-                <button
-                  onClick={() => toggleMobileDropdown('dashboard')}
-                  className={cn(
-                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
-                    dashboardNavigation.some(item => location.pathname === item.href || (item.href === '/dashboard' && location.pathname.startsWith('/dashboard')))
-                      ? "text-red-600"
-                      : "text-gray-700 hover:text-red-600"
-                  )}
-                >
-                  <span>{t('header.dashboard')}</span>
-                  <ChevronDown
-                    className={cn(
-                      "w-4 h-4 transition-transform duration-200",
-                      mobileDropdownsOpen.dashboard && "transform rotate-180"
-                    )}
-                  />
-                </button>
-                {mobileDropdownsOpen.dashboard && (
-                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
-                    {dashboardNavigation.map((item) => (
-                      <Link
-                        key={item.name}
-                        to={item.href}
-                        className={cn(
-                          "flex items-center justify-between px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
-                          (location.pathname === item.href || (item.href === '/dashboard' && location.pathname.startsWith('/dashboard') && item.href === '/dashboard'))
-                            ? "text-red-600 bg-red-50 border border-red-100"
-                            : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                        )}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <span>{item.name}</span>
-                      </Link>
-                    ))}
-                  </div>
+              {/* Mobile Leaderboard Link */}
+              <Link
+                to="/leaderboard"
+                className={cn(
+                  "flex items-center space-x-2 px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
+                  location.pathname === "/leaderboard"
+                    ? "text-yellow-600 bg-yellow-50 border border-yellow-100"
+                    : "text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
                 )}
-              </div>
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Trophy className="w-4 h-4" />
+                <span>Leaderboard</span>
+              </Link>
 
               {isAuthenticated() ? (
                 <div className="px-4 pt-2">
