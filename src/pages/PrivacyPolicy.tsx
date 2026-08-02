@@ -24,7 +24,7 @@ const PrivacyPolicy = () => {
         <div className="container mx-auto max-w-3xl text-center">
           <Lock className="mx-auto mb-4 w-14 h-14 text-primary" />
           <h1 className="text-5xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
-          <p className="text-xl text-gray-700 mb-6">Last updated: February 2026</p>
+          <p className="text-xl text-gray-700 mb-6">Last updated: August 1, 2026</p>
         </div>
       </div>
       <div className="container mx-auto max-w-3xl px-4">
@@ -45,6 +45,7 @@ const PrivacyPolicy = () => {
             <li>To authenticate users and secure access to the API.</li>
             <li>To communicate with you about your account or support requests.</li>
             <li>To monitor and analyze usage for security and performance.</li>
+            <li><strong>Public Leaderboard:</strong> Your name and compression statistics (average compression percentage, total files compressed, and space saved) may be displayed publicly on our Leaderboard feature to recognize top performers. Your profile picture may also be displayed if you've provided one through Google authentication. Guest users appear anonymously with a partial identifier.</li>
           </ul>
         </Section>
         <Section icon={Shield} title="4. Data Sharing and Third Parties" bg="bg-gray-100">
