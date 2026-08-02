@@ -303,10 +303,13 @@ export const Header = () => {
               <span>Leaderboard</span>
             </Link>
 
+          </nav>
+
+          {/* Auth buttons - Desktop */}
+          <div className="hidden md:flex items-center">
             {isAuthenticated() ? (
               <Button
                 variant="outline"
-                className="ml-3"
                 onClick={() => logout()}
               >
                 {t('header.logout')}
@@ -315,13 +318,13 @@ export const Header = () => {
               <Link to="/login">
                 <Button
                   variant="default"
-                  className="ml-4 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600"
+                  className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600"
                 >
                   {t('header.login')}
                 </Button>
               </Link>
             )}
-          </nav>
+          </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-1">

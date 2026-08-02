@@ -99,9 +99,6 @@ export default function Leaderboard() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-2xl mb-4">
-            <Trophy className="w-8 h-8 text-red-600" />
-          </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
             Compression Leaderboard
           </h1>
