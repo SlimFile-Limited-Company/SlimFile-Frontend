@@ -22,6 +22,7 @@ export default function CropImage() {
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const [compressFirst, setCompressFirst] = useState(false);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -60,7 +61,7 @@ export default function CropImage() {
       // Step 2: Crop with pixel-perfect coordinates
       setIsProcessing(true);
       const formData = new FormData();
-      formData.append('file', compressedFile);
+      formData.append('file', fileToProcess);
       formData.append('x', Math.round(croppedAreaPixels.x).toString());
       formData.append('y', Math.round(croppedAreaPixels.y).toString());
       formData.append('width', Math.round(croppedAreaPixels.width).toString());
@@ -161,6 +162,20 @@ export default function CropImage() {
                   <span className="font-medium">Crop Area:</span> {Math.round(croppedAreaPixels.width)}px × {Math.round(croppedAreaPixels.height)}px
                 </div>
               )}
+
+              {/* Compress First Option */}
+              <div className="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <input
+                  type="checkbox"
+                  id="compress-first"
+                  checked={compressFirst}
+                  onChange={(e) => setCompressFirst(e.target.checked)}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <label htmlFor="compress-first" className="ml-2 text-sm font-medium text-gray-700">
+                  🗜️ Compress before cropping (faster processing)
+                </label>
+              </div>
 
               {error && (
                 <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">

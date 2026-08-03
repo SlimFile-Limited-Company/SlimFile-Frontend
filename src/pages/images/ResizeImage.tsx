@@ -25,7 +25,9 @@ export default function ResizeImage() {
   const [width, setWidth] = useState<number>(800);
   const [height, setHeight] = useState<number>(600);
   const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
-  const [quality, setQuality] = useState(90);
+  const [quality, setQuality] = useState(100);
+  const [format, setFormat] = useState<'png' | 'jpeg' | 'webp'>('png');
+  const [compressFirst, setCompressFirst] = useState(false);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -82,31 +84,35 @@ export default function ResizeImage() {
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
     try {
-      // Step 1: Auto-compress the image first
-      setIsCompressing(true);
-      const compressFormData = new FormData();
-      compressFormData.append('file', selectedFile);
+      let fileToProcess = selectedFile;
 
-      const compressResponse = await fetch(`${API_BASE_URL}/compress`, {
-        method: 'POST',
-        body: compressFormData,
-      });
+      // Step 1: Optional compression
+      if (compressFirst) {
+        setIsCompressing(true);
+        const compressFormData = new FormData();
+        compressFormData.append('file', selectedFile);
 
-      if (!compressResponse.ok) throw new Error('Compression failed');
+        const compressResponse = await fetch(`${API_BASE_URL}/compress`, {
+          method: 'POST',
+          body: compressFormData,
+        });
 
-      const compressedBlob = await compressResponse.blob();
-      const compressedFile = new File([compressedBlob], selectedFile.name, { type: selectedFile.type });
+        if (!compressResponse.ok) throw new Error('Compression failed');
 
-      setIsCompressing(false);
+        const compressedBlob = await compressResponse.blob();
+        fileToProcess = new File([compressedBlob], selectedFile.name, { type: selectedFile.type });
+        setIsCompressing(false);
+      }
 
-      // Step 2: Resize the compressed image
+      // Step 2: Resize the image
       setIsProcessing(true);
       const formData = new FormData();
-      formData.append('file', compressedFile);
+      formData.append('file', fileToProcess);
       formData.append('width', width.toString());
       formData.append('height', height.toString());
       formData.append('maintainAspectRatio', maintainAspectRatio.toString());
       formData.append('quality', quality.toString());
+      formData.append('format', format);
 
       const response = await fetch(`${API_BASE_URL}/images/resize`, {
         method: 'POST',
@@ -251,6 +257,34 @@ export default function ResizeImage() {
                   </div>
                 </div>
 
+                {/* Output Format */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Output Format
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {['png', 'jpeg', 'webp'].map((fmt) => (
+                      <button
+                        key={fmt}
+                        type="button"
+                        onClick={() => setFormat(fmt as 'png' | 'jpeg' | 'webp')}
+                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                          format === fmt
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {fmt.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {format === 'png' && 'Best quality, larger file size'}
+                    {format === 'jpeg' && 'Good quality, medium file size'}
+                    {format === 'webp' && 'Great quality, smallest file size'}
+                  </p>
+                </div>
+
                 {/* Aspect Ratio */}
                 <div className="flex items-center p-3 bg-purple-50 rounded-lg">
                   <input
@@ -265,6 +299,20 @@ export default function ResizeImage() {
                   </label>
                 </div>
 
+                {/* Compress First Option */}
+                <div className="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <input
+                    type="checkbox"
+                    id="compress-first"
+                    checked={compressFirst}
+                    onChange={(e) => setCompressFirst(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="compress-first" className="ml-2 text-sm font-medium text-gray-700">
+                    🗜️ Compress before resizing (faster processing)
+                  </label>
+                </div>
+
                 {/* Quality */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -274,10 +322,11 @@ export default function ResizeImage() {
                     type="range"
                     value={quality}
                     onChange={(e) => setQuality(Number(e.target.value))}
-                    min="1"
+                    min="60"
                     max="100"
                     className="w-full"
                   />
+                  <p className="text-xs text-gray-500 mt-1">Higher quality = larger file size</p>
                 </div>
 
                 <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
