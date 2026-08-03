@@ -64,6 +64,9 @@ const FEATURES = [
     href: '/summarize',         description: 'Compress and extract a smart AI summary from any PDF, DOCX or PPTX.',
     features: ['Powered by Llama 3', 'PDF, DOCX & PPTX', 'Structured output'],
   },
+];
+
+const IMAGE_FEATURES = [
   {
     icon: Maximize2,  title: 'Resize Image',          badge: 'New',        gradient: 'from-blue-500 to-indigo-500',
     href: '/images/resize',      description: 'Resize images to custom dimensions with quality preservation.',
@@ -155,7 +158,7 @@ const AI_LAB_FEATURES = [
 ];
 
 const GetStarted: FC = () => {
-  const [activeTab, setActiveTab] = useState<'general' | 'ai'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'ai' | 'images'>('general');
   useSEO({
     title: 'Get Started with SlimFile — Choose Your Tool',
     description: 'Pick the right SlimFile tool for your task. Compress, convert, summarize, OCR, meet, collaborate — everything you need to manage files smarter.',
@@ -195,12 +198,22 @@ const GetStarted: FC = () => {
             >
               AI Lab
             </button>
+            <button
+              onClick={() => setActiveTab('images')}
+              className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                activeTab === 'images'
+                  ? 'bg-red-600 text-white shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Image Processing
+            </button>
           </div>
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {(activeTab === 'general' ? FEATURES : AI_LAB_FEATURES).map((f) => (
+          {(activeTab === 'general' ? FEATURES : activeTab === 'ai' ? AI_LAB_FEATURES : IMAGE_FEATURES).map((f) => (
             <Link to={f.href} key={f.title} className="group block">
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-200 h-full flex flex-col">
 
