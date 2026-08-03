@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Star } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isAuthenticated, logout } from "@/lib/auth";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -27,7 +27,6 @@ export const Header = () => {
 
   const companyNavigation = [
     { name: "About", href: "/about" },
-    { name: "Reviews", href: "/reviews" },
     { name: "Partnerships", href: "/partnerships" },
     { name: "SDGs", href: "/sdgs" },
     { name: "News", href: "/news" },
@@ -295,9 +294,10 @@ export const Header = () => {
           <div className="hidden md:flex items-center gap-3">
             <Link to="/reviews">
               <Button
-                variant="ghost"
-                className="text-gray-600 hover:text-gray-900"
+                variant="outline"
+                className="border-2 border-yellow-400 text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-500 font-semibold shadow-sm flex items-center gap-1.5"
               >
+                <Star className="w-4 h-4 fill-yellow-400" />
                 Reviews
               </Button>
             </Link>
