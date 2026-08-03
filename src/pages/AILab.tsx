@@ -69,7 +69,7 @@ const features = [
     name: 'Ask Questions',
     description: 'Upload a document or paste text, then ask me anything about it',
     icon: MessageCircleQuestion,
-    color: 'from-orange-500 to-red-500',
+    color: 'from-orange-500 to-purple-500',
   },
   {
     id: 'keywords' as AIFeature,
@@ -478,7 +478,7 @@ export default function AILab() {
   // Feature Selection Screen
   if (!selectedFeature) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50 pt-32 sm:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 pt-32 sm:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
@@ -498,7 +498,7 @@ export default function AILab() {
                 <button
                   key={feature.id}
                   onClick={() => handleFeatureSelect(feature.id)}
-                  className="group relative bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-red-500 hover:shadow-xl transition-all duration-300 text-left"
+                  className="group relative bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-purple-500 hover:shadow-xl transition-all duration-300 text-left"
                 >
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                     <Icon className="w-6 h-6 text-white" />
@@ -510,7 +510,7 @@ export default function AILab() {
                     {feature.description}
                   </p>
                   <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center">
                       <ArrowLeft className="w-4 h-4 text-white rotate-180" />
                     </div>
                   </div>
@@ -550,7 +550,7 @@ export default function AILab() {
       `}</style>
       <div className="flex flex-col bg-white ai-lab-container">
       {/* Header */}
-      <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-red-600">
+      <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-purple-500">
         <div className="flex items-center gap-3">
           <Link
             to="/"
@@ -593,7 +593,7 @@ export default function AILab() {
                       onClick={() => handleFeatureSelect(feature.id)}
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                         selectedFeature === feature.id
-                          ? 'bg-red-100 text-red-700'
+                          ? 'bg-purple-100 text-purple-700'
                           : 'hover:bg-gray-100 text-gray-700'
                       }`}
                     >
@@ -610,7 +610,7 @@ export default function AILab() {
                 <h3 className="text-xs font-semibold text-gray-500 uppercase">History</h3>
                 <button
                   onClick={startNewConversation}
-                  className="text-xs text-red-600 hover:text-red-700 font-medium"
+                  className="text-xs text-purple-600 hover:text-purple-700 font-medium"
                 >
                   New Chat
                 </button>
@@ -627,8 +627,8 @@ export default function AILab() {
                       onClick={() => loadConversation(conv._id)}
                       className={`w-full text-left text-xs p-2 bg-white rounded border transition-colors ${
                         conversationId === conv._id
-                          ? 'border-red-200 bg-red-50'
-                          : 'border-gray-100 hover:border-red-100 hover:bg-gray-50'
+                          ? 'border-purple-200 bg-purple-50'
+                          : 'border-gray-100 hover:border-purple-100 hover:bg-gray-50'
                       }`}
                     >
                       <p className="font-medium text-gray-700 mb-1 truncate">
@@ -657,7 +657,7 @@ export default function AILab() {
             <div
               className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-3 relative group ${
                 message.role === 'user'
-                  ? 'bg-red-600 text-white rounded-tr-sm'
+                  ? 'bg-purple-500 text-white rounded-tr-sm'
                   : 'bg-gray-100 text-gray-900 rounded-tl-sm'
               }`}
             >
@@ -737,7 +737,7 @@ export default function AILab() {
                 <label className="block text-xs font-medium text-gray-600 mb-1">Target Language</label>
                 <button
                   onClick={() => setShowLanguageModal(true)}
-                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-red-600 focus:outline-none focus:border-red-600 transition-colors text-sm text-left flex items-center justify-between"
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-purple-500 focus:outline-none focus:border-purple-500 transition-colors text-sm text-left flex items-center justify-between"
                 >
                   <span>{targetLanguage}</span>
                   <span className="text-gray-400">▼</span>
@@ -753,7 +753,7 @@ export default function AILab() {
                     <label className="block text-xs font-medium text-gray-600 mb-1">Email Type</label>
                     <button
                       onClick={() => setShowEmailTypeModal(true)}
-                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-red-600 focus:outline-none focus:border-red-600 transition-colors text-sm text-left flex items-center justify-between"
+                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-purple-500 focus:outline-none focus:border-purple-500 transition-colors text-sm text-left flex items-center justify-between"
                     >
                       <span>{emailType}</span>
                       <span className="text-gray-400">▼</span>
@@ -763,7 +763,7 @@ export default function AILab() {
                     <label className="block text-xs font-medium text-gray-600 mb-1">Tone</label>
                     <button
                       onClick={() => setShowEmailToneModal(true)}
-                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-red-600 focus:outline-none focus:border-red-600 transition-colors text-sm text-left flex items-center justify-between"
+                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-purple-500 focus:outline-none focus:border-purple-500 transition-colors text-sm text-left flex items-center justify-between"
                     >
                       <span>{emailTone}</span>
                       <span className="text-gray-400">▼</span>
@@ -808,7 +808,7 @@ export default function AILab() {
                         }}
                         className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                           targetLanguage === lang
-                            ? 'bg-red-600 text-white'
+                            ? 'bg-purple-500 text-white'
                             : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                         }`}
                       >
@@ -840,7 +840,7 @@ export default function AILab() {
                         }}
                         className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                           emailType === type
-                            ? 'bg-red-600 text-white'
+                            ? 'bg-purple-500 text-white'
                             : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                         }`}
                       >
@@ -872,7 +872,7 @@ export default function AILab() {
                         }}
                         className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                           emailTone === tone
-                            ? 'bg-red-600 text-white'
+                            ? 'bg-purple-500 text-white'
                             : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                         }`}
                       >
@@ -892,7 +892,7 @@ export default function AILab() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Enter first text..."
-                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-600 transition-colors text-sm resize-none"
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition-colors text-sm resize-none"
                   rows={3}
                   disabled={isLoading}
                 />
@@ -901,7 +901,7 @@ export default function AILab() {
                   value={compareText2}
                   onChange={(e) => setCompareText2(e.target.value)}
                   placeholder="Enter second text to compare..."
-                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-600 transition-colors text-sm resize-none"
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 transition-colors text-sm resize-none"
                   rows={3}
                   disabled={isLoading}
                 />
@@ -911,7 +911,7 @@ export default function AILab() {
             {/* Hide normal input for compare feature (uses textareas above) */}
             {selectedFeature !== 'compare' && (
               <div className="flex gap-2">
-                <label className="flex items-center justify-center p-3 border-2 border-gray-300 rounded-xl hover:border-red-600 hover:bg-red-50 transition-colors cursor-pointer">
+                <label className="flex items-center justify-center p-3 border-2 border-gray-300 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition-colors cursor-pointer">
                   <Upload className="w-5 h-5 text-gray-600" />
                   <input
                     type="file"
@@ -927,14 +927,14 @@ export default function AILab() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
                   placeholder="Type your message..."
-                  className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-red-600 transition-colors text-sm sm:text-base"
+                  className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-colors text-sm sm:text-base"
                   disabled={isLoading}
                 />
 
                 <button
                   onClick={handleSend}
                   disabled={isLoading || (!input.trim() && !uploadedFile)}
-                  className="px-4 sm:px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+                  className="px-4 sm:px-6 py-3 bg-purple-500 text-white rounded-xl hover:bg-red-700 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
                 >
                   <Send className="w-5 h-5" />
                   <span className="hidden sm:inline font-medium">Send</span>
@@ -945,7 +945,7 @@ export default function AILab() {
             {/* Send button for compare feature with upload support */}
             {selectedFeature === 'compare' && (
               <div className="flex gap-2 justify-end">
-                <label className="flex items-center justify-center p-3 border-2 border-gray-300 rounded-xl hover:border-red-600 hover:bg-red-50 transition-colors cursor-pointer">
+                <label className="flex items-center justify-center p-3 border-2 border-gray-300 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition-colors cursor-pointer">
                   <Upload className="w-5 h-5 text-gray-600" />
                   <input
                     type="file"
@@ -957,7 +957,7 @@ export default function AILab() {
                 <button
                   onClick={handleSend}
                   disabled={isLoading || !input.trim() || !compareText2.trim()}
-                  className="px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
+                  className="px-6 py-3 bg-purple-500 text-white rounded-xl hover:bg-red-700 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-2"
                 >
                   <Send className="w-5 h-5" />
                   <span className="font-medium">Compare Texts</span>
@@ -977,7 +977,7 @@ export default function AILab() {
         onMouseDown={() => setIsDragging(true)}
         onMouseMove={handleFabDrag}
         onMouseUp={() => setIsDragging(false)}
-        className="lg:hidden fixed z-20 p-4 bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 transition-colors cursor-move touch-none"
+        className="lg:hidden fixed z-20 p-4 bg-purple-500 text-white rounded-full shadow-lg hover:bg-red-700 transition-colors cursor-move touch-none"
         style={{ bottom: `${fabPosition.bottom}px`, right: `${fabPosition.right}px` }}
         title="Switch Feature (Drag to move)"
       >
