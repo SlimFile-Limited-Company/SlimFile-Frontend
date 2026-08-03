@@ -180,33 +180,36 @@ const GetStarted: FC = () => {
           <div className="inline-flex bg-white rounded-xl p-1 shadow-sm border border-gray-200">
             <button
               onClick={() => setActiveTab('general')}
-              className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+              className={`px-4 sm:px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === 'general'
                   ? 'bg-red-600 text-white shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              General Features
+              <span className="hidden sm:inline">General Features</span>
+              <span className="sm:hidden">General</span>
             </button>
             <button
               onClick={() => setActiveTab('ai')}
-              className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+              className={`px-4 sm:px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === 'ai'
                   ? 'bg-red-600 text-white shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              AI Lab
+              <span className="hidden sm:inline">AI Lab</span>
+              <span className="sm:hidden">AI</span>
             </button>
             <button
               onClick={() => setActiveTab('images')}
-              className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+              className={`px-4 sm:px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === 'images'
                   ? 'bg-red-600 text-white shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              Image Processing
+              <span className="hidden sm:inline">Image Processing</span>
+              <span className="sm:hidden">Image</span>
             </button>
           </div>
         </div>
