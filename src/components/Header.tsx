@@ -120,9 +120,9 @@ export const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
       {/* Announcement banner */}
       <Link
-        to="/ai-lab"
+        to="/get-started"
         className="relative flex items-center justify-center gap-3 px-6 py-2.5 text-white overflow-hidden group"
-        style={{ background: "linear-gradient(90deg, #7c3aed 0%, #9333ea 40%, #7c3aed 100%)" }}
+        style={{ background: "linear-gradient(90deg, #3b82f6 0%, #2563eb 40%, #3b82f6 100%)" }}
       >
         {/* Animated shimmer */}
         <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -136,10 +136,10 @@ export const Header = () => {
 
         {/* Message */}
         <span className="text-sm font-medium tracking-wide flex items-center gap-2">
-          <span className="font-semibold">Introducing SlimFile AI Lab</span>
+          <span className="font-semibold">NEW: Image Processing Tools</span>
           <span className="hidden sm:inline opacity-80">—</span>
-          <span className="hidden sm:inline">9 powerful AI tools for free</span>
-          <span className="hidden md:inline opacity-75 text-xs">· Translate, summarize, rewrite & more</span>
+          <span className="hidden sm:inline">8 professional tools for free</span>
+          <span className="hidden md:inline opacity-75 text-xs">· Resize, crop, enhance, watermark & more</span>
         </span>
 
         {/* Arrow */}

@@ -51,6 +51,35 @@ type NewsItem = {
 
 const newsItems: NewsItem[] = [
   {
+    id: "image-processing-launch",
+    title: "NEW: 8 Professional Image Processing Tools",
+    subtitle:
+      "SlimFile introduces a complete suite of image processing tools — resize, crop, enhance, watermark, remove background, replace background, blur faces, and generate thumbnails. All free with live preview.",
+    dateLabel: "August 2026",
+    category: "Product",
+    icon: ImageIcon,
+    imageHint: "SlimFile Image Processing with 8 tools",
+    imageUrl: "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=800&auto=format&fit=crop",
+    ctas: [
+      { label: "Try Image Tools", href: "/get-started", variant: "default" },
+      { label: "View All Features", href: "/get-started", variant: "outline" },
+    ],
+    highlights: [
+      {
+        title: "8 Essential Image Tools",
+        note: "Resize with quality preservation, drag-to-crop interface, auto-enhance, text/image watermarks, transparent PNG conversion, solid color backgrounds, AI-powered face blur, and batch thumbnail generation.",
+      },
+      {
+        title: "Live Preview Before Download",
+        note: "See exactly how your processed image looks before downloading. Make adjustments and preview in real-time for perfect results every time.",
+      },
+      {
+        title: "Quality-First Processing",
+        note: "100% quality default for resizing, PNG/JPEG/WEBP support, maintain aspect ratio, optional compression, and professional-grade Sharp library for processing.",
+      },
+    ],
+  },
+  {
     id: "ai-lab-launch",
     title: "Introducing SlimFile AI Lab — 9 Powerful AI Tools",
     subtitle:
