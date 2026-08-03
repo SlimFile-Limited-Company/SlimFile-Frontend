@@ -295,9 +295,9 @@ export const Header = () => {
             <Link to="/reviews">
               <Button
                 variant="outline"
-                className="border-2 border-yellow-400 text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-500 font-semibold shadow-sm flex items-center gap-1.5"
+                className="border-2 border-purple-400 text-purple-600 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-500 font-semibold shadow-sm flex items-center gap-1.5"
               >
-                <Star className="w-4 h-4 fill-yellow-400" />
+                <Star className="w-4 h-4 fill-purple-400" />
                 Reviews
               </Button>
             </Link>
