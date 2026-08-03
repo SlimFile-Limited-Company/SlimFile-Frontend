@@ -118,18 +118,18 @@ const Index = () => {
             {/* Tagline with styled underlines */}
             <div className="text-5xl sm:text-6xl lg:text-7xl font-black mb-8 leading-tight">
               <span className="inline-block relative">
-                <span className="text-red-600">Compress</span>
-                <span className="absolute -bottom-2 left-0 w-full h-1.5 bg-gradient-to-r from-red-600 to-red-400 rounded-full" />
+                <span style={{ color: '#dc2626' }}>Compress</span>
+                <span className="absolute -bottom-2 left-0 w-full h-1.5 rounded-full" style={{ background: 'linear-gradient(to right, #dc2626, #f87171)' }} />
               </span>
               <span className="text-gray-400 mx-1">.</span>
               <span className="inline-block relative">
-                <span className="text-purple-600">Convert</span>
-                <span className="absolute -bottom-2 left-0 w-full h-1.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-full" />
+                <span style={{ color: '#9333ea' }}>Convert</span>
+                <span className="absolute -bottom-2 left-0 w-full h-1.5 rounded-full" style={{ background: 'linear-gradient(to right, #9333ea, #c084fc)' }} />
               </span>
               <span className="text-gray-400 mx-1">.</span>
               <span className="inline-block relative">
-                <span className="text-gray-900">Collaborate</span>
-                <span className="absolute -bottom-2 left-0 w-full h-1.5 bg-gradient-to-r from-gray-900 to-gray-700 rounded-full" />
+                <span style={{ color: '#111827' }}>Collaborate</span>
+                <span className="absolute -bottom-2 left-0 w-full h-1.5 rounded-full" style={{ background: 'linear-gradient(to right, #111827, #4b5563)' }} />
               </span>
               <span className="text-gray-400">.</span>
             </div>
