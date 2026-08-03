@@ -19,6 +19,7 @@ import {
   Copy,
   Check,
   TrendingUp,
+  Sparkles,
 } from "lucide-react";
 
 type Highlight = {
@@ -49,6 +50,35 @@ type NewsItem = {
 };
 
 const newsItems: NewsItem[] = [
+  {
+    id: "ai-lab-launch",
+    title: "Introducing SlimFile AI Lab — 9 Powerful AI Tools",
+    subtitle:
+      "SlimFile launches AI Lab, a comprehensive suite of AI-powered text processing tools — translate, summarize, rewrite, analyze sentiment, remove plagiarism, and more. All free, all in one place.",
+    dateLabel: "August 2026",
+    category: "Product",
+    icon: Sparkles,
+    imageHint: "SlimFile AI Lab with 9 AI tools",
+    imageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&auto=format&fit=crop",
+    ctas: [
+      { label: "Try AI Lab", href: "/ai-lab", variant: "default" },
+      { label: "Learn More", href: "/features", variant: "outline" },
+    ],
+    highlights: [
+      {
+        title: "9 AI Tools in One Place",
+        note: "Translate text, summarize documents, rewrite content, ask questions about documents, extract keywords, analyze sentiment, compare texts, generate emails, and remove plagiarism.",
+      },
+      {
+        title: "100% Free with No Limits",
+        note: "All AI Lab features are completely free — no subscriptions, no hidden costs, no daily limits. Professional-grade AI tools accessible to everyone.",
+      },
+      {
+        title: "Process Documents with AI",
+        note: "Upload documents (PDF, DOCX, TXT) and let AI answer your questions, summarize content, or extract key information instantly.",
+      },
+    ],
+  },
   {
     id: "10k-users-milestone",
     title: "SlimFile Reaches 10K New Users Milestone",
