@@ -16,6 +16,7 @@ export default function CropImage() {
   const [isCompressing, setIsCompressing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<Blob | null>(null);
+  const [processedPreview, setProcessedPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Cropper state
@@ -70,6 +71,10 @@ export default function CropImage() {
       if (!response.ok) throw new Error('Crop failed');
       const blob = await response.blob();
       setProcessedFile(blob);
+
+      // Create preview
+      const url = URL.createObjectURL(blob);
+      setProcessedPreview(url);
     } catch (err) {
       setError('Failed to crop image');
     } finally {
@@ -94,6 +99,8 @@ export default function CropImage() {
     setSelectedFile(null);
     setPreview(null);
     setProcessedFile(null);
+    if (processedPreview) URL.revokeObjectURL(processedPreview);
+    setProcessedPreview(null);
     setError(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
@@ -202,8 +209,19 @@ export default function CropImage() {
                   <Scissors className="w-12 h-12 text-green-600" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Image Cropped!</h3>
-                <p className="text-gray-600">Your cropped image is ready to download</p>
+                <p className="text-gray-600">Preview your cropped image below</p>
               </div>
+
+              {/* Preview of cropped image */}
+              {processedPreview && (
+                <div className="relative bg-gray-50 rounded-lg p-4">
+                  <img
+                    src={processedPreview}
+                    alt="Cropped"
+                    className="w-full h-auto max-h-96 object-contain rounded-lg border border-gray-200"
+                  />
+                </div>
+              )}
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button onClick={handleDownload} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg font-semibold rounded-xl flex items-center justify-center gap-2">

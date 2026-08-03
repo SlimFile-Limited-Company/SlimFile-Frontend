@@ -14,6 +14,7 @@ export default function WatermarkImage() {
   const [isCompressing, setIsCompressing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<Blob | null>(null);
+  const [processedPreview, setProcessedPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [text, setText] = useState('SlimFile');
   const [fontSize, setFontSize] = useState(24);

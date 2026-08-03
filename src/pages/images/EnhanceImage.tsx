@@ -14,6 +14,7 @@ export default function EnhanceImage() {
   const [isCompressing, setIsCompressing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<Blob | null>(null);
+  const [processedPreview, setProcessedPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,6 +53,8 @@ export default function EnhanceImage() {
       if (!response.ok) throw new Error('Enhancement failed');
       const blob = await response.blob();
       setProcessedFile(blob);
+      const url = URL.createObjectURL(blob);
+      setProcessedPreview(url);
     } catch (err) {
       setError('Failed to enhance image');
     } finally {
@@ -76,6 +79,8 @@ export default function EnhanceImage() {
     setSelectedFile(null);
     setPreview(null);
     setProcessedFile(null);
+    if (processedPreview) URL.revokeObjectURL(processedPreview);
+    setProcessedPreview(null);
     setError(null);
   };
 
@@ -118,6 +123,13 @@ export default function EnhanceImage() {
                 <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
                   <AlertCircle className="w-5 h-5" />
                   <p className="text-sm">{error}</p>
+                </div>
+              )}
+
+              {processedPreview && (
+                <div className="relative bg-gray-50 rounded-lg p-4">
+                  <p className="text-sm font-medium text-gray-700 mb-2">Enhanced Preview:</p>
+                  <img src={processedPreview} alt="Enhanced" className="w-full h-auto max-h-96 object-contain rounded-lg border border-gray-200" />
                 </div>
               )}
 
