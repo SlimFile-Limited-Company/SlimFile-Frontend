@@ -153,15 +153,14 @@ const Home: FC = () => {
     { icon: Grid3x3, title: 'Generate Thumbnails', gradient: 'from-amber-500 to-yellow-500', href: '/images/generate-thumbnails', description: 'Create multiple thumbnail sizes from your images.', features: ['Multiple sizes', 'Batch generation', 'Instant download'], badge: 'New', flip: 'Image Magic! 🖼️' },
   ];
 
-  // Combine: General → AI Lab → Image Processing (NO duplicates)
-  const allFeatures = [
-    ...generalFeatures,
-    ...aiLabFeatures.map(f => ({ ...f, flip: "AI Power! 🤖" })),
-    ...imageFeatures,
+  // Organize by category: General → AI Lab → Image Processing
+  const featureCategories = [
+    generalFeatures,
+    aiLabFeatures.map(f => ({ ...f, flip: "AI Power! 🤖" })),
+    imageFeatures,
   ];
 
-  const featuresPerPage = 8;
-  const totalPages = Math.ceil(allFeatures.length / featuresPerPage);
+  const totalPages = featureCategories.length; // 3 pages: General, AI Lab, Image Processing
 
   // Auto-slide features every 10 seconds
   useEffect(() => {
@@ -484,7 +483,7 @@ const Home: FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {allFeatures.slice(featuresPage * featuresPerPage, (featuresPage + 1) * featuresPerPage).map((feature) => (
+            {featureCategories[featuresPage].map((feature) => (
               <div key={feature.title} className="flip-card" style={{ minHeight: "300px" }}>
                 <div className="flip-card-inner">
 

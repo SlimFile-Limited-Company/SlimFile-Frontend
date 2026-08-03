@@ -20,9 +20,9 @@ const FEATURES = [
     features: ['All conversion features', 'Max size reduction', 'One-step processing'],
   },
   {
-    icon: Users,     title: 'Team Workspaces',       badge: 'Team',       gradient: 'from-green-500 to-green-600',
-    href: '/workspaces',        description: 'Collaborate in real-time with your team in shared spaces.',
-    features: ['Real-time chat', 'Share links & resources', 'Member management'],
+    icon: FilePlus2, title: 'PDF Merger & Splitter', badge: 'New',        gradient: 'from-amber-500 to-orange-500',
+    href: '/forge',             description: 'Combine multiple PDFs or split one into custom sections.',
+    features: ['Merge up to 20 PDFs', 'Split by page ranges', 'Drag to reorder'],
   },
   {
     icon: ScanText,  title: 'OCR Tool',              badge: 'New',        gradient: 'from-orange-500 to-orange-600',
@@ -50,9 +50,9 @@ const FEATURES = [
     features: ['Rich text formatting', 'Import & export DOCX', 'Auto-save & organize'],
   },
   {
-    icon: FilePlus2, title: 'PDF Merger & Splitter', badge: 'New',        gradient: 'from-amber-500 to-orange-500',
-    href: '/forge',             description: 'Combine multiple PDFs or split one into custom sections.',
-    features: ['Merge up to 20 PDFs', 'Split by page ranges', 'Drag to reorder'],
+    icon: Users,     title: 'Team Workspaces',       badge: 'Team',       gradient: 'from-green-500 to-green-600',
+    href: '/workspaces',        description: 'Collaborate in real-time with your team in shared spaces.',
+    features: ['Real-time chat', 'Share links & resources', 'Member management'],
   },
   {
     icon: Lock,      title: 'PDF Password Protect',  badge: 'New',        gradient: 'from-violet-500 to-violet-600',
