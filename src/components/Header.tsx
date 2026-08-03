@@ -17,11 +17,13 @@ export const Header = () => {
     company: boolean;
     connect: boolean;
     suites: boolean;
+    images: boolean;
     devtools: boolean;
   }>({
     company: false,
     connect: false,
     suites: false,
+    images: false,
     devtools: false,
   });
 
@@ -65,6 +67,18 @@ export const Header = () => {
     { name: "AI Lab", href: "/ai-lab" },
   ];
 
+  const imagesNavigation = [
+    { name: "Resize Image", href: "/images/resize" },
+    { name: "Crop Image", href: "/images/crop" },
+    { name: "Compress Image", href: "/compress" },
+    { name: "Add Watermark", href: "/images/watermark" },
+    { name: "Remove Background", href: "/images/remove-background" },
+    { name: "Replace Background", href: "/images/replace-background" },
+    { name: "Blur Faces", href: "/images/blur-faces" },
+    { name: "Auto-enhance", href: "/images/enhance" },
+    { name: "Generate Thumbnails", href: "/images/thumbnails" },
+  ];
+
   const isActiveRoute = (href: string) => {
     return location.pathname === href;
   };
@@ -86,7 +100,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'company' | 'connect' | 'suites' | 'devtools') => {
+  const toggleMobileDropdown = (dropdown: 'company' | 'connect' | 'suites' | 'images' | 'devtools') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -252,6 +266,41 @@ export const Header = () => {
                         location.pathname === item.href || location.pathname.startsWith(item.href)
                           ? "text-red-600 bg-red-50"
                           : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                      )}
+                    >
+                      <span>{item.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Images Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => handleDropdownHover('images')}
+              onMouseLeave={() => handleDropdownHover(null)}
+            >
+              <button className={cn(
+                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
+                imagesNavigation.some(item => location.pathname === item.href || location.pathname.startsWith('/images'))
+                  ? "text-white bg-purple-600 shadow-md font-semibold"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              )}>
+                <span>Images</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              {hoveredDropdown === 'images' && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
+                  {imagesNavigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={cn(
+                        "flex items-center justify-between px-4 py-2 text-sm transition-colors duration-200",
+                        location.pathname === item.href
+                          ? "text-purple-600 bg-purple-50"
+                          : "text-gray-700 hover:text-purple-600 hover:bg-purple-50"
                       )}
                     >
                       <span>{item.name}</span>
@@ -462,6 +511,46 @@ export const Header = () => {
                           location.pathname === item.href || location.pathname.startsWith(item.href)
                             ? "text-red-600 bg-red-50 border border-red-100"
                             : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                        )}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <span>{item.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile Images Dropdown */}
+              <div className="px-4">
+                <button
+                  onClick={() => toggleMobileDropdown('images')}
+                  className={cn(
+                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg whitespace-nowrap",
+                    imagesNavigation.some(item => location.pathname === item.href || location.pathname.startsWith('/images'))
+                      ? "text-purple-600"
+                      : "text-gray-700 hover:text-purple-600"
+                  )}
+                >
+                  <span>Images</span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      mobileDropdownsOpen.images && "transform rotate-180"
+                    )}
+                  />
+                </button>
+                {mobileDropdownsOpen.images && (
+                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
+                    {imagesNavigation.map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={cn(
+                          "flex items-center justify-between px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
+                          location.pathname === item.href
+                            ? "text-purple-600 bg-purple-50 border border-purple-100"
+                            : "text-gray-700 hover:text-purple-600 hover:bg-purple-50"
                         )}
                         onClick={() => setMobileMenuOpen(false)}
                       >

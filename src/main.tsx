@@ -170,6 +170,16 @@ import Leaderboard from './pages/Leaderboard';
 import { NotificationProvider } from './components/InAppNotification';
 import UpdatePrompt from './components/UpdatePrompt';
 
+// Image Processing Pages
+import ResizeImage from './pages/images/ResizeImage';
+import CropImage from './pages/images/CropImage';
+import WatermarkImage from './pages/images/WatermarkImage';
+import RemoveBackground from './pages/images/RemoveBackground';
+import ReplaceBackground from './pages/images/ReplaceBackground';
+import BlurFaces from './pages/images/BlurFaces';
+import EnhanceImage from './pages/images/EnhanceImage';
+import GenerateThumbnails from './pages/images/GenerateThumbnails';
+
 const root = document.getElementById('root');
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -355,6 +365,16 @@ ReactDOM.createRoot(root).render(
           <Route path="lock" element={<SlimFileLock />} />
           <Route path="summarize" element={<SummarizeDocument />} />
           <Route path="ai-lab" element={<AILab />} />
+
+          {/* Image Processing Tools */}
+          <Route path="images/resize" element={<ResizeImage />} />
+          <Route path="images/crop" element={<CropImage />} />
+          <Route path="images/watermark" element={<WatermarkImage />} />
+          <Route path="images/remove-background" element={<RemoveBackground />} />
+          <Route path="images/replace-background" element={<ReplaceBackground />} />
+          <Route path="images/blur-faces" element={<BlurFaces />} />
+          <Route path="images/enhance" element={<EnhanceImage />} />
+          <Route path="images/thumbnails" element={<GenerateThumbnails />} />
         </Route>
 
         {/* Workspace chat - Full screen without header/footer */}
