@@ -14,7 +14,12 @@ export default function ResizeImage() {
   const [isCompressing, setIsCompressing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<Blob | null>(null);
+  const [processedPreview, setProcessedPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Original dimensions
+  const [originalWidth, setOriginalWidth] = useState<number>(0);
+  const [originalHeight, setOriginalHeight] = useState<number>(0);
 
   // Options
   const [width, setWidth] = useState<number>(800);
@@ -34,12 +39,40 @@ export default function ResizeImage() {
     setSelectedFile(file);
     setError(null);
 
-    // Create preview
+    // Create preview and get dimensions
     const reader = new FileReader();
     reader.onload = (e) => {
-      setPreview(e.target?.result as string);
+      const result = e.target?.result as string;
+      setPreview(result);
+
+      // Get image dimensions
+      const img = new Image();
+      img.onload = () => {
+        setOriginalWidth(img.width);
+        setOriginalHeight(img.height);
+        setWidth(img.width);
+        setHeight(img.height);
+      };
+      img.src = result;
     };
     reader.readAsDataURL(file);
+  };
+
+  // Handle aspect ratio calculations
+  const handleWidthChange = (newWidth: number) => {
+    setWidth(newWidth);
+    if (maintainAspectRatio && originalWidth && originalHeight) {
+      const aspectRatio = originalHeight / originalWidth;
+      setHeight(Math.round(newWidth * aspectRatio));
+    }
+  };
+
+  const handleHeightChange = (newHeight: number) => {
+    setHeight(newHeight);
+    if (maintainAspectRatio && originalWidth && originalHeight) {
+      const aspectRatio = originalWidth / originalHeight;
+      setWidth(Math.round(newHeight * aspectRatio));
+    }
   };
 
   const handleResize = async () => {
@@ -84,6 +117,10 @@ export default function ResizeImage() {
 
       const blob = await response.blob();
       setProcessedFile(blob);
+
+      // Create preview of processed image
+      const url = URL.createObjectURL(blob);
+      setProcessedPreview(url);
     } catch (err) {
       setError('Failed to resize image. Please try again.');
       console.error(err);
@@ -110,6 +147,7 @@ export default function ResizeImage() {
     setSelectedFile(null);
     setPreview(null);
     setProcessedFile(null);
+    setProcessedPreview(null);
     setError(null);
     setWidth(800);
     setHeight(600);
@@ -119,7 +157,7 @@ export default function ResizeImage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-white pt-28 md:pt-32 pb-16 md:pb-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-4">
@@ -158,7 +196,7 @@ export default function ResizeImage() {
                 </p>
               </label>
             </div>
-          ) : (
+          ) : !processedFile ? (
             /* Processing Area */
             <div className="space-y-6">
               {/* Preview */}
@@ -174,6 +212,9 @@ export default function ResizeImage() {
                 >
                   <X className="w-5 h-5 text-gray-600" />
                 </button>
+                <div className="absolute bottom-2 left-2 px-3 py-1 bg-black/70 text-white text-sm rounded">
+                  Original: {originalWidth} × {originalHeight}px
+                </div>
               </div>
 
               {/* Options */}
@@ -189,7 +230,7 @@ export default function ResizeImage() {
                     <input
                       type="number"
                       value={width}
-                      onChange={(e) => setWidth(Number(e.target.value))}
+                      onChange={(e) => handleWidthChange(Number(e.target.value))}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       min="1"
                       max="10000"
@@ -202,7 +243,7 @@ export default function ResizeImage() {
                     <input
                       type="number"
                       value={height}
-                      onChange={(e) => setHeight(Number(e.target.value))}
+                      onChange={(e) => handleHeightChange(Number(e.target.value))}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       min="1"
                       max="10000"
@@ -211,7 +252,7 @@ export default function ResizeImage() {
                 </div>
 
                 {/* Aspect Ratio */}
-                <div className="flex items-center">
+                <div className="flex items-center p-3 bg-purple-50 rounded-lg">
                   <input
                     type="checkbox"
                     id="aspect-ratio"
@@ -219,8 +260,8 @@ export default function ResizeImage() {
                     onChange={(e) => setMaintainAspectRatio(e.target.checked)}
                     className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
                   />
-                  <label htmlFor="aspect-ratio" className="ml-2 text-sm text-gray-700">
-                    Maintain aspect ratio
+                  <label htmlFor="aspect-ratio" className="ml-2 text-sm font-medium text-gray-700">
+                    Maintain aspect ratio (recommended)
                   </label>
                 </div>
 
@@ -238,6 +279,10 @@ export default function ResizeImage() {
                     className="w-full"
                   />
                 </div>
+
+                <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                  New size: {width} × {height}px
+                </div>
               </div>
 
               {/* Error */}
@@ -250,60 +295,58 @@ export default function ResizeImage() {
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3">
-                {!processedFile ? (
-                  <Button
-                    onClick={handleResize}
-                    disabled={isCompressing || isProcessing}
-                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg font-semibold rounded-xl"
-                  >
-                    {isCompressing ? 'Compressing...' : isProcessing ? 'Resizing...' : 'Resize Image'}
-                  </Button>
-                ) : (
-                  <>
-                    <Button
-                      onClick={handleDownload}
-                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg font-semibold rounded-xl flex items-center justify-center gap-2"
-                    >
-                      <Download className="w-5 h-5" />
-                      Download
-                    </Button>
-                    <Button
-                      onClick={handleReset}
-                      variant="outline"
-                      className="flex-1 py-6 text-lg font-semibold rounded-xl"
-                    >
-                      Resize Another
-                    </Button>
-                  </>
-                )}
+                <Button
+                  onClick={handleResize}
+                  disabled={isCompressing || isProcessing}
+                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg font-semibold rounded-xl"
+                >
+                  {isCompressing ? 'Compressing...' : isProcessing ? 'Resizing...' : 'Resize Image'}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            /* Result Area with Preview */
+            <div className="space-y-6">
+              <div className="text-center">
+                <div className="inline-block p-4 bg-green-50 rounded-full mb-4">
+                  <ImageIcon className="w-12 h-12 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Image Resized!</h3>
+                <p className="text-gray-600">Preview and download your resized image</p>
+              </div>
+
+              {/* Preview of resized image */}
+              {processedPreview && (
+                <div className="relative">
+                  <img
+                    src={processedPreview}
+                    alt="Resized"
+                    className="w-full h-auto max-h-96 object-contain rounded-lg border border-gray-200"
+                  />
+                  <div className="absolute bottom-2 left-2 px-3 py-1 bg-black/70 text-white text-sm rounded">
+                    Resized: {width} × {height}px
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  onClick={handleDownload}
+                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg font-semibold rounded-xl flex items-center justify-center gap-2"
+                >
+                  <Download className="w-5 h-5" />
+                  Download
+                </Button>
+                <Button
+                  onClick={handleReset}
+                  variant="outline"
+                  className="flex-1 py-6 text-lg font-semibold rounded-xl"
+                >
+                  Resize Another
+                </Button>
               </div>
             </div>
           )}
-        </div>
-
-        {/* Features */}
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="text-center p-6 bg-purple-50 rounded-xl">
-            <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
-              <ImageIcon className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold text-gray-900 mb-1">High Quality</h3>
-            <p className="text-sm text-gray-600">Maintain image quality while resizing</p>
-          </div>
-          <div className="text-center p-6 bg-purple-50 rounded-xl">
-            <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Upload className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold text-gray-900 mb-1">Fast Processing</h3>
-            <p className="text-sm text-gray-600">Resize images in seconds</p>
-          </div>
-          <div className="text-center p-6 bg-purple-50 rounded-xl">
-            <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Download className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold text-gray-900 mb-1">100% Free</h3>
-            <p className="text-sm text-gray-600">No limits, no watermarks</p>
-          </div>
         </div>
       </div>
     </div>

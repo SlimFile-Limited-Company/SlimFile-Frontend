@@ -1,12 +1,14 @@
-import { useState } from 'react';
-import { Upload, Download, Scissors, X, AlertCircle } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { Upload, Download, Scissors, X, AlertCircle, ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSEO } from '@/hooks/useSEO';
+import Cropper from 'react-easy-crop';
+import { Area, Point } from 'react-easy-crop/types';
 
 export default function CropImage() {
   useSEO({
     title: 'Crop Image — Free Image Cropping Tool | SlimFile',
-    description: 'Crop images for free. Trim and cut images to any size. Fast, easy, and 100% free.',
+    description: 'Crop images for free. Drag to select area. Fast, easy, and 100% free.',
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -15,10 +17,11 @@ export default function CropImage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
-  const [width, setWidth] = useState(500);
-  const [height, setHeight] = useState(500);
+
+  // Cropper state
+  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,8 +37,12 @@ export default function CropImage() {
     reader.readAsDataURL(file);
   };
 
+  const onCropComplete = useCallback((croppedArea: Area, croppedAreaPixels: Area) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
   const handleCrop = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile || !croppedAreaPixels) return;
     setError(null);
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -50,14 +57,14 @@ export default function CropImage() {
       const compressedFile = new File([compressedBlob], selectedFile.name, { type: selectedFile.type });
       setIsCompressing(false);
 
-      // Step 2: Crop
+      // Step 2: Crop with pixel-perfect coordinates
       setIsProcessing(true);
       const formData = new FormData();
       formData.append('file', compressedFile);
-      formData.append('x', x.toString());
-      formData.append('y', y.toString());
-      formData.append('width', width.toString());
-      formData.append('height', height.toString());
+      formData.append('x', Math.round(croppedAreaPixels.x).toString());
+      formData.append('y', Math.round(croppedAreaPixels.y).toString());
+      formData.append('width', Math.round(croppedAreaPixels.width).toString());
+      formData.append('height', Math.round(croppedAreaPixels.height).toString());
       const response = await fetch(`${API_BASE_URL}/images/crop`, { method: 'POST', body: formData });
       if (!response.ok) throw new Error('Crop failed');
       const blob = await response.blob();
@@ -87,6 +94,9 @@ export default function CropImage() {
     setPreview(null);
     setProcessedFile(null);
     setError(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setCroppedAreaPixels(null);
   };
 
   return (
@@ -99,7 +109,7 @@ export default function CropImage() {
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">Crop Image</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Trim and cut your images to the perfect size
+            Drag to select the area you want to keep
           </p>
         </div>
 
@@ -115,36 +125,42 @@ export default function CropImage() {
                 <p className="text-sm text-gray-500">PNG, JPG, WEBP</p>
               </label>
             </div>
-          ) : (
+          ) : !processedFile ? (
             <div className="space-y-6">
-              <div className="relative">
-                <img src={preview!} alt="Preview" className="w-full h-auto max-h-96 object-contain rounded-lg border" />
-                <button onClick={handleReset} className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100">
-                  <X className="w-5 h-5" />
-                </button>
+              {/* Cropper */}
+              <div className="relative w-full h-96 bg-gray-900 rounded-lg overflow-hidden">
+                <Cropper
+                  image={preview!}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={undefined}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                />
               </div>
 
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Crop Settings</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">X</label>
-                    <input type="number" value={x} onChange={(e) => setX(Number(e.target.value))} className="w-full px-4 py-2 border rounded-lg" min="0" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Y</label>
-                    <input type="number" value={y} onChange={(e) => setY(Number(e.target.value))} className="w-full px-4 py-2 border rounded-lg" min="0" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Width</label>
-                    <input type="number" value={width} onChange={(e) => setWidth(Number(e.target.value))} className="w-full px-4 py-2 border rounded-lg" min="1" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Height</label>
-                    <input type="number" value={height} onChange={(e) => setHeight(Number(e.target.value))} className="w-full px-4 py-2 border rounded-lg" min="1" />
-                  </div>
-                </div>
+              {/* Zoom Controls */}
+              <div className="flex items-center gap-4">
+                <ZoomOut className="w-5 h-5 text-gray-600" />
+                <input
+                  type="range"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="flex-1"
+                />
+                <ZoomIn className="w-5 h-5 text-gray-600" />
+                <span className="text-sm text-gray-600 w-16">{Math.round(zoom * 100)}%</span>
               </div>
+
+              {croppedAreaPixels && (
+                <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                  <span className="font-medium">Crop Area:</span> {Math.round(croppedAreaPixels.width)}px × {Math.round(croppedAreaPixels.height)}px
+                </div>
+              )}
 
               {error && (
                 <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
@@ -153,22 +169,35 @@ export default function CropImage() {
                 </div>
               )}
 
+              {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3">
-                {!processedFile ? (
-                  <Button onClick={handleCrop} disabled={isCompressing || isProcessing} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg font-semibold rounded-xl">
-                    {isCompressing ? 'Compressing...' : isProcessing ? 'Cropping...' : 'Crop Image'}
-                  </Button>
-                ) : (
-                  <>
-                    <Button onClick={handleDownload} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg font-semibold rounded-xl flex items-center justify-center gap-2">
-                      <Download className="w-5 h-5" />
-                      Download
-                    </Button>
-                    <Button onClick={handleReset} variant="outline" className="flex-1 py-6 text-lg font-semibold rounded-xl">
-                      Crop Another
-                    </Button>
-                  </>
-                )}
+                <Button onClick={handleCrop} disabled={isCompressing || isProcessing || !croppedAreaPixels} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg font-semibold rounded-xl">
+                  {isCompressing ? 'Compressing...' : isProcessing ? 'Cropping...' : 'Crop Image'}
+                </Button>
+                <Button onClick={handleReset} variant="outline" className="sm:w-32 py-6 text-lg font-semibold rounded-xl">
+                  <X className="w-5 h-5 mr-2" />
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="text-center">
+                <div className="inline-block p-4 bg-green-50 rounded-full mb-4">
+                  <Scissors className="w-12 h-12 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Image Cropped!</h3>
+                <p className="text-gray-600">Your cropped image is ready to download</p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button onClick={handleDownload} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg font-semibold rounded-xl flex items-center justify-center gap-2">
+                  <Download className="w-5 h-5" />
+                  Download Cropped Image
+                </Button>
+                <Button onClick={handleReset} variant="outline" className="flex-1 py-6 text-lg font-semibold rounded-xl">
+                  Crop Another
+                </Button>
               </div>
             </div>
           )}
