@@ -115,6 +115,25 @@ const Index = () => {
               <span className="text-sm font-medium text-gray-700">File compression platform</span>
             </div>
 
+            {/* Tagline with styled underlines */}
+            <div className="text-5xl sm:text-6xl lg:text-7xl font-black mb-8 leading-tight">
+              <span className="inline-block relative">
+                <span className="text-red-600">Compress</span>
+                <span className="absolute -bottom-2 left-0 w-full h-1.5 bg-gradient-to-r from-red-600 to-red-400 rounded-full" />
+              </span>
+              <span className="text-gray-400 mx-1">.</span>
+              <span className="inline-block relative">
+                <span className="text-purple-600">Convert</span>
+                <span className="absolute -bottom-2 left-0 w-full h-1.5 bg-gradient-to-r from-purple-600 to-purple-400 rounded-full" />
+              </span>
+              <span className="text-gray-400 mx-1">.</span>
+              <span className="inline-block relative">
+                <span className="text-gray-900">Collaborate</span>
+                <span className="absolute -bottom-2 left-0 w-full h-1.5 bg-gradient-to-r from-gray-900 to-gray-700 rounded-full" />
+              </span>
+              <span className="text-gray-400">.</span>
+            </div>
+
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
               From managing files,
