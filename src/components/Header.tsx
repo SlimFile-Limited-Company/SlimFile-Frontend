@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown, Trophy } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isAuthenticated, logout } from "@/lib/auth";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -105,33 +105,16 @@ export const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
-      {/* Leaderboard banner */}
-      <Link
-        to="/leaderboard"
-        className="relative flex items-center justify-center gap-3 px-6 py-2.5 text-white overflow-hidden group"
+      {/* Announcement banner */}
+      <div
+        className="relative flex items-center justify-center gap-3 px-6 py-2.5 text-white overflow-hidden"
         style={{ background: "linear-gradient(90deg, #7c3aed 0%, #9333ea 40%, #7c3aed 100%)" }}
       >
-        {/* Animated shimmer */}
-        <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)" }}
-        />
-
-        {/* Badge */}
-        <span className="hidden sm:inline-flex items-center gap-1 bg-white/20 text-white text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 tracking-wide">
-          🏆 LEADERBOARD
-        </span>
-
         {/* Message */}
         <span className="text-sm font-medium tracking-wide flex items-center gap-2">
-          <span className="font-semibold">Amos Tandoh is leading with 9.95 GB saved!</span>
-          <span className="hidden sm:inline opacity-80">—</span>
-          <span className="hidden sm:inline">49 files compressed · Top 3 win monthly!</span>
-          <span className="hidden md:inline opacity-75 text-xs">· Click to see the full rankings</span>
+          <span className="font-semibold">Stay tuned for exciting updates!</span>
         </span>
-
-        {/* Arrow */}
-        <span className="text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-200 text-sm shrink-0">→</span>
-      </Link>
+      </div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
@@ -288,20 +271,6 @@ export const Header = () => {
                 </div>
               )}
             </div>
-
-            {/* Leaderboard Link */}
-            <Link
-              to="/leaderboard"
-              className={cn(
-                "flex items-center space-x-1.5 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full",
-                location.pathname === "/leaderboard"
-                  ? "text-white bg-yellow-500 shadow-md font-semibold"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-yellow-50"
-              )}
-            >
-              <Trophy className="w-4 h-4" />
-              <span>Leaderboard</span>
-            </Link>
 
           </nav>
 
@@ -509,21 +478,6 @@ export const Header = () => {
                   </div>
                 )}
               </div>
-
-              {/* Mobile Leaderboard Link */}
-              <Link
-                to="/leaderboard"
-                className={cn(
-                  "flex items-center space-x-2 px-4 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
-                  location.pathname === "/leaderboard"
-                    ? "text-yellow-600 bg-yellow-50 border border-yellow-100"
-                    : "text-gray-700 hover:text-yellow-600 hover:bg-yellow-50"
-                )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Trophy className="w-4 h-4" />
-                <span>Leaderboard</span>
-              </Link>
 
               {isAuthenticated() ? (
                 <div className="px-4 pt-2">
