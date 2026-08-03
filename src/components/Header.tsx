@@ -122,7 +122,7 @@ export const Header = () => {
       <Link
         to="/get-started"
         className="relative flex items-center justify-center gap-3 px-6 py-2.5 text-white overflow-hidden group"
-        style={{ background: "linear-gradient(90deg, #3b82f6 0%, #2563eb 40%, #3b82f6 100%)" }}
+        style={{ background: "linear-gradient(90deg, #7c3aed 0%, #9333ea 40%, #7c3aed 100%)" }}
       >
         {/* Animated shimmer */}
         <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
