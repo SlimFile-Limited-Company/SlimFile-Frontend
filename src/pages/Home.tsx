@@ -444,41 +444,51 @@ const Home: FC = () => {
       {/* Features Section */}
       <section className="pt-4 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="container mx-auto max-w-7xl">
-          {/* Dots at TOP */}
-          <div className="flex justify-center gap-2 mb-8">
-            {Array.from({ length: totalPages }).map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setFeaturesPage(idx)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  idx === featuresPage ? 'bg-red-600 w-8' : 'bg-gray-300 w-2'
-                }`}
-              />
-            ))}
+          {/* Navigation: Arrows + Dots */}
+          <div className="flex items-center justify-between mb-8 max-w-md mx-auto">
+            {/* Left Arrow */}
+            <button
+              onClick={() => setFeaturesPage((prev) => Math.max(0, prev - 1))}
+              disabled={featuresPage === 0}
+              className={`w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center transition-colors border-2 ${
+                featuresPage === 0
+                  ? 'border-gray-200 text-gray-300 cursor-not-allowed'
+                  : 'border-red-100 text-red-600 hover:bg-red-50'
+              }`}
+              aria-label="Previous"
+            >
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+            </button>
+
+            {/* Dots */}
+            <div className="flex justify-center gap-2">
+              {Array.from({ length: totalPages }).map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setFeaturesPage(idx)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    idx === featuresPage ? 'bg-red-600 w-8' : 'bg-gray-300 w-2'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Right Arrow */}
+            <button
+              onClick={() => setFeaturesPage((prev) => Math.min(totalPages - 1, prev + 1))}
+              disabled={featuresPage === totalPages - 1}
+              className={`w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center transition-colors border-2 ${
+                featuresPage === totalPages - 1
+                  ? 'border-gray-200 text-gray-300 cursor-not-allowed'
+                  : 'border-red-100 text-red-600 hover:bg-red-50'
+              }`}
+              aria-label="Next"
+            >
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+            </button>
           </div>
 
           <div className="relative">
-            {/* Left Arrow */}
-            {featuresPage > 0 && (
-              <button
-                onClick={() => setFeaturesPage((prev) => prev - 1)}
-                className="absolute left-0 top-0 -translate-x-2 sm:-translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors border-2 border-red-100"
-                aria-label="Previous"
-              >
-                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
-            )}
-
-            {/* Right Arrow */}
-            {featuresPage < totalPages - 1 && (
-              <button
-                onClick={() => setFeaturesPage((prev) => prev + 1)}
-                className="absolute right-0 top-0 translate-x-2 sm:translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors border-2 border-red-100"
-                aria-label="Next"
-              >
-                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
-            )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {featureCategories[featuresPage].map((feature) => (
