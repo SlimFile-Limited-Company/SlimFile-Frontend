@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
   Home, Rss, Minimize2, RefreshCw, LayoutDashboard,
-  GitMerge, Lock, Layers, Users, FileText, PenLine, Video, Scan, Sparkles, Trophy,
+  GitMerge, Lock, Layers, Users, FileText, PenLine, Video, Scan, Sparkles,
 } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
@@ -27,7 +27,6 @@ const tabs = [
   { label: 'Boards',     icon: PenLine,         to: '/my-whiteboards',  section: 'connect' },
   { label: 'Meet',       icon: Video,           to: '/meet',            section: 'connect' },
   { label: 'AI Lab',     icon: Sparkles,        to: '/ai-lab',          section: 'ai' },
-  { label: 'Leaderboard', icon: Trophy,         to: '/leaderboard',     section: 'special' },
   { label: 'Dashboard',  icon: LayoutDashboard, to: '/dashboard',       section: null },
 ];
 
@@ -37,14 +36,12 @@ const sectionColor: Record<string, string> = {
   suite:   'bg-red-500   shadow-[0_3px_10px_rgba(239,68,68,0.35)]',
   connect: 'bg-violet-500 shadow-[0_3px_10px_rgba(139,92,246,0.35)]',
   ai:      'bg-blue-500  shadow-[0_3px_10px_rgba(59,130,246,0.35)]',
-  special: 'bg-yellow-500 shadow-[0_3px_10px_rgba(234,179,8,0.35)]',
 };
 const sectionLabel: Record<string, string> = {
   home:    'text-red-500',
   suite:   'text-red-500',
   connect: 'text-violet-500',
   ai:      'text-blue-500',
-  special: 'text-yellow-600',
 };
 
 export default function BottomNav() {
