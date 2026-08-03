@@ -68,7 +68,7 @@ export default function RemoveBackground() {
             Image Tools
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">Remove Background</h1>
-          <p className="text-lg text-gray-600">Automatically remove image backgrounds</p>
+          <p className="text-lg text-gray-600">AI-powered background removal for your images</p>
         </div>
         <div className="bg-white rounded-2xl shadow-lg border p-6 sm:p-8">
           {!selectedFile ? (
