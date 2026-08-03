@@ -94,21 +94,21 @@ export default function BottomNav() {
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[60]">
-      <div className="bg-white/98 backdrop-blur-xl rounded-t-[28px] border-t border-gray-100/60 shadow-[0_-6px_32px_rgba(0,0,0,0.10)]">
+      <div className="bg-gradient-to-r from-purple-900 via-purple-800 to-purple-900 backdrop-blur-xl rounded-t-[28px] border-t border-purple-700/60 shadow-[0_-6px_32px_rgba(0,0,0,0.10)]">
 
         {/* Handle pill */}
         <div className="flex justify-center pt-2.5 pb-1">
-          <div className="w-10 h-[3px] rounded-full bg-gray-200" />
+          <div className="w-10 h-[3px] rounded-full bg-purple-400/50" />
         </div>
 
         {/* Scrollable row */}
         <div className="relative">
           {/* Fade — left */}
           <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 z-10
-                          bg-gradient-to-r from-white to-transparent" />
+                          bg-gradient-to-r from-purple-900 to-transparent" />
           {/* Fade — right */}
           <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-10
-                          bg-gradient-to-l from-white to-transparent" />
+                          bg-gradient-to-l from-purple-900 to-transparent" />
 
           <div
             ref={scrollRef}
@@ -118,11 +118,8 @@ export default function BottomNav() {
             {tabs.map(({ label, icon: Icon, to, section }) => {
               const active = isActive(to);
               const pillBg = active
-                ? (section ? sectionColor[section] : 'bg-gray-800 shadow-[0_3px_10px_rgba(0,0,0,0.22)]')
-                : 'bg-gray-50';
-              const labelCls = active
-                ? (section ? sectionLabel[section] : 'text-gray-800')
-                : 'text-gray-400';
+                ? 'bg-white/20 shadow-[0_3px_10px_rgba(255,255,255,0.15)]'
+                : 'bg-transparent';
 
               return (
                 <Link
@@ -133,13 +130,13 @@ export default function BottomNav() {
                   {/* Icon pill */}
                   <div className={`relative w-12 h-[34px] rounded-2xl flex items-center justify-center transition-all duration-200 ${pillBg}`}>
                     <Icon
-                      className={`w-[17px] h-[17px] transition-colors ${active ? 'text-white' : 'text-gray-400'}`}
+                      className={`w-[17px] h-[17px] transition-colors text-white ${active ? 'opacity-100' : 'opacity-60'}`}
                       strokeWidth={active ? 2.3 : 1.7}
                     />
                   </div>
 
                   {/* Label */}
-                  <span className={`text-[9px] leading-none font-semibold whitespace-nowrap transition-colors ${labelCls}`}>
+                  <span className={`text-[9px] leading-none font-semibold whitespace-nowrap transition-colors text-white ${active ? 'opacity-100' : 'opacity-60'}`}>
                     {label}
                   </span>
                 </Link>
