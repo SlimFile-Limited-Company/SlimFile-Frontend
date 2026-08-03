@@ -122,9 +122,11 @@ const Home: FC = () => {
     { icon: Mail, title: 'Email Generator', gradient: 'from-blue-600 to-cyan-600', href: '/ai-lab?feature=email', description: 'Generate professional emails from bullet points.', features: ['8 email types', '6 tone options', 'Instant generation'] },
   ];
 
-  // Features slider
+  // Features slider - organized: General → AI Lab → Image Processing
   const [featuresPage, setFeaturesPage] = useState(0);
-  const allFeatures = [
+
+  // General Features (no duplicates)
+  const generalFeatures = [
     { icon: FileImage,  title: "Compress Files",        description: "Shrink images, PDFs, DOCX & XLSX while keeping quality.",               features: ["JPEG, PNG, WebP, PDF", "DOCX & XLSX support", "Up to 95% reduction"],       gradient: "from-blue-500 to-blue-600",     href: "/compress",        badge: "Popular",   flip: "Sneaky peek! 👀"          },
     { icon: FileText,  title: "Convert Formats",       description: "Transform files between formats — no quality loss.",                     features: ["Images, Office to PDF", "PDF to Images ZIP", "No quality loss"],              gradient: "from-purple-500 to-purple-600", href: "/convert-only",    badge: "New",       flip: "Oh you curious one! 🐱"   },
     { icon: Zap,       title: "Convert & Compress",    description: "Convert format AND reduce size in one single step.",                     features: ["All conversion features", "Max size reduction", "One-step processing"],       gradient: "from-red-500 to-red-600",       href: "/convert-compress", badge: "Best Value", flip: "You snooped! 🕵️"          },
@@ -137,7 +139,10 @@ const Home: FC = () => {
     { icon: Users,     title: "Team Workspaces",       description: "Collaborate in real-time with your team in shared spaces.",               features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600",   href: "/workspaces",      badge: "Team",      flip: "Caught ya! 😄"             },
     { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", href: "/lock",            badge: "New",       flip: "Oh snap! 😮"               },
     { icon: Sparkles,  title: "Summarize Document",    description: "Compress and extract a smart AI summary from any PDF, DOCX or PPTX.",   features: ["Powered by Llama 3", "PDF, DOCX & PPTX", "Structured output"],              gradient: "from-purple-600 to-indigo-700", href: "/summarize",       badge: "AI",        flip: "Well hello there! 🤫"      },
-    ...aiLabFeatures.map(f => ({ ...f, flip: "AI Power! 🤖" })),
+  ];
+
+  // Image Processing Features
+  const imageFeatures = [
     { icon: Maximize2, title: 'Resize Image', gradient: 'from-blue-500 to-indigo-500', href: '/images/resize', description: 'Resize images to custom dimensions with quality preservation.', features: ['Maintain aspect ratio', '100% quality default', 'PNG/JPEG/WEBP support'], badge: 'New', flip: 'Image Magic! 🖼️' },
     { icon: Crop, title: 'Crop Image', gradient: 'from-emerald-500 to-teal-500', href: '/images/crop', description: 'Crop images with drag-to-crop interface and zoom controls.', features: ['Visual drag interface', 'Zoom 1x - 3x', 'Live preview'], badge: 'New', flip: 'Image Magic! 🖼️' },
     { icon: Wand2, title: 'Enhance Image', gradient: 'from-purple-500 to-pink-500', href: '/images/enhance', description: 'Automatically improve brightness, contrast, and sharpness.', features: ['One-click enhance', 'Auto adjustments', 'Quality improvement'], badge: 'New', flip: 'Image Magic! 🖼️' },
@@ -147,6 +152,14 @@ const Home: FC = () => {
     { icon: UserX, title: 'Blur Faces', gradient: 'from-indigo-500 to-blue-600', href: '/images/blur-faces', description: 'AI-powered face detection and blur for privacy protection.', features: ['Auto face detection', 'Adjustable intensity', 'Privacy protection'], badge: 'AI', flip: 'Image Magic! 🖼️' },
     { icon: Grid3x3, title: 'Generate Thumbnails', gradient: 'from-amber-500 to-yellow-500', href: '/images/generate-thumbnails', description: 'Create multiple thumbnail sizes from your images.', features: ['Multiple sizes', 'Batch generation', 'Instant download'], badge: 'New', flip: 'Image Magic! 🖼️' },
   ];
+
+  // Combine: General → AI Lab → Image Processing (NO duplicates)
+  const allFeatures = [
+    ...generalFeatures,
+    ...aiLabFeatures.map(f => ({ ...f, flip: "AI Power! 🤖" })),
+    ...imageFeatures,
+  ];
+
   const featuresPerPage = 8;
   const totalPages = Math.ceil(allFeatures.length / featuresPerPage);
 
