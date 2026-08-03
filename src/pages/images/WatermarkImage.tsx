@@ -87,7 +87,7 @@ export default function WatermarkImage() {
   const handleReset = () => {
     setSelectedFile(null);
     setPreview(null);
-    setProcessedFile(null);
+    if (processedPreview) URL.revokeObjectURL(processedPreview); setProcessedFile(null); setProcessedPreview(null);
     setError(null);
   };
 
@@ -167,7 +167,14 @@ export default function WatermarkImage() {
               )}
 
               <div className="flex flex-col sm:flex-row gap-3">
-                {!processedFile ? (
+                {processedPreview && (
+                <div className="relative bg-gray-50 rounded-lg p-4 mb-4">
+                  <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
+                  <img src={processedPreview} alt="Processed" className="w-full h-auto max-h-96 object-contain rounded-lg border border-gray-200" />
+                </div>
+              )}
+
+              {!processedFile ? (
                   <Button onClick={handleWatermark} disabled={isCompressing || isProcessing} className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg font-semibold rounded-xl">
                     {isCompressing ? 'Compressing...' : isProcessing ? 'Adding...' : 'Add Watermark'}
                   </Button>

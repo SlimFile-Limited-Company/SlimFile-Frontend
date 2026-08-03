@@ -43,7 +43,10 @@ export default function BlurFaces() {
       formData.append('blurIntensity', intensity.toString());
       const response = await fetch(`${API_BASE_URL}/images/blur-faces`, { method: 'POST', body: formData });
       if (!response.ok) throw new Error('Failed');
-      setProcessedFile(await response.blob());
+      const blob = await response.blob();
+      setProcessedFile(blob);
+      const url = URL.createObjectURL(blob);
+      setProcessedPreview(url);
     } catch (err) {
       setError('Failed to blur faces');
     } finally {
@@ -88,7 +91,7 @@ export default function BlurFaces() {
             <div className="space-y-6">
               <div className="relative">
                 <img src={preview!} alt="Preview" className="w-full h-auto max-h-96 object-contain rounded-lg border" />
-                <button onClick={() => { setSelectedFile(null); setPreview(null); setProcessedFile(null); }} className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-lg">
+                <button onClick={() => { setSelectedFile(null); setPreview(null); if (processedPreview) URL.revokeObjectURL(processedPreview); setProcessedFile(null); setProcessedPreview(null); }} className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-lg">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -103,7 +106,14 @@ export default function BlurFaces() {
                 </div>
               )}
               <div className="flex gap-3">
-                {!processedFile ? (
+                {processedPreview && (
+                <div className="relative bg-gray-50 rounded-lg p-4 mb-4">
+                  <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
+                  <img src={processedPreview} alt="Processed" className="w-full h-auto max-h-96 object-contain rounded-lg border border-gray-200" />
+                </div>
+              )}
+
+              {!processedFile ? (
                   <Button onClick={handleBlur} disabled={isCompressing || isProcessing} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg rounded-xl">
                     {isCompressing ? 'Compressing...' : isProcessing ? 'Blurring...' : 'Blur Faces'}
                   </Button>
@@ -113,7 +123,7 @@ export default function BlurFaces() {
                       <Download className="w-5 h-5 mr-2" />
                       Download
                     </Button>
-                    <Button onClick={() => { setSelectedFile(null); setPreview(null); setProcessedFile(null); }} variant="outline" className="flex-1 py-6 text-lg rounded-xl">
+                    <Button onClick={() => { setSelectedFile(null); setPreview(null); if (processedPreview) URL.revokeObjectURL(processedPreview); setProcessedFile(null); setProcessedPreview(null); }} variant="outline" className="flex-1 py-6 text-lg rounded-xl">
                       Another
                     </Button>
                   </>
