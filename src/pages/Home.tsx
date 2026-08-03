@@ -122,34 +122,41 @@ const Home: FC = () => {
     { icon: Mail, title: 'Email Generator', gradient: 'from-blue-600 to-cyan-600', href: '/ai-lab?feature=email', description: 'Generate professional emails from bullet points.', features: ['8 email types', '6 tone options', 'Instant generation'] },
   ];
 
-  // Image Processing carousel
-  const [imageIndex, setImageIndex] = useState(0);
-  const imageFeatures = [
-    { icon: Maximize2, title: 'Resize Image', gradient: 'from-blue-500 to-indigo-500', href: '/images/resize', description: 'Resize images to custom dimensions with quality preservation.', features: ['Maintain aspect ratio', '100% quality default', 'PNG/JPEG/WEBP support'] },
-    { icon: Crop, title: 'Crop Image', gradient: 'from-emerald-500 to-teal-500', href: '/images/crop', description: 'Crop images with drag-to-crop interface and zoom controls.', features: ['Visual drag interface', 'Zoom 1x - 3x', 'Live preview'] },
-    { icon: Wand2, title: 'Enhance Image', gradient: 'from-purple-500 to-pink-500', href: '/images/enhance', description: 'Automatically improve brightness, contrast, and sharpness.', features: ['One-click enhance', 'Auto adjustments', 'Quality improvement'] },
-    { icon: Signature, title: 'Watermark Image', gradient: 'from-cyan-500 to-blue-500', href: '/images/watermark', description: 'Add text or image watermarks to protect your images.', features: ['Text & image marks', 'Custom position', 'Opacity control'] },
-    { icon: Eraser, title: 'Remove Background', gradient: 'from-red-500 to-orange-500', href: '/images/remove-background', description: 'Convert your images to transparent PNG format.', features: ['Transparent PNG', 'Alpha channel', 'Quick conversion'] },
-    { icon: Layers, title: 'Replace Background', gradient: 'from-violet-500 to-purple-500', href: '/images/replace-background', description: 'Change image background with solid colors.', features: ['Color picker', 'Custom colors', 'Live preview'] },
-    { icon: UserX, title: 'Blur Faces', gradient: 'from-indigo-500 to-blue-600', href: '/images/blur-faces', description: 'AI-powered face detection and blur for privacy protection.', features: ['Auto face detection', 'Adjustable intensity', 'Privacy protection'] },
-    { icon: Grid3x3, title: 'Generate Thumbnails', gradient: 'from-amber-500 to-yellow-500', href: '/images/generate-thumbnails', description: 'Create multiple thumbnail sizes from your images.', features: ['Multiple sizes', 'Batch generation', 'Instant download'] },
+  // Features slider
+  const [featuresPage, setFeaturesPage] = useState(0);
+  const allFeatures = [
+    { icon: FileImage,  title: "Compress Files",        description: "Shrink images, PDFs, DOCX & XLSX while keeping quality.",               features: ["JPEG, PNG, WebP, PDF", "DOCX & XLSX support", "Up to 95% reduction"],       gradient: "from-blue-500 to-blue-600",     href: "/compress",        badge: "Popular",   flip: "Sneaky peek! 👀"          },
+    { icon: FileText,  title: "Convert Formats",       description: "Transform files between formats — no quality loss.",                     features: ["Images, Office to PDF", "PDF to Images ZIP", "No quality loss"],              gradient: "from-purple-500 to-purple-600", href: "/convert-only",    badge: "New",       flip: "Oh you curious one! 🐱"   },
+    { icon: Zap,       title: "Convert & Compress",    description: "Convert format AND reduce size in one single step.",                     features: ["All conversion features", "Max size reduction", "One-step processing"],       gradient: "from-red-500 to-red-600",       href: "/convert-compress", badge: "Best Value", flip: "You snooped! 🕵️"          },
+    { icon: FilePlus2, title: "PDF Merger & Splitter", description: "Combine multiple PDFs or split one into custom sections.",               features: ["Merge up to 20 PDFs", "Split by page ranges", "Drag to reorder"],           gradient: "from-amber-500 to-orange-500",  href: "/forge",           badge: "New",       flip: "Busted! 🫢"                },
+    { icon: ScanText,  title: "OCR Tool",              description: "Extract editable text from images and scanned documents.",               features: ["Scan images & PDFs", "Multiple languages", "Export as text/PDF"],            gradient: "from-orange-500 to-orange-600", href: "/ocr-tool",        badge: "New",       flip: "Well well well... 😏"      },
+    { icon: Radio,     title: "Activity Feed",         description: "Stay updated with live activity across all your workspaces.",             features: ["Real-time updates", "Activity tracking", "Team notifications"],              gradient: "from-indigo-500 to-indigo-600", href: "/feed",            badge: "Live",      flip: "Look who's here! 👋"       },
+    { icon: Video,     title: "Video Meetings",        description: "Host HD video calls and share your screen instantly.",                   features: ["HD video calls", "Screen sharing", "No downloads needed"],                   gradient: "from-cyan-500 to-cyan-600",     href: "/meet",            badge: "New",       flip: "You found me! 🙈"          },
+    { icon: PenTool,   title: "Whiteboards",           description: "Brainstorm ideas and sketch concepts on visual boards.",                 features: ["Drawing tools", "Text & shapes", "Multiple boards"],                         gradient: "from-pink-500 to-pink-600",     href: "/my-whiteboards",  badge: "New",       flip: "Peek-a-boo! 🫣"            },
+    { icon: FileType,  title: "My Documents",          description: "Write and edit documents with a rich text editor.",                      features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600",       href: "/documents",       badge: "New",       flip: "Gotcha! 😏"                },
+    { icon: Users,     title: "Team Workspaces",       description: "Collaborate in real-time with your team in shared spaces.",               features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600",   href: "/workspaces",      badge: "Team",      flip: "Caught ya! 😄"             },
+    { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", href: "/lock",            badge: "New",       flip: "Oh snap! 😮"               },
+    { icon: Sparkles,  title: "Summarize Document",    description: "Compress and extract a smart AI summary from any PDF, DOCX or PPTX.",   features: ["Powered by Llama 3", "PDF, DOCX & PPTX", "Structured output"],              gradient: "from-purple-600 to-indigo-700", href: "/summarize",       badge: "AI",        flip: "Well hello there! 🤫"      },
+    ...aiLabFeatures.map(f => ({ ...f, flip: "AI Power! 🤖" })),
+    { icon: Maximize2, title: 'Resize Image', gradient: 'from-blue-500 to-indigo-500', href: '/images/resize', description: 'Resize images to custom dimensions with quality preservation.', features: ['Maintain aspect ratio', '100% quality default', 'PNG/JPEG/WEBP support'], badge: 'New', flip: 'Image Magic! 🖼️' },
+    { icon: Crop, title: 'Crop Image', gradient: 'from-emerald-500 to-teal-500', href: '/images/crop', description: 'Crop images with drag-to-crop interface and zoom controls.', features: ['Visual drag interface', 'Zoom 1x - 3x', 'Live preview'], badge: 'New', flip: 'Image Magic! 🖼️' },
+    { icon: Wand2, title: 'Enhance Image', gradient: 'from-purple-500 to-pink-500', href: '/images/enhance', description: 'Automatically improve brightness, contrast, and sharpness.', features: ['One-click enhance', 'Auto adjustments', 'Quality improvement'], badge: 'New', flip: 'Image Magic! 🖼️' },
+    { icon: Signature, title: 'Watermark Image', gradient: 'from-cyan-500 to-blue-500', href: '/images/watermark', description: 'Add text or image watermarks to protect your images.', features: ['Text & image marks', 'Custom position', 'Opacity control'], badge: 'New', flip: 'Image Magic! 🖼️' },
+    { icon: Eraser, title: 'Remove Background', gradient: 'from-red-500 to-orange-500', href: '/images/remove-background', description: 'Convert your images to transparent PNG format.', features: ['Transparent PNG', 'Alpha channel', 'Quick conversion'], badge: 'New', flip: 'Image Magic! 🖼️' },
+    { icon: Layers, title: 'Replace Background', gradient: 'from-violet-500 to-purple-500', href: '/images/replace-background', description: 'Change image background with solid colors.', features: ['Color picker', 'Custom colors', 'Live preview'], badge: 'New', flip: 'Image Magic! 🖼️' },
+    { icon: UserX, title: 'Blur Faces', gradient: 'from-indigo-500 to-blue-600', href: '/images/blur-faces', description: 'AI-powered face detection and blur for privacy protection.', features: ['Auto face detection', 'Adjustable intensity', 'Privacy protection'], badge: 'AI', flip: 'Image Magic! 🖼️' },
+    { icon: Grid3x3, title: 'Generate Thumbnails', gradient: 'from-amber-500 to-yellow-500', href: '/images/generate-thumbnails', description: 'Create multiple thumbnail sizes from your images.', features: ['Multiple sizes', 'Batch generation', 'Instant download'], badge: 'New', flip: 'Image Magic! 🖼️' },
   ];
+  const featuresPerPage = 8;
+  const totalPages = Math.ceil(allFeatures.length / featuresPerPage);
 
-  // Auto-slide AI Lab every 10 seconds
+  // Auto-slide features every 10 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setAiLabIndex((prev) => (prev + 1) % aiLabFeatures.length);
+      setFeaturesPage((prev) => (prev + 1) % totalPages);
     }, 10000);
     return () => clearInterval(interval);
-  }, [aiLabFeatures.length]);
-
-  // Auto-slide Image Processing every 10 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setImageIndex((prev) => (prev + 1) % imageFeatures.length);
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [imageFeatures.length]);
+  }, [totalPages]);
 
   // Right mascot — fun file compression tips
   const mascotTips = [
@@ -449,22 +456,22 @@ const Home: FC = () => {
 
       {/* Features Section */}
       <section className="pt-4 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
-            {[
-              { icon: FileImage,  title: "Compress Files",        description: "Shrink images, PDFs, DOCX & XLSX while keeping quality.",               features: ["JPEG, PNG, WebP, PDF", "DOCX & XLSX support", "Up to 95% reduction"],       gradient: "from-blue-500 to-blue-600",     href: "/compress",        badge: "Popular",   flip: "Sneaky peek! 👀"          },
-              { icon: FileText,  title: "Convert Formats",       description: "Transform files between formats — no quality loss.",                     features: ["Images, Office to PDF", "PDF to Images ZIP", "No quality loss"],              gradient: "from-purple-500 to-purple-600", href: "/convert-only",    badge: "New",       flip: "Oh you curious one! 🐱"   },
-              { icon: Zap,       title: "Convert & Compress",    description: "Convert format AND reduce size in one single step.",                     features: ["All conversion features", "Max size reduction", "One-step processing"],       gradient: "from-red-500 to-red-600",       href: "/convert-compress", badge: "Best Value", flip: "You snooped! 🕵️"          },
-              { icon: FilePlus2, title: "PDF Merger & Splitter", description: "Combine multiple PDFs or split one into custom sections.",               features: ["Merge up to 20 PDFs", "Split by page ranges", "Drag to reorder"],           gradient: "from-amber-500 to-orange-500",  href: "/forge",           badge: "New",       flip: "Busted! 🫢"                },
-              { icon: ScanText,  title: "OCR Tool",              description: "Extract editable text from images and scanned documents.",               features: ["Scan images & PDFs", "Multiple languages", "Export as text/PDF"],            gradient: "from-orange-500 to-orange-600", href: "/ocr-tool",        badge: "New",       flip: "Well well well... 😏"      },
-              { icon: Radio,     title: "Activity Feed",         description: "Stay updated with live activity across all your workspaces.",             features: ["Real-time updates", "Activity tracking", "Team notifications"],              gradient: "from-indigo-500 to-indigo-600", href: "/feed",            badge: "Live",      flip: "Look who's here! 👋"       },
-              { icon: Video,     title: "Video Meetings",        description: "Host HD video calls and share your screen instantly.",                   features: ["HD video calls", "Screen sharing", "No downloads needed"],                   gradient: "from-cyan-500 to-cyan-600",     href: "/meet",            badge: "New",       flip: "You found me! 🙈"          },
-              { icon: PenTool,   title: "Whiteboards",           description: "Brainstorm ideas and sketch concepts on visual boards.",                 features: ["Drawing tools", "Text & shapes", "Multiple boards"],                         gradient: "from-pink-500 to-pink-600",     href: "/my-whiteboards",  badge: "New",       flip: "Peek-a-boo! 🫣"            },
-              { icon: FileType,  title: "My Documents",          description: "Write and edit documents with a rich text editor.",                      features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600",       href: "/documents",       badge: "New",       flip: "Gotcha! 😏"                },
-              { icon: Users,     title: "Team Workspaces",       description: "Collaborate in real-time with your team in shared spaces.",               features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600",   href: "/workspaces",      badge: "Team",      flip: "Caught ya! 😄"             },
-              { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", href: "/lock",            badge: "New",       flip: "Oh snap! 😮"               },
-              { icon: Sparkles,  title: "Summarize Document",    description: "Compress and extract a smart AI summary from any PDF, DOCX or PPTX.",   features: ["Powered by Llama 3", "PDF, DOCX & PPTX", "Structured output"],              gradient: "from-purple-600 to-indigo-700", href: "/summarize",       badge: "AI",        flip: "Well hello there! 🤫"      },
-            ].map((feature) => (
+        <div className="container mx-auto max-w-7xl">
+          {/* Dots at TOP */}
+          <div className="flex justify-center gap-2 mb-8">
+            {Array.from({ length: totalPages }).map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setFeaturesPage(idx)}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  idx === featuresPage ? 'bg-red-600 w-8' : 'bg-gray-300 w-2'
+                }`}
+              />
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {allFeatures.slice(featuresPage * featuresPerPage, (featuresPage + 1) * featuresPerPage).map((feature) => (
               <div key={feature.title} className="flip-card" style={{ minHeight: "300px" }}>
                 <div className="flip-card-inner">
 
@@ -524,182 +531,6 @@ const Home: FC = () => {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* AI Lab Carousel */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 to-white border-y border-purple-100">
-        <div className="container mx-auto">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-8 sm:mb-10 md:mb-12">
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full px-6 py-2 mb-6">
-                <Sparkles className="w-4 h-4" />
-                <span className="font-semibold text-sm">AI LAB</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                9 Powerful AI Tools
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-                Transform your content with AI-powered features
-              </p>
-            </div>
-
-            {/* Carousel */}
-            <div className="relative">
-              <div className="overflow-hidden">
-                <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${aiLabIndex * 100}%)` }}>
-                  {aiLabFeatures.map((feature, idx) => (
-                    <div key={idx} className="w-full flex-shrink-0 px-2">
-                      <Link to={feature.href} className="group block">
-                        <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 max-w-4xl mx-auto">
-                          <div className={`relative bg-gradient-to-br ${feature.gradient} px-8 pt-8 pb-12`}>
-                            <span className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full">
-                              AI
-                            </span>
-                            <div className="flex items-center gap-4">
-                              <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
-                                <feature.icon className="w-8 h-8 text-white" />
-                              </div>
-                              <p className="text-white font-bold text-2xl leading-tight">{feature.title}</p>
-                            </div>
-                          </div>
-                          <div className="relative -mt-6 mx-6 mb-6 bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-6">
-                            <p className="text-gray-600 text-base leading-relaxed mb-6">{feature.description}</p>
-                            <ul className="space-y-3 mb-6">
-                              {feature.features.map((item, i) => (
-                                <li key={i} className="flex items-center gap-3 text-sm text-gray-700">
-                                  <CheckCircle2 className="w-5 h-5 text-purple-500 flex-shrink-0" />
-                                  <span>{item}</span>
-                                </li>
-                              ))}
-                            </ul>
-                            <span className="inline-flex items-center gap-2 text-base font-semibold text-purple-600 group-hover:gap-3 transition-all duration-200">
-                              Try Now <ArrowRight className="w-5 h-5" />
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Navigation buttons */}
-              <button
-                onClick={() => setAiLabIndex((prev) => (prev - 1 + aiLabFeatures.length) % aiLabFeatures.length)}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-purple-600 hover:bg-purple-50 transition-colors z-10"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-              <button
-                onClick={() => setAiLabIndex((prev) => (prev + 1) % aiLabFeatures.length)}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-purple-600 hover:bg-purple-50 transition-colors z-10"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
-
-              {/* Dots indicator */}
-              <div className="flex justify-center gap-2 mt-8">
-                {aiLabFeatures.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setAiLabIndex(idx)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      idx === aiLabIndex ? 'bg-purple-600 w-8' : 'bg-gray-300 w-2'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Image Processing Carousel */}
-      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-white border-y border-blue-100">
-        <div className="container mx-auto">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-8 sm:mb-10 md:mb-12">
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full px-6 py-2 mb-6">
-                <FileImage className="w-4 h-4" />
-                <span className="font-semibold text-sm">IMAGE PROCESSING</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                8 Professional Image Tools
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-                Edit and transform your images with powerful processing tools
-              </p>
-            </div>
-
-            {/* Carousel */}
-            <div className="relative">
-              <div className="overflow-hidden">
-                <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${imageIndex * 100}%)` }}>
-                  {imageFeatures.map((feature, idx) => (
-                    <div key={idx} className="w-full flex-shrink-0 px-2">
-                      <Link to={feature.href} className="group block">
-                        <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 max-w-4xl mx-auto">
-                          <div className={`relative bg-gradient-to-br ${feature.gradient} px-8 pt-8 pb-12`}>
-                            <span className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full">
-                              New
-                            </span>
-                            <div className="flex items-center gap-4">
-                              <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
-                                <feature.icon className="w-8 h-8 text-white" />
-                              </div>
-                              <p className="text-white font-bold text-2xl leading-tight">{feature.title}</p>
-                            </div>
-                          </div>
-                          <div className="relative -mt-6 mx-6 mb-6 bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-6">
-                            <p className="text-gray-600 text-base leading-relaxed mb-6">{feature.description}</p>
-                            <ul className="space-y-3 mb-6">
-                              {feature.features.map((item, i) => (
-                                <li key={i} className="flex items-center gap-3 text-sm text-gray-700">
-                                  <CheckCircle2 className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                                  <span>{item}</span>
-                                </li>
-                              ))}
-                            </ul>
-                            <span className="inline-flex items-center gap-2 text-base font-semibold text-blue-600 group-hover:gap-3 transition-all duration-200">
-                              Try Now <ArrowRight className="w-5 h-5" />
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Navigation buttons */}
-              <button
-                onClick={() => setImageIndex((prev) => (prev - 1 + imageFeatures.length) % imageFeatures.length)}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-colors z-10"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-              <button
-                onClick={() => setImageIndex((prev) => (prev + 1) % imageFeatures.length)}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-colors z-10"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
-
-              {/* Dots indicator */}
-              <div className="flex justify-center gap-2 mt-8">
-                {imageFeatures.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setImageIndex(idx)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      idx === imageIndex ? 'bg-blue-600 w-8' : 'bg-gray-300 w-2'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </section>
