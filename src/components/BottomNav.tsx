@@ -94,21 +94,21 @@ export default function BottomNav() {
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[60]">
-      <div className="bg-gradient-to-r from-purple-900 via-purple-800 to-purple-900 backdrop-blur-xl rounded-t-[28px] border-t border-purple-700/60 shadow-[0_-6px_32px_rgba(0,0,0,0.10)]">
+      <div className="bg-gradient-to-r from-purple-600 via-purple-500 to-purple-600 backdrop-blur-xl rounded-t-[28px] border-t border-purple-400/60 shadow-[0_-6px_32px_rgba(0,0,0,0.10)]">
 
         {/* Handle pill */}
         <div className="flex justify-center pt-2.5 pb-1">
-          <div className="w-10 h-[3px] rounded-full bg-purple-400/50" />
+          <div className="w-10 h-[3px] rounded-full bg-white/40" />
         </div>
 
         {/* Scrollable row */}
         <div className="relative">
           {/* Fade — left */}
           <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 z-10
-                          bg-gradient-to-r from-purple-900 to-transparent" />
+                          bg-gradient-to-r from-purple-600 to-transparent" />
           {/* Fade — right */}
           <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-10
-                          bg-gradient-to-l from-purple-900 to-transparent" />
+                          bg-gradient-to-l from-purple-600 to-transparent" />
 
           <div
             ref={scrollRef}
