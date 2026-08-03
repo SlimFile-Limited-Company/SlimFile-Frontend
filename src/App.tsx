@@ -3,14 +3,12 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { CookieBanner } from "@/components/CookieBanner";
-import { GreetingBanner } from "@/components/GreetingBanner";
 import { registerServiceWorker } from "@/utils/pwa";
 import { useEffect, useState } from "react";
 import { isAuthenticated, validateToken } from "@/lib/auth";
 import { getNotificationPermission, requestNotificationPermission, notifyGreeting } from "@/services/pushNotificationService";
 
 const App = () => {
-  const [greetingUser, setGreetingUser] = useState<string | null>(null);
 
   useEffect(() => {
     registerServiceWorker();
@@ -47,46 +45,11 @@ const App = () => {
     };
 
     autoEnableNotifications();
-
-    // Show in-app greeting banner once per session for authenticated users
-    const showGreetingBanner = async () => {
-      if (!isAuthenticated()) return;
-      const greetingShown = sessionStorage.getItem('greetingShown');
-      if (greetingShown) return;
-
-      try {
-        const token = localStorage.getItem('jwt');
-        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
-        const response = await fetch(`${API_BASE_URL}/protected/dashboard`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          const userName = data.user?.name || 'User';
-          const isMobile = window.matchMedia('(max-width: 768px)').matches;
-          setTimeout(() => {
-            sessionStorage.setItem('greetingShown', new Date().toDateString());
-            if (isMobile) {
-              setGreetingUser(userName);
-            } else {
-              notifyGreeting(userName);
-            }
-          }, 500);
-        }
-      } catch {
-        // silently fail
-      }
-    };
-
-    showGreetingBanner();
   }, []);
 
   return (
     <div className="min-h-screen bg-white flex flex-col pb-16 md:pb-0">
       <PWAInstallPrompt />
-      {greetingUser && (
-        <GreetingBanner userName={greetingUser} onDismiss={() => setGreetingUser(null)} />
-      )}
       <Header />
       <main className="flex-1">
         <Outlet />
