@@ -357,11 +357,11 @@ const Home: FC = () => {
                     />
                   </svg>
                 </span>
-                <span className="text-gray-400">. </span>
+                <span style={{ color: '#dc2626' }}>. </span>
                 <span style={{ color: '#9333ea' }}>Convert</span>
-                <span className="text-gray-400">. </span>
+                <span style={{ color: '#9333ea' }}>. </span>
                 <span className="text-gray-900">Collaborate</span>
-                <span className="text-gray-400">.</span>
+                <span className="text-gray-900">.</span>
               </h1>
 
               {/* Subtitle */}
