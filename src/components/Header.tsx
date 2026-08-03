@@ -504,6 +504,20 @@ export const Header = () => {
                 )}
               </div>
 
+              {/* Mobile Reviews Button */}
+              <div className="px-4 pt-2">
+                <Link to="/reviews" onClick={() => setMobileMenuOpen(false)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full border-2 border-purple-400 text-purple-600 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-500 font-semibold shadow-sm flex items-center justify-center gap-1.5"
+                  >
+                    <Star className="w-4 h-4 fill-purple-400" />
+                    Reviews
+                  </Button>
+                </Link>
+              </div>
+
               {isAuthenticated() ? (
                 <div className="px-4 pt-2">
                   <Button
