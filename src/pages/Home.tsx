@@ -162,14 +162,6 @@ const Home: FC = () => {
 
   const totalPages = featureCategories.length; // 3 pages: General, AI Lab, Image Processing
 
-  // Auto-slide features every 10 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFeaturesPage((prev) => (prev + 1) % totalPages);
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [totalPages]);
-
   // Right mascot — fun file compression tips
   const mascotTips = [
     { icon: Zap,        title: "ZIP was born in 1989 🎂",      desc: "Phil Katz invented the ZIP format over 35 years ago — and it's still one of the most widely used compression formats on the planet.",  features: ["Used by billions daily", "Lossless compression", "Cross-platform support"],  gradient: "from-red-500 to-orange-400",    href: "/compress"        },
@@ -482,6 +474,29 @@ const Home: FC = () => {
             ))}
           </div>
 
+          <div className="relative">
+            {/* Left Arrow */}
+            {featuresPage > 0 && (
+              <button
+                onClick={() => setFeaturesPage((prev) => prev - 1)}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors border-2 border-red-100"
+                aria-label="Previous"
+              >
+                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+              </button>
+            )}
+
+            {/* Right Arrow */}
+            {featuresPage < totalPages - 1 && (
+              <button
+                onClick={() => setFeaturesPage((prev) => prev + 1)}
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors border-2 border-red-100"
+                aria-label="Next"
+              >
+                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+              </button>
+            )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {featureCategories[featuresPage].map((feature) => (
               <div key={feature.title} className="flip-card" style={{ minHeight: "300px" }}>
@@ -543,6 +558,7 @@ const Home: FC = () => {
                 </div>
               </div>
             ))}
+          </div>
           </div>
         </div>
       </section>
