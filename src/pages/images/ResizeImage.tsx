@@ -11,6 +11,7 @@ export default function ResizeImage() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -44,26 +45,42 @@ export default function ResizeImage() {
   const handleResize = async () => {
     if (!selectedFile) return;
 
-    setIsProcessing(true);
     setError(null);
-
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('width', width.toString());
-    formData.append('height', height.toString());
-    formData.append('maintainAspectRatio', maintainAspectRatio.toString());
-    formData.append('quality', quality.toString());
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
+      // Step 1: Auto-compress the image first
+      setIsCompressing(true);
+      const compressFormData = new FormData();
+      compressFormData.append('file', selectedFile);
+
+      const compressResponse = await fetch(`${API_BASE_URL}/compress`, {
+        method: 'POST',
+        body: compressFormData,
+      });
+
+      if (!compressResponse.ok) throw new Error('Compression failed');
+
+      const compressedBlob = await compressResponse.blob();
+      const compressedFile = new File([compressedBlob], selectedFile.name, { type: selectedFile.type });
+
+      setIsCompressing(false);
+
+      // Step 2: Resize the compressed image
+      setIsProcessing(true);
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+      formData.append('width', width.toString());
+      formData.append('height', height.toString());
+      formData.append('maintainAspectRatio', maintainAspectRatio.toString());
+      formData.append('quality', quality.toString());
+
       const response = await fetch(`${API_BASE_URL}/images/resize`, {
         method: 'POST',
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error('Resize failed');
-      }
+      if (!response.ok) throw new Error('Resize failed');
 
       const blob = await response.blob();
       setProcessedFile(blob);
@@ -71,6 +88,7 @@ export default function ResizeImage() {
       setError('Failed to resize image. Please try again.');
       console.error(err);
     } finally {
+      setIsCompressing(false);
       setIsProcessing(false);
     }
   };
@@ -136,7 +154,7 @@ export default function ResizeImage() {
                   Click to upload or drag and drop
                 </p>
                 <p className="text-sm text-gray-500">
-                  PNG, JPG, WEBP up to 50MB
+                  PNG, JPG, WEBP
                 </p>
               </label>
             </div>
@@ -235,10 +253,10 @@ export default function ResizeImage() {
                 {!processedFile ? (
                   <Button
                     onClick={handleResize}
-                    disabled={isProcessing}
+                    disabled={isCompressing || isProcessing}
                     className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg font-semibold rounded-xl"
                   >
-                    {isProcessing ? 'Resizing...' : 'Resize Image'}
+                    {isCompressing ? 'Compressing...' : isProcessing ? 'Resizing...' : 'Resize Image'}
                   </Button>
                 ) : (
                   <>

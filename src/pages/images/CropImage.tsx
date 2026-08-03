@@ -11,6 +11,7 @@ export default function CropImage() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -35,29 +36,36 @@ export default function CropImage() {
 
   const handleCrop = async () => {
     if (!selectedFile) return;
-    setIsProcessing(true);
     setError(null);
-
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('x', x.toString());
-    formData.append('y', y.toString());
-    formData.append('width', width.toString());
-    formData.append('height', height.toString());
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
-      const response = await fetch(`${API_BASE_URL}/images/crop`, {
-        method: 'POST',
-        body: formData,
-      });
+      // Step 1: Auto-compress
+      setIsCompressing(true);
+      const compressFormData = new FormData();
+      compressFormData.append('file', selectedFile);
+      const compressResponse = await fetch(`${API_BASE_URL}/compress`, { method: 'POST', body: compressFormData });
+      if (!compressResponse.ok) throw new Error('Compression failed');
+      const compressedBlob = await compressResponse.blob();
+      const compressedFile = new File([compressedBlob], selectedFile.name, { type: selectedFile.type });
+      setIsCompressing(false);
 
+      // Step 2: Crop
+      setIsProcessing(true);
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+      formData.append('x', x.toString());
+      formData.append('y', y.toString());
+      formData.append('width', width.toString());
+      formData.append('height', height.toString());
+      const response = await fetch(`${API_BASE_URL}/images/crop`, { method: 'POST', body: formData });
       if (!response.ok) throw new Error('Crop failed');
       const blob = await response.blob();
       setProcessedFile(blob);
     } catch (err) {
       setError('Failed to crop image');
     } finally {
+      setIsCompressing(false);
       setIsProcessing(false);
     }
   };
@@ -104,7 +112,7 @@ export default function CropImage() {
                   <Upload className="w-8 h-8 text-red-600" />
                 </div>
                 <p className="text-lg font-semibold text-gray-900 mb-2">Click to upload</p>
-                <p className="text-sm text-gray-500">PNG, JPG, WEBP up to 50MB</p>
+                <p className="text-sm text-gray-500">PNG, JPG, WEBP</p>
               </label>
             </div>
           ) : (
@@ -147,8 +155,8 @@ export default function CropImage() {
 
               <div className="flex flex-col sm:flex-row gap-3">
                 {!processedFile ? (
-                  <Button onClick={handleCrop} disabled={isProcessing} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg font-semibold rounded-xl">
-                    {isProcessing ? 'Cropping...' : 'Crop Image'}
+                  <Button onClick={handleCrop} disabled={isCompressing || isProcessing} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg font-semibold rounded-xl">
+                    {isCompressing ? 'Compressing...' : isProcessing ? 'Cropping...' : 'Crop Image'}
                   </Button>
                 ) : (
                   <>

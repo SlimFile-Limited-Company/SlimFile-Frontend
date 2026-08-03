@@ -11,6 +11,7 @@ export default function EnhanceImage() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -30,25 +31,31 @@ export default function EnhanceImage() {
 
   const handleEnhance = async () => {
     if (!selectedFile) return;
-    setIsProcessing(true);
     setError(null);
-
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('mode', 'auto');
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
-      const response = await fetch(`${API_BASE_URL}/images/enhance`, {
-        method: 'POST',
-        body: formData,
-      });
+      setIsCompressing(true);
+      const compressFormData = new FormData();
+      compressFormData.append('file', selectedFile);
+      const compressResponse = await fetch(`${API_BASE_URL}/compress`, { method: 'POST', body: compressFormData });
+      if (!compressResponse.ok) throw new Error('Compression failed');
+      const compressedBlob = await compressResponse.blob();
+      const compressedFile = new File([compressedBlob], selectedFile.name, { type: selectedFile.type });
+      setIsCompressing(false);
+
+      setIsProcessing(true);
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+      formData.append('mode', 'auto');
+      const response = await fetch(`${API_BASE_URL}/images/enhance`, { method: 'POST', body: formData });
       if (!response.ok) throw new Error('Enhancement failed');
       const blob = await response.blob();
       setProcessedFile(blob);
     } catch (err) {
       setError('Failed to enhance image');
     } finally {
+      setIsCompressing(false);
       setIsProcessing(false);
     }
   };
@@ -116,8 +123,8 @@ export default function EnhanceImage() {
 
               <div className="flex flex-col sm:flex-row gap-3">
                 {!processedFile ? (
-                  <Button onClick={handleEnhance} disabled={isProcessing} className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg font-semibold rounded-xl">
-                    {isProcessing ? 'Enhancing...' : '✨ Auto-enhance'}
+                  <Button onClick={handleEnhance} disabled={isCompressing || isProcessing} className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg font-semibold rounded-xl">
+                    {isCompressing ? 'Compressing...' : isProcessing ? 'Enhancing...' : '✨ Auto-enhance'}
                   </Button>
                 ) : (
                   <>

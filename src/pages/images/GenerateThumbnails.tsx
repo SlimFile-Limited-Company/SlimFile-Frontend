@@ -7,6 +7,7 @@ export default function GenerateThumbnails() {
   useSEO({ title: 'Generate Thumbnails — Batch Resize Images | SlimFile', description: 'Generate multiple thumbnail sizes from one image. Perfect for responsive web design.' });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -23,24 +24,34 @@ export default function GenerateThumbnails() {
 
   const handleGenerate = async () => {
     if (!selectedFile) return;
-    setIsProcessing(true);
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('sizes', JSON.stringify([
-      { name: 'tiny', width: 100, height: 100 },
-      { name: 'small', width: 200, height: 200 },
-      { name: 'medium', width: 400, height: 400 },
-      { name: 'large', width: 800, height: 800 },
-      { name: 'xlarge', width: 1200, height: 1200 }
-    ]));
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
+      setIsCompressing(true);
+      const compressFormData = new FormData();
+      compressFormData.append('file', selectedFile);
+      const compressResponse = await fetch(`${API_BASE_URL}/compress`, { method: 'POST', body: compressFormData });
+      if (!compressResponse.ok) throw new Error('Compression failed');
+      const compressedBlob = await compressResponse.blob();
+      const compressedFile = new File([compressedBlob], selectedFile.name, { type: selectedFile.type });
+      setIsCompressing(false);
+
+      setIsProcessing(true);
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+      formData.append('sizes', JSON.stringify([
+        { name: 'tiny', width: 100, height: 100 },
+        { name: 'small', width: 200, height: 200 },
+        { name: 'medium', width: 400, height: 400 },
+        { name: 'large', width: 800, height: 800 },
+        { name: 'xlarge', width: 1200, height: 1200 }
+      ]));
       const response = await fetch(`${API_BASE_URL}/images/thumbnails`, { method: 'POST', body: formData });
       if (!response.ok) throw new Error('Failed');
       setProcessedFile(await response.blob());
     } catch (err) {
       setError('Failed to generate thumbnails');
     } finally {
+      setIsCompressing(false);
       setIsProcessing(false);
     }
   };
@@ -98,8 +109,8 @@ export default function GenerateThumbnails() {
               )}
               <div className="flex gap-3">
                 {!processedFile ? (
-                  <Button onClick={handleGenerate} disabled={isProcessing} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg rounded-xl">
-                    {isProcessing ? 'Generating...' : 'Generate Thumbnails'}
+                  <Button onClick={handleGenerate} disabled={isCompressing || isProcessing} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg rounded-xl">
+                    {isCompressing ? 'Compressing...' : isProcessing ? 'Generating...' : 'Generate Thumbnails'}
                   </Button>
                 ) : (
                   <>

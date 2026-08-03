@@ -7,6 +7,7 @@ export default function ReplaceBackground() {
   useSEO({ title: 'Replace Background — Change Image Background | SlimFile', description: 'Replace image backgrounds with solid colors or custom images.' });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -24,19 +25,29 @@ export default function ReplaceBackground() {
 
   const handleReplace = async () => {
     if (!selectedFile) return;
-    setIsProcessing(true);
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('backgroundType', 'color');
-    formData.append('backgroundColor', bgColor);
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
+      setIsCompressing(true);
+      const compressFormData = new FormData();
+      compressFormData.append('file', selectedFile);
+      const compressResponse = await fetch(`${API_BASE_URL}/compress`, { method: 'POST', body: compressFormData });
+      if (!compressResponse.ok) throw new Error('Compression failed');
+      const compressedBlob = await compressResponse.blob();
+      const compressedFile = new File([compressedBlob], selectedFile.name, { type: selectedFile.type });
+      setIsCompressing(false);
+
+      setIsProcessing(true);
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+      formData.append('backgroundType', 'color');
+      formData.append('backgroundColor', bgColor);
       const response = await fetch(`${API_BASE_URL}/images/replace-background`, { method: 'POST', body: formData });
       if (!response.ok) throw new Error('Failed');
       setProcessedFile(await response.blob());
     } catch (err) {
       setError('Failed to replace background');
     } finally {
+      setIsCompressing(false);
       setIsProcessing(false);
     }
   };
@@ -93,8 +104,8 @@ export default function ReplaceBackground() {
               )}
               <div className="flex gap-3">
                 {!processedFile ? (
-                  <Button onClick={handleReplace} disabled={isProcessing} className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg rounded-xl">
-                    {isProcessing ? 'Replacing...' : 'Replace Background'}
+                  <Button onClick={handleReplace} disabled={isCompressing || isProcessing} className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg rounded-xl">
+                    {isCompressing ? 'Compressing...' : isProcessing ? 'Replacing...' : 'Replace Background'}
                   </Button>
                 ) : (
                   <>

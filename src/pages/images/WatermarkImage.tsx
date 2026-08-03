@@ -11,6 +11,7 @@ export default function WatermarkImage() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -35,30 +36,37 @@ export default function WatermarkImage() {
 
   const handleWatermark = async () => {
     if (!selectedFile) return;
-    setIsProcessing(true);
     setError(null);
-
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('type', 'text');
-    formData.append('text', text);
-    formData.append('fontSize', fontSize.toString());
-    formData.append('color', color);
-    formData.append('opacity', opacity.toString());
-    formData.append('position', position);
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
-      const response = await fetch(`${API_BASE_URL}/images/watermark`, {
-        method: 'POST',
-        body: formData,
-      });
+      setIsCompressing(true);
+      const compressFormData = new FormData();
+      compressFormData.append('file', selectedFile);
+      const compressResponse = await fetch(`${API_BASE_URL}/compress`, { method: 'POST', body: compressFormData });
+      if (!compressResponse.ok) throw new Error('Compression failed');
+      const compressedBlob = await compressResponse.blob();
+      const compressedFile = new File([compressedBlob], selectedFile.name, { type: selectedFile.type });
+      setIsCompressing(false);
+
+      setIsProcessing(true);
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+      formData.append('type', 'text');
+      formData.append('text', text);
+      formData.append('fontSize', fontSize.toString());
+      formData.append('color', color);
+      formData.append('opacity', opacity.toString());
+      formData.append('position', position);
+
+      const response = await fetch(`${API_BASE_URL}/images/watermark`, { method: 'POST', body: formData });
       if (!response.ok) throw new Error('Watermark failed');
       const blob = await response.blob();
       setProcessedFile(blob);
     } catch (err) {
       setError('Failed to add watermark');
     } finally {
+      setIsCompressing(false);
       setIsProcessing(false);
     }
   };
@@ -159,8 +167,8 @@ export default function WatermarkImage() {
 
               <div className="flex flex-col sm:flex-row gap-3">
                 {!processedFile ? (
-                  <Button onClick={handleWatermark} disabled={isProcessing} className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg font-semibold rounded-xl">
-                    {isProcessing ? 'Adding...' : 'Add Watermark'}
+                  <Button onClick={handleWatermark} disabled={isCompressing || isProcessing} className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg font-semibold rounded-xl">
+                    {isCompressing ? 'Compressing...' : isProcessing ? 'Adding...' : 'Add Watermark'}
                   </Button>
                 ) : (
                   <>

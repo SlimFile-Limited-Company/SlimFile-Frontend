@@ -7,6 +7,7 @@ export default function BlurFaces() {
   useSEO({ title: 'Blur Faces — Privacy Protection Tool | SlimFile', description: 'Blur faces in images for privacy. Protect identities automatically.' });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedFile, setProcessedFile] = useState<Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -24,18 +25,28 @@ export default function BlurFaces() {
 
   const handleBlur = async () => {
     if (!selectedFile) return;
-    setIsProcessing(true);
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('blurIntensity', intensity.toString());
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
+      setIsCompressing(true);
+      const compressFormData = new FormData();
+      compressFormData.append('file', selectedFile);
+      const compressResponse = await fetch(`${API_BASE_URL}/compress`, { method: 'POST', body: compressFormData });
+      if (!compressResponse.ok) throw new Error('Compression failed');
+      const compressedBlob = await compressResponse.blob();
+      const compressedFile = new File([compressedBlob], selectedFile.name, { type: selectedFile.type });
+      setIsCompressing(false);
+
+      setIsProcessing(true);
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+      formData.append('blurIntensity', intensity.toString());
       const response = await fetch(`${API_BASE_URL}/images/blur-faces`, { method: 'POST', body: formData });
       if (!response.ok) throw new Error('Failed');
       setProcessedFile(await response.blob());
     } catch (err) {
       setError('Failed to blur faces');
     } finally {
+      setIsCompressing(false);
       setIsProcessing(false);
     }
   };
@@ -92,8 +103,8 @@ export default function BlurFaces() {
               )}
               <div className="flex gap-3">
                 {!processedFile ? (
-                  <Button onClick={handleBlur} disabled={isProcessing} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg rounded-xl">
-                    {isProcessing ? 'Blurring...' : 'Blur Faces'}
+                  <Button onClick={handleBlur} disabled={isCompressing || isProcessing} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg rounded-xl">
+                    {isCompressing ? 'Compressing...' : isProcessing ? 'Blurring...' : 'Blur Faces'}
                   </Button>
                 ) : (
                   <>
