@@ -117,7 +117,7 @@ const newsItems: NewsItem[] = [
     category: "Milestone",
     icon: TrendingUp,
     imageHint: "SlimFile 10K users analytics",
-    imageUrl: "/news/10k-milestone.jpeg",
+    imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop",
     highlights: [
       {
         title: "10,000 New Users",
