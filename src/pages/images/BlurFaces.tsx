@@ -114,16 +114,16 @@ export default function BlurFaces() {
               )}
 
               {!processedFile ? (
-                  <Button onClick={handleBlur} disabled={isCompressing || isProcessing} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg rounded-xl">
+                  <Button onClick={handleBlur} disabled={isCompressing || isProcessing} className="w-full flex-1 bg-red-600 hover:bg-red-700 text-white py-4 sm:py-6 text-base sm:text-lg rounded-xl">
                     {isCompressing ? 'Compressing...' : isProcessing ? 'Blurring...' : 'Blur Faces'}
                   </Button>
                 ) : (
                   <>
-                    <Button onClick={handleDownload} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg rounded-xl">
+                    <Button onClick={handleDownload} className="w-full flex-1 bg-red-600 hover:bg-red-700 text-white py-4 sm:py-6 text-base sm:text-lg rounded-xl">
                       <Download className="w-5 h-5 mr-2" />
                       Download
                     </Button>
-                    <Button onClick={() => { setSelectedFile(null); setPreview(null); if (processedPreview) URL.revokeObjectURL(processedPreview); setProcessedFile(null); setProcessedPreview(null); }} variant="outline" className="flex-1 py-6 text-lg rounded-xl">
+                    <Button onClick={() => { setSelectedFile(null); setPreview(null); if (processedPreview) URL.revokeObjectURL(processedPreview); setProcessedFile(null); setProcessedPreview(null); }} variant="outline" className="w-full flex-1 py-4 sm:py-6 text-base sm:text-lg rounded-xl">
                       Another
                     </Button>
                   </>

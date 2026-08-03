@@ -193,7 +193,7 @@ export default function CropImage() {
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button onClick={handleCrop} disabled={isCompressing || isProcessing || !croppedAreaPixels} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg font-semibold rounded-xl">
+                <Button onClick={handleCrop} disabled={isCompressing || isProcessing || !croppedAreaPixels} className="w-full flex-1 bg-red-600 hover:bg-red-700 text-white py-4 sm:py-6 text-base sm:text-lg font-semibold rounded-xl">
                   {isCompressing ? 'Compressing...' : isProcessing ? 'Cropping...' : 'Crop Image'}
                 </Button>
                 <Button onClick={handleReset} variant="outline" className="sm:w-32 py-6 text-lg font-semibold rounded-xl">
@@ -224,11 +224,11 @@ export default function CropImage() {
               )}
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button onClick={handleDownload} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg font-semibold rounded-xl flex items-center justify-center gap-2">
+                <Button onClick={handleDownload} className="w-full flex-1 bg-red-600 hover:bg-red-700 text-white py-4 sm:py-6 text-base sm:text-lg font-semibold rounded-xl flex items-center justify-center gap-2">
                   <Download className="w-5 h-5" />
                   Download Cropped Image
                 </Button>
-                <Button onClick={handleReset} variant="outline" className="flex-1 py-6 text-lg font-semibold rounded-xl">
+                <Button onClick={handleReset} variant="outline" className="w-full flex-1 py-4 sm:py-6 text-base sm:text-lg font-semibold rounded-xl">
                   Crop Another
                 </Button>
               </div>

@@ -109,16 +109,16 @@ export default function GenerateThumbnails() {
               )}
               <div className="flex gap-3">
                 {!processedFile ? (
-                  <Button onClick={handleGenerate} disabled={isCompressing || isProcessing} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg rounded-xl">
+                  <Button onClick={handleGenerate} disabled={isCompressing || isProcessing} className="w-full flex-1 bg-red-600 hover:bg-red-700 text-white py-4 sm:py-6 text-base sm:text-lg rounded-xl">
                     {isCompressing ? 'Compressing...' : isProcessing ? 'Generating...' : 'Generate Thumbnails'}
                   </Button>
                 ) : (
                   <>
-                    <Button onClick={handleDownload} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-6 text-lg rounded-xl">
+                    <Button onClick={handleDownload} className="w-full flex-1 bg-red-600 hover:bg-red-700 text-white py-4 sm:py-6 text-base sm:text-lg rounded-xl">
                       <Download className="w-5 h-5 mr-2" />
                       Download ZIP
                     </Button>
-                    <Button onClick={() => { setSelectedFile(null); setPreview(null); setProcessedFile(null); }} variant="outline" className="flex-1 py-6 text-lg rounded-xl">
+                    <Button onClick={() => { setSelectedFile(null); setPreview(null); setProcessedFile(null); }} variant="outline" className="w-full flex-1 py-4 sm:py-6 text-base sm:text-lg rounded-xl">
                       Another
                     </Button>
                   </>

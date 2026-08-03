@@ -347,7 +347,7 @@ export default function ResizeImage() {
                 <Button
                   onClick={handleResize}
                   disabled={isCompressing || isProcessing}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg font-semibold rounded-xl"
+                  className="w-full flex-1 bg-purple-600 hover:bg-purple-700 text-white py-4 sm:py-6 text-base sm:text-lg font-semibold rounded-xl"
                 >
                   {isCompressing ? 'Compressing...' : isProcessing ? 'Resizing...' : 'Resize Image'}
                 </Button>
@@ -381,7 +381,7 @@ export default function ResizeImage() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button
                   onClick={handleDownload}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-6 text-lg font-semibold rounded-xl flex items-center justify-center gap-2"
+                  className="w-full flex-1 bg-purple-600 hover:bg-purple-700 text-white py-4 sm:py-6 text-base sm:text-lg font-semibold rounded-xl flex items-center justify-center gap-2"
                 >
                   <Download className="w-5 h-5" />
                   Download
@@ -389,7 +389,7 @@ export default function ResizeImage() {
                 <Button
                   onClick={handleReset}
                   variant="outline"
-                  className="flex-1 py-6 text-lg font-semibold rounded-xl"
+                  className="w-full flex-1 py-4 sm:py-6 text-base sm:text-lg font-semibold rounded-xl"
                 >
                   Resize Another
                 </Button>
