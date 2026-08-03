@@ -69,8 +69,8 @@ export default function BlurFaces() {
             <UserX className="w-4 h-4" />
             Image Tools
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">Blur Image</h1>
-          <p className="text-lg text-gray-600">Apply blur effect to protect privacy</p>
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">Blur Faces</h1>
+          <p className="text-lg text-gray-600">AI-powered face detection and blur for privacy protection</p>
         </div>
         <div className="bg-white rounded-2xl shadow-lg border p-6 sm:p-8">
           {!selectedFile ? (
