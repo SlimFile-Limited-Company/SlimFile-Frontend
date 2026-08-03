@@ -190,6 +190,8 @@ const queryClient = new QueryClient({
   },
 });
 
+// PWA auto-refresh test deployment - v1.0.1
+
 ReactDOM.createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
