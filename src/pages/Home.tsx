@@ -339,9 +339,23 @@ const Home: FC = () => {
             <div className="text-center space-y-4 sm:space-y-6">
               {/* Headline - Compress. Convert. Collaborate. */}
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal leading-tight tracking-tight">
-                <span className="inline-block relative">
+                <span className="inline-block relative pb-3">
                   <span style={{ color: '#dc2626' }}>Compress</span>
-                  <span className="absolute -bottom-1 left-0 w-full h-1.5 rounded-full shadow-md" style={{ background: 'linear-gradient(to right, #dc2626, #ef4444, #f87171)' }} />
+                  <svg
+                    className="absolute left-0 w-full overflow-visible"
+                    style={{ bottom: '-8px', height: '12px' }}
+                    viewBox="0 0 300 12"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M5,8 Q80,4 150,7 T295,8"
+                      fill="none"
+                      stroke="#dc2626"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      opacity="0.8"
+                    />
+                  </svg>
                 </span>
                 <span className="text-gray-400">. </span>
                 <span style={{ color: '#9333ea' }}>Convert</span>
