@@ -479,7 +479,7 @@ const Home: FC = () => {
             {featuresPage > 0 && (
               <button
                 onClick={() => setFeaturesPage((prev) => prev - 1)}
-                className="absolute left-0 top-20 -translate-x-2 sm:-translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors border-2 border-red-100"
+                className="absolute left-0 top-0 -translate-x-2 sm:-translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors border-2 border-red-100"
                 aria-label="Previous"
               >
                 <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -490,7 +490,7 @@ const Home: FC = () => {
             {featuresPage < totalPages - 1 && (
               <button
                 onClick={() => setFeaturesPage((prev) => prev + 1)}
-                className="absolute right-0 top-20 translate-x-2 sm:translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors border-2 border-red-100"
+                className="absolute right-0 top-0 translate-x-2 sm:translate-x-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors border-2 border-red-100"
                 aria-label="Next"
               >
                 <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
