@@ -282,7 +282,7 @@ export const Feed = () => {
     <div className="min-h-screen bg-[#F5F5F7]">
 
       {/* ── Hero ── */}
-      <div className="bg-[#0A0A0F] pt-36 pb-16 px-4 sm:px-6">
+      <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 pt-36 pb-16 px-4 sm:px-6">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-2 mb-6">
             <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
@@ -316,7 +316,7 @@ export const Feed = () => {
               onClick={() => setFilter(f.key)}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
                 filter === f.key
-                  ? 'bg-[#0A0A0F] text-white'
+                  ? 'bg-purple-600 text-white'
                   : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
