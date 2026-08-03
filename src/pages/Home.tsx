@@ -341,18 +341,12 @@ const Home: FC = () => {
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal leading-tight tracking-tight">
                 <span className="inline-block relative">
                   <span style={{ color: '#dc2626' }}>Compress</span>
-                  <span className="absolute -bottom-1 left-0 w-full h-1 rounded-full" style={{ background: 'linear-gradient(to right, #dc2626, #f87171)' }} />
+                  <span className="absolute -bottom-1 left-0 w-full h-1.5 rounded-full shadow-md" style={{ background: 'linear-gradient(to right, #dc2626, #ef4444, #f87171)' }} />
                 </span>
                 <span className="text-gray-400">. </span>
-                <span className="inline-block relative">
-                  <span style={{ color: '#9333ea' }}>Convert</span>
-                  <span className="absolute -bottom-1 left-0 w-full h-1 rounded-full" style={{ background: 'linear-gradient(to right, #9333ea, #c084fc)' }} />
-                </span>
+                <span style={{ color: '#9333ea' }}>Convert</span>
                 <span className="text-gray-400">. </span>
-                <span className="inline-block relative text-gray-900">
-                  <span>Collaborate</span>
-                  <span className="absolute -bottom-1 left-0 w-full h-1 rounded-full" style={{ background: 'linear-gradient(to right, #111827, #4b5563)' }} />
-                </span>
+                <span className="text-gray-900">Collaborate</span>
                 <span className="text-gray-400">.</span>
               </h1>
 
