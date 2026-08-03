@@ -27,6 +27,9 @@ export default function RemoveBackground() {
     if (!selectedFile) return;
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
     try {
+      const fileSizeInMB = selectedFile.size / (1024 * 1024);
+      let fileToProcess = selectedFile;
+      if (fileSizeInMB >= 10) {
       setIsCompressing(true);
       const compressFormData = new FormData();
       compressFormData.append('file', selectedFile);
@@ -34,11 +37,15 @@ export default function RemoveBackground() {
       if (!compressResponse.ok) throw new Error('Compression failed');
       const compressedBlob = await compressResponse.blob();
       const compressedFile = new File([compressedBlob], selectedFile.name, { type: selectedFile.type });
+        fileToProcess = compressedFile;
+      } else {
+        fileToProcess = selectedFile;
+      }
       setIsCompressing(false);
 
       setIsProcessing(true);
       const formData = new FormData();
-      formData.append('file', compressedFile);
+      formData.append('file', fileToProcess);
       const response = await fetch(`${API_BASE_URL}/images/remove-background`, { method: 'POST', body: formData });
       if (!response.ok) throw new Error('Failed');
       const blob = await response.blob();

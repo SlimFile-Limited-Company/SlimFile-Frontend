@@ -27,7 +27,6 @@ export default function ResizeImage() {
   const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
   const [quality, setQuality] = useState(100);
   const [format, setFormat] = useState<'png' | 'jpeg' | 'webp'>('png');
-  const [compressFirst, setCompressFirst] = useState(false);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -86,8 +85,9 @@ export default function ResizeImage() {
     try {
       let fileToProcess = selectedFile;
 
-      // Step 1: Optional compression
-      if (compressFirst) {
+      // Step 1: Auto-compress if file is 10MB or larger
+      const fileSizeInMB = selectedFile.size / (1024 * 1024);
+      if (fileSizeInMB >= 10) {
         setIsCompressing(true);
         const compressFormData = new FormData();
         compressFormData.append('file', selectedFile);
@@ -296,20 +296,6 @@ export default function ResizeImage() {
                   />
                   <label htmlFor="aspect-ratio" className="ml-2 text-sm font-medium text-gray-700">
                     Maintain aspect ratio (recommended)
-                  </label>
-                </div>
-
-                {/* Compress First Option */}
-                <div className="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <input
-                    type="checkbox"
-                    id="compress-first"
-                    checked={compressFirst}
-                    onChange={(e) => setCompressFirst(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label htmlFor="compress-first" className="ml-2 text-sm font-medium text-gray-700">
-                    🗜️ Compress before resizing (faster processing)
                   </label>
                 </div>
 
