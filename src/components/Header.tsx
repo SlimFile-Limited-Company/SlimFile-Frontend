@@ -138,7 +138,8 @@ export const Header = () => {
 
         {/* Message */}
         <span className="text-sm font-medium tracking-wide flex items-center gap-2">
-          <span className="font-semibold">SlimFile Mobile App Now Live on Google Play Store</span>
+          <span className="font-semibold sm:hidden">SlimFile Mobile App is Live!</span>
+          <span className="font-semibold hidden sm:inline">SlimFile Mobile App Now Live on Google Play Store</span>
           <span className="hidden sm:inline opacity-80">—</span>
           <span className="hidden sm:inline">Compress & convert files on the go</span>
           <span className="hidden md:inline opacity-75 text-xs">· 100% free, no ads</span>
