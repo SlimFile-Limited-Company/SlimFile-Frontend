@@ -121,12 +121,12 @@ export default function GenerateThumbnails() {
                   </Button>
                 ) : (
                   <>
-                    <Button onClick={handleDownload} className="w-full flex-1 bg-red-600 hover:bg-red-700 text-white py-4 sm:py-6 text-base sm:text-lg rounded-xl">
-                      <Download className="w-5 h-5 mr-2" />
-                      Download ZIP
+                    <Button onClick={handleDownload} className="w-full flex-1 bg-red-600 hover:bg-red-700 text-white py-4 sm:py-6 text-sm sm:text-base font-semibold rounded-xl flex items-center justify-center gap-2">
+                      <Download className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span className="whitespace-nowrap">Download</span>
                     </Button>
-                    <Button onClick={() => { setSelectedFile(null); setPreview(null); setProcessedFile(null); }} variant="outline" className="w-full flex-1 py-4 sm:py-6 text-base sm:text-lg rounded-xl">
-                      Another
+                    <Button onClick={() => { setSelectedFile(null); setPreview(null); setProcessedFile(null); }} variant="outline" className="w-full flex-1 py-4 sm:py-6 text-sm sm:text-base font-semibold rounded-xl">
+                      <span className="whitespace-nowrap">Generate Another</span>
                     </Button>
                   </>
                 )}

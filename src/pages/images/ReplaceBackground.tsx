@@ -127,12 +127,12 @@ export default function ReplaceBackground() {
                   </Button>
                 ) : (
                   <>
-                    <Button onClick={handleDownload} className="w-full flex-1 bg-purple-600 hover:bg-purple-700 text-white py-4 sm:py-6 text-base sm:text-lg rounded-xl">
-                      <Download className="w-5 h-5 mr-2" />
-                      Download
+                    <Button onClick={handleDownload} className="w-full flex-1 bg-purple-600 hover:bg-purple-700 text-white py-4 sm:py-6 text-sm sm:text-base font-semibold rounded-xl flex items-center justify-center gap-2">
+                      <Download className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span className="whitespace-nowrap">Download</span>
                     </Button>
-                    <Button onClick={() => { setSelectedFile(null); setPreview(null); if (processedPreview) URL.revokeObjectURL(processedPreview); setProcessedFile(null); setProcessedPreview(null); }} variant="outline" className="w-full flex-1 py-4 sm:py-6 text-base sm:text-lg rounded-xl">
-                      Another
+                    <Button onClick={() => { setSelectedFile(null); setPreview(null); if (processedPreview) URL.revokeObjectURL(processedPreview); setProcessedFile(null); setProcessedPreview(null); }} variant="outline" className="w-full flex-1 py-4 sm:py-6 text-sm sm:text-base font-semibold rounded-xl">
+                      <span className="whitespace-nowrap">Replace Another</span>
                     </Button>
                   </>
                 )}
