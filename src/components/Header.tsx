@@ -119,8 +119,10 @@ export const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
       {/* Announcement banner */}
-      <Link
-        to="/get-started"
+      <a
+        href="https://play.google.com/store/apps/details?id=com.slimfile.app"
+        target="_blank"
+        rel="noopener noreferrer"
         className="relative flex items-center justify-center gap-3 px-6 py-2.5 text-white overflow-hidden group"
         style={{ background: "linear-gradient(90deg, #7c3aed 0%, #9333ea 40%, #7c3aed 100%)" }}
       >
@@ -136,15 +138,15 @@ export const Header = () => {
 
         {/* Message */}
         <span className="text-sm font-medium tracking-wide flex items-center gap-2">
-          <span className="font-semibold">NEW: Image Processing Tools</span>
+          <span className="font-semibold">SlimFile Mobile App Now Live on Google Play Store</span>
           <span className="hidden sm:inline opacity-80">—</span>
-          <span className="hidden sm:inline">8 professional tools for free</span>
-          <span className="hidden md:inline opacity-75 text-xs">· Resize, crop, enhance, watermark & more</span>
+          <span className="hidden sm:inline">Compress & convert files on the go</span>
+          <span className="hidden md:inline opacity-75 text-xs">· 100% free, no ads</span>
         </span>
 
         {/* Arrow */}
         <span className="text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-200 text-sm shrink-0">→</span>
-      </Link>
+      </a>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">

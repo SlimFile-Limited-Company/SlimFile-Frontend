@@ -428,10 +428,13 @@ const Home: FC = () => {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="px-8 py-3 rounded-full border-green-200 text-green-700 hover:border-green-500 hover:text-green-900 hover:bg-green-50 transition-all duration-200 text-base font-medium gap-2"
+                    className="px-6 py-3 rounded-full border-gray-900 text-gray-900 hover:border-gray-700 hover:text-gray-700 hover:bg-gray-50 transition-all duration-200 text-base font-medium gap-2 bg-white"
+                    style={{ minHeight: '48px' }}
                   >
-                    <Download className="w-4 h-4" />
-                    Android App
+                    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
+                      <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
+                    </svg>
+                    Get it on Google Play
                   </Button>
                 </a>
               </div>
