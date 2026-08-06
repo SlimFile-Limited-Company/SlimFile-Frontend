@@ -51,6 +51,37 @@ type NewsItem = {
 
 const newsItems: NewsItem[] = [
   {
+    id: "slimfile-mobile-app-launch",
+    title: "SlimFile Mobile App Now Available on Google Play Store",
+    subtitle:
+      "SlimFile launches its official Android mobile app, bringing powerful file compression and conversion tools to your pocket. Compress images, PDFs, and Office documents on the go — all free on the Google Play Store.",
+    dateLabel: "August 2026",
+    category: "Product",
+    icon: Package,
+    imageHint: "SlimFile Mobile App on Google Play Store",
+    imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&auto=format&fit=crop",
+    externalUrl: "https://play.google.com/store/apps/details?id=com.slimfile.app",
+    externalCtaLabel: "Download on Google Play",
+    ctas: [
+      { label: "Download on Google Play", href: "https://play.google.com/store/apps/details?id=com.slimfile.app", external: true, variant: "default" },
+      { label: "View All Features", href: "/get-started", variant: "outline" },
+    ],
+    highlights: [
+      {
+        title: "Compress Files Anywhere",
+        note: "Compress images, PDFs, DOCX, and XLSX files right from your Android device. Perfect for reducing file sizes before sharing or uploading.",
+      },
+      {
+        title: "Convert Formats On-The-Go",
+        note: "Transform files between different formats directly from your phone. Convert images to PDF, Office documents to PDF, and more.",
+      },
+      {
+        title: "100% Free & Secure",
+        note: "All features are completely free with no ads or subscriptions. Your files are processed securely and never stored on our servers.",
+      },
+    ],
+  },
+  {
     id: "image-processing-launch",
     title: "NEW: 8 Professional Image Processing Tools",
     subtitle:

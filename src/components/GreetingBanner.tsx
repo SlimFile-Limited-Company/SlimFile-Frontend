@@ -56,7 +56,7 @@ export const GreetingBanner = ({ userName, onDismiss }: Props) => {
               {emoji} {greeting}, {userName}!
             </p>
             <p className="text-xs text-gray-500 mt-0.5">
-              Welcome back to SlimFile
+              Welcome back — <a href="https://play.google.com/store/apps/details?id=com.slimfile.app" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:text-purple-700 font-medium">SlimFile Mobile is live!</a>
             </p>
           </div>
 

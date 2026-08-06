@@ -424,15 +424,16 @@ const Home: FC = () => {
                     AI Lab
                   </Button>
                 </Link>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => setAnalyticsOpen(true)}
-                  className="px-8 py-3 rounded-full border-gray-200 text-gray-700 hover:border-primary hover:text-primary transition-all duration-200 text-base font-medium gap-2"
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  Live Analytics
-                </Button>
+                <a href="https://play.google.com/store/apps/details?id=com.slimfile.app" target="_blank" rel="noopener noreferrer">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="px-8 py-3 rounded-full border-green-200 text-green-700 hover:border-green-500 hover:text-green-900 hover:bg-green-50 transition-all duration-200 text-base font-medium gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Android App
+                  </Button>
+                </a>
               </div>
 
 
