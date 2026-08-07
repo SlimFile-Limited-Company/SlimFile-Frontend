@@ -160,7 +160,7 @@ export default function CommunityManager() {
 
       console.log('🤖 Generating AI reply for review:', reviewId);
 
-      const response = await fetch(`${API_BASE_URL}/ai/grok`, {
+      const response = await fetch(`${API_BASE_URL}/ai/review-reply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
