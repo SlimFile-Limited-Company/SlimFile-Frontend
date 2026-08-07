@@ -136,7 +136,7 @@ export default function CommunityManager() {
           reviewsNeedingReplies.forEach((review: ReviewWithReplies, index: number) => {
             setTimeout(() => {
               generateAIReply(review._id, review.rating, review.comment);
-            }, index * 200); // 200ms delay = 5 requests per second
+            }, index * 1000); // 1 second delay = 1 request per second (Grok rate limit)
           });
         } else {
           setReviews(reviewsList.map((r: Review) => ({ ...r, replies: [] })));
