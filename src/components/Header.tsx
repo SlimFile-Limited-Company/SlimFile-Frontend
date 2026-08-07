@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown, Star } from "lucide-react";
+import { Menu, X, ChevronDown, Star, Bot } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isAuthenticated, logout } from "@/lib/auth";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -343,6 +343,15 @@ export const Header = () => {
 
           {/* Auth buttons - Desktop */}
           <div className="hidden md:flex items-center gap-3">
+            <Link to="/community-manager">
+              <Button
+                variant="outline"
+                className="border-2 border-blue-400 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-500 font-semibold shadow-sm flex items-center gap-1.5"
+              >
+                <Bot className="w-4 h-4" />
+                AI Reviews
+              </Button>
+            </Link>
             <Link to="/reviews">
               <Button
                 variant="outline"
@@ -595,9 +604,19 @@ export const Header = () => {
                 )}
               </div>
 
-              {/* Mobile Reviews Button */}
-              <div className="px-4 pt-2">
-                <Link to="/reviews" onClick={() => setMobileMenuOpen(false)}>
+              {/* Mobile AI Reviews & Reviews Buttons */}
+              <div className="px-4 pt-2 flex gap-2">
+                <Link to="/community-manager" onClick={() => setMobileMenuOpen(false)} className="flex-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full border-2 border-blue-400 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-500 font-semibold shadow-sm flex items-center justify-center gap-1.5"
+                  >
+                    <Bot className="w-4 h-4" />
+                    AI Reviews
+                  </Button>
+                </Link>
+                <Link to="/reviews" onClick={() => setMobileMenuOpen(false)} className="flex-1">
                   <Button
                     variant="outline"
                     size="sm"
