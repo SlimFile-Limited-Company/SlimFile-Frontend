@@ -128,11 +128,16 @@ export default function CommunityManager() {
 
           setReviews(reviewsWithReplies);
 
-          // Auto-generate AI reply for reviews without any replies
-          reviewsWithReplies.forEach((review: ReviewWithReplies) => {
-            if (review.replies.length === 0) {
+          // Auto-generate AI reply for ONLY the first 10 reviews without replies
+          // This prevents rate limiting from calling AI for 100+ reviews at once
+          const reviewsNeedingReplies = reviewsWithReplies.filter((r: ReviewWithReplies) => r.replies.length === 0);
+          const reviewsToGenerate = reviewsNeedingReplies.slice(0, 10);
+
+          // Add delay between each API call to avoid rate limiting
+          reviewsToGenerate.forEach((review: ReviewWithReplies, index: number) => {
+            setTimeout(() => {
               generateAIReply(review._id, review.rating, review.comment);
-            }
+            }, index * 2000); // 2 second delay between each call
           });
         } else {
           setReviews(reviewsList.map((r: Review) => ({ ...r, replies: [] })));
