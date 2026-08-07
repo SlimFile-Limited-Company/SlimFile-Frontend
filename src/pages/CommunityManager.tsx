@@ -101,7 +101,7 @@ export default function CommunityManager() {
   const fetchData = async () => {
     try {
       const [reviewsRes, statsRes, repliesRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/reviews?limit=100`),
+        fetch(`${API_BASE_URL}/reviews?limit=1000`),
         fetch(`${API_BASE_URL}/reviews/stats`),
         fetch(`${API_BASE_URL}/reviews/replies`)
       ]);
