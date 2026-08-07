@@ -59,8 +59,8 @@ const operationColors: Record<string, string> = {
 
 export default function CommunityManager() {
   useSEO({
-    title: 'Community Manager — SlimFile AI Assistant',
-    description: 'AI-powered review management with SlimFile Assistant responding to customer feedback in real-time.',
+    title: 'Community Manager — SlimFile Assistant',
+    description: 'Review management with SlimFile Assistant responding to customer feedback in real-time.',
   });
 
   const [reviews, setReviews] = useState<ReviewWithReplies[]>([]);
@@ -247,54 +247,54 @@ Your tone should be: friendly, professional, empathetic, and solution-oriented.`
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-white pt-28 pb-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-4">
             <Bot className="w-4 h-4" />
-            AI-Powered Review Management
+            Review Management
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
             Community Manager
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            View all customer reviews and SlimFile Assistant's AI-generated responses
+          <p className="text-base text-gray-600 max-w-2xl mx-auto">
+            View all customer reviews and SlimFile Assistant responses
           </p>
         </div>
 
         {/* Stats Cards */}
         {stats && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center">
-                  <Star className="w-6 h-6 text-yellow-600 fill-yellow-600" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center">
+                  <Star className="w-5 h-5 text-yellow-600 fill-yellow-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Average Rating</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.averageRating.toFixed(1)} / 5</p>
+                  <p className="text-xs font-medium text-gray-600">Average Rating</p>
+                  <p className="text-xl font-bold text-gray-900">{stats.averageRating.toFixed(1)} / 5</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-                  <MessageSquare className="w-6 h-6 text-blue-600" />
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Reviews</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.totalReviews.toLocaleString()}</p>
+                  <p className="text-xs font-medium text-gray-600">Total Reviews</p>
+                  <p className="text-xl font-bold text-gray-900">{stats.totalReviews.toLocaleString()}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
-                  <Bot className="w-6 h-6 text-purple-600" />
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                  <Bot className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">AI Responses</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-xs font-medium text-gray-600">Assistant Responses</p>
+                  <p className="text-xl font-bold text-gray-900">
                     {reviews.reduce((acc, r) => acc + r.replies.filter(reply => reply.role === 'assistant').length, 0)}
                   </p>
                 </div>
@@ -316,26 +316,26 @@ Your tone should be: friendly, professional, empathetic, and solution-oriented.`
             <p className="text-gray-600">Reviews will appear here when customers leave feedback</p>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-3">
             {reviews.map((review) => (
-              <div key={review._id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div key={review._id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
                 {/* Review Header */}
-                <div className={`bg-gradient-to-br ${operationColors[review.operationType] || 'from-gray-500 to-gray-600'} px-6 py-4`}>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                        <span className="text-white font-bold text-lg">
+                <div className={`bg-gradient-to-br ${operationColors[review.operationType] || 'from-gray-500 to-gray-600'} px-4 py-3`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-white font-bold text-sm">
                           {review.name.charAt(0).toUpperCase()}
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-white font-bold text-lg">{review.name}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="flex items-center gap-1">
+                        <p className="text-white font-semibold text-sm truncate">{review.name}</p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <div className="flex items-center gap-0.5">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <Star
                                 key={star}
-                                className={`w-4 h-4 ${
+                                className={`w-3 h-3 ${
                                   star <= review.rating
                                     ? 'text-yellow-300 fill-yellow-300'
                                     : 'text-white/30'
@@ -343,64 +343,64 @@ Your tone should be: friendly, professional, empathetic, and solution-oriented.`
                               />
                             ))}
                           </div>
-                          <span className="text-white/80 text-sm">·</span>
-                          <span className="text-white/80 text-sm">{formatDate(review.createdAt)}</span>
+                          <span className="text-white/60 text-xs">·</span>
+                          <span className="text-white/80 text-xs">{formatDate(review.createdAt)}</span>
                         </div>
                       </div>
                     </div>
-                    <span className="bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+                    <span className="bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
                       {operationLabels[review.operationType] || review.operationType}
                     </span>
                   </div>
                 </div>
 
                 {/* Review Content */}
-                <div className="px-6 py-4 bg-gray-50">
-                  <p className="text-gray-800 text-base leading-relaxed italic">
+                <div className="px-4 py-2 bg-gray-50">
+                  <p className="text-gray-700 text-sm leading-relaxed italic line-clamp-2">
                     "{review.comment}"
                   </p>
                 </div>
 
-                {/* AI Replies Thread */}
-                <div className="px-6 py-4 space-y-4">
+                {/* Assistant Replies */}
+                <div className="px-4 py-3 space-y-2">
                   {review.isGenerating && (
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                        <Bot className="w-5 h-5 text-purple-600" />
+                    <div className="flex items-start gap-2">
+                      <div className="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <Bot className="w-4 h-4 text-purple-600" />
                       </div>
-                      <div className="flex-1 bg-purple-50 rounded-2xl rounded-tl-none px-4 py-3">
-                        <div className="flex items-center gap-2 mb-2">
-                          <p className="text-sm font-semibold text-purple-900">SlimFile Assistant</p>
+                      <div className="flex-1 bg-purple-50 rounded-xl rounded-tl-none px-3 py-2">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <p className="text-xs font-semibold text-purple-900">SlimFile Assistant</p>
                           <Loader2 className="w-3 h-3 text-purple-600 animate-spin" />
                         </div>
-                        <p className="text-sm text-purple-700">Generating response...</p>
+                        <p className="text-xs text-purple-700">Generating response...</p>
                       </div>
                     </div>
                   )}
 
                   {review.replies.length === 0 && !review.isGenerating && (
-                    <div className="text-center py-4 text-gray-500 text-sm">
-                      <AlertCircle className="w-5 h-5 mx-auto mb-2 text-gray-400" />
-                      No AI response yet
+                    <div className="text-center py-2 text-gray-400 text-xs">
+                      <AlertCircle className="w-4 h-4 mx-auto mb-1" />
+                      No response yet
                     </div>
                   )}
 
                   {review.replies.map((reply) => (
-                    <div key={reply._id} className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                        <Bot className="w-5 h-5 text-purple-600" />
+                    <div key={reply._id} className="flex items-start gap-2">
+                      <div className="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <Bot className="w-4 h-4 text-purple-600" />
                       </div>
-                      <div className="flex-1 bg-purple-50 rounded-2xl rounded-tl-none px-4 py-3">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="text-sm font-semibold text-purple-900">
+                      <div className="flex-1 bg-purple-50 rounded-xl rounded-tl-none px-3 py-2">
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <p className="text-xs font-semibold text-purple-900">
                             SlimFile Assistant
                           </p>
-                          <span className="text-xs text-purple-600">
+                          <span className="text-[10px] text-purple-600">
                             {formatDate(reply.createdAt)}
                           </span>
-                          <CheckCircle className="w-3.5 h-3.5 text-green-500 ml-auto" />
+                          <CheckCircle className="w-3 h-3 text-green-500 ml-auto" />
                         </div>
-                        <p className="text-sm leading-relaxed text-purple-900">
+                        <p className="text-xs leading-relaxed text-purple-900">
                           {reply.message}
                         </p>
                       </div>
@@ -413,17 +413,17 @@ Your tone should be: friendly, professional, empathetic, and solution-oriented.`
         )}
 
         {/* Info Banner */}
-        <div className="mt-12 bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl border border-purple-100 p-6">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
-              <AlertCircle className="w-6 h-6 text-purple-600" />
+        <div className="mt-6 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl border border-purple-100 p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+              <AlertCircle className="w-5 h-5 text-purple-600" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">How SlimFile Assistant Works</h3>
-              <ul className="space-y-2 text-sm text-gray-700">
+              <h3 className="text-base font-bold text-gray-900 mb-2">How SlimFile Assistant Works</h3>
+              <ul className="space-y-1.5 text-xs text-gray-700">
                 <li className="flex items-start gap-2">
                   <span className="text-purple-600 font-bold">•</span>
-                  <span><strong>Smart Analysis:</strong> The AI analyzes both the star rating AND the review text to understand true sentiment</span>
+                  <span><strong>Smart Analysis:</strong> Analyzes both star rating AND review text to understand true sentiment</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-purple-600 font-bold">•</span>
@@ -431,7 +431,7 @@ Your tone should be: friendly, professional, empathetic, and solution-oriented.`
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-purple-600 font-bold">•</span>
-                  <span><strong>View & Monitor:</strong> See all AI responses for quality assurance and improvements</span>
+                  <span><strong>View & Monitor:</strong> See all responses for quality assurance and improvements</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-purple-600 font-bold">•</span>

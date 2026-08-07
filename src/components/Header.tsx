@@ -343,14 +343,10 @@ export const Header = () => {
 
           {/* Auth buttons - Desktop */}
           <div className="hidden md:flex items-center gap-3">
-            <Link to="/community-manager">
-              <Button
-                variant="outline"
-                className="border-2 border-blue-400 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-500 font-semibold shadow-sm flex items-center gap-1.5"
-              >
-                <Bot className="w-4 h-4" />
-                AI Reviews
-              </Button>
+            <Link to="/community-manager" title="SlimFile Assistant">
+              <button className="w-9 h-9 rounded-full bg-purple-100 hover:bg-purple-200 flex items-center justify-center transition-colors">
+                <Bot className="w-5 h-5 text-purple-600" />
+              </button>
             </Link>
             <Link to="/reviews">
               <Button
@@ -604,19 +600,9 @@ export const Header = () => {
                 )}
               </div>
 
-              {/* Mobile AI Reviews & Reviews Buttons */}
-              <div className="px-4 pt-2 flex gap-2">
-                <Link to="/community-manager" onClick={() => setMobileMenuOpen(false)} className="flex-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full border-2 border-blue-400 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-500 font-semibold shadow-sm flex items-center justify-center gap-1.5"
-                  >
-                    <Bot className="w-4 h-4" />
-                    AI Reviews
-                  </Button>
-                </Link>
-                <Link to="/reviews" onClick={() => setMobileMenuOpen(false)} className="flex-1">
+              {/* Mobile Reviews Button */}
+              <div className="px-4 pt-2">
+                <Link to="/reviews" onClick={() => setMobileMenuOpen(false)}>
                   <Button
                     variant="outline"
                     size="sm"
@@ -624,6 +610,20 @@ export const Header = () => {
                   >
                     <Star className="w-4 h-4 fill-purple-400" />
                     Reviews
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Mobile SlimFile Assistant Link */}
+              <div className="px-4 pt-2">
+                <Link to="/community-manager" onClick={() => setMobileMenuOpen(false)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full text-purple-600 hover:bg-purple-50 flex items-center justify-center gap-2"
+                  >
+                    <Bot className="w-4 h-4" />
+                    <span>SlimFile Assistant</span>
                   </Button>
                 </Link>
               </div>
