@@ -128,11 +128,15 @@ export default function CommunityManager() {
 
           setReviews(reviewsWithReplies);
 
-          // Auto-generate AI reply for all reviews without replies
-          reviewsWithReplies.forEach((review: ReviewWithReplies) => {
-            if (review.replies.length === 0) {
+          // Auto-generate for reviews without replies in batches (5 per second)
+          const reviewsNeedingReplies = reviewsWithReplies.filter(
+            (review: ReviewWithReplies) => review.replies.length === 0
+          );
+
+          reviewsNeedingReplies.forEach((review: ReviewWithReplies, index: number) => {
+            setTimeout(() => {
               generateAIReply(review._id, review.rating, review.comment);
-            }
+            }, index * 200); // 200ms delay = 5 requests per second
           });
         } else {
           setReviews(reviewsList.map((r: Review) => ({ ...r, replies: [] })));
