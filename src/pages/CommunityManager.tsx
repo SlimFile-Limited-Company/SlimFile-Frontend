@@ -154,6 +154,8 @@ export default function CommunityManager() {
     try {
       setReviews(prev => prev.map(r => r._id === reviewId ? { ...r, isGenerating: true } : r));
 
+      console.log('🤖 Generating AI reply for review:', reviewId);
+
       const response = await fetch(`${API_BASE_URL}/ai/grok`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -161,7 +163,7 @@ export default function CommunityManager() {
           messages: [
             {
               role: 'system',
-              content: `You are SlimFile Assistant, the official AI assistant for SlimFile - a file compression and conversion platform. Your role is to respond to customer reviews professionally, helpfully, and warmly.
+              content: `You are SlimFile Assistant, the official assistant for SlimFile - a file compression and conversion platform. Your role is to respond to customer reviews professionally, helpfully, and warmly.
 
 IMPORTANT INSTRUCTIONS:
 1. Analyze BOTH the star rating AND the actual text content
@@ -185,43 +187,55 @@ Your tone should be: friendly, professional, empathetic, and solution-oriented.`
         })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        const aiMessage = data.reply;
-
-        // Save the AI reply to the backend
-        await fetch(`${API_BASE_URL}/reviews/replies`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            reviewId,
-            message: aiMessage,
-            role: 'assistant'
-          })
-        });
-
-        setReviews(prev => prev.map(review => {
-          if (review._id === reviewId) {
-            return {
-              ...review,
-              replies: [
-                ...review.replies,
-                {
-                  _id: Date.now().toString(),
-                  reviewId,
-                  message: aiMessage,
-                  role: 'assistant',
-                  createdAt: new Date().toISOString()
-                }
-              ],
-              isGenerating: false
-            };
-          }
-          return review;
-        }));
+      if (!response.ok) {
+        throw new Error(`AI API failed: ${response.status}`);
       }
+
+      const data = await response.json();
+      const aiMessage = data.reply;
+      console.log('✅ AI reply generated:', aiMessage);
+
+      // Save the AI reply to the backend
+      console.log('💾 Saving reply to backend...');
+      const saveResponse = await fetch(`${API_BASE_URL}/reviews/replies`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reviewId,
+          message: aiMessage,
+          role: 'assistant'
+        })
+      });
+
+      if (!saveResponse.ok) {
+        console.error('❌ Failed to save reply to backend:', saveResponse.status);
+        console.error('Backend might not have /reviews/replies endpoint');
+      } else {
+        console.log('✅ Reply saved to backend');
+      }
+
+      // Update UI immediately regardless of backend save
+      setReviews(prev => prev.map(review => {
+        if (review._id === reviewId) {
+          return {
+            ...review,
+            replies: [
+              ...review.replies,
+              {
+                _id: Date.now().toString(),
+                reviewId,
+                message: aiMessage,
+                role: 'assistant',
+                createdAt: new Date().toISOString()
+              }
+            ],
+            isGenerating: false
+          };
+        }
+        return review;
+      }));
     } catch (error) {
-      console.error('Error generating AI reply:', error);
+      console.error('❌ Error generating reply:', error);
       setReviews(prev => prev.map(r => r._id === reviewId ? { ...r, isGenerating: false } : r));
     }
   };
