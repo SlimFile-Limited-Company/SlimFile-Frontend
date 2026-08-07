@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSEO } from '@/hooks/useSEO';
-import { Star, MessageSquare, TrendingUp, Bot, Send, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Star, MessageSquare, TrendingUp, Bot, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import io from 'socket.io-client';
 
 interface Review {
@@ -17,7 +16,7 @@ interface AIReply {
   _id: string;
   reviewId: string;
   message: string;
-  role: 'assistant' | 'user';
+  role: 'assistant';
   createdAt: string;
 }
 
@@ -67,8 +66,6 @@ export default function CommunityManager() {
   const [reviews, setReviews] = useState<ReviewWithReplies[]>([]);
   const [stats, setStats] = useState<ReviewStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [userMessages, setUserMessages] = useState<Record<string, string>>({});
-  const [sendingMessage, setSendingMessage] = useState<Record<string, boolean>>({});
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -229,109 +226,6 @@ Your tone should be: friendly, professional, empathetic, and solution-oriented.`
     }
   };
 
-  const handleUserReply = async (reviewId: string) => {
-    const message = userMessages[reviewId]?.trim();
-    if (!message) return;
-
-    setSendingMessage(prev => ({ ...prev, [reviewId]: true }));
-
-    try {
-      // Save user message
-      await fetch(`${API_BASE_URL}/reviews/replies`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          reviewId,
-          message,
-          role: 'user'
-        })
-      });
-
-      const userReply: AIReply = {
-        _id: Date.now().toString(),
-        reviewId,
-        message,
-        role: 'user',
-        createdAt: new Date().toISOString()
-      };
-
-      setReviews(prev => prev.map(review => {
-        if (review._id === reviewId) {
-          return {
-            ...review,
-            replies: [...review.replies, userReply]
-          };
-        }
-        return review;
-      }));
-
-      setUserMessages(prev => ({ ...prev, [reviewId]: '' }));
-
-      // Generate AI response to the user's message
-      const review = reviews.find(r => r._id === reviewId);
-      if (review) {
-        const allMessages = [
-          ...review.replies.map(r => ({
-            role: r.role === 'assistant' ? 'assistant' : 'user',
-            content: r.message
-          })),
-          { role: 'user', content: message }
-        ];
-
-        const response = await fetch(`${API_BASE_URL}/ai/grok`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            messages: [
-              {
-                role: 'system',
-                content: `You are SlimFile Assistant. Continue the conversation professionally and helpfully. Keep responses under 3 sentences. Be warm and solution-oriented.`
-              },
-              ...allMessages
-            ]
-          })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const aiMessage = data.reply;
-
-          await fetch(`${API_BASE_URL}/reviews/replies`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              reviewId,
-              message: aiMessage,
-              role: 'assistant'
-            })
-          });
-
-          setReviews(prev => prev.map(r => {
-            if (r._id === reviewId) {
-              return {
-                ...r,
-                replies: [
-                  ...r.replies,
-                  {
-                    _id: (Date.now() + 1).toString(),
-                    reviewId,
-                    message: aiMessage,
-                    role: 'assistant',
-                    createdAt: new Date().toISOString()
-                  }
-                ]
-              };
-            }
-            return r;
-          }));
-        }
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-    } finally {
-      setSendingMessage(prev => ({ ...prev, [reviewId]: false }));
-    }
-  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -362,7 +256,7 @@ Your tone should be: friendly, professional, empathetic, and solution-oriented.`
             Community Manager
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            SlimFile Assistant automatically responds to all customer reviews in real-time
+            View all customer reviews and SlimFile Assistant's AI-generated responses
           </p>
         </div>
 
@@ -484,77 +378,34 @@ Your tone should be: friendly, professional, empathetic, and solution-oriented.`
                     </div>
                   )}
 
-                  {review.replies.map((reply, idx) => (
-                    <div key={reply._id} className={`flex items-start gap-3 ${reply.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        reply.role === 'assistant' ? 'bg-purple-100' : 'bg-blue-100'
-                      }`}>
-                        {reply.role === 'assistant' ? (
-                          <Bot className="w-5 h-5 text-purple-600" />
-                        ) : (
-                          <MessageSquare className="w-5 h-5 text-blue-600" />
-                        )}
+                  {review.replies.length === 0 && !review.isGenerating && (
+                    <div className="text-center py-4 text-gray-500 text-sm">
+                      <AlertCircle className="w-5 h-5 mx-auto mb-2 text-gray-400" />
+                      No AI response yet
+                    </div>
+                  )}
+
+                  {review.replies.map((reply) => (
+                    <div key={reply._id} className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <Bot className="w-5 h-5 text-purple-600" />
                       </div>
-                      <div className={`flex-1 rounded-2xl px-4 py-3 ${
-                        reply.role === 'assistant'
-                          ? 'bg-purple-50 rounded-tl-none'
-                          : 'bg-blue-50 rounded-tr-none'
-                      }`}>
+                      <div className="flex-1 bg-purple-50 rounded-2xl rounded-tl-none px-4 py-3">
                         <div className="flex items-center gap-2 mb-1">
-                          <p className={`text-sm font-semibold ${
-                            reply.role === 'assistant' ? 'text-purple-900' : 'text-blue-900'
-                          }`}>
-                            {reply.role === 'assistant' ? 'SlimFile Assistant' : 'Community Manager'}
+                          <p className="text-sm font-semibold text-purple-900">
+                            SlimFile Assistant
                           </p>
-                          <span className={`text-xs ${
-                            reply.role === 'assistant' ? 'text-purple-600' : 'text-blue-600'
-                          }`}>
+                          <span className="text-xs text-purple-600">
                             {formatDate(reply.createdAt)}
                           </span>
+                          <CheckCircle className="w-3.5 h-3.5 text-green-500 ml-auto" />
                         </div>
-                        <p className={`text-sm leading-relaxed ${
-                          reply.role === 'assistant' ? 'text-purple-900' : 'text-blue-900'
-                        }`}>
+                        <p className="text-sm leading-relaxed text-purple-900">
                           {reply.message}
                         </p>
                       </div>
                     </div>
                   ))}
-
-                  {/* User Reply Input */}
-                  <div className="pt-2">
-                    <div className="flex items-end gap-2">
-                      <div className="flex-1">
-                        <textarea
-                          value={userMessages[review._id] || ''}
-                          onChange={(e) => setUserMessages(prev => ({ ...prev, [review._id]: e.target.value }))}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              e.preventDefault();
-                              handleUserReply(review._id);
-                            }
-                          }}
-                          placeholder="Reply as Community Manager..."
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-sm"
-                          rows={2}
-                        />
-                      </div>
-                      <Button
-                        onClick={() => handleUserReply(review._id)}
-                        disabled={!userMessages[review._id]?.trim() || sendingMessage[review._id]}
-                        className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-xl h-[52px]"
-                      >
-                        {sendingMessage[review._id] ? (
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                        ) : (
-                          <Send className="w-5 h-5" />
-                        )}
-                      </Button>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-2">
-                      💡 Tip: Press Enter to send, Shift+Enter for new line
-                    </p>
-                  </div>
                 </div>
               </div>
             ))}
@@ -580,7 +431,7 @@ Your tone should be: friendly, professional, empathetic, and solution-oriented.`
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-purple-600 font-bold">•</span>
-                  <span><strong>Full Conversations:</strong> You can reply as Community Manager and the AI will continue the conversation</span>
+                  <span><strong>View & Monitor:</strong> See all AI responses for quality assurance and improvements</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-purple-600 font-bold">•</span>
