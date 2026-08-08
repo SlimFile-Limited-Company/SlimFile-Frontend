@@ -17,7 +17,7 @@ export default function BlogSummarizePdfWithAi() {
           <span className="text-sm font-semibold text-red-600 uppercase tracking-wider">AI Tools</span>
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mt-3 mb-6 leading-tight">Summarize a PDF with AI</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">Upload any PDF and get an instant AI summary — key points, main themes, and action items. Save hours of reading time.</p>
-          <Link to="/summarize"><Button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-semibold">Summarize PDF Free <ArrowRight className="ml-2 w-4 h-4" /></Button></Link>
+          <Link to="/ai-lab?feature=summarize"><Button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-semibold">Summarize PDF Free <ArrowRight className="ml-2 w-4 h-4" /></Button></Link>
           <p className="text-sm text-gray-500 mt-4">Updated January 2026 · 5 min read</p>
         </div>
       </section>
@@ -109,7 +109,7 @@ export default function BlogSummarizePdfWithAi() {
           <Zap className="w-12 h-12 mx-auto mb-4 opacity-90" />
           <h2 className="text-3xl font-bold mb-4">Summarize Any PDF with AI — Free</h2>
           <p className="text-red-100 mb-8 text-lg">Get key points in seconds. No account. No data stored.</p>
-          <Link to="/summarize"><Button className="bg-white text-red-600 hover:bg-red-50 px-10 py-4 rounded-xl font-bold text-lg">Summarize PDF Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
+          <Link to="/ai-lab?feature=summarize"><Button className="bg-white text-red-600 hover:bg-red-50 px-10 py-4 rounded-xl font-bold text-lg">Summarize PDF Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
         </div>
       </section>
     </div>

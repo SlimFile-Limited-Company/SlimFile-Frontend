@@ -17,7 +17,7 @@ export default function BlogBestAiDocumentSummarizersFree() {
           <span className="text-sm font-semibold text-red-600 uppercase tracking-wider">Comparisons</span>
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mt-3 mb-6 leading-tight">Best Free AI Document Summarizers 2026</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">AI summarizers can condense a 50-page report into a clear summary in seconds. Here are the best free tools, ranked by accuracy, privacy, and document support.</p>
-          <Link to="/summarize"><Button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-semibold">Summarize Free <ArrowRight className="ml-2 w-4 h-4" /></Button></Link>
+          <Link to="/ai-lab?feature=summarize"><Button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-semibold">Summarize Free <ArrowRight className="ml-2 w-4 h-4" /></Button></Link>
           <p className="text-sm text-gray-500 mt-4">Updated January 2026 · 6 min read</p>
         </div>
       </section>
@@ -135,7 +135,7 @@ export default function BlogBestAiDocumentSummarizersFree() {
           <Zap className="w-12 h-12 mx-auto mb-4 opacity-90" />
           <h2 className="text-3xl font-bold mb-4">Summarize Any Document — Free, No Account</h2>
           <p className="text-red-100 mb-8 text-lg">PDF, Word, PPTX, Excel — get a clear summary in seconds.</p>
-          <Link to="/summarize"><Button className="bg-white text-red-600 hover:bg-red-50 px-10 py-4 rounded-xl font-bold text-lg">Summarize Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
+          <Link to="/ai-lab?feature=summarize"><Button className="bg-white text-red-600 hover:bg-red-50 px-10 py-4 rounded-xl font-bold text-lg">Summarize Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
         </div>
       </section>
     </div>

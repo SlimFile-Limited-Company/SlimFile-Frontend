@@ -163,7 +163,6 @@ import BottomNav from './components/BottomNav';
 import PushListener from './components/PushListener';
 import SlimFileForge from './pages/SlimFileForge';
 import SlimFileLock from './pages/SlimFileLock';
-import SummarizeDocument from './pages/SummarizeDocument';
 import AILab from './pages/AILab';
 import Reviews from './pages/Reviews';
 import CommunityManager from './pages/CommunityManager';
@@ -369,7 +368,6 @@ ReactDOM.createRoot(root).render(
           <Route path="ocr-tool" element={<OCRTool />} />
           <Route path="forge" element={<SlimFileForge />} />
           <Route path="lock" element={<SlimFileLock />} />
-          <Route path="summarize" element={<SummarizeDocument />} />
           <Route path="ai-lab" element={<AILab />} />
 
           {/* Image Processing Tools */}
