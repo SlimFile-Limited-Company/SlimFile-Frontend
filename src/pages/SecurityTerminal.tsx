@@ -198,6 +198,7 @@ export default function SecurityTerminal() {
           '  blacklist      - Show blocked IPs',
           '  attacks        - Show attack attempts (SQL, XSS, path traversal)',
           '  uploads        - Show blocked malicious uploads',
+          '  lookup-ip <ip> - Get geolocation & info for an IP address',
           '  clear          - Clear screen',
           '  exit           - Logout',
           ''
@@ -317,6 +318,51 @@ export default function SecurityTerminal() {
         break;
 
       default:
+        // Check for lookup-ip command with parameter
+        if (trimmed.startsWith('lookup-ip ')) {
+          const ip = trimmed.replace('lookup-ip ', '').trim();
+
+          setOutput(prev => [...prev, `Looking up ${ip}...`, '']);
+
+          fetch(`${API_BASE_URL}/security/ip-lookup/${ip}`)
+            .then(r => r.json())
+            .then(data => {
+              if (data.success) {
+                setOutput(prev => [...prev,
+                  'IP ADDRESS INFORMATION',
+                  '━'.repeat(60),
+                  `IP: ${data.ip}`,
+                  '',
+                  '[LOCATION]',
+                  `├─ Country: ${data.location.country} (${data.location.countryCode})`,
+                  `├─ Region: ${data.location.region}`,
+                  `├─ City: ${data.location.city}`,
+                  `├─ ZIP: ${data.location.zip || 'N/A'}`,
+                  `├─ Timezone: ${data.location.timezone}`,
+                  `└─ Coordinates: ${data.location.coordinates.lat}, ${data.location.coordinates.lon}`,
+                  '',
+                  '[NETWORK]',
+                  `├─ ISP: ${data.network.isp}`,
+                  `├─ Organization: ${data.network.organization}`,
+                  `└─ ASN: ${data.network.asn}`,
+                  '',
+                  '[SECURITY FLAGS]',
+                  `├─ Mobile: ${data.security.isMobile ? 'YES' : 'NO'}`,
+                  `├─ Proxy/VPN: ${data.security.isProxy ? 'YES ⚠️' : 'NO'}`,
+                  `└─ Hosting/Datacenter: ${data.security.isHosting ? 'YES' : 'NO'}`,
+                  ''
+                ]);
+              } else {
+                setOutput(prev => [...prev, `Error: ${data.error}`, '']);
+              }
+            })
+            .catch(err => {
+              setOutput(prev => [...prev, `Failed to lookup IP: ${err.message}`, '']);
+            });
+
+          break;
+        }
+
         setOutput(prev => [...prev, `Command not found: ${cmd}`, 'Type "help" for available commands', '']);
     }
 
