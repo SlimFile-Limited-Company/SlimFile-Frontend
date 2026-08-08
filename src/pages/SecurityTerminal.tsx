@@ -400,10 +400,10 @@ export default function SecurityTerminal() {
   }
 
   return (
-    <div className="fixed inset-0 bg-black text-green-500 font-mono p-4 overflow-y-auto z-[9999]">
-      <div className="max-w-7xl mx-auto">
+    <div className="fixed inset-0 bg-black text-green-500 font-mono overflow-hidden z-[9999] flex flex-col">
+      <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col p-3 gap-3 overflow-hidden">
         {/* Header */}
-        <div className="border border-green-500 p-4 mb-4">
+        <div className="border border-green-500 p-3 flex-shrink-0">
           <div className="flex justify-between items-center text-xs">
             <div>
               <span className="text-green-400">SLIMFILE SECURITY TERMINAL</span>
@@ -418,11 +418,11 @@ export default function SecurityTerminal() {
 
         {/* Stats Display */}
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 flex-shrink-0">
             {/* Sessions */}
-            <div className="border border-green-500 p-4">
+            <div className="border border-green-500 p-3">
               <div className="text-sm mb-2">[LIVE SESSIONS]</div>
-              <div className="text-xs space-y-1">
+              <div className="text-xs space-y-0.5">
                 <div>├─ Total Active: {stats.sessions.total}</div>
                 <div>├─ Authenticated: {stats.sessions.authenticated}</div>
                 <div>├─ Guest: {stats.sessions.guest}</div>
@@ -431,9 +431,9 @@ export default function SecurityTerminal() {
             </div>
 
             {/* Threats */}
-            <div className="border border-green-500 p-4">
+            <div className="border border-green-500 p-3">
               <div className="text-sm mb-2">[THREATS - LAST 10 MIN]</div>
-              <div className="text-xs space-y-1">
+              <div className="text-xs space-y-0.5">
                 <div className={stats.threats.critical > 0 ? 'text-red-500' : ''}>
                   ├─ Critical: {stats.threats.critical} {stats.threats.critical > 0 && '🔴'}
                 </div>
@@ -446,9 +446,9 @@ export default function SecurityTerminal() {
             </div>
 
             {/* Activity */}
-            <div className="border border-green-500 p-4">
+            <div className="border border-green-500 p-3">
               <div className="text-sm mb-2">[ACTIVITY]</div>
-              <div className="text-xs space-y-1">
+              <div className="text-xs space-y-0.5">
                 <div>├─ Failed Logins: {stats.failedLogins}</div>
                 <div>├─ Rate Limits: {stats.rateLimitHits}</div>
                 <div>└─ Blocked IPs: {stats.blockedIPs.length}</div>
@@ -459,9 +459,9 @@ export default function SecurityTerminal() {
 
         {/* Recent Events Stream */}
         {stats && stats.recentEvents.length > 0 && (
-          <div className="border border-green-500 p-4 mb-4">
+          <div className="border border-green-500 p-3 flex-shrink-0">
             <div className="text-sm mb-2">[SECURITY EVENT STREAM]</div>
-            <div className="text-xs space-y-1 max-h-40 overflow-y-auto">
+            <div className="text-xs space-y-0.5 max-h-24 overflow-y-auto">
               {stats.recentEvents.slice(0, 10).map((event, i) => {
                 // Highlight different attack types
                 const isAttack = ['sql_injection', 'path_traversal', 'xss_attempt', 'malicious_upload'].includes(event.type);
@@ -485,7 +485,7 @@ export default function SecurityTerminal() {
         {/* Terminal Output */}
         <div
           ref={terminalRef}
-          className="border border-green-500 p-4 h-96 overflow-y-auto mb-4 text-xs"
+          className="border border-green-500 p-3 flex-1 overflow-y-auto text-xs min-h-0"
         >
           {output.map((line, i) => (
             <div key={i}>{line}</div>
@@ -493,7 +493,7 @@ export default function SecurityTerminal() {
         </div>
 
         {/* Command Input */}
-        <div className="border border-green-500 p-4">
+        <div className="border border-green-500 p-3 flex-shrink-0">
           <div className="flex items-center text-xs">
             <span className="mr-2">root@slimfile:~#</span>
             <input
