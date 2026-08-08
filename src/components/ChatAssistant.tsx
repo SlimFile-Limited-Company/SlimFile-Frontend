@@ -107,6 +107,29 @@ export default function ChatAssistant() {
     }
   };
 
+  // Function to convert URLs in text to clickable links
+  const renderMessageWithLinks = (text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+
+    return parts.map((part, index) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-purple-600 dark:text-purple-400 underline hover:text-purple-700 dark:hover:text-purple-300 font-medium"
+          >
+            {part}
+          </a>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
+
   return (
     <>
       {/* Floating Chat Button */}
@@ -159,7 +182,9 @@ export default function ChatAssistant() {
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  <p className="text-sm whitespace-pre-wrap">
+                    {renderMessageWithLinks(message.content)}
+                  </p>
                   <p className={`text-xs mt-1 ${
                     message.role === 'user' ? 'text-purple-100' : 'text-gray-500 dark:text-gray-400'
                   }`}>
