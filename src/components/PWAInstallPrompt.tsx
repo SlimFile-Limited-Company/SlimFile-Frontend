@@ -17,6 +17,49 @@ export const PWAInstallPrompt = () => {
   const [isInstalled, setIsInstalled] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
+
+  // Get or create session ID for tracking
+  const getSessionId = () => {
+    let sessionId = localStorage.getItem('slimfile-session-id');
+    if (!sessionId) {
+      sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('slimfile-session-id', sessionId);
+    }
+    return sessionId;
+  };
+
+  // Detect platform
+  const getPlatform = () => {
+    const ua = navigator.userAgent;
+    if (/Android/i.test(ua)) return 'mobile';
+    if (/iPhone|iPad|iPod/i.test(ua)) return 'mobile';
+    if (/Tablet|iPad/i.test(ua)) return 'tablet';
+    return 'desktop';
+  };
+
+  // Record PWA install to backend
+  const recordInstall = async () => {
+    try {
+      const sessionId = getSessionId();
+      const platform = getPlatform();
+
+      const response = await fetch(`${API_BASE_URL}/pwa-installs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId, platform })
+      });
+
+      if (response.ok) {
+        console.log('PWA Install Prompt: Install recorded successfully');
+      } else {
+        console.error('PWA Install Prompt: Failed to record install');
+      }
+    } catch (error) {
+      console.error('PWA Install Prompt: Error recording install:', error);
+    }
+  };
+
   useEffect(() => {
     console.log('PWA Install Prompt: Component mounted');
 
@@ -41,6 +84,8 @@ export const PWAInstallPrompt = () => {
       console.log('PWA Install Prompt: App installed event fired');
       setIsInstalled(true);
       setShowPrompt(false);
+      // Record install to backend
+      recordInstall();
     };
 
     const checkInstallability = async () => {
