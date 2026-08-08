@@ -1,4 +1,5 @@
-const CACHE_NAME = 'slimfile-v2';
+// Use timestamp for cache versioning - updates on each deploy
+const CACHE_NAME = 'slimfile-v' + '20260808';
 
 // ─── Install ───────────────────────────────────────────────────────────────────
 self.addEventListener('install', event => {
@@ -31,7 +32,16 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Network-first for same-origin GET (page navigations / static assets)
+  // DON'T cache hashed assets (index-xxxxx.js, main-xxxxx.css)
+  // They already have cache busting via filename hash
+  const isHashedAsset = /\.(js|css)$/.test(url) && /-[a-zA-Z0-9_]{8,}\.(js|css)/.test(url);
+
+  if (isHashedAsset) {
+    // Always fetch fresh - don't use cache (prevents version mismatch)
+    return event.respondWith(fetch(event.request));
+  }
+
+  // Network-first for HTML and images
   event.respondWith(
     fetch(event.request)
       .then(res => {
