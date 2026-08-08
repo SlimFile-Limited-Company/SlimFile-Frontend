@@ -1,6 +1,41 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 
+// Hide header/footer on mount
+const useFullScreen = () => {
+  useEffect(() => {
+    // Hide header and footer
+    const header = document.querySelector('header');
+    const footer = document.querySelector('footer');
+    const main = document.querySelector('main');
+
+    if (header) header.style.display = 'none';
+    if (footer) footer.style.display = 'none';
+    if (main) {
+      main.style.padding = '0';
+      main.style.margin = '0';
+    }
+
+    // Set body to full screen
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      // Restore on unmount
+      if (header) header.style.display = '';
+      if (footer) footer.style.display = '';
+      if (main) {
+        main.style.padding = '';
+        main.style.margin = '';
+      }
+      document.body.style.margin = '';
+      document.body.style.padding = '';
+      document.body.style.overflow = '';
+    };
+  }, []);
+};
+
 interface SessionStats {
   total: number;
   authenticated: number;
@@ -57,6 +92,9 @@ export default function SecurityTerminal() {
 
   // Beep sound for alerts (data URI - pure sine wave)
   const alertBeep = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBDGH0fPTgjMGHm7A7+OZSA8'
+
+  // Hide header/footer for full-screen terminal
+  useFullScreen();
 
   useEffect(() => {
     // Auto-focus input
@@ -262,7 +300,7 @@ export default function SecurityTerminal() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-black text-green-500 font-mono flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black text-green-500 font-mono flex items-center justify-center p-4 z-[9999]">
         <div className="w-full max-w-md">
           <div className="border border-green-500 p-6">
             <pre className="text-xs mb-6 text-center">
@@ -322,7 +360,7 @@ export default function SecurityTerminal() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-green-500 font-mono p-4">
+    <div className="fixed inset-0 bg-black text-green-500 font-mono p-4 overflow-y-auto z-[9999]">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="border border-green-500 p-4 mb-4">
