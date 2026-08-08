@@ -196,6 +196,8 @@ export default function SecurityTerminal() {
           '  failed-logins  - Show failed login attempts',
           '  rate-limits    - Show rate limit violations',
           '  blacklist      - Show blocked IPs',
+          '  attacks        - Show attack attempts (SQL, XSS, path traversal)',
+          '  uploads        - Show blocked malicious uploads',
           '  clear          - Clear screen',
           '  exit           - Logout',
           ''
@@ -263,6 +265,44 @@ export default function SecurityTerminal() {
           ]);
         } else {
           setOutput(prev => [...prev, 'No blocked IPs', '']);
+        }
+        break;
+
+      case 'attacks':
+        if (stats && stats.recentEvents) {
+          const attacks = stats.recentEvents.filter(e =>
+            ['sql_injection', 'path_traversal', 'xss_attempt'].includes(e.type)
+          );
+          if (attacks.length > 0) {
+            setOutput(prev => [...prev,
+              'ATTACK ATTEMPTS',
+              '━'.repeat(60),
+              ...attacks.map(a =>
+                `[${new Date(a.timestamp).toLocaleTimeString()}] ${a.type.toUpperCase()} from ${a.ipAddress}`
+              ),
+              ''
+            ]);
+          } else {
+            setOutput(prev => [...prev, 'No attack attempts detected', '']);
+          }
+        }
+        break;
+
+      case 'uploads':
+        if (stats && stats.recentEvents) {
+          const uploads = stats.recentEvents.filter(e => e.type === 'malicious_upload');
+          if (uploads.length > 0) {
+            setOutput(prev => [...prev,
+              'BLOCKED MALICIOUS UPLOADS',
+              '━'.repeat(60),
+              ...uploads.map(u =>
+                `[${new Date(u.timestamp).toLocaleTimeString()}] ${u.description} from ${u.ipAddress}`
+              ),
+              ''
+            ]);
+          } else {
+            setOutput(prev => [...prev, 'No malicious uploads blocked', '']);
+          }
         }
         break;
 
@@ -422,15 +462,22 @@ export default function SecurityTerminal() {
           <div className="border border-green-500 p-4 mb-4">
             <div className="text-sm mb-2">[SECURITY EVENT STREAM]</div>
             <div className="text-xs space-y-1 max-h-40 overflow-y-auto">
-              {stats.recentEvents.slice(0, 10).map((event, i) => (
-                <div key={i} className={
+              {stats.recentEvents.slice(0, 10).map((event, i) => {
+                // Highlight different attack types
+                const isAttack = ['sql_injection', 'path_traversal', 'xss_attempt', 'malicious_upload'].includes(event.type);
+                const colorClass =
                   event.severity === 'critical' ? 'text-red-500' :
                   event.severity === 'high' ? 'text-yellow-500' :
-                  'text-green-500'
-                }>
-                  [{new Date(event.timestamp).toLocaleTimeString()}] {event.severity.toUpperCase()}: {event.type.replace(/_/g, ' ')} - {event.ipAddress}
-                </div>
-              ))}
+                  isAttack ? 'text-orange-400' :
+                  'text-green-500';
+
+                return (
+                  <div key={i} className={colorClass}>
+                    [{new Date(event.timestamp).toLocaleTimeString()}] {event.severity.toUpperCase()}: {event.type.replace(/_/g, ' ')} - {event.ipAddress}
+                    {event.blocked && ' [BLOCKED]'}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
