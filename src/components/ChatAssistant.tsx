@@ -130,6 +130,11 @@ export default function ChatAssistant() {
     });
   };
 
+  // Don't show on security terminal page
+  if (window.location.pathname === '/security-terminal') {
+    return null;
+  }
+
   return (
     <>
       {/* Floating Chat Button */}

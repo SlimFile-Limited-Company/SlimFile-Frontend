@@ -164,6 +164,11 @@ export const PWAInstallPrompt = () => {
     setDeferredPrompt(null);
   };
 
+  // Don't show on security terminal page
+  if (window.location.pathname === '/security-terminal') {
+    return null;
+  }
+
   if (isInstalled || !showPrompt) {
     return null;
   }
