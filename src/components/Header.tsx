@@ -26,18 +26,18 @@ export const Header = () => {
     devtools: false,
   });
 
-  // Fetch global stats for banner
+  // Fetch global stats for banner (same endpoint as Feed page)
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
-        const response = await fetch(`${API_BASE_URL}/global-stats`);
+        const response = await fetch(`${API_BASE_URL}/feed/stats`);
         if (response.ok) {
           const data = await response.json();
           setGlobalStats(data);
         }
       } catch (error) {
-        console.error('Failed to fetch global stats:', error);
+        console.error('Failed to fetch feed stats:', error);
       }
     };
     fetchStats();
