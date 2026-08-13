@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, ChevronLeft, ChevronRight, Maximize2, Crop, Wand2, Signature, Eraser, UserX, Grid3x3, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail } from "lucide-react";
+import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, ChevronLeft, ChevronRight, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useSEO } from "@/hooks/useSEO";
 
@@ -141,26 +141,13 @@ const Home: FC = () => {
     { icon: Sparkles,  title: "Summarize Document",    description: "Compress and extract a smart AI summary from any PDF, DOCX or PPTX.",   features: ["Powered by Llama 3", "PDF, DOCX & PPTX", "Structured output"],              gradient: "from-purple-600 to-indigo-700", href: "/ai-lab?feature=summarize",       badge: "AI",        flip: "Well hello there! 🤫"      },
   ];
 
-  // Image Processing Features
-  const imageFeatures = [
-    { icon: Maximize2, title: 'Resize Image', gradient: 'from-blue-500 to-indigo-500', href: '/images/resize', description: 'Resize images to custom dimensions with quality preservation.', features: ['Maintain aspect ratio', '100% quality default', 'PNG/JPEG/WEBP support'], badge: 'New', flip: 'Image Magic! 🖼️' },
-    { icon: Crop, title: 'Crop Image', gradient: 'from-emerald-500 to-teal-500', href: '/images/crop', description: 'Crop images with drag-to-crop interface and zoom controls.', features: ['Visual drag interface', 'Zoom 1x - 3x', 'Live preview'], badge: 'New', flip: 'Image Magic! 🖼️' },
-    { icon: Wand2, title: 'Enhance Image', gradient: 'from-purple-500 to-pink-500', href: '/images/enhance', description: 'Automatically improve brightness, contrast, and sharpness.', features: ['One-click enhance', 'Auto adjustments', 'Quality improvement'], badge: 'New', flip: 'Image Magic! 🖼️' },
-    { icon: Signature, title: 'Watermark Image', gradient: 'from-cyan-500 to-blue-500', href: '/images/watermark', description: 'Add text or image watermarks to protect your images.', features: ['Text & image marks', 'Custom position', 'Opacity control'], badge: 'New', flip: 'Image Magic! 🖼️' },
-    { icon: Eraser, title: 'Remove Background', gradient: 'from-red-500 to-orange-500', href: '/images/remove-background', description: 'Convert your images to transparent PNG format.', features: ['Transparent PNG', 'Alpha channel', 'Quick conversion'], badge: 'New', flip: 'Image Magic! 🖼️' },
-    { icon: Layers, title: 'Replace Background', gradient: 'from-violet-500 to-purple-500', href: '/images/replace-background', description: 'Change image background with solid colors.', features: ['Color picker', 'Custom colors', 'Live preview'], badge: 'New', flip: 'Image Magic! 🖼️' },
-    { icon: UserX, title: 'Blur Faces', gradient: 'from-indigo-500 to-blue-600', href: '/images/blur-faces', description: 'AI-powered face detection and blur for privacy protection.', features: ['Auto face detection', 'Adjustable intensity', 'Privacy protection'], badge: 'AI', flip: 'Image Magic! 🖼️' },
-    { icon: Grid3x3, title: 'Generate Thumbnails', gradient: 'from-amber-500 to-yellow-500', href: '/images/generate-thumbnails', description: 'Create multiple thumbnail sizes from your images.', features: ['Multiple sizes', 'Batch generation', 'Instant download'], badge: 'New', flip: 'Image Magic! 🖼️' },
-  ];
-
-  // Organize by category: General → AI Lab → Image Processing
+  // Organize by category: General → AI Lab
   const featureCategories = [
     generalFeatures,
     aiLabFeatures.map(f => ({ ...f, flip: "AI Power! 🤖" })),
-    imageFeatures,
   ];
 
-  const totalPages = featureCategories.length; // 3 pages: General, AI Lab, Image Processing
+  const totalPages = featureCategories.length; // 2 pages: General, AI Lab
 
   // Right mascot — fun file compression tips
   const mascotTips = [

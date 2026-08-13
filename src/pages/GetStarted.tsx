@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit, Sparkles, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, Shield, Maximize2, Crop, Wand2, Signature, Eraser, Layers, UserX, Grid3x3 } from 'lucide-react';
+import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit, Sparkles, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, Shield } from 'lucide-react';
 
 const FEATURES = [
   {
@@ -66,49 +66,6 @@ const FEATURES = [
   },
 ];
 
-const IMAGE_FEATURES = [
-  {
-    icon: Maximize2,  title: 'Resize Image',          badge: 'New',        gradient: 'from-blue-500 to-indigo-500',
-    href: '/images/resize',      description: 'Resize images to custom dimensions with quality preservation.',
-    features: ['Maintain aspect ratio', '100% quality default', 'PNG/JPEG/WEBP support'],
-  },
-  {
-    icon: Crop,       title: 'Crop Image',            badge: 'New',        gradient: 'from-emerald-500 to-teal-500',
-    href: '/images/crop',        description: 'Crop images with drag-to-crop interface and zoom controls.',
-    features: ['Visual drag interface', 'Zoom 1x - 3x', 'Live preview'],
-  },
-  {
-    icon: Wand2,      title: 'Enhance Image',         badge: 'New',        gradient: 'from-purple-500 to-pink-500',
-    href: '/images/enhance',     description: 'Automatically improve brightness, contrast, and sharpness.',
-    features: ['One-click enhance', 'Auto adjustments', 'Quality improvement'],
-  },
-  {
-    icon: Signature,  title: 'Watermark Image',       badge: 'New',        gradient: 'from-cyan-500 to-blue-500',
-    href: '/images/watermark',   description: 'Add text or image watermarks to protect your images.',
-    features: ['Text & image marks', 'Custom position', 'Opacity control'],
-  },
-  {
-    icon: Eraser,     title: 'Remove Background',     badge: 'New',        gradient: 'from-red-500 to-orange-500',
-    href: '/images/remove-background', description: 'Convert your images to transparent PNG format.',
-    features: ['Transparent PNG', 'Alpha channel', 'Quick conversion'],
-  },
-  {
-    icon: Layers,     title: 'Replace Background',    badge: 'New',        gradient: 'from-violet-500 to-purple-500',
-    href: '/images/replace-background', description: 'Change image background with solid colors.',
-    features: ['Color picker', 'Custom colors', 'Live preview'],
-  },
-  {
-    icon: UserX,      title: 'Blur Faces',            badge: 'AI',         gradient: 'from-indigo-500 to-blue-600',
-    href: '/images/blur-faces',  description: 'AI-powered face detection and blur for privacy protection.',
-    features: ['Auto face detection', 'Adjustable intensity', 'Privacy protection'],
-  },
-  {
-    icon: Grid3x3,    title: 'Generate Thumbnails',   badge: 'New',        gradient: 'from-amber-500 to-yellow-500',
-    href: '/images/generate-thumbnails', description: 'Create multiple thumbnail sizes from your images.',
-    features: ['Multiple sizes', 'Batch generation', 'Instant download'],
-  },
-];
-
 const AI_LAB_FEATURES = [
   {
     icon: Languages, title: 'Translate Text', badge: 'AI', gradient: 'from-blue-500 to-cyan-500',
@@ -158,7 +115,7 @@ const AI_LAB_FEATURES = [
 ];
 
 const GetStarted: FC = () => {
-  const [activeTab, setActiveTab] = useState<'general' | 'ai' | 'images'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'ai'>('general');
   useSEO({
     title: 'Get Started with SlimFile — Choose Your Tool',
     description: 'Pick the right SlimFile tool for your task. Compress, convert, summarize, OCR, meet, collaborate — everything you need to manage files smarter.',
@@ -200,23 +157,12 @@ const GetStarted: FC = () => {
               <span className="hidden sm:inline">AI Lab</span>
               <span className="sm:hidden">AI</span>
             </button>
-            <button
-              onClick={() => setActiveTab('images')}
-              className={`px-4 sm:px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-                activeTab === 'images'
-                  ? 'bg-red-600 text-white shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <span className="hidden sm:inline">Image Processing</span>
-              <span className="sm:hidden">Image</span>
-            </button>
           </div>
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {(activeTab === 'general' ? FEATURES : activeTab === 'ai' ? AI_LAB_FEATURES : IMAGE_FEATURES).map((f) => (
+          {(activeTab === 'general' ? FEATURES : AI_LAB_FEATURES).map((f) => (
             <Link to={f.href} key={f.title} className="group block">
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-200 h-full flex flex-col">
 
