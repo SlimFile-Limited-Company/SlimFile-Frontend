@@ -118,11 +118,9 @@ export const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
-      {/* Announcement banner */}
-      <a
-        href="https://play.google.com/store/apps/details?id=com.slimfile.app"
-        target="_blank"
-        rel="noopener noreferrer"
+      {/* Compression Stats Banner */}
+      <Link
+        to="/feed"
         className="relative flex items-center justify-center gap-3 px-6 py-2.5 text-white overflow-hidden group"
         style={{ background: "linear-gradient(90deg, #7c3aed 0%, #9333ea 40%, #7c3aed 100%)" }}
       >
@@ -133,20 +131,20 @@ export const Header = () => {
 
         {/* Badge */}
         <span className="hidden sm:inline-flex items-center gap-1 bg-white/20 text-white text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 tracking-wide">
-          ✨ NEW
+          🌍 LIVE
         </span>
 
         {/* Message */}
         <span className="text-sm font-medium tracking-wide flex items-center gap-2">
-          <span className="font-semibold sm:hidden">SlimFile Mobile App is Live!</span>
-          <span className="font-semibold hidden sm:inline">SlimFile Mobile App Now Live on Google Play Store</span>
+          <span className="font-semibold sm:hidden">Global Impact — See It Live</span>
+          <span className="font-semibold hidden sm:inline">Global Compression Stats</span>
           <span className="hidden sm:inline opacity-80">—</span>
-          <span className="hidden sm:inline">Compress & convert files on the go</span>
+          <span className="hidden sm:inline">Watch files being compressed worldwide in real-time</span>
         </span>
 
         {/* Arrow */}
         <span className="text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-200 text-sm shrink-0">→</span>
-      </a>
+      </Link>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
