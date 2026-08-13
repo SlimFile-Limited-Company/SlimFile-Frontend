@@ -35,20 +35,6 @@ export const Footer = () => {
       ],
     },
     {
-      heading: "Images",
-      links: [
-        { label: "Resize Image", path: "/images/resize" },
-        { label: "Crop Image", path: "/images/crop" },
-        { label: "Compress Image", path: "/compress" },
-        { label: "Add Watermark", path: "/images/watermark" },
-        { label: "Remove Background", path: "/images/remove-background" },
-        { label: "Replace Background", path: "/images/replace-background" },
-        { label: "Blur Faces", path: "/images/blur-faces" },
-        { label: "Auto-enhance", path: "/images/enhance" },
-        { label: "Generate Thumbnails", path: "/images/thumbnails" },
-      ],
-    },
-    {
       heading: "Company",
       links: [
         { label: "About", path: "/about" },
