@@ -150,7 +150,7 @@ export const Header = () => {
 
         {/* Badge */}
         <span className="hidden sm:inline-flex items-center gap-1 bg-white/20 text-white text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 tracking-wide">
-          🌍 LIVE
+          LIVE
         </span>
 
         {/* Message with Stats */}
