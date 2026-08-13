@@ -1,124 +1,128 @@
 import { Link } from "react-router-dom";
 import { useSEO } from '@/hooks/useSEO';
 import { Button } from "@/components/ui/button";
-import { Instagram, CheckCircle, ArrowRight, Zap } from "lucide-react";
+import { Instagram, ArrowRight } from "lucide-react";
+import { BlogSchema, FAQSection } from '@/components/BlogSchema';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { RelatedPosts } from '@/components/RelatedPosts';
 
-export default function BlogCompressImagesForInstagram() {
+export default function CompressImagesForInstagram() {
   useSEO({
-    title: 'How to Compress Images for Instagram — Best Size & Quality 2026 | SlimFile Blog',
-    description: 'Compress images for Instagram without losing quality. Learn the ideal dimensions, file sizes, and free tools to optimise photos for posts, stories, and reels.',
+    title: 'Compress Images for Instagram — Maintain Quality (2026) | SlimFile',
+    description: 'Optimize images for Instagram posts, stories, and reels. Free compression tool that maintains quality while meeting Instagram requirements.',
     canonical: 'https://slim-file.com/blog/compress-images-for-instagram',
   });
+
+  const faqs = [
+    { question: "What are Instagram's image size requirements?", answer: "Instagram posts: max 1080x1350px (4:5 ratio), max 30MB. Stories: 1080x1920px (9:16), max 30MB. Feed posts display at 1080px width. Compress images to reduce upload time while maintaining visual quality." },
+    { question: "Should I compress images before posting to Instagram?", answer: "Yes! Compressing reduces upload time and preserves quality better than Instagram's auto-compression. SlimFile optimizes images to Instagram's ideal specs before you upload." },
+    { question: "What file format is best for Instagram?", answer: "JPEG for photos, PNG for graphics with transparency. Instagram converts everything to JPEG anyway, so compress to JPEG first for best quality control." },
+    { question: "Does Instagram compress images?", answer: "Yes, Instagram automatically compresses all uploads. By pre-compressing with SlimFile, you control the quality and get better results than Instagram's aggressive auto-compression." },
+    { question: "How do I compress images for Instagram without losing quality?", answer: "Use SlimFile: 1) Upload your image, 2) Select 'Instagram Optimized' preset, 3) Download and post. Images are optimized to 1080px width, 85% JPEG quality—perfect for Instagram." }
+  ];
+
+  const relatedPosts = [
+    { title: "Compress Images for Facebook", description: "Optimize images for Facebook posts and ads", href: "/blog/compress-images-for-facebook", category: "Social Media" },
+    { title: "Compress Images Online", description: "Free unlimited image compression", href: "/blog/compress-images-online-free", category: "Tools" },
+    { title: "Reduce Photo Size on iPhone", description: "Compress photos directly on iOS", href: "/blog/reduce-photo-size-on-iphone", category: "Mobile" },
+    { title: "Best Image Compressors 2026", description: "Top 10 image compression tools", href: "/blog/best-image-compressors-2026", category: "Reviews" }
+  ];
+
   return (
-    <div className="min-h-screen pt-28 bg-white">
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-pink-50 to-white">
-        <div className="container mx-auto max-w-4xl text-center">
-          <div className="flex items-center justify-center w-20 h-20 rounded-full bg-pink-100 mx-auto mb-6"><Instagram className="w-10 h-10 text-pink-600" /></div>
-          <span className="text-sm font-semibold text-red-600 uppercase tracking-wider">Image Compression</span>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mt-3 mb-6 leading-tight">Compress Images for Instagram</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">Instagram recompresses every upload automatically — often making photos look worse. Pre-compress your images correctly to stay in control of quality.</p>
-          <Link to="/compress-images-online"><Button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-semibold">Compress Images Free <ArrowRight className="ml-2 w-4 h-4" /></Button></Link>
-          <p className="text-sm text-gray-500 mt-4">Updated January 2026 · 5 min read</p>
-        </div>
-      </section>
+    <>
+      <BlogSchema
+        title="Compress Images for Instagram — Maintain Quality (2026)"
+        description="Optimize images for Instagram posts, stories, and reels. Free compression maintaining quality."
+        datePublished="2026-05-15"
+        dateModified="2026-08-08"
+        faqs={faqs}
+        keywords={["compress images for instagram", "instagram image size", "optimize photos for instagram", "instagram image requirements"]}
+      />
+      <Breadcrumbs items={[{ label: "Blog", href: "/blog" }, { label: "Compress Images for Instagram" }]} />
 
-      <article className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto max-w-3xl space-y-10">
-
-          <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Why Instagram Degrades Your Photos</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">Instagram applies its own compression algorithm to every uploaded image. If your photo is already large (e.g. a 10MB DSLR RAW export), Instagram's auto-compression is aggressive — it reduces the file to under 1MB, often producing visible artifacts, banding, and reduced sharpness.</p>
-            <p className="text-gray-600 leading-relaxed">By pre-compressing to a size close to Instagram's own target, you control exactly what gets preserved. The platform's compressor then has less "work" to do and applies minimal degradation.</p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Instagram's Recommended Image Specs (2026)</h2>
-            <div className="overflow-x-auto rounded-xl border border-gray-200">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50"><tr>
-                  <th className="text-left p-3 font-semibold text-gray-700">Format</th>
-                  <th className="text-left p-3 font-semibold text-gray-700">Dimensions</th>
-                  <th className="text-left p-3 font-semibold text-gray-700">Ideal File Size</th>
-                  <th className="text-left p-3 font-semibold text-gray-700">Format</th>
-                </tr></thead>
-                <tbody className="divide-y divide-gray-100">
-                  <tr><td className="p-3">Square post</td><td className="p-3">1080 × 1080px</td><td className="p-3">Under 1MB</td><td className="p-3">JPEG</td></tr>
-                  <tr><td className="p-3">Portrait post</td><td className="p-3">1080 × 1350px</td><td className="p-3">Under 1MB</td><td className="p-3">JPEG</td></tr>
-                  <tr><td className="p-3">Landscape post</td><td className="p-3">1080 × 566px</td><td className="p-3">Under 1MB</td><td className="p-3">JPEG</td></tr>
-                  <tr><td className="p-3">Story / Reel</td><td className="p-3">1080 × 1920px</td><td className="p-3">Under 8MB</td><td className="p-3">JPEG/MP4</td></tr>
-                  <tr><td className="p-3">Profile photo</td><td className="p-3">320 × 320px</td><td className="p-3">Under 500KB</td><td className="p-3">JPEG/PNG</td></tr>
-                </tbody>
-              </table>
+      <div className="min-h-screen pt-20 bg-white">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-pink-50 to-white">
+          <div className="container mx-auto max-w-4xl text-center">
+            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-pink-100 mx-auto mb-6">
+              <Instagram className="w-10 h-10 text-pink-600" />
             </div>
-          </section>
+            <span className="text-sm font-semibold text-red-600 uppercase tracking-wider">Instagram</span>
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mt-3 mb-6 leading-tight">Compress Images for Instagram</h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">Optimize photos for Instagram posts, stories, and reels. Faster uploads, better quality.</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link to="/compress-images-online">
+                <Button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-semibold">
+                  Compress for Instagram <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
+              <Link to="/compress">
+                <Button variant="outline" className="px-8 py-3 rounded-xl font-semibold">General Compression</Button>
+              </Link>
+            </div>
+            <p className="text-sm text-gray-500 mt-4">Updated August 2026 · 6 min read</p>
+          </div>
+        </section>
 
-          <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">How to Compress Images for Instagram with SlimFile</h2>
-            <div className="space-y-4">
-              {[
-                { step: "1", title: "Go to slim-file.com/compress-images-online", desc: "Open SlimFile's image compressor in any browser on any device." },
-                { step: "2", title: "Upload your photo", desc: "Supports JPEG, PNG, WebP, and HEIC formats. Drag and drop or click to select." },
-                { step: "3", title: "Compression runs automatically", desc: "SlimFile optimises the image to the ideal balance of size and quality." },
-                { step: "4", title: "Download and upload to Instagram", desc: "Your pre-compressed image is ready. Instagram will apply minimal additional compression." },
-              ].map(item => (
-                <div key={item.step} className="flex gap-4 items-start">
-                  <div className="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center font-bold text-sm shrink-0">{item.step}</div>
-                  <div><p className="font-semibold text-gray-900">{item.title}</p><p className="text-gray-600 text-sm mt-1">{item.desc}</p></div>
+        <article className="py-12 px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto max-w-3xl space-y-10">
+            <section>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">Instagram Image Requirements 2026</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                  <h3 className="font-semibold text-gray-900 mb-3">📸 Feed Posts</h3>
+                  <ul className="text-sm text-gray-600 space-y-2">
+                    <li>• Max width: 1080px</li>
+                    <li>• Best ratio: 4:5 (1080x1350px)</li>
+                    <li>• Max file size: 30MB</li>
+                    <li>• Format: JPEG or PNG</li>
+                  </ul>
                 </div>
-              ))}
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Instagram Image Quality Tips</h2>
-            <ul className="space-y-3">
-              {[
-                "Always upload JPEG — Instagram handles JPEG best and compresses PNG further than needed",
-                "Export at exactly 1080px wide — upscaling from smaller dimensions loses sharpness",
-                "Use sRGB colour profile — Instagram doesn't support CMYK or wide-gamut profiles",
-                "Avoid oversharpening before upload — Instagram's compression amplifies sharpening artifacts",
-                "For Stories, save at 1080 × 1920px at 80–85% JPEG quality for optimal results",
-                "Pre-compress on SlimFile, then enable 'Upload at highest quality' in Instagram settings",
-              ].map((tip, i) => (
-                <li key={i} className="flex gap-3 text-gray-600"><CheckCircle className="w-5 h-5 text-green-500 shrink-0 mt-0.5" /><span>{tip}</span></li>
-              ))}
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">JPEG vs PNG for Instagram</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-5 bg-blue-50 rounded-xl border border-blue-100">
-                <p className="font-bold text-gray-900 mb-2">JPEG — Best for Photos</p>
-                <ul className="space-y-1 text-gray-600 text-sm">
-                  <li>✅ Smaller file sizes</li>
-                  <li>✅ Instagram-native format</li>
-                  <li>✅ Best for photography</li>
-                  <li>⚠️ Lossy — avoid re-saving</li>
-                </ul>
+                <div className="bg-purple-50 rounded-xl p-5 border border-purple-200">
+                  <h3 className="font-semibold text-gray-900 mb-3">📱 Stories</h3>
+                  <ul className="text-sm text-gray-600 space-y-2">
+                    <li>• Size: 1080x1920px (9:16)</li>
+                    <li>• Max file size: 30MB</li>
+                    <li>• Format: JPEG or PNG</li>
+                    <li>• Video: MP4, max 15sec</li>
+                  </ul>
+                </div>
               </div>
-              <div className="p-5 bg-purple-50 rounded-xl border border-purple-100">
-                <p className="font-bold text-gray-900 mb-2">PNG — Best for Graphics</p>
-                <ul className="space-y-1 text-gray-600 text-sm">
-                  <li>✅ Lossless quality</li>
-                  <li>✅ Good for logos/text overlays</li>
-                  <li>⚠️ Larger file size</li>
-                  <li>⚠️ Instagram still converts it</li>
-                </ul>
+            </section>
+
+            <section>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">How to Compress for Instagram</h2>
+              <ol className="space-y-4">
+                {[
+                  { step: 1, title: "Upload Image", desc: "Go to slim-file.com/compress-images-online and upload" },
+                  { step: 2, title: "Compress", desc: "Select 'Instagram Optimized' or let auto-optimize handle it" },
+                  { step: 3, title: "Download", desc: "Get optimized image (1080px width, perfect quality)" },
+                  { step: 4, title: "Post", desc: "Upload to Instagram—faster upload, better quality" }
+                ].map(item => (
+                  <li key={item.step} className="flex gap-4">
+                    <div className="w-10 h-10 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold shrink-0">{item.step}</div>
+                    <div><h3 className="font-semibold text-gray-900">{item.title}</h3><p className="text-sm text-gray-600">{item.desc}</p></div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+
+            <div className="text-center py-8 bg-gradient-to-br from-pink-50 to-white rounded-2xl">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Ready to Optimize for Instagram?</h3>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link to="/compress-images-online">
+                  <Button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-semibold text-lg">Compress Images Free</Button>
+                </Link>
+                <Link to="/compress">
+                  <Button variant="outline" className="px-8 py-3 rounded-xl font-semibold text-lg">All Tools</Button>
+                </Link>
               </div>
             </div>
-          </section>
-        </div>
-      </article>
+          </div>
+        </article>
 
-      <section className="py-16 px-4 bg-gradient-to-r from-red-600 to-orange-500">
-        <div className="container mx-auto max-w-3xl text-center text-white">
-          <Zap className="w-12 h-12 mx-auto mb-4 opacity-90" />
-          <h2 className="text-3xl font-bold mb-4">Optimise Your Instagram Images Now</h2>
-          <p className="text-red-100 mb-8 text-lg">Free image compression. No account. No watermark.</p>
-          <Link to="/compress-images-online"><Button className="bg-white text-red-600 hover:bg-red-50 px-10 py-4 rounded-xl font-bold text-lg">Compress Images Free <ArrowRight className="ml-2 w-5 h-5" /></Button></Link>
-        </div>
-      </section>
-    </div>
+        <FAQSection faqs={faqs} />
+        <RelatedPosts posts={relatedPosts} />
+      </div>
+    </>
   );
 }
