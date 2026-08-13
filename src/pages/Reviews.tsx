@@ -65,12 +65,30 @@ export const Reviews = () => {
 
         if (reviewsRes.ok) {
           const reviewsData = await reviewsRes.json();
-          setReviews(reviewsData.reviews || []);
+          // Filter out 1-star reviews
+          const filteredReviews = (reviewsData.reviews || []).filter((review: Review) => review.rating > 1);
+          setReviews(filteredReviews);
         }
 
         if (statsRes.ok) {
           const statsData = await statsRes.json();
-          setStats(statsData);
+          // Recalculate stats excluding 1-star reviews
+          const oneStarCount = statsData.distribution[1] || 0;
+          const filteredTotalReviews = statsData.totalReviews - oneStarCount;
+          const totalRatingPoints = (statsData.averageRating * statsData.totalReviews) - oneStarCount;
+          const filteredAverageRating = filteredTotalReviews > 0 ? totalRatingPoints / filteredTotalReviews : 0;
+
+          setStats({
+            totalReviews: filteredTotalReviews,
+            averageRating: filteredAverageRating,
+            distribution: {
+              5: statsData.distribution[5] || 0,
+              4: statsData.distribution[4] || 0,
+              3: statsData.distribution[3] || 0,
+              2: statsData.distribution[2] || 0,
+              1: 0 // Exclude 1-star from distribution
+            }
+          });
         }
       } catch (error) {
         console.error('Error fetching reviews:', error);
