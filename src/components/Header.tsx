@@ -13,6 +13,7 @@ export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [globalStats, setGlobalStats] = useState<{ totalCompressions: number; totalSpaceSaved: number; avgCompressionRatio: number } | null>(null);
   const [mobileDropdownsOpen, setMobileDropdownsOpen] = useState<{
     company: boolean;
     connect: boolean;
@@ -24,6 +25,37 @@ export const Header = () => {
     suites: false,
     devtools: false,
   });
+
+  // Fetch global stats for banner
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
+        const response = await fetch(`${API_BASE_URL}/global-stats`);
+        if (response.ok) {
+          const data = await response.json();
+          setGlobalStats(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch global stats:', error);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  const formatCount = (n: number) => {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
+    if (n >= 1_000) return (n / 1_000).toFixed(1) + 'K';
+    return n.toString();
+  };
+
+  const formatBytes = (bytes: number) => {
+    if (!bytes || bytes <= 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  };
 
   const companyNavigation = [
     { name: "About", href: "/about" },
@@ -121,12 +153,23 @@ export const Header = () => {
           🌍 LIVE
         </span>
 
-        {/* Message */}
+        {/* Message with Stats */}
         <span className="text-sm font-medium tracking-wide flex items-center gap-2">
-          <span className="font-semibold sm:hidden">Global Impact — See It Live</span>
-          <span className="font-semibold hidden sm:inline">Global Compression Stats</span>
-          <span className="hidden sm:inline opacity-80">—</span>
-          <span className="hidden sm:inline">Watch files being compressed worldwide in real-time</span>
+          {globalStats ? (
+            <>
+              <span className="font-semibold sm:hidden">{formatCount(globalStats.totalCompressions)} files compressed</span>
+              <span className="font-semibold hidden sm:inline">{formatCount(globalStats.totalCompressions)} compressions</span>
+              <span className="hidden sm:inline opacity-80">•</span>
+              <span className="hidden sm:inline">{formatBytes(globalStats.totalSpaceSaved)} saved</span>
+              <span className="hidden sm:inline opacity-80">•</span>
+              <span className="hidden sm:inline">{globalStats.avgCompressionRatio}% avg ratio</span>
+            </>
+          ) : (
+            <>
+              <span className="font-semibold sm:hidden">Global Impact — See It Live</span>
+              <span className="font-semibold hidden sm:inline">Loading global stats...</span>
+            </>
+          )}
         </span>
 
         {/* Arrow */}
