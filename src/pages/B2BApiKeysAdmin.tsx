@@ -22,6 +22,7 @@ interface B2BApiKey {
 export default function B2BApiKeysAdmin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [adminPassword, setAdminPassword] = useState(''); // Store password for API calls
   const [passwordError, setPasswordError] = useState('');
 
   const [keys, setKeys] = useState<B2BApiKey[]>([]);
@@ -43,15 +44,9 @@ export default function B2BApiKeysAdmin() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // First check if user has a SlimFile login token
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setPasswordError('Please log in to your SlimFile account first at /login');
-      return;
-    }
-
     if (password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
+      setAdminPassword(password); // Store for API calls
       setPasswordError('');
       loadKeys();
     } else {
@@ -59,26 +54,14 @@ export default function B2BApiKeysAdmin() {
     }
   };
 
-  // Get auth token from localStorage
-  const getAuthToken = () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.error('[B2B Admin] No token found in localStorage');
-      setError('Not logged in. Please log in to your SlimFile account first.');
-      return null;
-    }
-    return token;
-  };
-
   // Load all API keys
   const loadKeys = async () => {
     setLoading(true);
     setError('');
     try {
-      const token = getAuthToken();
       const response = await fetch(`${API_BASE_URL}/admin/b2b-keys`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'X-Admin-Password': adminPassword
         }
       });
 
@@ -102,11 +85,10 @@ export default function B2BApiKeysAdmin() {
     setError('');
 
     try {
-      const token = getAuthToken();
       const response = await fetch(`${API_BASE_URL}/admin/b2b-keys/generate`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'X-Admin-Password': adminPassword,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
@@ -147,11 +129,10 @@ export default function B2BApiKeysAdmin() {
     if (!confirm('Are you sure you want to revoke this API key?')) return;
 
     try {
-      const token = getAuthToken();
       const response = await fetch(`${API_BASE_URL}/admin/b2b-keys/${id}/revoke`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'X-Admin-Password': adminPassword
         }
       });
 
@@ -172,11 +153,10 @@ export default function B2BApiKeysAdmin() {
   // Activate API key
   const handleActivate = async (id: string) => {
     try {
-      const token = getAuthToken();
       const response = await fetch(`${API_BASE_URL}/admin/b2b-keys/${id}/activate`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'X-Admin-Password': adminPassword
         }
       });
 
@@ -199,11 +179,10 @@ export default function B2BApiKeysAdmin() {
     if (!confirm('Are you sure you want to PERMANENTLY delete this API key? This cannot be undone!')) return;
 
     try {
-      const token = getAuthToken();
       const response = await fetch(`${API_BASE_URL}/admin/b2b-keys/${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'X-Admin-Password': adminPassword
         }
       });
 
