@@ -42,6 +42,14 @@ export default function B2BApiKeysAdmin() {
   // Check password
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // First check if user has a SlimFile login token
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setPasswordError('Please log in to your SlimFile account first at /login');
+      return;
+    }
+
     if (password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       setPasswordError('');
@@ -53,7 +61,13 @@ export default function B2BApiKeysAdmin() {
 
   // Get auth token from localStorage
   const getAuthToken = () => {
-    return localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('[B2B Admin] No token found in localStorage');
+      setError('Not logged in. Please log in to your SlimFile account first.');
+      return null;
+    }
+    return token;
   };
 
   // Load all API keys
