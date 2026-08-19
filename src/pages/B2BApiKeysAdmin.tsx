@@ -48,20 +48,21 @@ export default function B2BApiKeysAdmin() {
       setIsAuthenticated(true);
       setAdminPassword(password); // Store for API calls
       setPasswordError('');
-      loadKeys();
+      loadKeys(password); // Pass password directly
     } else {
       setPasswordError('Invalid password');
     }
   };
 
   // Load all API keys
-  const loadKeys = async () => {
+  const loadKeys = async (pwd?: string) => {
+    const passwordToUse = pwd || adminPassword;
     setLoading(true);
     setError('');
     try {
       const response = await fetch(`${API_BASE_URL}/admin/b2b-keys`, {
         headers: {
-          'X-Admin-Password': adminPassword
+          'X-Admin-Password': passwordToUse
         }
       });
 
