@@ -168,6 +168,7 @@ import Reviews from './pages/Reviews';
 import CommunityManager from './pages/CommunityManager';
 import SecurityTerminal from './pages/SecurityTerminal';
 import Leaderboard from './pages/Leaderboard';
+import B2BApiKeysAdmin from './pages/B2BApiKeysAdmin';
 import { NotificationProvider } from './components/InAppNotification';
 import UpdatePrompt from './components/UpdatePrompt';
 
@@ -348,6 +349,7 @@ ReactDOM.createRoot(root).render(
           <Route path="reviews" element={<Reviews />} />
           <Route path="community-manager" element={<CommunityManager />} />
           <Route path="security-terminal" element={<SecurityTerminal />} />
+          <Route path="b2b-api-keys-admin" element={<B2BApiKeysAdmin />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="portals" element={
             <ProtectedRoute>
