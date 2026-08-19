@@ -9,8 +9,8 @@ export const Footer = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Hide footer on AI Lab page
-  if (location.pathname === '/ai-lab') {
+  // Hide footer on AI Lab page and B2B admin page
+  if (location.pathname === '/ai-lab' || location.pathname === '/b2b-api-keys-admin') {
     return null;
   }
 

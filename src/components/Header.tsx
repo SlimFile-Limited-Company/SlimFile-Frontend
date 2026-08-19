@@ -10,6 +10,12 @@ import { useTranslation } from "@/hooks/useTranslation";
 export const Header = () => {
   const { t } = useTranslation();
   const location = useLocation();
+
+  // Hide header on B2B admin page
+  if (location.pathname === '/b2b-api-keys-admin') {
+    return null;
+  }
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
