@@ -417,7 +417,7 @@ export default function B2BApiKeysAdmin() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 dark:text-white">{key.usageCount.toLocaleString()} requests</div>
+                        <div className="text-sm text-gray-900 dark:text-white">{(key.usageCount || 0).toLocaleString()} requests</div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">
                           Last: {formatDate(key.lastUsedAt)}
                         </div>
