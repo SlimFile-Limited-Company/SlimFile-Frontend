@@ -164,8 +164,8 @@ export const PWAInstallPrompt = () => {
     setDeferredPrompt(null);
   };
 
-  // Don't show on security terminal page
-  if (window.location.pathname === '/security-terminal') {
+  // Don't show on security terminal page or B2B admin page
+  if (window.location.pathname === '/security-terminal' || window.location.pathname === '/b2b-api-keys-admin') {
     return null;
   }
 
