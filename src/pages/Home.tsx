@@ -374,9 +374,11 @@ const Home: FC = () => {
         )}
 
         <div className="container mx-auto">
-          <div className="max-w-4xl mx-auto">
-            {/* Main Hero Content */}
-            <div className="text-center space-y-4 sm:space-y-6">
+          {/* Hero Grid: Content left, Video right (desktop only) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
+
+            {/* Left: Main Hero Content */}
+            <div className="text-center lg:text-left space-y-4 sm:space-y-6">
               {/* Headline - Compress. Convert. Collaborate. */}
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal leading-tight tracking-tight">
                 <span style={{ color: '#dc2626' }}>Compress</span>
@@ -388,12 +390,12 @@ const Home: FC = () => {
               </h1>
 
               {/* Subtitle */}
-              <p className="text-xl sm:text-2xl text-gray-600 max-w-2xl mx-auto font-normal">
-                {t('hero.subtitle')}
+              <p className="text-xl sm:text-2xl text-gray-600 font-normal">
+                Your complete workspace for files and teams
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center pt-6">
                 <Link to="/get-started">
                   <Button
                     size="lg"
@@ -425,9 +427,23 @@ const Home: FC = () => {
                   </Button>
                 </a>
               </div>
-
-
             </div>
+
+            {/* Right: Hero Video (desktop only) */}
+            <div className="hidden lg:flex lg:items-center lg:justify-center">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="rounded-2xl shadow-2xl object-cover"
+                style={{ maxHeight: '400px', width: '95%' }}
+              >
+                <source src="/slimfile-hero.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+
           </div>
         </div>
       </section>
