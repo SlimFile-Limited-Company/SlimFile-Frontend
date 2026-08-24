@@ -442,24 +442,24 @@ const Home: FC = () => {
               />
               <video
                 autoPlay
-                loop
                 muted
                 playsInline
                 preload="auto"
                 onLoadedData={(e) => {
                   const skeleton = document.getElementById('video-skeleton');
                   if (skeleton) skeleton.style.display = 'none';
-                  // Ensure seamless looping
                   const video = e.target as HTMLVideoElement;
                   video.play();
                 }}
-                onEnded={(e) => {
-                  // Immediately restart to avoid black flash
+                onTimeUpdate={(e) => {
+                  // Restart video 3 seconds before end - NO BLACK FLASH
                   const video = e.target as HTMLVideoElement;
-                  video.currentTime = 0;
-                  video.play();
+                  if (video.currentTime >= 61) { // Restart 3s before end (duration is ~64s)
+                    video.currentTime = 0;
+                    video.play();
+                  }
                 }}
-                className="rounded-2xl shadow-2xl object-cover relative z-10 bg-gray-100"
+                className="rounded-2xl shadow-2xl object-cover relative z-10 bg-white"
                 style={{ maxHeight: '400px', width: '100%' }}
               >
                 <source src="/slimfile-hero.mp4" type="video/mp4" />
