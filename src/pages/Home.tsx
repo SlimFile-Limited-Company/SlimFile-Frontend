@@ -430,18 +430,47 @@ const Home: FC = () => {
             </div>
 
             {/* Right: Hero Video (desktop only) */}
-            <div className="hidden lg:flex lg:items-center lg:justify-center">
+            <div className="hidden lg:flex lg:items-center lg:justify-center relative" style={{ width: '95%', maxHeight: '400px' }}>
+              {/* Skeleton loader */}
+              <div
+                id="video-skeleton"
+                className="absolute inset-0 rounded-2xl overflow-hidden bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse"
+                style={{
+                  backgroundSize: '200% 100%',
+                  animation: 'shimmer 1.5s infinite'
+                }}
+              />
               <video
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="rounded-2xl shadow-2xl object-cover"
-                style={{ maxHeight: '400px', width: '95%' }}
+                preload="auto"
+                onLoadedData={(e) => {
+                  const skeleton = document.getElementById('video-skeleton');
+                  if (skeleton) skeleton.style.display = 'none';
+                  // Ensure seamless looping
+                  const video = e.target as HTMLVideoElement;
+                  video.play();
+                }}
+                onEnded={(e) => {
+                  // Immediately restart to avoid black flash
+                  const video = e.target as HTMLVideoElement;
+                  video.currentTime = 0;
+                  video.play();
+                }}
+                className="rounded-2xl shadow-2xl object-cover relative z-10 bg-gray-100"
+                style={{ maxHeight: '400px', width: '100%' }}
               >
                 <source src="/slimfile-hero.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
+              <style>{`
+                @keyframes shimmer {
+                  0% { background-position: -200% 0; }
+                  100% { background-position: 200% 0; }
+                }
+              `}</style>
             </div>
 
           </div>
