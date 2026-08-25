@@ -374,11 +374,9 @@ const Home: FC = () => {
         )}
 
         <div className="container mx-auto">
-          {/* Hero Grid: Content left, Video right (desktop only) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
-
-            {/* Left: Main Hero Content */}
-            <div className="text-center lg:text-left space-y-4 sm:space-y-6">
+          <div className="max-w-4xl mx-auto">
+            {/* Main Hero Content */}
+            <div className="text-center space-y-4 sm:space-y-6">
               {/* Headline - Compress. Convert. Collaborate. */}
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal leading-tight tracking-tight">
                 <span style={{ color: '#dc2626' }}>Compress</span>
@@ -390,12 +388,12 @@ const Home: FC = () => {
               </h1>
 
               {/* Subtitle */}
-              <p className="text-xl sm:text-2xl text-gray-600 font-normal">
+              <p className="text-xl sm:text-2xl text-gray-600 max-w-2xl mx-auto font-normal">
                 Your complete workspace for files and teams
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center pt-6">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6">
                 <Link to="/get-started">
                   <Button
                     size="lg"
@@ -427,52 +425,9 @@ const Home: FC = () => {
                   </Button>
                 </a>
               </div>
-            </div>
 
-            {/* Right: Hero Video (desktop only) */}
-            <div className="hidden lg:flex lg:items-center lg:justify-center relative" style={{ width: '95%', maxHeight: '400px' }}>
-              {/* Skeleton loader */}
-              <div
-                id="video-skeleton"
-                className="absolute inset-0 rounded-2xl overflow-hidden bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse"
-                style={{
-                  backgroundSize: '200% 100%',
-                  animation: 'shimmer 1.5s infinite'
-                }}
-              />
-              <video
-                autoPlay
-                muted
-                playsInline
-                preload="auto"
-                onLoadedData={(e) => {
-                  const skeleton = document.getElementById('video-skeleton');
-                  if (skeleton) skeleton.style.display = 'none';
-                  const video = e.target as HTMLVideoElement;
-                  video.play();
-                }}
-                onTimeUpdate={(e) => {
-                  // Restart video 3 seconds before end - NO BLACK FLASH
-                  const video = e.target as HTMLVideoElement;
-                  if (video.currentTime >= 61) { // Restart 3s before end (duration is ~64s)
-                    video.currentTime = 0;
-                    video.play();
-                  }
-                }}
-                className="rounded-2xl shadow-2xl object-cover relative z-10 bg-white"
-                style={{ maxHeight: '400px', width: '100%' }}
-              >
-                <source src="/slimfile-hero.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-              <style>{`
-                @keyframes shimmer {
-                  0% { background-position: -200% 0; }
-                  100% { background-position: 200% 0; }
-                }
-              `}</style>
-            </div>
 
+            </div>
           </div>
         </div>
       </section>
