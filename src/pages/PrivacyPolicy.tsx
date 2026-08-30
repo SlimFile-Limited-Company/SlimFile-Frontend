@@ -48,32 +48,40 @@ const PrivacyPolicy = () => {
             <li><strong>Public Leaderboard:</strong> Your name and compression statistics (average compression percentage, total files compressed, and space saved) may be displayed publicly on our Leaderboard feature to recognize top performers. Your profile picture may also be displayed if you've provided one through Google authentication. Guest users appear anonymously with a partial identifier.</li>
           </ul>
         </Section>
-        <Section icon={Shield} title="4. Data Sharing and Third Parties" bg="bg-gray-100">
+        <Section icon={Shield} title="4. Advertising" bg="bg-gray-100">
+          <ul className="list-disc ml-6">
+            <li><strong>Third-Party Advertising:</strong> We use third-party advertising services, including Google AdSense, to display ads on our website.</li>
+            <li><strong>Cookies and Tracking:</strong> These advertising partners may use cookies, web beacons, and similar technologies to collect information about your visits to this and other websites in order to provide relevant advertisements about goods and services that may be of interest to you.</li>
+            <li><strong>Personalized Advertising:</strong> Google uses cookies to serve ads based on your prior visits to our website or other websites. You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google's Ads Settings</a>.</li>
+            <li><strong>Privacy Policies:</strong> For more information about how Google uses data, please review <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google's Privacy Policy</a>.</li>
+          </ul>
+        </Section>
+        <Section icon={Shield} title="5. Data Sharing and Third Parties" bg="bg-white">
           <ul className="list-disc ml-6">
             <li>We do not sell your personal information.</li>
             <li>We may share data with trusted third-party service providers (e.g., cloud hosting, analytics) as necessary to operate the Service.</li>
             <li>We may disclose information if required by law or to protect our rights and users.</li>
           </ul>
         </Section>
-        <Section icon={Lock} title="5. Data Security" bg="bg-white">
+        <Section icon={Lock} title="6. Data Security" bg="bg-gray-100">
           We implement reasonable security measures to protect your information. However, no method of transmission over the internet or electronic storage is 100% secure.
         </Section>
-        <Section icon={AlertTriangle} title="6. Data Retention" bg="bg-gray-100">
+        <Section icon={AlertTriangle} title="7. Data Retention" bg="bg-white">
           Uploaded files are deleted after processing. Account and usage data are retained as long as necessary to provide the Service and comply with legal obligations.
         </Section>
-        <Section icon={User} title="7. Your Rights" bg="bg-white">
+        <Section icon={User} title="8. Your Rights" bg="bg-gray-100">
           <ul className="list-disc ml-6">
             <li>You may request access to, correction of, or deletion of your personal information by contacting us.</li>
             <li>You may opt out of non-essential communications at any time.</li>
           </ul>
         </Section>
-        <Section icon={Shield} title="8. Children's Privacy" bg="bg-gray-100">
+        <Section icon={Shield} title="9. Children's Privacy" bg="bg-white">
           The Service is not intended for children under 13. We do not knowingly collect personal information from children under 13.
         </Section>
-        <Section icon={RefreshCcw} title="9. Changes to This Policy" bg="bg-white">
+        <Section icon={RefreshCcw} title="10. Changes to This Policy" bg="bg-gray-100">
           We may update this Privacy Policy from time to time. Continued use of the Service after changes constitutes acceptance of the new policy.
         </Section>
-        <Section icon={Mail} title="10. Contact" bg="bg-gray-100">
+        <Section icon={Mail} title="11. Contact" bg="bg-white">
           If you have any questions about this Privacy Policy, please contact us at <a href="mailto:info@slim-file.com" className="text-primary underline">info@slim-file.com</a>.
         </Section>
       </div>
