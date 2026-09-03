@@ -252,9 +252,9 @@ export default function CEODashboard() {
                           fill="none"
                           stroke="white"
                           strokeWidth="2"
-                          points={usersAnalytics.growth.web.slice(-30).map((day: any, i: number, arr: any[]) => {
+                          points={usersAnalytics.growth.web.map((day: any, i: number, arr: any[]) => {
                             const maxCount = Math.max(...arr.map((d: any) => d.count), 1);
-                            const x = (i / (arr.length - 1)) * 300;
+                            const x = (i / (arr.length - 1 || 1)) * 300;
                             const y = 150 - ((day.count / maxCount) * 140);
                             return `${x},${y}`;
                           }).join(' ')}
@@ -262,16 +262,16 @@ export default function CEODashboard() {
                         <polyline
                           fill="rgba(255, 255, 255, 0.1)"
                           stroke="none"
-                          points={`0,150 ${usersAnalytics.growth.web.slice(-30).map((day: any, i: number, arr: any[]) => {
+                          points={`0,150 ${usersAnalytics.growth.web.map((day: any, i: number, arr: any[]) => {
                             const maxCount = Math.max(...arr.map((d: any) => d.count), 1);
-                            const x = (i / (arr.length - 1)) * 300;
+                            const x = (i / (arr.length - 1 || 1)) * 300;
                             const y = 150 - ((day.count / maxCount) * 140);
                             return `${x},${y}`;
                           }).join(' ')} 300,150`}
                         />
                       </svg>
                     </div>
-                    <p className="text-xs text-white/40 mt-2">Last 30 days • Total: {usersAnalytics.growth.web.reduce((sum: number, d: any) => sum + d.count, 0)} users</p>
+                    <p className="text-xs text-white/40 mt-2">{period === 'today' ? 'Today' : period === '7d' ? 'Last 7 days' : period === '30d' ? 'Last 30 days' : period === '90d' ? 'Last 90 days' : 'All time'} • Total: {usersAnalytics.growth.web.reduce((sum: number, d: any) => sum + d.count, 0)} users</p>
                   </div>
                 )}
 
@@ -285,9 +285,9 @@ export default function CEODashboard() {
                           fill="none"
                           stroke="white"
                           strokeWidth="2"
-                          points={compressionAnalytics.trend.slice(-30).map((day: any, i: number, arr: any[]) => {
+                          points={compressionAnalytics.trend.map((day: any, i: number, arr: any[]) => {
                             const maxCount = Math.max(...arr.map((d: any) => d.count), 1);
-                            const x = (i / (arr.length - 1)) * 300;
+                            const x = (i / (arr.length - 1 || 1)) * 300;
                             const y = 150 - ((day.count / maxCount) * 140);
                             return `${x},${y}`;
                           }).join(' ')}
@@ -295,16 +295,16 @@ export default function CEODashboard() {
                         <polyline
                           fill="rgba(255, 255, 255, 0.1)"
                           stroke="none"
-                          points={`0,150 ${compressionAnalytics.trend.slice(-30).map((day: any, i: number, arr: any[]) => {
+                          points={`0,150 ${compressionAnalytics.trend.map((day: any, i: number, arr: any[]) => {
                             const maxCount = Math.max(...arr.map((d: any) => d.count), 1);
-                            const x = (i / (arr.length - 1)) * 300;
+                            const x = (i / (arr.length - 1 || 1)) * 300;
                             const y = 150 - ((day.count / maxCount) * 140);
                             return `${x},${y}`;
                           }).join(' ')} 300,150`}
                         />
                       </svg>
                     </div>
-                    <p className="text-xs text-white/40 mt-2">Last 30 days • Total: {compressionAnalytics.trend.reduce((sum: number, d: any) => sum + d.count, 0)} compressions</p>
+                    <p className="text-xs text-white/40 mt-2">{period === 'today' ? 'Today' : period === '7d' ? 'Last 7 days' : period === '30d' ? 'Last 30 days' : period === '90d' ? 'Last 90 days' : 'All time'} • Total: {compressionAnalytics.trend.reduce((sum: number, d: any) => sum + d.count, 0)} compressions</p>
                   </div>
                 )}
               </div>
