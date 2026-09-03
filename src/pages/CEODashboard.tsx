@@ -14,6 +14,7 @@ export default function CEODashboard() {
 
   // Data states
   const [overview, setOverview] = useState<any>(null);
+  const [globalStats, setGlobalStats] = useState<any>(null);
   const [usersAnalytics, setUsersAnalytics] = useState<any>(null);
   const [compressionAnalytics, setCompressionAnalytics] = useState<any>(null);
   const [revenue, setRevenue] = useState<any>(null);
@@ -83,6 +84,7 @@ export default function CEODashboard() {
 
       const [
         overviewRes,
+        globalStatsRes,
         usersRes,
         compressionRes,
         revenueRes,
@@ -91,6 +93,7 @@ export default function CEODashboard() {
         mobileRes
       ] = await Promise.all([
         fetch(`${API_BASE_URL}/ceo-dashboard/overview?period=${period}`, { headers }),
+        fetch(`${API_BASE_URL}/feed/stats`),
         fetch(`${API_BASE_URL}/ceo-dashboard/users-analytics?period=${period}`, { headers }),
         fetch(`${API_BASE_URL}/ceo-dashboard/compression-analytics?period=${period}`, { headers }),
         fetch(`${API_BASE_URL}/ceo-dashboard/revenue?period=${period}`, { headers }),
@@ -106,6 +109,7 @@ export default function CEODashboard() {
       }
 
       setOverview(await overviewRes.json());
+      setGlobalStats(await globalStatsRes.json());
       setUsersAnalytics(await usersRes.json());
       setCompressionAnalytics(await compressionRes.json());
       setRevenue(await revenueRes.json());
@@ -200,7 +204,7 @@ export default function CEODashboard() {
 
         {/* Content Area */}
         <div className="flex-1 p-4 lg:p-8 overflow-y-auto">
-          {activeSection === 'overview' && overview && (
+          {activeSection === 'overview' && overview && globalStats && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                 <StatCard
@@ -210,8 +214,8 @@ export default function CEODashboard() {
                 />
                 <StatCard
                   label="Compressions"
-                  value={overview.compressions.total.toLocaleString()}
-                  subtitle={`${overview.compressions.totalSpaceSavedGB} GB saved`}
+                  value={globalStats.totalCompressions.toLocaleString()}
+                  subtitle={`${(globalStats.totalSpaceSaved / (1024 * 1024 * 1024)).toFixed(2)} GB saved`}
                 />
                 <StatCard
                   label="B2B Customers"
