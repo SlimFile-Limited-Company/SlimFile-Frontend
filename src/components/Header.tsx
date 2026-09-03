@@ -25,12 +25,36 @@ export const Header = () => {
     connect: boolean;
     suites: boolean;
     devtools: boolean;
+    internal: boolean;
   }>({
     company: false,
     connect: false,
     suites: false,
     devtools: false,
+    internal: false,
   });
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const token = localStorage.getItem('jwt');
+      if (!token) return;
+
+      try {
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
+        const response = await fetch(`${API_BASE_URL}/admin/check`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.ok) {
+          setIsAdmin(true);
+        }
+      } catch (error) {
+        // User is not admin, keep isAdmin false
+      }
+    };
+    checkAdmin();
+  }, []);
 
   // Fetch global stats for banner (same endpoint as Feed page)
   useEffect(() => {
@@ -103,6 +127,13 @@ export const Header = () => {
     { name: "AI Lab", href: "/ai-lab" },
   ];
 
+  const internalNavigation = [
+    { name: "CEO Dashboard", href: "/ceo-dashboard" },
+    { name: "B2B API Keys", href: "/b2b-api-keys-admin" },
+    { name: "Newsletter", href: "/admin/newsletter" },
+    { name: "Security Terminal", href: "/security-terminal" },
+  ];
+
 
   const isActiveRoute = (href: string) => {
     return location.pathname === href;
@@ -125,7 +156,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'company' | 'connect' | 'suites' | 'devtools') => {
+  const toggleMobileDropdown = (dropdown: 'company' | 'connect' | 'suites' | 'devtools' | 'internal') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -337,6 +368,41 @@ export const Header = () => {
                 </div>
               )}
             </div>
+
+            {/* Internal Dropdown (Admin Only) */}
+            {isAdmin && (
+              <div
+                className="relative"
+                onMouseEnter={() => handleDropdownHover('internal')}
+                onMouseLeave={() => handleDropdownHover(null)}
+              >
+                <button className={cn(
+                  "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
+                  internalNavigation.some(item => isActiveRoute(item.href))
+                    ? "text-white bg-red-600 shadow-md font-semibold"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                )}>
+                  <span>Internal</span>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                {hoveredDropdown === 'internal' && (
+                  <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
+                    {internalNavigation.map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={cn(
+                          "block px-4 py-2 text-sm transition-colors duration-200",
+                          isActiveRoute(item.href) ? "text-red-600 bg-red-50" : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                        )}
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
           </nav>
 
@@ -558,6 +624,48 @@ export const Header = () => {
                   </div>
                 )}
               </div>
+
+              {/* Mobile Internal Dropdown (Admin Only) */}
+              {isAdmin && (
+                <div className="px-4">
+                  <button
+                    onClick={() => toggleMobileDropdown('internal')}
+                    className={cn(
+                      "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
+                      internalNavigation.some(item => isActiveRoute(item.href))
+                        ? "text-red-600"
+                        : "text-gray-700 hover:text-red-600"
+                    )}
+                  >
+                    <span>Internal</span>
+                    <ChevronDown
+                      className={cn(
+                        "w-4 h-4 transition-transform duration-200",
+                        mobileDropdownsOpen.internal && "transform rotate-180"
+                      )}
+                    />
+                  </button>
+                  {mobileDropdownsOpen.internal && (
+                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
+                      {internalNavigation.map((item) => (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          className={cn(
+                            "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
+                            isActiveRoute(item.href)
+                              ? "text-red-600 bg-red-50 border border-red-100"
+                              : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                          )}
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Mobile Reviews Button */}
               <div className="px-4 pt-2">
