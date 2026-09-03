@@ -409,7 +409,7 @@ export default function CEODashboard() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
                 <StatCard label="PWA Installs" value={engagement.pwa.byPlatform.reduce((sum: number, p: any) => sum + p.count, 0)} />
-                <StatCard label="Reviews" value={engagement.reviews.recent.length} />
+                <StatCard label="Reviews" value={engagement.reviews.breakdown.reduce((sum: number, r: any) => sum + r.count, 0)} />
                 <StatCard label="Total Guests" value={engagement.guests.totalGuests || 0} />
               </div>
 
