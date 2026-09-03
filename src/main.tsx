@@ -169,6 +169,7 @@ import CommunityManager from './pages/CommunityManager';
 import SecurityTerminal from './pages/SecurityTerminal';
 import Leaderboard from './pages/Leaderboard';
 import B2BApiKeysAdmin from './pages/B2BApiKeysAdmin';
+import CEODashboard from './pages/CEODashboard';
 import { NotificationProvider } from './components/InAppNotification';
 import UpdatePrompt from './components/UpdatePrompt';
 
@@ -439,6 +440,13 @@ ReactDOM.createRoot(root).render(
         <Route path="messages" element={
           <ProtectedRoute>
             <Messages />
+          </ProtectedRoute>
+        } />
+
+        {/* CEO Dashboard - Full screen analytics dashboard without header/footer */}
+        <Route path="ceo-dashboard" element={
+          <ProtectedRoute>
+            <CEODashboard />
           </ProtectedRoute>
         } />
             </Routes>
