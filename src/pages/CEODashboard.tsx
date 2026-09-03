@@ -246,22 +246,32 @@ export default function CEODashboard() {
                 {usersAnalytics && usersAnalytics.growth.web.length > 0 && (
                   <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
                     <h3 className="text-base lg:text-lg font-semibold mb-4">User Growth Trend</h3>
-                    <div className="h-48 flex items-end gap-1">
-                      {usersAnalytics.growth.web.slice(-30).map((day: any, i: number) => {
-                        const maxCount = Math.max(...usersAnalytics.growth.web.slice(-30).map((d: any) => d.count));
-                        const height = maxCount > 0 ? (day.count / maxCount) * 100 : 0;
-                        return (
-                          <div key={i} className="flex-1 flex flex-col justify-end">
-                            <div
-                              className="bg-white rounded-sm transition-all hover:bg-white/80"
-                              style={{ height: `${height}%`, minHeight: height > 0 ? '2px' : '0' }}
-                              title={`${day._id}: ${day.count} users`}
-                            />
-                          </div>
-                        );
-                      })}
+                    <div className="relative h-48">
+                      <svg className="w-full h-full" viewBox="0 0 300 150" preserveAspectRatio="none">
+                        <polyline
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="2"
+                          points={usersAnalytics.growth.web.slice(-30).map((day: any, i: number, arr: any[]) => {
+                            const maxCount = Math.max(...arr.map((d: any) => d.count), 1);
+                            const x = (i / (arr.length - 1)) * 300;
+                            const y = 150 - ((day.count / maxCount) * 140);
+                            return `${x},${y}`;
+                          }).join(' ')}
+                        />
+                        <polyline
+                          fill="rgba(255, 255, 255, 0.1)"
+                          stroke="none"
+                          points={`0,150 ${usersAnalytics.growth.web.slice(-30).map((day: any, i: number, arr: any[]) => {
+                            const maxCount = Math.max(...arr.map((d: any) => d.count), 1);
+                            const x = (i / (arr.length - 1)) * 300;
+                            const y = 150 - ((day.count / maxCount) * 140);
+                            return `${x},${y}`;
+                          }).join(' ')} 300,150`}
+                        />
+                      </svg>
                     </div>
-                    <p className="text-xs text-white/40 mt-2">Last 30 days</p>
+                    <p className="text-xs text-white/40 mt-2">Last 30 days • Total: {usersAnalytics.growth.web.reduce((sum: number, d: any) => sum + d.count, 0)} users</p>
                   </div>
                 )}
 
@@ -269,22 +279,32 @@ export default function CEODashboard() {
                 {compressionAnalytics && compressionAnalytics.trend.length > 0 && (
                   <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
                     <h3 className="text-base lg:text-lg font-semibold mb-4">Compression Trend</h3>
-                    <div className="h-48 flex items-end gap-1">
-                      {compressionAnalytics.trend.slice(-30).map((day: any, i: number) => {
-                        const maxCount = Math.max(...compressionAnalytics.trend.slice(-30).map((d: any) => d.count));
-                        const height = maxCount > 0 ? (day.count / maxCount) * 100 : 0;
-                        return (
-                          <div key={i} className="flex-1 flex flex-col justify-end">
-                            <div
-                              className="bg-white rounded-sm transition-all hover:bg-white/80"
-                              style={{ height: `${height}%`, minHeight: height > 0 ? '2px' : '0' }}
-                              title={`${day._id}: ${day.count} compressions`}
-                            />
-                          </div>
-                        );
-                      })}
+                    <div className="relative h-48">
+                      <svg className="w-full h-full" viewBox="0 0 300 150" preserveAspectRatio="none">
+                        <polyline
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="2"
+                          points={compressionAnalytics.trend.slice(-30).map((day: any, i: number, arr: any[]) => {
+                            const maxCount = Math.max(...arr.map((d: any) => d.count), 1);
+                            const x = (i / (arr.length - 1)) * 300;
+                            const y = 150 - ((day.count / maxCount) * 140);
+                            return `${x},${y}`;
+                          }).join(' ')}
+                        />
+                        <polyline
+                          fill="rgba(255, 255, 255, 0.1)"
+                          stroke="none"
+                          points={`0,150 ${compressionAnalytics.trend.slice(-30).map((day: any, i: number, arr: any[]) => {
+                            const maxCount = Math.max(...arr.map((d: any) => d.count), 1);
+                            const x = (i / (arr.length - 1)) * 300;
+                            const y = 150 - ((day.count / maxCount) * 140);
+                            return `${x},${y}`;
+                          }).join(' ')} 300,150`}
+                        />
+                      </svg>
                     </div>
-                    <p className="text-xs text-white/40 mt-2">Last 30 days</p>
+                    <p className="text-xs text-white/40 mt-2">Last 30 days • Total: {compressionAnalytics.trend.reduce((sum: number, d: any) => sum + d.count, 0)} compressions</p>
                   </div>
                 )}
               </div>
