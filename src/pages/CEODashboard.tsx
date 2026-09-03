@@ -339,16 +339,16 @@ export default function CEODashboard() {
             </div>
           )}
 
-          {activeSection === 'compressions' && compressionAnalytics && (
+          {activeSection === 'compressions' && compressionAnalytics && globalStats && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
                 <StatCard
                   label="Total Compressions"
-                  value={compressionAnalytics.trend.reduce((sum: number, d: any) => sum + d.count, 0)}
+                  value={globalStats.totalCompressions.toLocaleString()}
                 />
                 <StatCard
                   label="Avg Compression Ratio"
-                  value={(compressionAnalytics.averages.avgCompressionRatio || 0).toFixed(1) + '%'}
+                  value={globalStats.avgCompressionRatio + '%'}
                 />
               </div>
 
