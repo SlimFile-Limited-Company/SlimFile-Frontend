@@ -235,6 +235,55 @@ export default function CEODashboard() {
                   value={overview.engagement.pwaInstalls}
                 />
               </div>
+
+              {/* Charts */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mt-6">
+                {/* User Growth Chart */}
+                {usersAnalytics && usersAnalytics.growth.web.length > 0 && (
+                  <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+                    <h3 className="text-base lg:text-lg font-semibold mb-4">User Growth Trend</h3>
+                    <div className="h-48 flex items-end gap-1">
+                      {usersAnalytics.growth.web.slice(-30).map((day: any, i: number) => {
+                        const maxCount = Math.max(...usersAnalytics.growth.web.slice(-30).map((d: any) => d.count));
+                        const height = maxCount > 0 ? (day.count / maxCount) * 100 : 0;
+                        return (
+                          <div key={i} className="flex-1 flex flex-col justify-end">
+                            <div
+                              className="bg-white rounded-sm transition-all hover:bg-white/80"
+                              style={{ height: `${height}%`, minHeight: height > 0 ? '2px' : '0' }}
+                              title={`${day._id}: ${day.count} users`}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className="text-xs text-white/40 mt-2">Last 30 days</p>
+                  </div>
+                )}
+
+                {/* Compression Trend Chart */}
+                {compressionAnalytics && compressionAnalytics.trend.length > 0 && (
+                  <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+                    <h3 className="text-base lg:text-lg font-semibold mb-4">Compression Trend</h3>
+                    <div className="h-48 flex items-end gap-1">
+                      {compressionAnalytics.trend.slice(-30).map((day: any, i: number) => {
+                        const maxCount = Math.max(...compressionAnalytics.trend.slice(-30).map((d: any) => d.count));
+                        const height = maxCount > 0 ? (day.count / maxCount) * 100 : 0;
+                        return (
+                          <div key={i} className="flex-1 flex flex-col justify-end">
+                            <div
+                              className="bg-white rounded-sm transition-all hover:bg-white/80"
+                              style={{ height: `${height}%`, minHeight: height > 0 ? '2px' : '0' }}
+                              title={`${day._id}: ${day.count} compressions`}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className="text-xs text-white/40 mt-2">Last 30 days</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
