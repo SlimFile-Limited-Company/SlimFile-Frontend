@@ -198,6 +198,7 @@ export default function SecurityTerminal() {
           '  blacklist      - Show blocked IPs',
           '  attacks        - Show attack attempts (SQL, XSS, path traversal)',
           '  uploads        - Show blocked malicious uploads',
+          '  summit         - Show Summit 2027 registrations',
           '  lookup-ip <ip> - Get geolocation & info for an IP address',
           '  clear          - Clear screen',
           '  exit           - Logout',
@@ -305,6 +306,33 @@ export default function SecurityTerminal() {
             setOutput(prev => [...prev, 'No malicious uploads blocked', '']);
           }
         }
+        break;
+
+      case 'summit':
+        setOutput(prev => [...prev, 'Fetching Summit 2027 registrations...', '']);
+        fetch(`${API_BASE_URL}/summit/admin/registrations`, {
+          headers: { 'X-Admin-Password': '0423017003Sf' }
+        })
+          .then(r => r.json())
+          .then(data => {
+            if (data.success) {
+              setOutput(prev => [...prev,
+                'SLIMFILE IMPACT SUMMIT 2027 REGISTRATIONS',
+                '━'.repeat(60),
+                `Total Registrations: ${data.count}`,
+                '',
+                ...data.registrations.map((reg: any) =>
+                  `${reg.name} (${reg.email})\n  Org: ${reg.organization}\n  Role: ${reg.role}\n  Registered: ${new Date(reg.registeredAt).toLocaleString()}`
+                ),
+                ''
+              ]);
+            } else {
+              setOutput(prev => [...prev, `Error: ${data.message}`, '']);
+            }
+          })
+          .catch(() => {
+            setOutput(prev => [...prev, 'Failed to fetch registrations', '']);
+          });
         break;
 
       case 'clear':
