@@ -311,7 +311,7 @@ export default function SecurityTerminal() {
       case 'summit':
         setOutput(prev => [...prev, 'Fetching Summit 2027 registrations...', '']);
         fetch(`${API_BASE_URL}/summit/admin/registrations`, {
-          headers: { 'X-Admin-Password': '0423017003Sf' }
+          headers: { 'X-Admin-Password': password }
         })
           .then(r => r.json())
           .then(data => {
