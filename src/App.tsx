@@ -10,8 +10,12 @@ import { isAuthenticated, validateToken } from "@/lib/auth";
 import { getNotificationPermission, requestNotificationPermission, notifyGreeting } from "@/services/pushNotificationService";
 
 const App = () => {
+  const [isInIframe, setIsInIframe] = useState(false);
 
   useEffect(() => {
+    // Detect if loaded in iframe
+    setIsInIframe(window.self !== window.top);
+
     registerServiceWorker();
 
     // Validate token on app mount (check if it's expired)
@@ -49,15 +53,15 @@ const App = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col pb-16 md:pb-0">
-      <PWAInstallPrompt />
-      <Header />
+    <div className={`min-h-screen bg-white flex flex-col ${isInIframe ? 'pb-0' : 'pb-16 md:pb-0'}`}>
+      {!isInIframe && <PWAInstallPrompt />}
+      {!isInIframe && <Header />}
       <main className="flex-1">
         <Outlet />
       </main>
-      <Footer />
-      <CookieBanner />
-      <ChatAssistant />
+      {!isInIframe && <Footer />}
+      {!isInIframe && <CookieBanner />}
+      {!isInIframe && <ChatAssistant />}
     </div>
   );
 };

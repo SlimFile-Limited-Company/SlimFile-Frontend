@@ -147,6 +147,7 @@ import Feed from './pages/Feed';
 import Portals from './pages/Portals';
 import GlobalDashboard from './pages/GlobalDashboard';
 import Workspaces from './pages/Workspaces';
+import SummitRegistration from './pages/SummitRegistration';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import WorkspaceInvitations from './pages/WorkspaceInvitations';
 import Meet from './pages/Meet';
@@ -345,6 +346,7 @@ ReactDOM.createRoot(root).render(
           <Route path="sdgs" element={<SlimFileSDGs />} />
           <Route path="partnerships" element={<Partnerships />} />
           <Route path="news" element={<News />} />
+          <Route path="summit-registration" element={<SummitRegistration />} />
           <Route path="global-dashboard" element={<GlobalDashboard />} />
           <Route path="feed" element={<Feed />} />
           <Route path="reviews" element={<Reviews />} />
