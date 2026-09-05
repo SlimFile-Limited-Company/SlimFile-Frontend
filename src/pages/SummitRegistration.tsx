@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://slimfile-backend.onrender.com';
 
@@ -28,14 +27,24 @@ export default function SummitRegistration() {
     setError('');
 
     try {
-      const response = await axios.post(`${API_URL}/api/summit/register`, formData);
+      const response = await fetch(`${API_URL}/api/summit/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-      if (response.data.success) {
+      const data = await response.json();
+
+      if (data.success) {
         setSuccess(true);
         setFormData({ name: '', email: '', organization: '', role: 'individual' });
+      } else {
+        setError(data.message || 'Registration failed. Please try again.');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      setError('Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
