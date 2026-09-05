@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
+
 export default function SummitRegistration() {
   const [formData, setFormData] = useState({
     name: '',
@@ -25,7 +27,7 @@ export default function SummitRegistration() {
     setError('');
 
     try {
-      const response = await fetch('/api/summit/register', {
+      const response = await fetch(`${API_BASE_URL}/summit/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
