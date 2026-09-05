@@ -170,6 +170,7 @@ export default function SummitRegistration() {
               <option value="partner">Partner</option>
               <option value="media">Media/Press</option>
               <option value="innovator">Tech Innovator/Leader</option>
+              <option value="volunteer">Volunteer</option>
             </select>
           </div>
 
