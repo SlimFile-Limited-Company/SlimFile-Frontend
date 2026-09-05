@@ -3,7 +3,7 @@ import {
   Home, Rss, Minimize2, RefreshCw, LayoutDashboard,
   GitMerge, Lock, Layers, Users, FileText, PenLine, Video, Scan, Sparkles,
 } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 
 const HIDDEN_PREFIXES = ['/meet/', '/my-whiteboards/', '/documents/', '/login', '/ai-lab'];
@@ -48,6 +48,12 @@ export default function BottomNav() {
   const location  = useLocation();
   const scrollRef = useRef<HTMLDivElement>(null);
   const pausedRef = useRef(false);
+  const [isInIframe, setIsInIframe] = useState(false);
+
+  // Detect if loaded in iframe and hide bottom nav
+  useEffect(() => {
+    setIsInIframe(window.self !== window.top);
+  }, []);
   const rafRef    = useRef(0);
 
   /* ── Very slow auto-scroll (20 px / second) ── */
@@ -88,6 +94,7 @@ export default function BottomNav() {
   }, []);
 
   if (isHiddenRoute(location.pathname)) return null;
+  if (isInIframe) return null;
 
   const isActive = (to: string) =>
     to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
