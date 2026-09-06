@@ -60,6 +60,11 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
       return;
     }
 
+    if (!isAuthenticated() && !email.trim()) {
+      alert('Please provide your email');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -74,7 +79,7 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
         },
         body: JSON.stringify({
           name: name.trim(),
-          email: email.trim() || null,
+          email: email.trim(),
           rating,
           comment: comment.trim(),
           operationType
@@ -175,11 +180,11 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
               </div>
             )}
 
-            {/* Email (optional, if not authenticated) */}
+            {/* Email (required, if not authenticated) */}
             {!isAuthenticated() && (
               <div className="mb-4">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Email (Optional)
+                  Email *
                 </label>
                 <input
                   type="email"
@@ -187,6 +192,7 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   placeholder="john@example.com"
+                  required
                 />
               </div>
             )}
