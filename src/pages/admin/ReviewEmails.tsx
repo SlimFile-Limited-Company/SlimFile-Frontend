@@ -233,7 +233,7 @@ export default function ReviewEmails() {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full bg-white text-black hover:bg-white/90">
+              <Button type="submit" className="w-full !bg-white !text-black hover:!bg-white/90 !shadow-none hover:!shadow-none !transform-none">
                 Authenticate
               </Button>
             </form>
@@ -436,7 +436,7 @@ export default function ReviewEmails() {
                   <Button
                     onClick={() => sendEmail(false)}
                     disabled={sending || selectedReviews.size === 0 || !emailSubject || !emailMessage}
-                    className="w-full bg-white text-black hover:bg-white/90"
+                    className="w-full !bg-white !text-black hover:!bg-white/90 !shadow-none hover:!shadow-none !transform-none"
                   >
                     {sending ? (
                       <>
@@ -498,7 +498,7 @@ export default function ReviewEmails() {
                   <h2 className="text-xl font-bold text-white">
                     Reviews with Emails ({reviews.length})
                   </h2>
-                  <Button variant="outline" size="sm" onClick={selectAll} className="border-white text-white hover:bg-white hover:text-black">
+                  <Button variant="outline" size="sm" onClick={selectAll} className="!border-white !bg-black !text-white hover:!bg-white hover:!text-black !shadow-none">
                     {selectedReviews.size === reviews.length ? 'Deselect All' : 'Select All'}
                   </Button>
                 </div>
@@ -578,7 +578,7 @@ export default function ReviewEmails() {
                                   sendEmail(true, review._id);
                                 }}
                                 disabled={sending || !emailSubject || !emailMessage}
-                                className="border-white text-white hover:bg-white hover:text-black"
+                                className="!border-white !bg-black !text-white hover:!bg-white hover:!text-black !shadow-none"
                               >
                                 <Send className="w-3 h-3 mr-1" />
                                 Send to this reviewer
