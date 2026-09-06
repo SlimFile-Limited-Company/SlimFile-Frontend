@@ -246,10 +246,10 @@ export default function ReviewEmails() {
   const operationTypes = ['compress', 'convert', 'forge', 'lock', 'ocr', 'summarize'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="flex">
+    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+      <div className="flex h-full">
         {/* Sidebar */}
-        <div className="w-72 bg-white border-r border-gray-200 min-h-screen p-6 sticky top-0">
+        <div className="w-72 bg-white border-r border-gray-200 h-full p-6 flex flex-col overflow-y-auto">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Review Email Manager</h1>
             <p className="text-sm text-gray-600">Send emails to reviewers</p>
@@ -332,11 +332,11 @@ export default function ReviewEmails() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1">
+        <div className="flex-1 overflow-y-auto h-full">
           <div className="container mx-auto px-6 py-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Email Composer */}
-              <div className="lg:col-span-1 bg-white rounded-2xl shadow-lg p-6 h-fit sticky top-8">
+              <div className="lg:col-span-1 bg-white rounded-2xl shadow-lg p-6 h-fit">
                 <div className="flex items-center gap-2 mb-4">
                   <Mail className="w-5 h-5 text-red-600" />
                   <h2 className="text-xl font-bold text-gray-900">Compose Email</h2>
