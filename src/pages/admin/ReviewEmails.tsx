@@ -332,9 +332,9 @@ export default function ReviewEmails() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 h-full flex">
-          <div className="container mx-auto px-6 py-8 flex-1">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+        <div className="flex-1 h-full overflow-y-auto">
+          <div className="container mx-auto px-6 py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Email Composer */}
               <div className="lg:col-span-1 bg-white rounded-2xl shadow-lg p-6 h-fit">
                 <div className="flex items-center gap-2 mb-4">
@@ -413,7 +413,7 @@ export default function ReviewEmails() {
               </div>
 
               {/* Reviews List */}
-              <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 flex flex-col h-full">
+              <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-gray-900">
                     Reviews with Emails ({reviews.length})
@@ -432,7 +432,7 @@ export default function ReviewEmails() {
                     No reviews with emails found
                   </div>
                 ) : (
-                  <div className="space-y-4 overflow-y-auto flex-1 pr-2">
+                  <div className="space-y-4 overflow-y-auto max-h-[calc(100vh-16rem)] pr-2">
                     {reviews.map((review) => {
                       const emailHistory = emailHistoryMap[review._id] || [];
                       const emailCount = emailHistory.length;
