@@ -251,7 +251,7 @@ export default function ReviewEmails() {
         {/* Sidebar */}
         <div className="w-72 bg-white border-r border-gray-200 h-full p-6 flex flex-col overflow-y-auto">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Review Email Manager</h1>
+<h1 className="text-2xl font-bold text-gray-900 mb-2">SlimFile Mail</h1>
             <p className="text-sm text-gray-600">Send emails to reviewers</p>
           </div>
 
