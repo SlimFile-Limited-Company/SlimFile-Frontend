@@ -249,7 +249,7 @@ export default function ReviewEmails() {
     <div className="h-screen bg-black overflow-hidden">
       <div className="flex h-full">
         {/* Sidebar */}
-        <div className="w-72 bg-black border-r border-white h-full p-6 flex flex-col overflow-y-auto">
+        <div className="w-72 bg-white/5 h-full p-6 flex flex-col overflow-y-auto">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-white mb-2">SlimFile Mail</h1>
             <p className="text-sm text-white">Send emails to reviewers</p>
