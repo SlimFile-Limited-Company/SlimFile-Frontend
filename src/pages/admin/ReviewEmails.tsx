@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { Mail, Send, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -159,7 +157,6 @@ export default function ReviewEmails() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <Header />
         <div className="container mx-auto px-4 py-32">
           <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8">
             <h1 className="text-2xl font-bold text-gray-900 mb-6">Admin Authentication</h1>
@@ -183,15 +180,13 @@ export default function ReviewEmails() {
             </form>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <Header />
-      <div className="container mx-auto px-4 py-32">
+      <div className="container mx-auto px-4 py-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Review Email Manager</h1>
           <p className="text-gray-600">Send emails to reviewers who left their email address</p>
@@ -356,7 +351,6 @@ export default function ReviewEmails() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
