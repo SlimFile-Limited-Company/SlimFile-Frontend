@@ -217,7 +217,7 @@ export default function ReviewEmails() {
     return (
       <div className="min-h-screen bg-black">
         <div className="container mx-auto px-4 py-32">
-          <div className="max-w-md mx-auto bg-black rounded-2xl shadow-2xl border border-white p-8">
+          <div className="max-w-md mx-auto bg-black rounded-2xl shadow-2xl p-8">
             <h1 className="text-2xl font-bold text-white mb-6">Admin Authentication</h1>
             <form onSubmit={handleAuth} className="space-y-4">
               <div>
@@ -228,7 +228,7 @@ export default function ReviewEmails() {
                   type="password"
                   value={adminPassword}
                   onChange={(e) => setAdminPassword(e.target.value)}
-                  className="w-full px-4 py-2 bg-black border border-white text-white rounded-lg focus:ring-2 focus:ring-white focus:border-white placeholder-white/50"
+                  className="w-full px-4 py-2 bg-white/10 text-white rounded-lg focus:ring-2 focus:ring-white placeholder-white/50"
                   placeholder="Enter admin password"
                   required
                 />
@@ -256,7 +256,7 @@ export default function ReviewEmails() {
           </div>
 
           {/* Stats */}
-          <div className="mb-8 p-4 bg-black rounded-xl border border-white">
+          <div className="mb-8 p-4 bg-white/10 rounded-xl">
             <div className="text-3xl font-bold text-white mb-1">{reviews.length}</div>
             <div className="text-sm text-white">Total Reviews</div>
           </div>
@@ -276,7 +276,7 @@ export default function ReviewEmails() {
               <select
                 value={filterRating}
                 onChange={(e) => setFilterRating(e.target.value)}
-                className="w-full px-3 py-2 bg-black border border-white text-white rounded-lg text-sm focus:ring-2 focus:ring-white focus:border-white"
+                className="w-full px-3 py-2 bg-white/10 text-white rounded-lg text-sm focus:ring-2 focus:ring-white"
               >
                 <option value="">All Ratings</option>
                 <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
@@ -295,7 +295,7 @@ export default function ReviewEmails() {
               <select
                 value={filterOperation}
                 onChange={(e) => setFilterOperation(e.target.value)}
-                className="w-full px-3 py-2 bg-black border border-white text-white rounded-lg text-sm focus:ring-2 focus:ring-white focus:border-white"
+                className="w-full px-3 py-2 bg-white/10 text-white rounded-lg text-sm focus:ring-2 focus:ring-white"
               >
                 <option value="">All Operations</option>
                 {operationTypes.map((op) => (
@@ -321,7 +321,7 @@ export default function ReviewEmails() {
           </div>
 
           {/* Selection Info */}
-          <div className="p-4 bg-black rounded-lg border border-white">
+          <div className="p-4 bg-white/10 rounded-lg">
             <div className="text-sm font-medium text-white mb-1">
               {selectedReviews.size} Selected
             </div>
@@ -336,7 +336,7 @@ export default function ReviewEmails() {
           <div className="container mx-auto px-6 py-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Email Composer */}
-              <div className="lg:col-span-1 bg-black border border-white rounded-2xl shadow-2xl p-6 h-fit">
+              <div className="lg:col-span-1 bg-black rounded-2xl p-6 h-fit">
                 <div className="flex items-center gap-2 mb-4">
                   <Mail className="w-5 h-5 text-white" />
                   <h2 className="text-xl font-bold text-white">Compose Email</h2>
@@ -351,7 +351,7 @@ export default function ReviewEmails() {
                       type="text"
                       value={emailSubject}
                       onChange={(e) => setEmailSubject(e.target.value)}
-                      className="w-full px-4 py-2 bg-black border border-white text-white rounded-lg focus:ring-2 focus:ring-white focus:border-white placeholder-white/50"
+                      className="w-full px-4 py-2 bg-white/10 text-white rounded-lg focus:ring-2 focus:ring-white placeholder-white/50"
                       placeholder="Email subject"
                     />
                   </div>
@@ -364,7 +364,7 @@ export default function ReviewEmails() {
                       value={emailMessage}
                       onChange={(e) => setEmailMessage(e.target.value)}
                       rows={8}
-                      className="w-full px-4 py-2 bg-black border border-white text-white rounded-lg focus:ring-2 focus:ring-white focus:border-white resize-none placeholder-white/50"
+                      className="w-full px-4 py-2 bg-white/10 text-white rounded-lg focus:ring-2 focus:ring-white resize-none placeholder-white/50"
                       placeholder="Your message here..."
                     />
                     <p className="text-xs text-white mt-1">
@@ -391,7 +391,7 @@ export default function ReviewEmails() {
                   </Button>
 
                   {sendResults.length > 0 && (
-                    <div className="mt-4 p-4 bg-black rounded-lg border border-white">
+                    <div className="mt-4 p-4 bg-white/10 rounded-lg">
                       <h3 className="text-sm font-semibold text-white mb-2">Send Results:</h3>
                       <div className="space-y-2">
                         {sendResults.map((result, idx) => (
@@ -413,7 +413,7 @@ export default function ReviewEmails() {
               </div>
 
               {/* Reviews List */}
-              <div className="lg:col-span-2 bg-black border border-white rounded-2xl shadow-2xl p-6">
+              <div className="lg:col-span-2 bg-black rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-white">
                     Reviews with Emails ({reviews.length})
@@ -440,10 +440,10 @@ export default function ReviewEmails() {
                       return (
                         <div
                           key={review._id}
-                          className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                          className={`p-4 rounded-lg cursor-pointer transition-all ${
                             selectedReviews.has(review._id)
-                              ? 'border-white bg-white/10'
-                              : 'border-white hover:border-white bg-black'
+                              ? 'bg-white/20'
+                              : 'bg-white/5 hover:bg-white/10'
                           }`}
                           onClick={() => toggleReview(review._id)}
                         >
@@ -454,7 +454,7 @@ export default function ReviewEmails() {
                                   type="checkbox"
                                   checked={selectedReviews.has(review._id)}
                                   onChange={() => toggleReview(review._id)}
-                                  className="w-4 h-4 text-white rounded focus:ring-white bg-black border-white"
+                                  className="w-4 h-4 text-white rounded focus:ring-white bg-white/10"
                                   onClick={(e) => e.stopPropagation()}
                                 />
                                 <span className="font-semibold text-white">{review.name}</span>
@@ -519,8 +519,8 @@ export default function ReviewEmails() {
       {/* Email History Modal */}
       {viewingHistory && (
         <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-4">
-          <div className="bg-black border border-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b border-white">
+          <div className="bg-black rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-white/20">
               <div className="flex items-center gap-2">
                 <History className="w-5 h-5 text-white" />
                 <h2 className="text-xl font-bold text-white">Email History</h2>
@@ -541,7 +541,7 @@ export default function ReviewEmails() {
               ) : (
                 <div className="space-y-4">
                   {emailHistoryMap[viewingHistory]?.map((history, idx) => (
-                    <div key={history._id} className="p-4 bg-black rounded-lg border border-white">
+                    <div key={history._id} className="p-4 bg-white/10 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-semibold text-white">{history.subject}</span>
                         <span className="text-xs text-white">
