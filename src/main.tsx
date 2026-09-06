@@ -158,6 +158,7 @@ import PersonalWhiteboardCanvas from './pages/PersonalWhiteboardCanvas';
 import Documents from './pages/Documents';
 import DocumentEditor from './pages/DocumentEditor';
 import AdminNewsletter from './pages/AdminNewsletter';
+import ReviewEmails from './pages/admin/ReviewEmails';
 import SlimFileDrive from './pages/SlimFileDrive';
 import Messages from './pages/Messages';
 import BottomNav from './components/BottomNav';
@@ -425,6 +426,13 @@ ReactDOM.createRoot(root).render(
         <Route path="admin/newsletter" element={
           <ProtectedRoute>
             <AdminNewsletter />
+          </ProtectedRoute>
+        } />
+
+        {/* Admin Review Emails — protected by server-side email check */}
+        <Route path="admin/review-emails" element={
+          <ProtectedRoute>
+            <ReviewEmails />
           </ProtectedRoute>
         } />
 

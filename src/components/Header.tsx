@@ -131,6 +131,7 @@ export const Header = () => {
     { name: "CEO Dashboard", href: "/ceo-dashboard" },
     { name: "B2B API Keys", href: "/b2b-api-keys-admin" },
     { name: "Newsletter", href: "/admin/newsletter" },
+    { name: "Review Emails", href: "/admin/review-emails" },
     { name: "Security Terminal", href: "/security-terminal" },
   ];
 
