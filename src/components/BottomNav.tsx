@@ -6,7 +6,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 
 
-const HIDDEN_PREFIXES = ['/meet/', '/my-whiteboards/', '/documents/', '/login', '/ai-lab'];
+const HIDDEN_PREFIXES = ['/meet/', '/my-whiteboards/', '/documents/', '/login', '/ai-lab', '/admin/review-emails'];
 function isHiddenRoute(pathname: string) {
   if (HIDDEN_PREFIXES.some(p => pathname.startsWith(p))) return true;
   if (/^\/workspaces\/[^/]+/.test(pathname)) return true;
