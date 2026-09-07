@@ -137,13 +137,13 @@ export default function BottomNav() {
                   {/* Icon pill */}
                   <div className={`relative w-12 h-[34px] rounded-2xl flex items-center justify-center transition-all duration-200 ${pillBg}`}>
                     <Icon
-                      className={`w-[17px] h-[17px] transition-colors text-white ${active ? 'opacity-100' : 'opacity-60'}`}
-                      strokeWidth={active ? 2.3 : 1.7}
+                      className={`w-[17px] h-[17px] transition-colors text-white ${active ? 'opacity-100' : 'opacity-90'}`}
+                      strokeWidth={active ? 2.5 : 2.0}
                     />
                   </div>
 
                   {/* Label */}
-                  <span className={`text-[9px] leading-none font-semibold whitespace-nowrap transition-colors text-white ${active ? 'opacity-100' : 'opacity-60'}`}>
+                  <span className={`text-[9px] leading-none font-semibold whitespace-nowrap transition-colors text-white ${active ? 'opacity-100' : 'opacity-90'}`}>
                     {label}
                   </span>
                 </Link>
