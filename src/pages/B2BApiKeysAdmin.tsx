@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Key, Copy, Check, Trash2, Lock, Unlock, Plus, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const ADMIN_PASSWORD = '0423017003Sf';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
 interface B2BApiKey {
@@ -40,17 +39,42 @@ export default function B2BApiKeysAdmin() {
   });
   const [generating, setGenerating] = useState(false);
 
-  // Check password
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (password === ADMIN_PASSWORD) {
+  // Check for saved password on mount
+  useEffect(() => {
+    const savedPassword = sessionStorage.getItem('b2b-admin-password');
+    if (savedPassword) {
+      setAdminPassword(savedPassword);
       setIsAuthenticated(true);
-      setAdminPassword(password); // Store for API calls
-      setPasswordError('');
-      loadKeys(password); // Pass password directly
-    } else {
-      setPasswordError('Invalid password');
+      loadKeys(savedPassword);
+    }
+  }, []);
+
+  // Check password by validating with backend
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError('');
+
+    // Try to load keys - if successful, password is correct
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/b2b-keys`, {
+        headers: {
+          'X-Admin-Password': password
+        }
+      });
+
+      if (response.ok) {
+        setIsAuthenticated(true);
+        setAdminPassword(password);
+        sessionStorage.setItem('b2b-admin-password', password);
+        loadKeys(password);
+      } else {
+        setPasswordError('Invalid password');
+      }
+    } catch (error) {
+      setPasswordError('Authentication failed');
+    } finally {
+      setLoading(false);
     }
   };
 
