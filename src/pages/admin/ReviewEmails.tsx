@@ -307,10 +307,10 @@ export default function ReviewEmails() {
   };
 
   return (
-    <div className="h-screen bg-black overflow-hidden">
-      <div className="flex h-full">
+    <div className="min-h-screen md:h-screen bg-black overflow-hidden">
+      <div className="flex flex-col md:flex-row h-full">
         {/* Sidebar */}
-        <div className="w-72 bg-white/5 h-full p-6 flex flex-col overflow-y-auto">
+        <div className="w-full md:w-72 bg-white/5 p-4 md:p-6 flex flex-col md:h-full overflow-y-auto">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-white mb-2">SlimFile Mail</h1>
             <p className="text-sm text-white">Send emails to reviewers</p>
@@ -393,11 +393,11 @@ export default function ReviewEmails() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 h-full overflow-y-auto">
-          <div className="container mx-auto px-6 py-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="flex-1 overflow-y-auto">
+          <div className="container mx-auto px-4 md:px-6 py-4 md:py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
               {/* Email Composer */}
-              <div className="lg:col-span-1 bg-black rounded-2xl p-6 h-fit">
+              <div className="lg:col-span-1 bg-black rounded-xl md:rounded-2xl p-4 md:p-6 h-fit">
                 <div className="flex items-center gap-2 mb-4">
                   <Mail className="w-5 h-5 text-white" />
                   <h2 className="text-xl font-bold text-white">Compose Email</h2>
@@ -493,7 +493,7 @@ export default function ReviewEmails() {
               </div>
 
               {/* Reviews List */}
-              <div className="lg:col-span-2 bg-black rounded-2xl p-6">
+              <div className="lg:col-span-2 bg-black rounded-xl md:rounded-2xl p-4 md:p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-white">
                     Reviews with Emails ({reviews.length})
@@ -512,7 +512,7 @@ export default function ReviewEmails() {
                     No reviews with emails found
                   </div>
                 ) : (
-                  <div className="space-y-4 overflow-y-auto max-h-[calc(100vh-16rem)] pr-2">
+                  <div className="space-y-3 md:space-y-4 overflow-y-auto max-h-[calc(100vh-16rem)] pr-1 md:pr-2">
                     {reviews.map((review) => {
                       const emailHistory = emailHistoryMap[review._id] || [];
                       const emailCount = emailHistory.length;
@@ -520,7 +520,7 @@ export default function ReviewEmails() {
                       return (
                         <div
                           key={review._id}
-                          className={`p-4 rounded-lg cursor-pointer transition-all ${
+                          className={`p-3 md:p-4 rounded-lg cursor-pointer transition-all ${
                             selectedReviews.has(review._id)
                               ? 'bg-white/20'
                               : 'bg-white/5 hover:bg-white/10'
@@ -529,30 +529,34 @@ export default function ReviewEmails() {
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedReviews.has(review._id)}
-                                  onChange={() => toggleReview(review._id)}
-                                  className="w-4 h-4 text-white rounded focus:ring-white bg-white/10"
-                                  onClick={(e) => e.stopPropagation()}
-                                />
-                                <span className="font-semibold text-white">{review.name}</span>
-                                <span className="text-sm text-white">{review.email}</span>
+                              <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedReviews.has(review._id)}
+                                    onChange={() => toggleReview(review._id)}
+                                    className="w-4 h-4 text-white rounded focus:ring-white bg-white/10"
+                                    onClick={(e) => e.stopPropagation()}
+                                  />
+                                  <span className="font-semibold text-white text-sm md:text-base">{review.name}</span>
+                                </div>
+                                <div className="flex items-center gap-2 ml-6 md:ml-0">
+                                  <span className="text-xs md:text-sm text-white truncate">{review.email}</span>
 
-                                {/* Email History Badge */}
-                                {emailCount > 0 && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      viewEmailHistory(review._id);
-                                    }}
-                                    className="flex items-center gap-1 px-2 py-1 bg-white text-black rounded-full text-xs font-medium hover:bg-white/90 transition-colors"
-                                  >
-                                    <Mail className="w-3 h-3" />
-                                    Emailed {emailCount}x
-                                  </button>
-                                )}
+                                  {/* Email History Badge */}
+                                  {emailCount > 0 && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        viewEmailHistory(review._id);
+                                      }}
+                                      className="flex items-center gap-1 px-2 py-1 bg-white text-black rounded-full text-xs font-medium hover:bg-white/90 transition-colors whitespace-nowrap"
+                                    >
+                                      <Mail className="w-3 h-3" />
+                                      Emailed {emailCount}x
+                                    </button>
+                                  )}
+                                </div>
                               </div>
                               <div className="flex items-center gap-2 mb-2">
                                 <div className="flex items-center">
@@ -569,7 +573,7 @@ export default function ReviewEmails() {
                                   {review.operationType} • {new Date(review.createdAt).toLocaleDateString()}
                                 </span>
                               </div>
-                              <p className="text-sm text-white mb-2">{review.comment}</p>
+                              <p className="text-xs md:text-sm text-white mb-2">{review.comment}</p>
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -578,7 +582,7 @@ export default function ReviewEmails() {
                                   sendEmail(true, review._id);
                                 }}
                                 disabled={sending || !emailSubject || !emailMessage}
-                                className="!border-white !bg-black !text-white hover:!bg-white hover:!text-black !shadow-none"
+                                className="!border-white !bg-black !text-white hover:!bg-white hover:!text-black !shadow-none text-xs md:text-sm w-full md:w-auto"
                               >
                                 <Send className="w-3 h-3 mr-1" />
                                 Send to this reviewer
