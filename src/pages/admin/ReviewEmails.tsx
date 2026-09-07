@@ -312,7 +312,7 @@ export default function ReviewEmails() {
       {/* Mobile hamburger button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+        className="md:hidden fixed top-4 right-4 z-50 p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
       >
         <Menu className="w-6 h-6 text-white" />
       </button>
@@ -328,7 +328,7 @@ export default function ReviewEmails() {
       <div className="flex flex-col md:flex-row h-full">
         {/* Sidebar */}
         <div className={`
-          w-72 bg-white/5 p-4 md:p-6 flex flex-col overflow-y-auto
+          w-72 bg-black md:bg-white/5 p-4 md:p-6 flex flex-col overflow-y-auto
           fixed md:relative h-full z-40
           transition-transform duration-300 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
