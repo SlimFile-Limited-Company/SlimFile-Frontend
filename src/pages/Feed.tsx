@@ -213,12 +213,12 @@ const HeroStat = ({ icon: Icon, label, value, sub }: { icon: typeof TrendingUp; 
     animate={{ opacity: 1, y: 0 }}
     className="flex flex-col gap-1"
   >
-    <div className="flex items-center gap-2 text-white/50 text-xs font-medium uppercase tracking-wider">
+    <div className="flex items-center gap-2 text-black/60 text-xs font-medium uppercase tracking-wider">
       <Icon className="w-3.5 h-3.5" />
       {label}
     </div>
-    <p className="text-3xl sm:text-4xl font-black text-white">{value}</p>
-    <p className="text-white/40 text-xs">{sub}</p>
+    <p className="text-2xl sm:text-4xl font-black text-red-600">{value}</p>
+    <p className="text-black/50 text-xs">{sub}</p>
   </motion.div>
 );
 
@@ -282,24 +282,24 @@ export const Feed = () => {
     <div className="min-h-screen bg-[#F5F5F7]">
 
       {/* ── Hero ── */}
-      <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 pt-36 pb-16 px-4 sm:px-6">
-        <div className="max-w-2xl mx-auto">
+      <div className="bg-white pt-36 pb-8 sm:pb-16 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-2 mb-6">
-            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/20 text-emerald-600 text-xs font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Live
             </span>
-            <span className="text-white/30 text-xs">Updates in real time</span>
+            <span className="text-black/40 text-xs">Updates in real time</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight mb-2">
+          <h1 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-2">
             Community Feed
           </h1>
-          <p className="text-white/40 text-base mb-14">
+          <p className="text-black/50 text-base mb-8 sm:mb-14">
             Every file compressed around the world, as it happens.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 border-t border-white/10 pt-10">
+          <div className="grid grid-cols-3 gap-4 sm:gap-10 border-t border-black/10 pt-6 sm:pt-10">
             <HeroStat icon={Zap}        label="Total compressions" value={stats ? formatCount(stats.totalCompressions) : '—'} sub="all time, across all users" />
             <HeroStat icon={HardDrive}  label="Space saved"        value={stats ? formatBytes(stats.totalSpaceSaved)   : '—'} sub="all time, freed globally"   />
             <HeroStat icon={TrendingUp} label="Avg compression"    value={stats ? `${stats.avgCompressionRatio}%`      : '—'} sub="all time average ratio"     />
