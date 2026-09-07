@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Mail, Send, Loader2, CheckCircle2, XCircle, Filter, History, X } from 'lucide-react';
+import { Mail, Send, Loader2, CheckCircle2, XCircle, Filter, History, X, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Review {
@@ -36,6 +36,7 @@ export default function ReviewEmails() {
   const [emailHistoryMap, setEmailHistoryMap] = useState<Record<string, EmailHistory[]>>({});
   const [viewingHistory, setViewingHistory] = useState<string | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -308,9 +309,38 @@ export default function ReviewEmails() {
 
   return (
     <div className="min-h-screen md:h-screen bg-black overflow-hidden">
+      {/* Mobile hamburger button */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+      >
+        <Menu className="w-6 h-6 text-white" />
+      </button>
+
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/80 z-40"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       <div className="flex flex-col md:flex-row h-full">
         {/* Sidebar */}
-        <div className="w-full md:w-72 bg-white/5 p-4 md:p-6 flex flex-col md:h-full overflow-y-auto">
+        <div className={`
+          w-72 bg-white/5 p-4 md:p-6 flex flex-col overflow-y-auto
+          fixed md:relative h-full z-40
+          transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}>
+          {/* Mobile close button */}
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-colors"
+          >
+            <X className="w-5 h-5 text-white" />
+          </button>
+
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-white mb-2">SlimFile Mail</h1>
             <p className="text-sm text-white">Send emails to reviewers</p>
