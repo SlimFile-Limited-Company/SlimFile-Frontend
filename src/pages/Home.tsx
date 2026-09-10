@@ -247,7 +247,7 @@ const Home: FC = () => {
       {/* Hero Section */}
       <section className="relative pt-32 sm:pt-44 md:pt-56 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
 
-        {/* 💡 Left Mascot — motivational quotes & file tips */}
+        {/*  Left Mascot — motivational quotes & file tips */}
         {!leftMascotDismissed && (
           <div className="slide-in-left absolute top-28 left-4 z-30 hidden lg:flex items-start gap-2">
             {/* Avatar */}
