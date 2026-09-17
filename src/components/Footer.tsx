@@ -39,7 +39,7 @@ export const Footer = () => {
       links: [
         { label: "About", path: "/about" },
         // { label: "Partnerships", path: "/partnerships" },
-        { name: "Website", href: "https://company.slim-file.com", external: true },
+        { label: "Website", path: "https://company.slim-file.com", external: true },
         { label: "SDGs", path: "/sdgs" },
         { label: "News", path: "/news" },
         { label: "Why Compression?", path: "/file-compression-education" },
