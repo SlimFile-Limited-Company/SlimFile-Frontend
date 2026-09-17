@@ -89,7 +89,7 @@ export const Header = () => {
 
   const companyNavigation = [
     { name: "About", href: "/about" },
-    { name: "Partnerships", href: "/partnerships" },
+    // { name: "Partnerships", href: "/partnerships" },
     { name: "Website", href: "https://company.slim-file.com", external: true },
     { name: "SDGs", href: "/sdgs" },
     { name: "News", href: "/news" },

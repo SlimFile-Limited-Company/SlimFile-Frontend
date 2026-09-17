@@ -38,7 +38,7 @@ export const Footer = () => {
       heading: "Company",
       links: [
         { label: "About", path: "/about" },
-        { label: "Partnerships", path: "/partnerships" },
+        // { label: "Partnerships", path: "/partnerships" },
         { label: "SDGs", path: "/sdgs" },
         { label: "News", path: "/news" },
         { label: "Why Compression?", path: "/file-compression-education" },
