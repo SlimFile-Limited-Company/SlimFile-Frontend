@@ -90,6 +90,7 @@ export const Header = () => {
   const companyNavigation = [
     { name: "About", href: "/about" },
     { name: "Partnerships", href: "/partnerships" },
+    { name: "Website", href: "https://company.slim-file.com", external: true },
     { name: "SDGs", href: "/sdgs" },
     { name: "News", href: "/news" },
     { name: "Why Compression?", href: "/file-compression-education" },
@@ -258,16 +259,28 @@ export const Header = () => {
               {hoveredDropdown === 'company' && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
                   {companyNavigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={cn(
-                        "block px-4 py-2 text-sm transition-colors duration-200",
-                        isActiveRoute(item.href) ? "text-red-600 bg-red-50" : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                      )}
-                    >
-                      {item.name}
-                    </Link>
+                    item.external ? (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200"
+                      >
+                        {item.name}
+                      </a>
+                    ) : (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={cn(
+                          "block px-4 py-2 text-sm transition-colors duration-200",
+                          isActiveRoute(item.href) ? "text-red-600 bg-red-50" : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                        )}
+                      >
+                        {item.name}
+                      </Link>
+                    )
                   ))}
                 </div>
               )}
@@ -496,19 +509,32 @@ export const Header = () => {
                 {mobileDropdownsOpen.company && (
                   <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
                     {companyNavigation.map((item) => (
-                      <Link
-                        key={item.name}
-                        to={item.href}
-                        className={cn(
-                          "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
-                          isActiveRoute(item.href)
-                            ? "text-red-600 bg-red-50 border border-red-100"
-                            : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                        )}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {item.name}
-                      </Link>
+                      item.external ? (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg text-gray-700 hover:text-red-600 hover:bg-red-50"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {item.name}
+                        </a>
+                      ) : (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          className={cn(
+                            "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
+                            isActiveRoute(item.href)
+                              ? "text-red-600 bg-red-50 border border-red-100"
+                              : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                          )}
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {item.name}
+                        </Link>
+                      )
                     ))}
                   </div>
                 )}
