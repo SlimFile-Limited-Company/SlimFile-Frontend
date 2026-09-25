@@ -5,7 +5,7 @@ import { isAuthenticated } from '@/lib/auth';
 interface ReviewPromptProps {
   isOpen: boolean;
   onClose: () => void;
-  operationType: 'compress' | 'convert' | 'convert-compress' | 'forge' | 'lock' | 'ocr' | 'summarize';
+  operationType: 'compress' | 'convert' | 'convert-compress' | 'forge' | 'forge-merge' | 'forge-split' | 'lock' | 'ocr' | 'summarize';
 }
 
 export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptProps) => {

@@ -42,6 +42,8 @@ const operationLabels: Record<string, string> = {
   convert: 'Conversion',
   'convert-compress': 'Convert & Compress',
   forge: 'PDF Tools',
+  'forge-merge': 'Merge PDFs',
+  'forge-split': 'Split PDF',
   lock: 'PDF Security',
   ocr: 'OCR',
   summarize: 'Summarization'
@@ -52,6 +54,8 @@ const operationColors: Record<string, string> = {
   convert: 'from-purple-500 to-pink-500',
   'convert-compress': 'from-red-500 to-orange-500',
   forge: 'from-amber-500 to-yellow-500',
+  'forge-merge': 'from-amber-500 to-orange-600',
+  'forge-split': 'from-teal-500 to-cyan-600',
   lock: 'from-green-500 to-emerald-500',
   ocr: 'from-cyan-500 to-teal-500',
   summarize: 'from-violet-500 to-purple-500'

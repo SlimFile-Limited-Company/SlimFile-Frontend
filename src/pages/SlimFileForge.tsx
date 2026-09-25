@@ -266,6 +266,7 @@ const SlimFileForge = () => {
   });
   const [tab, setTab] = useState<'merge' | 'split'>('merge');
   const [showReviewPrompt, setShowReviewPrompt] = useState(false);
+  const [promptTool, setPromptTool] = useState<'forge-merge' | 'forge-split'>('forge-merge');
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-32 pb-20">
@@ -327,7 +328,11 @@ const SlimFileForge = () => {
 
         {/* Card */}
         <div className="bg-white rounded-3xl border border-gray-200/80 p-7 shadow-sm">
-          {tab === 'merge' ? <MergeTab onSuccess={() => setTimeout(() => setShowReviewPrompt(true), 1500)} /> : <SplitTab onSuccess={() => setTimeout(() => setShowReviewPrompt(true), 1500)} />}
+          {tab === 'merge' ? (
+            <MergeTab onSuccess={() => setTimeout(() => { setPromptTool('forge-merge'); setShowReviewPrompt(true); }, 1500)} />
+          ) : (
+            <SplitTab onSuccess={() => setTimeout(() => { setPromptTool('forge-split'); setShowReviewPrompt(true); }, 1500)} />
+          )}
         </div>
 
         {/* Footer */}
@@ -341,7 +346,7 @@ const SlimFileForge = () => {
       <ReviewPrompt
         isOpen={showReviewPrompt}
         onClose={() => setShowReviewPrompt(false)}
-        operationType="forge"
+        operationType={promptTool}
       />
     </div>
   );
