@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit, Sparkles, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, Shield } from 'lucide-react';
+import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit, Sparkles, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, Shield, QrCode } from 'lucide-react';
 
 const FEATURES = [
   {
@@ -63,6 +63,11 @@ const FEATURES = [
     icon: Sparkles,  title: 'Summarize Document',    badge: 'AI',         gradient: 'from-purple-600 to-indigo-700',
     href: '/ai-lab?feature=summarize',         description: 'Compress and extract a smart AI summary from any PDF, DOCX or PPTX.',
     features: ['Powered by Llama 3', 'PDF, DOCX & PPTX', 'Structured output'],
+  },
+  {
+    icon: QrCode,    title: 'QR Code Generator',      badge: 'New',        gradient: 'from-fuchsia-500 to-pink-600',
+    href: '/qr-code',           description: 'Create QR codes for links, text, WhatsApp, WiFi & email — instantly.',
+    features: ['PNG & SVG download', 'No sign-up needed', '100% in your browser'],
   },
 ];
 
