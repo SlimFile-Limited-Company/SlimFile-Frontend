@@ -179,7 +179,7 @@ export const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
       {/* Top Banner — Stats (→ Feed) + New Feature (→ QR) */}
       <div
-        className="relative flex flex-nowrap items-center justify-start sm:justify-center gap-3 sm:gap-4 px-6 py-2.5 text-white overflow-x-auto group whitespace-nowrap"
+        className="relative flex flex-nowrap items-center justify-center gap-2 px-6 py-2.5 text-white overflow-x-auto group whitespace-nowrap"
         style={{ background: "linear-gradient(90deg, #7c3aed 0%, #9333ea 40%, #7c3aed 100%)" }}
       >
         {/* Animated shimmer */}
@@ -187,41 +187,60 @@ export const Header = () => {
           style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)" }}
         />
 
-        {/* Badge */}
-        <span className="hidden sm:inline-flex items-center gap-1 bg-white/20 text-white text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 tracking-wide">
-          LIVE
+        {/* ── Mobile: short pills ── */}
+        <span className="sm:hidden inline-flex items-center gap-2 shrink-0">
+          <Link
+            to="/feed"
+            className="inline-flex items-center gap-1 bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide hover:bg-white/35 transition-colors whitespace-nowrap"
+          >
+            Stats <span className="text-white/80">→</span>
+          </Link>
+          <Link
+            to="/qr-code"
+            className="inline-flex items-center gap-1 bg-white/25 text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide hover:bg-white/35 transition-colors whitespace-nowrap"
+          >
+            QR Code <span className="text-white/80">→</span>
+          </Link>
         </span>
 
-        {/* Stats → Feed */}
-        <Link
-          to="/feed"
-          className="inline-flex items-center gap-2 text-sm font-medium tracking-wide group/stat shrink-0 whitespace-nowrap"
-        >
-          {globalStats ? (
-            <>
-              <span className="font-semibold">{formatCount(globalStats.totalCompressions)} compressions</span>
-              <span className="opacity-80">•</span>
-              <span className="opacity-80">{formatBytes(globalStats.totalSpaceSaved)} saved</span>
-              <span className="hidden md:inline opacity-80">•</span>
-              <span className="hidden md:inline">{globalStats.avgCompressionRatio}% avg ratio</span>
-            </>
-          ) : (
-            <span className="font-semibold">Global Impact — See It Live</span>
-          )}
-          <span className="text-white/70 group-hover/stat:text-white group-hover/stat:translate-x-0.5 transition-all duration-200">→</span>
-        </Link>
+        {/* ── Desktop: full stats + announcement ── */}
+        <span className="hidden sm:inline-flex items-center gap-4 shrink-0">
+          {/* Badge */}
+          <span className="inline-flex items-center gap-1 bg-white/20 text-white text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 tracking-wide">
+            LIVE
+          </span>
 
-        {/* Divider */}
-        <span className="hidden sm:inline w-px h-4 bg-white/30 shrink-0" />
+          {/* Stats → Feed */}
+          <Link
+            to="/feed"
+            className="inline-flex items-center gap-2 text-sm font-medium tracking-wide group/stat whitespace-nowrap"
+          >
+            {globalStats ? (
+              <>
+                <span className="font-semibold">{formatCount(globalStats.totalCompressions)} compressions</span>
+                <span className="opacity-80">•</span>
+                <span className="opacity-80">{formatBytes(globalStats.totalSpaceSaved)} saved</span>
+                <span className="hidden md:inline opacity-80">•</span>
+                <span className="hidden md:inline">{globalStats.avgCompressionRatio}% avg ratio</span>
+              </>
+            ) : (
+              <span className="font-semibold">Global Impact — See It Live</span>
+            )}
+            <span className="text-white/70 group-hover/stat:text-white group-hover/stat:translate-x-0.5 transition-all duration-200">→</span>
+          </Link>
 
-        {/* New Feature → QR Code */}
-        <Link
-          to="/qr-code"
-          className="inline-flex items-center gap-1.5 bg-white/25 text-white text-xs font-bold px-2.5 py-1 rounded-full tracking-wide hover:bg-white/40 transition-colors group/qr shrink-0 whitespace-nowrap"
-        >
-          New: QR Code Generator
-          <span className="text-white/80 group-hover/qr:text-white group-hover/qr:translate-x-0.5 transition-all duration-200">→</span>
-        </Link>
+          {/* Divider */}
+          <span className="w-px h-4 bg-white/30 shrink-0" />
+
+          {/* New Feature → QR Code */}
+          <Link
+            to="/qr-code"
+            className="inline-flex items-center gap-1.5 bg-white/25 text-white text-xs font-bold px-2.5 py-1 rounded-full tracking-wide hover:bg-white/40 transition-colors group/qr whitespace-nowrap"
+          >
+            New: QR Code Generator
+            <span className="text-white/80 group-hover/qr:text-white group-hover/qr:translate-x-0.5 transition-all duration-200">→</span>
+          </Link>
+        </span>
       </div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
