@@ -183,7 +183,7 @@ export const Header = () => {
         style={{ background: "linear-gradient(90deg, #7c3aed 0%, #9333ea 40%, #7c3aed 100%)" }}
       >
         {/* Animated shimmer */}
-        <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
           style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)" }}
         />
 
