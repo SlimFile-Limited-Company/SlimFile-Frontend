@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown, Star, Bot } from "lucide-react";
@@ -10,7 +10,6 @@ import { useTranslation } from "@/hooks/useTranslation";
 export const Header = () => {
   const { t } = useTranslation();
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Hide header on B2B admin page
   if (location.pathname === '/b2b-api-keys-admin') {
@@ -178,10 +177,9 @@ export const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
-      {/* Compression Stats Banner */}
-      <Link
-        to="/feed"
-        className="relative flex items-center justify-center gap-3 px-6 py-2.5 text-white overflow-hidden group"
+      {/* Top Banner — Stats (→ Feed) + New Feature (→ QR) */}
+      <div
+        className="relative flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 px-6 py-2.5 text-white overflow-hidden group"
         style={{ background: "linear-gradient(90deg, #7c3aed 0%, #9333ea 40%, #7c3aed 100%)" }}
       >
         {/* Animated shimmer */}
@@ -194,39 +192,37 @@ export const Header = () => {
           LIVE
         </span>
 
-        {/* Message with Stats */}
-        <span className="text-sm font-medium tracking-wide flex items-center gap-2">
+        {/* Stats → Feed */}
+        <Link
+          to="/feed"
+          className="inline-flex items-center gap-2 text-sm font-medium tracking-wide group/stat shrink-0"
+        >
           {globalStats ? (
             <>
-              <span className="font-semibold sm:hidden">{formatCount(globalStats.totalCompressions)} files compressed</span>
-              <span className="font-semibold hidden sm:inline">{formatCount(globalStats.totalCompressions)} compressions</span>
-              <span className="hidden sm:inline opacity-80">•</span>
-              <span className="hidden sm:inline">{formatBytes(globalStats.totalSpaceSaved)} saved</span>
-              <span className="hidden sm:inline opacity-80">•</span>
-              <span className="hidden sm:inline">{globalStats.avgCompressionRatio}% avg ratio</span>
+              <span className="font-semibold">{formatCount(globalStats.totalCompressions)} compressions</span>
+              <span className="opacity-80">•</span>
+              <span className="opacity-80">{formatBytes(globalStats.totalSpaceSaved)} saved</span>
+              <span className="hidden md:inline opacity-80">•</span>
+              <span className="hidden md:inline">{globalStats.avgCompressionRatio}% avg ratio</span>
             </>
           ) : (
-            <>
-              <span className="font-semibold sm:hidden">Global Impact — See It Live</span>
-              <span className="font-semibold hidden sm:inline">Loading global stats...</span>
-            </>
+            <span className="font-semibold">Global Impact — See It Live</span>
           )}
+          <span className="text-white/70 group-hover/stat:text-white group-hover/stat:translate-x-0.5 transition-all duration-200">→</span>
+        </Link>
 
-          {/* New Feature Announcement */}
-          <span className="hidden sm:inline opacity-80">•</span>
-          <button
-            type="button"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate('/qr-code'); }}
-            className="inline-flex items-center gap-1 bg-white/25 text-white text-xs font-bold px-2 py-0.5 rounded-full tracking-wide hover:bg-white/35 transition-colors shrink-0 cursor-pointer"
-          >
-            <span className="sm:hidden">New: QR Codes</span>
-            <span className="hidden sm:inline">New: QR Code Generator</span>
-          </button>
-        </span>
+        {/* Divider */}
+        <span className="hidden sm:inline w-px h-4 bg-white/30 shrink-0" />
 
-        {/* Arrow */}
-        <span className="text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-200 text-sm shrink-0">→</span>
-      </Link>
+        {/* New Feature → QR Code */}
+        <Link
+          to="/qr-code"
+          className="inline-flex items-center gap-1.5 bg-white/25 text-white text-xs font-bold px-2.5 py-1 rounded-full tracking-wide hover:bg-white/40 transition-colors group/qr shrink-0"
+        >
+          New: QR Code Generator
+          <span className="text-white/80 group-hover/qr:text-white group-hover/qr:translate-x-0.5 transition-all duration-200">→</span>
+        </Link>
+      </div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
