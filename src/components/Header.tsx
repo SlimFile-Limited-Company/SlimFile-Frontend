@@ -179,7 +179,7 @@ export const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
       {/* Top Banner — Stats (→ Feed) + New Feature (→ QR) */}
       <div
-        className="relative flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 px-6 py-2.5 text-white overflow-hidden group"
+        className="relative flex flex-nowrap items-center justify-start sm:justify-center gap-3 sm:gap-4 px-6 py-2.5 text-white overflow-x-auto group whitespace-nowrap"
         style={{ background: "linear-gradient(90deg, #7c3aed 0%, #9333ea 40%, #7c3aed 100%)" }}
       >
         {/* Animated shimmer */}
@@ -195,7 +195,7 @@ export const Header = () => {
         {/* Stats → Feed */}
         <Link
           to="/feed"
-          className="inline-flex items-center gap-2 text-sm font-medium tracking-wide group/stat shrink-0"
+          className="inline-flex items-center gap-2 text-sm font-medium tracking-wide group/stat shrink-0 whitespace-nowrap"
         >
           {globalStats ? (
             <>
@@ -217,7 +217,7 @@ export const Header = () => {
         {/* New Feature → QR Code */}
         <Link
           to="/qr-code"
-          className="inline-flex items-center gap-1.5 bg-white/25 text-white text-xs font-bold px-2.5 py-1 rounded-full tracking-wide hover:bg-white/40 transition-colors group/qr shrink-0"
+          className="inline-flex items-center gap-1.5 bg-white/25 text-white text-xs font-bold px-2.5 py-1 rounded-full tracking-wide hover:bg-white/40 transition-colors group/qr shrink-0 whitespace-nowrap"
         >
           New: QR Code Generator
           <span className="text-white/80 group-hover/qr:text-white group-hover/qr:translate-x-0.5 transition-all duration-200">→</span>
