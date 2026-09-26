@@ -91,7 +91,7 @@ export function getRemainingDownloads(): number {
  * Track guest activity in backend
  */
 export async function trackGuestActivity(
-  actionType: 'compress' | 'convert' | 'convert-compress' | 'portal-compress' | 'download' | 'review',
+  actionType: 'compress' | 'convert' | 'convert-compress' | 'portal-compress' | 'download' | 'qr' | 'review',
   fileType?: string,
   originalSize?: number,
   processedSize?: number

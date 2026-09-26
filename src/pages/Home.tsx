@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, ChevronLeft, ChevronRight, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail } from "lucide-react";
+import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, ChevronLeft, ChevronRight, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, QrCode } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useSEO } from "@/hooks/useSEO";
 
@@ -139,6 +139,7 @@ const Home: FC = () => {
     { icon: Users,     title: "Team Workspaces",       description: "Collaborate in real-time with your team in shared spaces.",               features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600",   href: "/workspaces",      badge: "Team",      flip: "Caught ya! 😄"             },
     { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", href: "/lock",            badge: "New",       flip: "Oh snap! 😮"               },
     { icon: Sparkles,  title: "Summarize Document",    description: "Compress and extract a smart AI summary from any PDF, DOCX or PPTX.",   features: ["Powered by Llama 3", "PDF, DOCX & PPTX", "Structured output"],              gradient: "from-purple-600 to-indigo-700", href: "/ai-lab?feature=summarize",       badge: "AI",        flip: "Well hello there! 🤫"      },
+    { icon: QrCode,    title: "QR Code Generator",     description: "Create QR codes for links, text, WhatsApp, WiFi & email — instantly.",   features: ["PNG & SVG download", "No sign-up needed", "100% in your browser"],         gradient: "from-fuchsia-500 to-pink-600", href: "/qr-code",        badge: "New",       flip: "You scanned me! 🔍"          },
   ];
 
   // Organize by category: General → AI Lab

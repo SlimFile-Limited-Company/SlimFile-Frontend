@@ -32,6 +32,7 @@ const operationLabels: Record<string, string> = {
   'forge-split': 'Split PDF',
   lock: 'PDF Security',
   ocr: 'OCR',
+  qr: 'QR Code',
   summarize: 'Summarization'
 };
 
@@ -44,6 +45,7 @@ const operationColors: Record<string, string> = {
   'forge-split': 'from-teal-500 to-cyan-600',
   lock: 'from-green-500 to-emerald-500',
   ocr: 'from-cyan-500 to-teal-500',
+  qr: 'from-slate-800 to-gray-900',
   summarize: 'from-violet-500 to-purple-500'
 };
 

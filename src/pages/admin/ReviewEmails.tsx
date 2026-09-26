@@ -244,7 +244,7 @@ export default function ReviewEmails() {
     );
   }
 
-  const operationTypes = ['compress', 'convert', 'convert-compress', 'forge', 'forge-merge', 'forge-split', 'lock', 'ocr', 'summarize'];
+  const operationTypes = ['compress', 'convert', 'convert-compress', 'forge', 'forge-merge', 'forge-split', 'lock', 'ocr', 'qr', 'summarize'];
 
   // Generate email preview HTML
   const generatePreviewHTML = () => {
