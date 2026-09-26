@@ -161,7 +161,6 @@ import AdminNewsletter from './pages/AdminNewsletter';
 import ReviewEmails from './pages/admin/ReviewEmails';
 import SlimFileDrive from './pages/SlimFileDrive';
 import Messages from './pages/Messages';
-import BottomNav from './components/BottomNav';
 import PushListener from './components/PushListener';
 import SlimFileForge from './pages/SlimFileForge';
 import SlimFileLock from './pages/SlimFileLock';
@@ -207,7 +206,6 @@ ReactDOM.createRoot(root).render(
         <BrowserRouter>
           <NotificationProvider>
             <ScrollToTop />
-            <BottomNav />
             <PushListener />
             <UpdatePrompt />
             <Routes>
