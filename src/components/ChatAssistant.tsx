@@ -153,7 +153,7 @@ export default function ChatAssistant() {
 
       {/* Chat Popup */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-96 h-[500px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div className="fixed bottom-24 right-4 left-4 sm:left-auto sm:right-6 sm:w-96 h-[calc(100dvh-8rem)] sm:h-[500px] z-50 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700">
           {/* Header */}
           <div className="bg-gradient-to-r from-purple-600 to-purple-700 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
