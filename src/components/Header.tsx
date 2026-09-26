@@ -179,7 +179,7 @@ export const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
       {/* Top Banner — Stats (→ Feed) + New Feature (→ QR) */}
       <div
-        className="relative flex flex-nowrap items-center justify-center gap-2 px-6 py-2.5 text-white overflow-x-auto group whitespace-nowrap"
+        className="relative hidden sm:flex flex-nowrap items-center justify-center gap-2 px-6 py-2.5 text-white overflow-x-auto group whitespace-nowrap"
         style={{ background: "linear-gradient(90deg, #7c3aed 0%, #9333ea 40%, #7c3aed 100%)" }}
       >
         {/* Animated shimmer */}
@@ -187,24 +187,8 @@ export const Header = () => {
           style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)" }}
         />
 
-        {/* ── Mobile: short pills ── */}
-        <span className="sm:hidden inline-flex items-center gap-2 shrink-0">
-          <Link
-            to="/feed"
-            className="inline-flex items-center gap-1 bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide hover:bg-white/35 transition-colors whitespace-nowrap"
-          >
-            Stats <span className="text-white/80">→</span>
-          </Link>
-          <Link
-            to="/qr-code"
-            className="inline-flex items-center gap-1 bg-white/25 text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide hover:bg-white/35 transition-colors whitespace-nowrap"
-          >
-            QR Code <span className="text-white/80">→</span>
-          </Link>
-        </span>
-
         {/* ── Desktop: full stats + announcement ── */}
-        <span className="hidden sm:inline-flex items-center gap-4 shrink-0">
+        <span className="inline-flex items-center gap-4 shrink-0">
           {/* Badge */}
           <span className="inline-flex items-center gap-1 bg-white/20 text-white text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 tracking-wide">
             LIVE
