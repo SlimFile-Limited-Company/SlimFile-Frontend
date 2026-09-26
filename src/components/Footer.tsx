@@ -31,6 +31,7 @@ export const Footer = () => {
         { label: "PDF Merger & Splitter", path: "/forge" },
         { label: "PDF Password Protect", path: "/lock" },
         { label: "Summarize Document", path: "/summarize" },
+        { label: "QR Code Generator", path: "/qr-code" },
         { label: "AI Lab", path: "/ai-lab" },
       ],
     },

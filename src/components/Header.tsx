@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown, Star, Bot } from "lucide-react";
@@ -10,6 +10,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 export const Header = () => {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Hide header on B2B admin page
   if (location.pathname === '/b2b-api-keys-admin') {
@@ -125,6 +126,7 @@ export const Header = () => {
     { name: "PDF Merger & Splitter", href: "/forge" },
     { name: "PDF Password Protect", href: "/lock" },
     { name: "Summarize Document", href: "/summarize" },
+    { name: "QR Code Generator", href: "/qr-code" },
     { name: "AI Lab", href: "/ai-lab" },
   ];
 
@@ -209,6 +211,17 @@ export const Header = () => {
               <span className="font-semibold hidden sm:inline">Loading global stats...</span>
             </>
           )}
+
+          {/* New Feature Announcement */}
+          <span className="hidden sm:inline opacity-80">•</span>
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate('/qr-code'); }}
+            className="inline-flex items-center gap-1 bg-white/25 text-white text-xs font-bold px-2 py-0.5 rounded-full tracking-wide hover:bg-white/35 transition-colors shrink-0 cursor-pointer"
+          >
+            <span className="sm:hidden">New: QR Codes</span>
+            <span className="hidden sm:inline">New: QR Code Generator</span>
+          </button>
         </span>
 
         {/* Arrow */}
