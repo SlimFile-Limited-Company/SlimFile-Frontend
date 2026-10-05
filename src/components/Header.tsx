@@ -170,6 +170,11 @@ export const Header = () => {
     };
   }, [dropdownTimeout]);
 
+  /* Reviews, Login and Logout all use this one neutral pill, matching the
+     Google Play button above them: no brand colour, just a grey outline. */
+  const pillBtn =
+    "flex items-center gap-1.5 h-9 px-4 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200 text-xs font-semibold";
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -331,30 +336,17 @@ export const Header = () => {
                 <Bot className="w-5 h-5 text-purple-600" />
               </button>
             </Link>
-            <Link to="/reviews">
-              <Button
-                variant="outline"
-                className="border-2 border-purple-400 text-purple-600 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-500 font-semibold shadow-sm flex items-center gap-1.5"
-              >
-                <Star className="w-4 h-4 fill-purple-400" />
-                Reviews
-              </Button>
+            <Link to="/reviews" className={pillBtn}>
+              <Star className="w-4 h-4 fill-gray-400" />
+              Reviews
             </Link>
             {isAuthenticated() ? (
-              <Button
-                variant="outline"
-                onClick={() => logout()}
-              >
+              <button onClick={() => logout()} className={pillBtn}>
                 {t('header.logout')}
-              </Button>
+              </button>
             ) : (
-              <Link to="/login">
-                <Button
-                  variant="default"
-                  className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600"
-                >
-                  {t('header.login')}
-                </Button>
+              <Link to="/login" className={pillBtn}>
+                {t('header.login')}
               </Link>
             )}
           </div>
@@ -520,15 +512,9 @@ export const Header = () => {
 
               {/* Mobile Reviews Button */}
               <div className="px-4 pt-2">
-                <Link to="/reviews" onClick={() => setMobileMenuOpen(false)}>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full border-2 border-purple-400 text-purple-600 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-500 font-semibold shadow-sm flex items-center justify-center gap-1.5"
-                  >
-                    <Star className="w-4 h-4 fill-purple-400" />
-                    Reviews
-                  </Button>
+                <Link to="/reviews" onClick={() => setMobileMenuOpen(false)} className={`${pillBtn} w-full justify-center`}>
+                  <Star className="w-4 h-4 fill-gray-400" />
+                  Reviews
                 </Link>
               </div>
 
@@ -548,28 +534,20 @@ export const Header = () => {
 
               {isAuthenticated() ? (
                 <div className="px-4 pt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
+                  <button
                     onClick={() => {
                       setMobileMenuOpen(false);
                       logout();
                     }}
-                    className="w-full text-red-600 border-red-300 hover:bg-red-50 hover:text-red-700"
+                    className={`${pillBtn} w-full justify-center`}
                   >
                     {t('header.logout')}
-                  </Button>
+                  </button>
                 </div>
               ) : (
                 <div className="px-4 pt-2">
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600"
-                    >
-                      {t('header.login')}
-                    </Button>
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)} className={`${pillBtn} w-full justify-center`}>
+                    {t('header.login')}
                   </Link>
                 </div>
               )}
