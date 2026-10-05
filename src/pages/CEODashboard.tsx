@@ -680,7 +680,12 @@ function formatOperation(op: string) {
     'pdf-protect': 'Password Protect',
     'pdf-unlock': 'Remove Password',
     'b2b-compress': 'B2B API Compress',
-    'ai-grok': 'AI Lab'
+    'ai-grok': 'AI Lab',
+    compress: 'Compress Files',
+    convert: 'Convert Formats',
+    'convert-compress': 'Convert & Compress',
+    'merge-compress': 'Merge & Compress PDFs',
+    'split-compress': 'Split & Compress PDFs'
   };
   return labels[op] || op;
 }
