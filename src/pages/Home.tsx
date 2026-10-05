@@ -171,7 +171,7 @@ const Home: FC = () => {
 
         <div aria-hidden className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <img
-            src="/bg-hero.jpg"
+            src="/bg-hero.png"
             alt=""
             className="w-full h-full object-cover object-center opacity-30"
           />
