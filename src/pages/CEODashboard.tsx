@@ -387,6 +387,8 @@ export default function CEODashboard() {
                 <p className="text-white/40 text-xs lg:text-sm mb-4">
                   Counted from the dedicated usage collections on every successful call, so signed-out
                   visitors are included and nothing here depends on a compression ratio.
+                  OCR and QR run entirely in your browser, so the page reports its own visits and
+                  completions rather than a server request.
                 </p>
 
                 {operations.operations.length === 0 ? (
@@ -404,6 +406,7 @@ export default function CEODashboard() {
                             <th className="pb-3 pr-4 font-medium text-right">Anonymous</th>
                             <th className="pb-3 pr-4 font-medium text-right">Visitors</th>
                             <th className="pb-3 pr-4 font-medium text-right">Pages</th>
+                            <th className="pb-3 pr-4 font-medium text-right">Visit / Done</th>
                             <th className="pb-3 pr-4 font-medium text-right">Avg in</th>
                             <th className="pb-3 font-medium text-right">Last used</th>
                           </tr>
@@ -420,6 +423,14 @@ export default function CEODashboard() {
                               <td className="py-3 pr-4 text-right text-white/60">{op.anonymous.toLocaleString()}</td>
                               <td className="py-3 pr-4 text-right text-white/60">{op.uniqueVisitors.toLocaleString()}</td>
                               <td className="py-3 pr-4 text-right text-white/60">{op.pages ?? '-'}</td>
+                              <td className="py-3 pr-4 text-right text-white/60 whitespace-nowrap">
+                                {op.visits || op.completes
+                                  ? `${op.visits.toLocaleString()} / ${op.completes.toLocaleString()}`
+                                  : '-'}
+                                {op.completionRate !== null && (
+                                  <span className="block text-white/30 text-xs">{op.completionRate}% done</span>
+                                )}
+                              </td>
                               <td className="py-3 pr-4 text-right text-white/60">{formatBytes(op.originalBytes / op.uses)}</td>
                               <td className="py-3 text-right text-white/40 text-xs whitespace-nowrap">
                                 {new Date(op.lastUsedAt).toLocaleDateString()}
@@ -441,7 +452,15 @@ export default function CEODashboard() {
                             </div>
                             <p className="text-lg font-semibold shrink-0">{op.uses.toLocaleString()}</p>
                           </div>
-                          <div className="grid grid-cols-3 gap-2 mt-3 text-xs">
+                          <div className="grid grid-cols-4 gap-2 mt-3 text-xs">
+                            <div>
+                              <p className="text-white/40">Visits</p>
+                              <p className="font-semibold">{op.visits.toLocaleString()}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/40">Completed</p>
+                              <p className="font-semibold">{op.completes.toLocaleString()}</p>
+                            </div>
                             <div>
                               <p className="text-white/40">Signed in</p>
                               <p className="font-semibold">{op.signedIn.toLocaleString()}</p>
@@ -681,6 +700,8 @@ function formatOperation(op: string) {
     'pdf-unlock': 'Remove Password',
     'b2b-compress': 'B2B API Compress',
     'ai-grok': 'AI Lab',
+    ocr: 'OCR Tool',
+    qr: 'QR Code Generator',
     compress: 'Compress Files',
     convert: 'Convert Formats',
     'convert-compress': 'Convert & Compress',

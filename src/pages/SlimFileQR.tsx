@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { QRCodeCanvas, QRCodeSVG } from 'qrcode.react';
 import { useSEO } from '@/hooks/useSEO';
 import { useToast } from '@/hooks/use-toast';
@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { ReviewPrompt } from '@/components/ReviewPrompt';
 import { trackGuestActivity } from '@/utils/guestTracking';
+import { reportClientTool } from '@/utils/clientToolTracking';
 
 type QrTab = 'link' | 'text' | 'whatsapp' | 'wifi' | 'email';
 
@@ -38,6 +39,12 @@ const SlimFileQR = () => {
     description: 'Create free QR codes for links, plain text, WhatsApp, WiFi networks, and email on SlimFile. Download as PNG or SVG — no account needed.',
   });
   const { toast } = useToast();
+
+  // The QR generator is pure client-side canvas work, so the backend never sees
+  // it. Report the visit separately from the download counted in finish().
+  useEffect(() => {
+    reportClientTool('qr', 'visit');
+  }, []);
 
   const [tab, setTab] = useState<QrTab>('link');
   const [size, setSize] = useState(256);
@@ -111,6 +118,7 @@ const SlimFileQR = () => {
 
   const finish = (format: 'png' | 'svg') => {
     trackGuestActivity('qr', format);
+    reportClientTool('qr', 'complete', { detail: `${tab}:${format}` });
     setTimeout(() => setShowReviewPrompt(true), 1500);
   };
 

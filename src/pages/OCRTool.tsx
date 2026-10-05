@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 import { useDropzone } from 'react-dropzone';
 import { createWorker } from 'tesseract.js';
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { reportClientTool } from '@/utils/clientToolTracking';
 import {
   Upload,
   FileText,
@@ -50,6 +51,12 @@ const OCRTool = () => {
     description: 'Convert scanned images and PDFs to editable text with SlimFile\'s free OCR tool. Supports 100+ languages, no signup required.',
   });
   const { toast } = useToast();
+
+  // OCR runs entirely in the browser via Tesseract.js, so there is no request
+  // for the backend to count. Report the visit ourselves.
+  useEffect(() => {
+    reportClientTool('ocr', 'visit');
+  }, []);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [extractedText, setExtractedText] = useState<string>('');
@@ -167,6 +174,11 @@ const OCRTool = () => {
 
   const extractText = async () => {
     if (!selectedFile || !previewUrl) return;
+
+    reportClientTool('ocr', 'complete', {
+      detail: selectedLanguage,
+      pages: 1,
+    });
 
     setIsProcessing(true);
     setProgress(0);
