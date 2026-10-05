@@ -217,15 +217,7 @@ const Home: FC = () => {
                     <p className="text-sm sm:text-lg font-bold text-gray-900 leading-tight sm:mb-2 truncate">{feature.title}</p>
                   </div>
                   <p className="hidden sm:block text-gray-500 text-sm leading-relaxed mb-4">{feature.description}</p>
-                  <ul className="hidden sm:block space-y-1.5 mb-4 flex-1">
-                    {feature.features.map((item, idx) => (
-                      <li key={idx} className="flex items-center gap-1.5 text-xs text-gray-600">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-500 flex-shrink-0" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <span className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-gray-900">
+                  <span className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-gray-900 mt-auto">
                     Try Now <ArrowRight className="w-3.5 h-3.5" />
                   </span>
                   <ArrowRight className="w-4 h-4 text-gray-300 flex-shrink-0 sm:hidden" />
