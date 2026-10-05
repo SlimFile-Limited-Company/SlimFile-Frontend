@@ -377,9 +377,9 @@ export default function CEODashboard() {
           {activeSection === 'operations' && operations && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-                <StatCard label="Total Feature Uses" value={operations.totalUses.toLocaleString()} />
+                <StatCard label="Total Feature Uses" value={num(operations.totalUses)} />
                 <StatCard label="Operations Tracked" value={operations.totalOperations} />
-                <StatCard label="Unique Visitors" value={operations.uniqueVisitors.toLocaleString()} />
+                <StatCard label="Unique Visitors" value={num(operations.uniqueVisitors)} />
               </div>
 
               <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
@@ -424,16 +424,16 @@ export default function CEODashboard() {
                                   {op.collection}{op.lifetime && <span className="text-white/50"> · all-time</span>}
                                 </span>
                               </td>
-                              <td className="py-3 pr-4 text-right font-semibold">{op.uses.toLocaleString()}</td>
-                              <td className="py-3 pr-4 text-right text-white/60">{op.signedIn.toLocaleString()}</td>
-                              <td className="py-3 pr-4 text-right text-white/60">{op.anonymous.toLocaleString()}</td>
+                              <td className="py-3 pr-4 text-right font-semibold">{num(op.uses)}</td>
+                              <td className="py-3 pr-4 text-right text-white/60">{num(op.signedIn)}</td>
+                              <td className="py-3 pr-4 text-right text-white/60">{num(op.anonymous)}</td>
                               <td className="py-3 pr-4 text-right text-white/60">
-                                {op.uniqueVisitors === null ? '-' : op.uniqueVisitors.toLocaleString()}
+                                {num(op.uniqueVisitors)}
                               </td>
                               <td className="py-3 pr-4 text-right text-white/60">{op.pages ?? '-'}</td>
                               <td className="py-3 pr-4 text-right text-white/60 whitespace-nowrap">
                                 {op.visits || op.completes
-                                  ? `${op.visits.toLocaleString()} / ${op.completes.toLocaleString()}`
+                                  ? `${num(op.visits)} / ${num(op.completes)}`
                                   : '-'}
                                 {op.completionRate !== null && (
                                   <span className="block text-white/30 text-xs">{op.completionRate}% done</span>
@@ -462,29 +462,29 @@ export default function CEODashboard() {
                                 {op.collection}{op.lifetime && <span className="text-white/50"> · all-time</span>}
                               </p>
                             </div>
-                            <p className="text-lg font-semibold shrink-0">{op.uses.toLocaleString()}</p>
+                            <p className="text-lg font-semibold shrink-0">{num(op.uses)}</p>
                           </div>
                           <div className="grid grid-cols-4 gap-2 mt-3 text-xs">
                             <div>
                               <p className="text-white/40">Visits</p>
-                              <p className="font-semibold">{op.visits.toLocaleString()}</p>
+                              <p className="font-semibold">{num(op.visits)}</p>
                             </div>
                             <div>
                               <p className="text-white/40">Completed</p>
-                              <p className="font-semibold">{op.completes.toLocaleString()}</p>
+                              <p className="font-semibold">{num(op.completes)}</p>
                             </div>
                             <div>
                               <p className="text-white/40">Signed in</p>
-                              <p className="font-semibold">{op.signedIn.toLocaleString()}</p>
+                              <p className="font-semibold">{num(op.signedIn)}</p>
                             </div>
                             <div>
                               <p className="text-white/40">Anonymous</p>
-                              <p className="font-semibold">{op.anonymous.toLocaleString()}</p>
+                              <p className="font-semibold">{num(op.anonymous)}</p>
                             </div>
                             <div>
                               <p className="text-white/40">Visitors</p>
                               <p className="font-semibold">
-                                {op.uniqueVisitors === null ? '-' : op.uniqueVisitors.toLocaleString()}
+                                {num(op.uniqueVisitors)}
                               </p>
                             </div>
                           </div>
@@ -693,6 +693,13 @@ export default function CEODashboard() {
       </main>
     </div>
   );
+}
+
+// The compression row comes from the Stats counter, which has no anonymous or
+// visitor split, so those fields are null. Format defensively everywhere
+// rather than assume every row came from the same aggregation.
+function num(value: number | null | undefined): string {
+  return value === null || value === undefined ? '-' : value.toLocaleString();
 }
 
 function formatBytes(bytes: number) {
