@@ -21,15 +21,11 @@ export const Header = () => {
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
   const [globalStats, setGlobalStats] = useState<{ totalCompressions: number; totalSpaceSaved: number; avgCompressionRatio: number } | null>(null);
   const [mobileDropdownsOpen, setMobileDropdownsOpen] = useState<{
-    company: boolean;
-    connect: boolean;
-    suites: boolean;
+    tools: boolean;
     devtools: boolean;
     internal: boolean;
   }>({
-    company: false,
-    connect: false,
-    suites: false,
+    tools: false,
     devtools: false,
     internal: false,
   });
@@ -87,17 +83,6 @@ export const Header = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   };
 
-  const companyNavigation = [
-    { name: "About", href: "/about" },
-    // { name: "Partnerships", href: "/partnerships" },
-    { name: "Website", href: "https://company.slim-file.com", external: true },
-    { name: "SDGs", href: "/sdgs" },
-    { name: "News", href: "/news" },
-    { name: "Why Compression?", href: "/file-compression-education" },
-    { name: "Our Blogs", href: "/blog" },
-    { name: "Contact", href: "/contact" },
-  ];
-
   const connectNavigation = [
     { name: "Feed", href: "/feed" },
     ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces" }] : []),
@@ -127,6 +112,16 @@ export const Header = () => {
     { name: "Summarize Document", href: "/summarize" },
     { name: "QR Code Generator", href: "/qr-code" },
     { name: "AI Lab", href: "/ai-lab" },
+  ];
+
+  // iLovePDF keeps every tool inside one dropdown. "SlimFile Connect" and
+  // "SlimFile Suites" were two separate dropdowns and are gone from the header
+  // bar, so their items are merged here — otherwise Compress, Convert, Forge,
+  // Lock, QR, AI Lab, Feed, Meet and the workspace pages become unreachable
+  // from the header.
+  const toolsNavigation = [
+    ...suitesNavigation,
+    ...connectNavigation.filter(c => !suitesNavigation.some(s => s.href === c.href)),
   ];
 
   const internalNavigation = [
@@ -159,7 +154,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'company' | 'connect' | 'suites' | 'devtools' | 'internal') => {
+  const toggleMobileDropdown = (dropdown: 'tools' | 'devtools' | 'internal') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -237,10 +232,11 @@ export const Header = () => {
               />
               <span className="text-2xl font-bold text-gray-900">SlimFile</span>
             </Link>
-          </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-2 absolute left-1/2 transform -translate-x-1/2">
+          {/* Desktop Navigation — left aligned next to the logo, iLovePDF style.
+              It used to be absolutely centred, which overlapped the logo and the
+              auth buttons as items were added. */}
+          <nav className="hidden md:flex items-center space-x-1 ml-6">
             <Link
               to="/"
               className={cn(
@@ -253,24 +249,24 @@ export const Header = () => {
               {t('header.home')}
             </Link>
 
-            {/* Company Dropdown */}
+            {/* Tools Dropdown — replaces the old Connect and Suites dropdowns */}
             <div
               className="relative"
-              onMouseEnter={() => handleDropdownHover('company')}
+              onMouseEnter={() => handleDropdownHover('tools')}
               onMouseLeave={() => handleDropdownHover(null)}
             >
               <button className={cn(
-                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full",
-                companyNavigation.some(item => isActiveRoute(item.href))
+                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
+                toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')) || (item.href === '/ai-lab' && location.pathname.startsWith('/ai-lab')))
                   ? "text-white bg-red-600 shadow-md font-semibold"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}>
-                <span>Company</span>
+                <span>Tools</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
-              {hoveredDropdown === 'company' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
-                  {companyNavigation.map((item) => (
+              {hoveredDropdown === 'tools' && (
+                <div className="absolute top-full left-0 mt-2 w-56 max-h-[70vh] overflow-y-auto bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
+                  {toolsNavigation.map((item) => (
                     item.external ? (
                       <a
                         key={item.name}
@@ -287,82 +283,14 @@ export const Header = () => {
                         to={item.href}
                         className={cn(
                           "block px-4 py-2 text-sm transition-colors duration-200",
-                          isActiveRoute(item.href) ? "text-red-600 bg-red-50" : "text-gray-700 hover:text-red-600 hover:bg-red-50"
+                          (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')) || (item.href === '/ai-lab' && location.pathname.startsWith('/ai-lab')))
+                            ? "text-red-600 bg-red-50"
+                            : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                         )}
                       >
                         {item.name}
                       </Link>
                     )
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* SlimFile Connect Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleDropdownHover('connect')}
-              onMouseLeave={() => handleDropdownHover(null)}
-            >
-              <button className={cn(
-                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
-                connectNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
-                  ? "text-white bg-red-600 shadow-md font-semibold"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              )}>
-                <span>SlimFile Connect</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              {hoveredDropdown === 'connect' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
-                  {connectNavigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={cn(
-                        "flex items-center justify-between px-4 py-2 text-sm transition-colors duration-200",
-                        (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
-                          ? "text-red-600 bg-red-50"
-                          : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                      )}
-                    >
-                      <span>{item.name}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* SlimFile Suites Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleDropdownHover('suites')}
-              onMouseLeave={() => handleDropdownHover(null)}
-            >
-              <button className={cn(
-                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
-                suitesNavigation.some(item => location.pathname === item.href || location.pathname.startsWith(item.href))
-                  ? "text-white bg-red-600 shadow-md font-semibold"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              )}>
-                <span>SlimFile Suites</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              {hoveredDropdown === 'suites' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
-                  {suitesNavigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={cn(
-                        "flex items-center justify-between px-4 py-2 text-sm transition-colors duration-200",
-                        location.pathname === item.href || location.pathname.startsWith(item.href)
-                          ? "text-red-600 bg-red-50"
-                          : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                      )}
-                    >
-                      <span>{item.name}</span>
-                    </Link>
                   ))}
                 </div>
               )}
@@ -431,6 +359,7 @@ export const Header = () => {
             )}
 
           </nav>
+          </div>
 
           {/* Auth buttons - Desktop */}
           <div className="hidden md:flex items-center gap-3">
@@ -511,35 +440,35 @@ export const Header = () => {
                 {t('header.home')}
               </Link>
 
-              {/* Mobile Company Dropdown */}
+              {/* Mobile Tools Dropdown — replaces Connect and Suites */}
               <div className="px-4">
                 <button
-                  onClick={() => toggleMobileDropdown('company')}
+                  onClick={() => toggleMobileDropdown('tools')}
                   className={cn(
-                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg",
-                    companyNavigation.some(item => isActiveRoute(item.href))
+                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg whitespace-nowrap",
+                    toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')) || (item.href === '/ai-lab' && location.pathname.startsWith('/ai-lab')))
                       ? "text-red-600"
                       : "text-gray-700 hover:text-red-600"
                   )}
                 >
-                  <span>Company</span>
+                  <span>Tools</span>
                   <ChevronDown
                     className={cn(
                       "w-4 h-4 transition-transform duration-200",
-                      mobileDropdownsOpen.company && "transform rotate-180"
+                      mobileDropdownsOpen.tools && "transform rotate-180"
                     )}
                   />
                 </button>
-                {mobileDropdownsOpen.company && (
+                {mobileDropdownsOpen.tools && (
                   <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
-                    {companyNavigation.map((item) => (
+                    {toolsNavigation.map((item) => (
                       item.external ? (
                         <a
                           key={item.name}
                           href={item.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg text-gray-700 hover:text-red-600 hover:bg-red-50"
+                          className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-300 rounded-lg"
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           {item.name}
@@ -550,7 +479,7 @@ export const Header = () => {
                           to={item.href}
                           className={cn(
                             "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
-                            isActiveRoute(item.href)
+                            (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')) || (item.href === '/ai-lab' && location.pathname.startsWith('/ai-lab')))
                               ? "text-red-600 bg-red-50 border border-red-100"
                               : "text-gray-700 hover:text-red-600 hover:bg-red-50"
                           )}
@@ -559,86 +488,6 @@ export const Header = () => {
                           {item.name}
                         </Link>
                       )
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Mobile SlimFile Connect Dropdown */}
-              <div className="px-4">
-                <button
-                  onClick={() => toggleMobileDropdown('connect')}
-                  className={cn(
-                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg whitespace-nowrap",
-                    connectNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
-                      ? "text-red-600"
-                      : "text-gray-700 hover:text-red-600"
-                  )}
-                >
-                  <span>SlimFile Connect</span>
-                  <ChevronDown
-                    className={cn(
-                      "w-4 h-4 transition-transform duration-200",
-                      mobileDropdownsOpen.connect && "transform rotate-180"
-                    )}
-                  />
-                </button>
-                {mobileDropdownsOpen.connect && (
-                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
-                    {connectNavigation.map((item) => (
-                      <Link
-                        key={item.name}
-                        to={item.href}
-                        className={cn(
-                          "flex items-center justify-between px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
-                          (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')))
-                            ? "text-red-600 bg-red-50 border border-red-100"
-                            : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                        )}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <span>{item.name}</span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Mobile SlimFile Suites Dropdown */}
-              <div className="px-4">
-                <button
-                  onClick={() => toggleMobileDropdown('suites')}
-                  className={cn(
-                    "w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg whitespace-nowrap",
-                    suitesNavigation.some(item => location.pathname === item.href || location.pathname.startsWith(item.href))
-                      ? "text-red-600"
-                      : "text-gray-700 hover:text-red-600"
-                  )}
-                >
-                  <span>SlimFile Suites</span>
-                  <ChevronDown
-                    className={cn(
-                      "w-4 h-4 transition-transform duration-200",
-                      mobileDropdownsOpen.suites && "transform rotate-180"
-                    )}
-                  />
-                </button>
-                {mobileDropdownsOpen.suites && (
-                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
-                    {suitesNavigation.map((item) => (
-                      <Link
-                        key={item.name}
-                        to={item.href}
-                        className={cn(
-                          "flex items-center justify-between px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
-                          location.pathname === item.href || location.pathname.startsWith(item.href)
-                            ? "text-red-600 bg-red-50 border border-red-100"
-                            : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                        )}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <span>{item.name}</span>
-                      </Link>
                     ))}
                   </div>
                 )}

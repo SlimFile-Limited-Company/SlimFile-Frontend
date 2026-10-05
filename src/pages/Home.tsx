@@ -234,7 +234,7 @@ const Home: FC = () => {
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-44 md:pt-56 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="relative pt-24 sm:pt-28 md:pt-32 pb-10 sm:pb-14 md:pb-16 px-4 sm:px-6 lg:px-8 bg-white">
 
         {/*  Left Mascot — motivational quotes & file tips */}
         {!leftMascotDismissed && (
@@ -384,7 +384,7 @@ const Home: FC = () => {
             ))}
           </div>
 
-          <p className="text-center text-sm text-gray-500 mt-4">
+          <p className="text-center text-sm text-gray-500 mt-3">
             {featureTabs.find(t => t.key === activeTab)!.blurb}
           </p>
         </div>
