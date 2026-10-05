@@ -210,7 +210,7 @@ const Home: FC = () => {
                 {/* iLovePDF style: white card, coloured icon. No motion, no badge.
                     Mobile is a horizontal row; sm and up is the full card. */}
                 <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 h-full flex flex-row sm:flex-col items-center sm:items-stretch gap-3 p-3 sm:p-5">
-                  <div className="flex items-center gap-3 sm:contents">
+                  <div className="flex items-center gap-3 flex-1 min-w-0 sm:contents">
                     <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center flex-shrink-0`}>
                       <feature.icon className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                     </div>
