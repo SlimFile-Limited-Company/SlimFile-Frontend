@@ -166,6 +166,16 @@ const Home: FC = () => {
           Kept tight on mobile so ~10 slim cards fit in one viewport. */}
       <section className="relative pt-20 sm:pt-28 md:pt-32 pb-6 sm:pb-14 md:pb-16 px-4 sm:px-6 lg:px-8 bg-white">
 
+        {/* iLovePDF keeps a .pattern-bg behind everything: a fixed SVG of soft
+            blurred gradient blobs at 10% opacity with z-index -1, so it sits
+            above the white but behind all content. Same idea, drawn with
+            radial gradients instead of shipping an asset. */}
+        <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+          <div className="absolute -top-48 -left-40 w-[560px] h-[560px] rounded-full bg-[radial-gradient(circle,rgba(229,50,45,0.18),transparent_70%)] blur-2xl" />
+          <div className="absolute top-10 -right-40 w-[460px] h-[460px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.14),transparent_70%)] blur-2xl" />
+          <div className="absolute -bottom-56 left-1/4 w-[620px] h-[620px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.12),transparent_70%)] blur-3xl" />
+        </div>
+
         <div className="container mx-auto">
           {/* Category tabs — narrow text tabs, iLovePDF style. The old hero
               (headline, subtitle and three CTA buttons) was removed. */}
