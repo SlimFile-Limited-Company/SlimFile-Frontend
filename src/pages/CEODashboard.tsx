@@ -389,6 +389,11 @@ export default function CEODashboard() {
                   visitors are included and nothing here depends on a compression ratio.
                   OCR and QR run entirely in your browser, so the page reports its own visits and
                   completions rather than a server request.
+                  <span className="block mt-1">
+                    Rows marked <span className="text-white/60">all-time</span> are lifetime figures read
+                    from the same CompressionHistory archive the Feed page uses, so they ignore the period
+                    filter. The rest respect it.
+                  </span>
                 </p>
 
                 {operations.operations.length === 0 ? (
@@ -416,12 +421,16 @@ export default function CEODashboard() {
                             <tr key={op.collection + op.operation} className="border-b border-white/5">
                               <td className="py-3 pr-4">
                                 <span className="font-semibold">{formatOperation(op.operation)}</span>
-                                <span className="block text-white/30 text-xs">{op.collection}</span>
+                                <span className="block text-white/30 text-xs">
+                                  {op.collection}{op.lifetime && <span className="text-white/50"> · all-time</span>}
+                                </span>
                               </td>
                               <td className="py-3 pr-4 text-right font-semibold">{op.uses.toLocaleString()}</td>
                               <td className="py-3 pr-4 text-right text-white/60">{op.signedIn.toLocaleString()}</td>
                               <td className="py-3 pr-4 text-right text-white/60">{op.anonymous.toLocaleString()}</td>
-                              <td className="py-3 pr-4 text-right text-white/60">{op.uniqueVisitors.toLocaleString()}</td>
+                              <td className="py-3 pr-4 text-right text-white/60">
+                                {op.uniqueVisitors === null ? '-' : op.uniqueVisitors.toLocaleString()}
+                              </td>
                               <td className="py-3 pr-4 text-right text-white/60">{op.pages ?? '-'}</td>
                               <td className="py-3 pr-4 text-right text-white/60 whitespace-nowrap">
                                 {op.visits || op.completes
@@ -448,7 +457,9 @@ export default function CEODashboard() {
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
                               <p className="font-semibold text-sm">{formatOperation(op.operation)}</p>
-                              <p className="text-white/30 text-xs">{op.collection}</p>
+                              <p className="text-white/30 text-xs">
+                                {op.collection}{op.lifetime && <span className="text-white/50"> · all-time</span>}
+                              </p>
                             </div>
                             <p className="text-lg font-semibold shrink-0">{op.uses.toLocaleString()}</p>
                           </div>
@@ -471,7 +482,9 @@ export default function CEODashboard() {
                             </div>
                             <div>
                               <p className="text-white/40">Visitors</p>
-                              <p className="font-semibold">{op.uniqueVisitors.toLocaleString()}</p>
+                              <p className="font-semibold">
+                                {op.uniqueVisitors === null ? '-' : op.uniqueVisitors.toLocaleString()}
+                              </p>
                             </div>
                           </div>
                         </div>
