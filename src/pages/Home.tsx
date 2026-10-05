@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, ChevronLeft, ChevronRight, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, QrCode } from "lucide-react";
+import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, QrCode } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useSEO } from "@/hooks/useSEO";
 
@@ -68,26 +68,6 @@ style.textContent = `
   .bubble-pop     { animation: bubble-pop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards; }
   .pulse-glow     { animation: pulse-glow 2s ease-in-out infinite; }
 
-  /* Flip card */
-  .flip-card { perspective: 1000px; }
-  .flip-card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
-  }
-  .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
-  .flip-card-front,
-  .flip-card-back {
-    position: absolute;
-    inset: 0;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    border-radius: 1rem;
-    overflow: hidden;
-  }
-  .flip-card-back { transform: rotateY(180deg); }
 `;
 document.head.appendChild(style);
 import { Button } from "@/components/ui/button";
@@ -112,45 +92,51 @@ const Home: FC = () => {
   // AI Lab carousel
   const [aiLabIndex, setAiLabIndex] = useState(0);
   const aiLabFeatures = [
-    { icon: Languages, title: 'Translate Text', gradient: 'from-blue-500 to-cyan-500', href: '/ai-lab?feature=translate', description: 'Translate text to any language instantly with AI.', features: ['12+ languages', 'Preserves context', 'File upload support'] },
-    { icon: FileText, title: 'Summarize Document', gradient: 'from-purple-500 to-pink-500', href: '/ai-lab?feature=summarize', description: 'Get key points and summaries from any document.', features: ['PDF, DOCX support', 'Smart extraction', 'Structured output'] },
-    { icon: PenTool, title: 'Rewrite Content', gradient: 'from-green-500 to-emerald-500', href: '/ai-lab?feature=rewrite', description: 'Improve, formalize, or simplify your text.', features: ['Multiple styles', 'Tone adjustment', 'Quality improvement'] },
-    { icon: MessageCircleQuestion, title: 'Ask Questions', gradient: 'from-orange-500 to-red-500', href: '/ai-lab?feature=question', description: 'Get answers about your documents and text.', features: ['Document analysis', 'Detailed answers', 'Context-aware'] },
-    { icon: Tags, title: 'Extract Keywords', gradient: 'from-yellow-500 to-orange-500', href: '/ai-lab?feature=keywords', description: 'Identify key terms, topics, and tags automatically.', features: ['Topic analysis', 'Tag generation', 'Categorization'] },
-    { icon: Smile, title: 'Analyze Sentiment', gradient: 'from-pink-500 to-rose-500', href: '/ai-lab?feature=sentiment', description: 'Detect tone, emotions, and sentiment in text.', features: ['Emotion detection', 'Tone analysis', 'Detailed breakdown'] },
-    { icon: GitCompare, title: 'Compare Texts', gradient: 'from-indigo-500 to-purple-500', href: '/ai-lab?feature=compare', description: 'Find differences and similarities between texts.', features: ['Side-by-side analysis', 'Change detection', 'Structured report'] },
-    { icon: Mail, title: 'Email Generator', gradient: 'from-blue-600 to-cyan-600', href: '/ai-lab?feature=email', description: 'Generate professional emails from bullet points.', features: ['8 email types', '6 tone options', 'Instant generation'] },
+    { icon: Languages, title: 'Translate Text', gradient: 'from-blue-500 to-cyan-500', color: 'text-blue-600', href: '/ai-lab?feature=translate', description: 'Translate text to any language instantly with AI.', features: ['12+ languages', 'Preserves context', 'File upload support'] },
+    { icon: FileText, title: 'Summarize Document', gradient: 'from-purple-500 to-pink-500', color: 'text-purple-600', href: '/ai-lab?feature=summarize', description: 'Get key points and summaries from any document.', features: ['PDF, DOCX support', 'Smart extraction', 'Structured output'] },
+    { icon: PenTool, title: 'Rewrite Content', gradient: 'from-green-500 to-emerald-500', color: 'text-emerald-600', href: '/ai-lab?feature=rewrite', description: 'Improve, formalize, or simplify your text.', features: ['Multiple styles', 'Tone adjustment', 'Quality improvement'] },
+    { icon: MessageCircleQuestion, title: 'Ask Questions', gradient: 'from-orange-500 to-red-500', color: 'text-orange-600', href: '/ai-lab?feature=question', description: 'Get answers about your documents and text.', features: ['Document analysis', 'Detailed answers', 'Context-aware'] },
+    { icon: Tags, title: 'Extract Keywords', gradient: 'from-yellow-500 to-orange-500', color: 'text-yellow-600', href: '/ai-lab?feature=keywords', description: 'Identify key terms, topics, and tags automatically.', features: ['Topic analysis', 'Tag generation', 'Categorization'] },
+    { icon: Smile, title: 'Analyze Sentiment', gradient: 'from-pink-500 to-rose-500', color: 'text-pink-600', href: '/ai-lab?feature=sentiment', description: 'Detect tone, emotions, and sentiment in text.', features: ['Emotion detection', 'Tone analysis', 'Detailed breakdown'] },
+    { icon: GitCompare, title: 'Compare Texts', gradient: 'from-indigo-500 to-purple-500', color: 'text-indigo-600', href: '/ai-lab?feature=compare', description: 'Find differences and similarities between texts.', features: ['Side-by-side analysis', 'Change detection', 'Structured report'] },
+    { icon: Mail, title: 'Email Generator', gradient: 'from-blue-600 to-cyan-600', color: 'text-blue-700', href: '/ai-lab?feature=email', description: 'Generate professional emails from bullet points.', features: ['8 email types', '6 tone options', 'Instant generation'] },
   ];
-
-  // Features slider - organized: General → AI Lab → Image Processing
-  const [featuresPage, setFeaturesPage] = useState(0);
 
   // General Features (no duplicates)
   const generalFeatures = [
-    { icon: FileImage,  title: "Compress Files",        description: "Shrink images, PDFs, DOCX & XLSX while keeping quality.",               features: ["JPEG, PNG, WebP, PDF", "DOCX & XLSX support", "Up to 95% reduction"],       gradient: "from-blue-500 to-blue-600",     href: "/compress",        badge: "Popular",   flip: "Sneaky peek! 👀"          },
-    { icon: FileText,  title: "Convert Formats",       description: "Transform files between formats — no quality loss.",                     features: ["Images, Office to PDF", "PDF to Images ZIP", "No quality loss"],              gradient: "from-purple-500 to-purple-600", href: "/convert-only",    badge: "New",       flip: "Oh you curious one! 🐱"   },
-    { icon: Zap,       title: "Convert & Compress",    description: "Convert format AND reduce size in one single step.",                     features: ["All conversion features", "Max size reduction", "One-step processing"],       gradient: "from-red-500 to-red-600",       href: "/convert-compress", badge: "Best Value", flip: "You snooped! 🕵️"          },
-    { icon: FilePlus2, title: "PDF Merger & Splitter", description: "Combine multiple PDFs or split one into custom sections.",               features: ["Merge up to 20 PDFs", "Split by page ranges", "Drag to reorder"],           gradient: "from-amber-500 to-orange-500",  href: "/forge",           badge: "New",       flip: "Busted! 🫢"                },
-    { icon: Layers,    title: "Merge & Compress PDFs", description: "Combine PDFs into one and compress the result in a single step.",       features: ["Up to 20 PDFs", "Compressed after merging", "One file out"],          gradient: "from-teal-500 to-emerald-600",  href: "/merge-compress",  badge: "New",       flip: "Two birds, one stone! 🪶"    },
-    { icon: GitMerge,  title: "Split & Compress PDFs", description: "Split a PDF into pages and compress every piece at once.",            features: ["Split by page ranges", "Each piece compressed", "ZIP download"],      gradient: "from-cyan-600 to-blue-600",    href: "/split-compress",  badge: "New",       flip: "Shrink that split! ✂️"         },
-    { icon: ScanText,  title: "OCR Tool",              description: "Extract editable text from images and scanned documents.",               features: ["Scan images & PDFs", "Multiple languages", "Export as text/PDF"],            gradient: "from-orange-500 to-orange-600", href: "/ocr-tool",        badge: "New",       flip: "Well well well... 😏"      },
-    { icon: Radio,     title: "Activity Feed",         description: "Stay updated with live activity across all your workspaces.",             features: ["Real-time updates", "Activity tracking", "Team notifications"],              gradient: "from-indigo-500 to-indigo-600", href: "/feed",            badge: "Live",      flip: "Look who's here! 👋"       },
-    { icon: Video,     title: "Video Meetings",        description: "Host HD video calls and share your screen instantly.",                   features: ["HD video calls", "Screen sharing", "No downloads needed"],                   gradient: "from-cyan-500 to-cyan-600",     href: "/meet",            badge: "New",       flip: "You found me! 🙈"          },
-    { icon: PenTool,   title: "Whiteboards",           description: "Brainstorm ideas and sketch concepts on visual boards.",                 features: ["Drawing tools", "Text & shapes", "Multiple boards"],                         gradient: "from-pink-500 to-pink-600",     href: "/my-whiteboards",  badge: "New",       flip: "Peek-a-boo! 🫣"            },
-    { icon: FileType,  title: "My Documents",          description: "Write and edit documents with a rich text editor.",                      features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600",       href: "/documents",       badge: "New",       flip: "Gotcha! 😏"                },
-    { icon: Users,     title: "Team Workspaces",       description: "Collaborate in real-time with your team in shared spaces.",               features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600",   href: "/workspaces",      badge: "Team",      flip: "Caught ya! 😄"             },
-    { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", href: "/lock",            badge: "New",       flip: "Oh snap! 😮"               },
-    { icon: Sparkles,  title: "Summarize Document",    description: "Compress and extract a smart AI summary from any PDF, DOCX or PPTX.",   features: ["Powered by Llama 3", "PDF, DOCX & PPTX", "Structured output"],              gradient: "from-purple-600 to-indigo-700", href: "/ai-lab?feature=summarize",       badge: "AI",        flip: "Well hello there! 🤫"      },
-    { icon: QrCode,    title: "QR Code Generator",     description: "Create QR codes for links, text, WhatsApp, WiFi & email — instantly.",   features: ["PNG & SVG download", "No sign-up needed", "100% in your browser"],         gradient: "from-fuchsia-500 to-pink-600", href: "/qr-code",        badge: "New",       flip: "You scanned me! 🔍"          },
+    { icon: FileImage,  title: "Compress Files",        description: "Shrink images, PDFs, DOCX & XLSX while keeping quality.",               features: ["JPEG, PNG, WebP, PDF", "DOCX & XLSX support", "Up to 95% reduction"],       gradient: "from-blue-500 to-blue-600", color: "text-blue-600",     href: "/compress",        badge: "Popular",   flip: "Sneaky peek! 👀"          },
+    { icon: FileText,  title: "Convert Formats",       description: "Transform files between formats — no quality loss.",                     features: ["Images, Office to PDF", "PDF to Images ZIP", "No quality loss"],              gradient: "from-purple-500 to-purple-600", color: "text-purple-600", href: "/convert-only",    badge: "New",       flip: "Oh you curious one! 🐱"   },
+    { icon: Zap,       title: "Convert & Compress",    description: "Convert format AND reduce size in one single step.",                     features: ["All conversion features", "Max size reduction", "One-step processing"],       gradient: "from-red-500 to-red-600", color: "text-red-600",       href: "/convert-compress", badge: "Best Value", flip: "You snooped! 🕵️"          },
+    { icon: FilePlus2, title: "PDF Merger & Splitter", description: "Combine multiple PDFs or split one into custom sections.",               features: ["Merge up to 20 PDFs", "Split by page ranges", "Drag to reorder"],           gradient: "from-amber-500 to-orange-500", color: "text-amber-600",  href: "/forge",           badge: "New",       flip: "Busted! 🫢"                },
+    { icon: Layers,    title: "Merge & Compress PDFs", description: "Combine PDFs into one and compress the result in a single step.",       features: ["Up to 20 PDFs", "Compressed after merging", "One file out"],          gradient: "from-teal-500 to-emerald-600", color: "text-teal-600",  href: "/merge-compress",  badge: "New",       flip: "Two birds, one stone! 🪶"    },
+    { icon: GitMerge,  title: "Split & Compress PDFs", description: "Split a PDF into pages and compress every piece at once.",            features: ["Split by page ranges", "Each piece compressed", "ZIP download"],      gradient: "from-cyan-600 to-blue-600", color: "text-cyan-700",    href: "/split-compress",  badge: "New",       flip: "Shrink that split! ✂️"         },
+    { icon: ScanText,  title: "OCR Tool",              description: "Extract editable text from images and scanned documents.",               features: ["Scan images & PDFs", "Multiple languages", "Export as text/PDF"],            gradient: "from-orange-500 to-orange-600", color: "text-orange-600", href: "/ocr-tool",        badge: "New",       flip: "Well well well... 😏"      },
+    { icon: Radio,     title: "Activity Feed",         description: "Stay updated with live activity across all your workspaces.",             features: ["Real-time updates", "Activity tracking", "Team notifications"],              gradient: "from-indigo-500 to-indigo-600", color: "text-indigo-600", href: "/feed",            badge: "Live",      flip: "Look who's here! 👋"       },
+    { icon: Video,     title: "Video Meetings",        description: "Host HD video calls and share your screen instantly.",                   features: ["HD video calls", "Screen sharing", "No downloads needed"],                   gradient: "from-cyan-500 to-cyan-600", color: "text-cyan-600",     href: "/meet",            badge: "New",       flip: "You found me! 🙈"          },
+    { icon: PenTool,   title: "Whiteboards",           description: "Brainstorm ideas and sketch concepts on visual boards.",                 features: ["Drawing tools", "Text & shapes", "Multiple boards"],                         gradient: "from-pink-500 to-pink-600", color: "text-pink-600",     href: "/my-whiteboards",  badge: "New",       flip: "Peek-a-boo! 🫣"            },
+    { icon: FileType,  title: "My Documents",          description: "Write and edit documents with a rich text editor.",                      features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600", color: "text-sky-600",       href: "/documents",       badge: "New",       flip: "Gotcha! 😏"                },
+    { icon: Users,     title: "Team Workspaces",       description: "Collaborate in real-time with your team in shared spaces.",               features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600", color: "text-green-600",   href: "/workspaces",      badge: "Team",      flip: "Caught ya! 😄"             },
+    { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", color: "text-violet-600", href: "/lock",            badge: "New",       flip: "Oh snap! 😮"               },
+    { icon: Sparkles,  title: "Summarize Document",    description: "Compress and extract a smart AI summary from any PDF, DOCX or PPTX.",   features: ["Powered by Llama 3", "PDF, DOCX & PPTX", "Structured output"],              gradient: "from-purple-600 to-indigo-700", color: "text-indigo-700", href: "/ai-lab?feature=summarize",       badge: "AI",        flip: "Well hello there! 🤫"      },
+    { icon: QrCode,    title: "QR Code Generator",     description: "Create QR codes for links, text, WhatsApp, WiFi & email — instantly.",   features: ["PNG & SVG download", "No sign-up needed", "100% in your browser"],         gradient: "from-fuchsia-500 to-pink-600", color: "text-fuchsia-600", href: "/qr-code",        badge: "New",       flip: "You scanned me! 🔍"          },
   ];
 
-  // Organize by category: General → AI Lab
-  const featureCategories = [
-    generalFeatures,
-    aiLabFeatures.map(f => ({ ...f, flip: "AI Power! 🤖" })),
+  // Category tabs, iLovePDF style. Every feature belongs to exactly one tab,
+  // except "All" which is the union — so no tool appears twice. Summarize
+  // Document lives only in AI Lab; it used to be duplicated in generalFeatures.
+  const aiLabTab = aiLabFeatures.map(f => ({ ...f, flip: "AI Power! 🤖" }));
+  const byTitle = (t: string) => generalFeatures.find(f => f.title === t)!;
+
+  const featureTabs = [
+    { key: "all",  label: "All",     blurb: "All your file tools in one place.",                                    items: [...generalFeatures, ...aiLabTab] },
+    { key: "pdf",  label: "PDF",     blurb: "Merge, split, compress and protect your PDFs.",                        items: [byTitle("PDF Merger & Splitter"), byTitle("Merge & Compress PDFs"), byTitle("Split & Compress PDFs"), byTitle("OCR Tool"), byTitle("PDF Password Protect")] },
+    { key: "files", label: "Files",  blurb: "Shrink, convert and generate files.",                                  items: [byTitle("Compress Files"), byTitle("Convert Formats"), byTitle("Convert & Compress"), byTitle("QR Code Generator")] },
+    { key: "ai",   label: "AI Lab",  blurb: "Translate, summarise, rewrite and analyse with AI.",                   items: aiLabTab },
+    { key: "team", label: "Team",   blurb: "Meet, sketch, write and collaborate together.",                       items: [byTitle("Video Meetings"), byTitle("Whiteboards"), byTitle("My Documents"), byTitle("Team Workspaces"), byTitle("Activity Feed")] },
   ];
 
-  const totalPages = featureCategories.length; // 2 pages: General, AI Lab
+  const [activeTab, setActiveTab] = useState(featureTabs[0].key);
+  const visibleFeatures = featureTabs.find(t => t.key === activeTab)!.items;
 
   // Right mascot — fun file compression tips
   const mascotTips = [
@@ -377,173 +363,67 @@ const Home: FC = () => {
         )}
 
         <div className="container mx-auto">
-          <div className="max-w-4xl mx-auto">
-            {/* Main Hero Content */}
-            <div className="text-center space-y-4 sm:space-y-6">
-              {/* Headline - Compress. Convert. Collaborate. */}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal leading-tight tracking-tight">
-                <span style={{ color: '#dc2626' }}>Compress</span>
-                <span style={{ color: '#dc2626' }}>. </span>
-                <span style={{ color: '#9333ea' }}>Convert</span>
-                <span style={{ color: '#9333ea' }}>. </span>
-                <span className="text-gray-900">Collaborate</span>
-                <span className="text-gray-900">.</span>
-              </h1>
-
-              {/* Subtitle */}
-              <p className="text-xl sm:text-2xl text-gray-600 max-w-2xl mx-auto font-normal">
-                Your complete workspace for files and teams
-              </p>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6">
-                <Link to="/get-started">
-                  <Button
-                    size="lg"
-                    className="px-8 py-3 rounded-full bg-primary text-white hover:bg-primary/90 transition-all duration-200 text-base font-medium"
-                  >
-                    Get Started
-                  </Button>
-                </Link>
-                <Link to="/ai-lab">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="px-8 py-3 rounded-full border-purple-200 text-purple-700 hover:border-purple-500 hover:text-purple-900 hover:bg-purple-50 transition-all duration-200 text-base font-medium"
-                  >
-                    AI Lab
-                  </Button>
-                </Link>
-                <a href="https://play.google.com/store/apps/details?id=com.slimfile.app" target="_blank" rel="noopener noreferrer">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="px-6 py-3 rounded-full border-gray-900 text-gray-900 hover:border-gray-700 hover:text-gray-700 hover:bg-gray-50 transition-all duration-200 text-base font-medium gap-2 bg-white"
-                    style={{ minHeight: '48px' }}
-                  >
-                    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
-                      <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
-                    </svg>
-                    Get it on Google Play
-                  </Button>
-                </a>
-              </div>
-
-
-            </div>
+          {/* Category tabs — narrow text tabs, iLovePDF style. The old hero
+              (headline, subtitle and three CTA buttons) was removed. */}
+          <div className="flex flex-wrap items-center justify-center gap-1 border-b border-gray-200">
+            {featureTabs.map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`relative px-3 py-2 text-[13px] font-medium transition-colors duration-200 ${
+                  activeTab === tab.key
+                    ? "text-red-600"
+                    : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                {tab.label}
+                {activeTab === tab.key && (
+                  <span className="absolute left-2 right-2 -bottom-px h-0.5 bg-red-600 rounded-full" />
+                )}
+              </button>
+            ))}
           </div>
+
+          <p className="text-center text-sm text-gray-500 mt-4">
+            {featureTabs.find(t => t.key === activeTab)!.blurb}
+          </p>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="pt-4 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="container mx-auto max-w-7xl">
-          {/* Navigation: Arrows + Dots */}
-          <div className="flex items-center justify-between mb-8 max-w-md mx-auto">
-            {/* Left Arrow */}
-            <button
-              onClick={() => setFeaturesPage((prev) => Math.max(0, prev - 1))}
-              disabled={featuresPage === 0}
-              className={`w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center transition-colors border-2 ${
-                featuresPage === 0
-                  ? 'border-gray-200 text-gray-300 cursor-not-allowed'
-                  : 'border-red-100 text-red-600 hover:bg-red-50'
-              }`}
-              aria-label="Previous"
-            >
-              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-            </button>
-
-            {/* Dots */}
-            <div className="flex justify-center gap-2">
-              {Array.from({ length: totalPages }).map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setFeaturesPage(idx)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    idx === featuresPage ? 'bg-red-600 w-8' : 'bg-gray-300 w-2'
-                  }`}
-                />
-              ))}
-            </div>
-
-            {/* Right Arrow */}
-            <button
-              onClick={() => setFeaturesPage((prev) => Math.min(totalPages - 1, prev + 1))}
-              disabled={featuresPage === totalPages - 1}
-              className={`w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center transition-colors border-2 ${
-                featuresPage === totalPages - 1
-                  ? 'border-gray-200 text-gray-300 cursor-not-allowed'
-                  : 'border-red-100 text-red-600 hover:bg-red-50'
-              }`}
-              aria-label="Next"
-            >
-              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-            </button>
-          </div>
-
+          {/* Arrows and dots removed — the category tabs above now drive this grid. */}
           <div className="relative">
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {featureCategories[featuresPage].map((feature) => (
-              <div key={feature.title} className="flip-card" style={{ minHeight: "300px" }}>
-                <div className="flip-card-inner">
-
-                  {/* FRONT */}
-                  <div className="flip-card-front">
-                    <Link to={feature.href} className="group block h-full">
-                      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 h-full flex flex-col">
-                        {/* Gradient header */}
-                        <div className={`relative bg-gradient-to-br ${feature.gradient} px-5 pt-5 pb-8 flex-shrink-0`}>
-                          <span className="absolute top-3 right-3 bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                            {feature.badge}
-                          </span>
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
-                              <feature.icon className="w-5 h-5 text-white" />
-                            </div>
-                            <p className="text-white font-bold text-base leading-tight">{feature.title}</p>
-                          </div>
-                        </div>
-                        {/* Floating white panel */}
-                        <div className="relative -mt-4 mx-4 mb-4 bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-4 flex flex-col flex-1">
-                          <p className="text-gray-500 text-xs leading-relaxed mb-4">{feature.description}</p>
-                          <ul className="space-y-1.5 mb-4 flex-1">
-                            {feature.features.map((item, idx) => (
-                              <li key={idx} className="flex items-center gap-1.5 text-xs text-gray-600">
-                                <CheckCircle2 className="w-3 h-3 text-emerald-500 flex-shrink-0" />
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-gray-900 group-hover:gap-2 transition-all duration-200">
-                            Try Now <ArrowRight className="w-3.5 h-3.5" />
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
+            {visibleFeatures.map((feature) => (
+              <Link key={feature.title} to={feature.href} className="block h-full">
+                {/* iLovePDF style: white card, coloured icon, plain-text badge. No motion. */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 h-full flex flex-col p-5">
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center flex-shrink-0`}>
+                      <feature.icon className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-gray-400 flex-shrink-0 pt-1">
+                      {feature.badge}
+                    </span>
                   </div>
-
-                  {/* BACK */}
-                  <div className="flip-card-back">
-                    <Link to={feature.href} className="block h-full">
-                      <div className={`bg-gradient-to-br ${feature.gradient} h-full flex flex-col items-center justify-center gap-4 p-6 text-center rounded-2xl`}>
-                        <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
-                          <feature.icon className="w-8 h-8 text-white" />
-                        </div>
-                        <p className="text-white text-2xl font-black tracking-tight">{feature.flip}</p>
-                        <p className="text-white/90 text-sm font-medium leading-snug max-w-[180px]">
-                          You found <span className="font-bold">{feature.title}</span>!
-                        </p>
-                        <span className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 transition-colors text-white font-bold text-sm px-5 py-2.5 rounded-full border border-white/30">
-                          Click to Open <ArrowRight className="w-4 h-4" />
-                        </span>
-                      </div>
-                    </Link>
-                  </div>
-
+                  <p className="text-gray-900 font-bold text-base leading-tight mb-2">{feature.title}</p>
+                  <p className="text-gray-500 text-xs leading-relaxed mb-4">{feature.description}</p>
+                  <ul className="space-y-1.5 mb-4 flex-1">
+                    {feature.features.map((item, idx) => (
+                      <li key={idx} className="flex items-center gap-1.5 text-xs text-gray-600">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-500 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-gray-900">
+                    Try Now <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
           </div>

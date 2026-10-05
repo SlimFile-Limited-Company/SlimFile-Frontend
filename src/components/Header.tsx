@@ -434,6 +434,18 @@ export const Header = () => {
 
           {/* Auth buttons - Desktop */}
           <div className="hidden md:flex items-center gap-3">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.slimfile.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Get it on Google Play"
+              className="flex items-center gap-1.5 h-9 px-3 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200 text-xs font-semibold"
+            >
+              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
+              </svg>
+              Play Store
+            </a>
             <Link to="/community-manager" title="SlimFile Assistant">
               <button className="w-9 h-9 rounded-full bg-purple-100 hover:bg-purple-200 flex items-center justify-center transition-colors">
                 <Bot className="w-5 h-5 text-purple-600" />
