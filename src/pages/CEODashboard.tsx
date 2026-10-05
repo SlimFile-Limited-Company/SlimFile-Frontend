@@ -390,9 +390,8 @@ export default function CEODashboard() {
                   OCR and QR run entirely in your browser, so the page reports its own visits and
                   completions rather than a server request.
                   <span className="block mt-1">
-                    Rows marked <span className="text-white/60">all-time</span> are lifetime figures read
-                    from the same CompressionHistory archive the Feed page uses, so they ignore the period
-                    filter. The rest respect it.
+                    <span className="text-white/60">Compression</span> is the same counter the Feed page
+                    shows, so it matches exactly and ignores the period filter. Everything else respects it.
                   </span>
                 </p>
 
@@ -440,7 +439,9 @@ export default function CEODashboard() {
                                   <span className="block text-white/30 text-xs">{op.completionRate}% done</span>
                                 )}
                               </td>
-                              <td className="py-3 pr-4 text-right text-white/60">{formatBytes(op.originalBytes / op.uses)}</td>
+                              <td className="py-3 pr-4 text-right text-white/60">
+                                {op.compressionAvgRatio ? `${op.compressionAvgRatio}% avg` : formatBytes(op.originalBytes / op.uses)}
+                              </td>
                               <td className="py-3 text-right text-white/40 text-xs whitespace-nowrap">
                                 {new Date(op.lastUsedAt).toLocaleDateString()}
                               </td>
@@ -716,9 +717,6 @@ function formatOperation(op: string) {
     ocr: 'OCR Tool',
     qr: 'QR Code Generator',
     compress: 'Compress Files',
-    convert: 'Convert Formats',
-    'convert-compress': 'Convert & Compress',
-    'merge-compress': 'Merge & Compress PDFs',
     'split-compress': 'Split & Compress PDFs'
   };
   return labels[op] || op;
