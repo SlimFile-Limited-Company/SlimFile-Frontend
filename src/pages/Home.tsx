@@ -164,20 +164,7 @@ const Home: FC = () => {
       {/* Hero Section */}
       {/* pt-20 clears the fixed 64px header now that the purple banner is gone.
           Kept tight on mobile so ~10 slim cards fit in one viewport. */}
-      {/* Wrapper so the background image runs behind both the tab strip and the
-          card grid as one band. Sections sit at z-10 above it and drop their
-          own bg-white, otherwise they would cover it. */}
-      <div className="relative bg-white">
-
-        <div aria-hidden className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <img
-            src="/bg-hero.png"
-            alt=""
-            className="hidden sm:block w-full h-full object-cover object-center opacity-30"
-          />
-        </div>
-
-      <section className="relative z-10 pt-20 sm:pt-28 md:pt-32 pb-6 sm:pb-14 md:pb-16 px-4 sm:px-6 lg:px-8">
+      <section className="pt-20 sm:pt-28 md:pt-32 pb-6 sm:pb-14 md:pb-16 px-4 sm:px-6 lg:px-8 bg-white">
 
         <div className="container mx-auto">
           {/* Category tabs — narrow text tabs, iLovePDF style. The old hero
@@ -208,7 +195,7 @@ const Home: FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="relative z-10 pt-4 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="pt-4 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="container mx-auto max-w-[1600px]">
           {/* Arrows and dots removed — the category tabs above now drive this grid. */}
           <div className="relative">
@@ -241,7 +228,6 @@ const Home: FC = () => {
           </div>
         </div>
       </section>
-      </div>
 
       {/* Office Documents Highlight Section */}
       <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white border-y border-gray-200">
