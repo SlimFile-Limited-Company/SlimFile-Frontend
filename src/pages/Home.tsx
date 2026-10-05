@@ -162,7 +162,9 @@ const Home: FC = () => {
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative pt-24 sm:pt-28 md:pt-32 pb-10 sm:pb-14 md:pb-16 px-4 sm:px-6 lg:px-8 bg-white">
+      {/* pt-20 clears the fixed 64px header now that the purple banner is gone.
+          Kept tight on mobile so ~10 slim cards fit in one viewport. */}
+      <section className="relative pt-20 sm:pt-28 md:pt-32 pb-6 sm:pb-14 md:pb-16 px-4 sm:px-6 lg:px-8 bg-white">
 
         <div className="container mx-auto">
           {/* Category tabs — narrow text tabs, iLovePDF style. The old hero
@@ -199,23 +201,31 @@ const Home: FC = () => {
           <div className="relative">
 
           {/* 5 columns on wide screens, not 4. At max-w-7xl with 4 columns the cards
-              were ~300px each and read as zoomed out next to iLovePDF. */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5">
+              were ~300px each and read as zoomed out next to iLovePDF.
+              Below sm each card collapses to a single slim row — icon, title,
+              badge — so roughly 10 fit on screen without scrolling. */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-5">
             {visibleFeatures.map((feature) => (
               <Link key={feature.title} to={feature.href} className="block h-full">
-                {/* iLovePDF style: white card, coloured icon, plain-text badge. No motion. */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 h-full flex flex-col p-5">
-                  <div className="flex items-start justify-between gap-2 mb-4">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center flex-shrink-0`}>
-                      <feature.icon className="w-6 h-6 text-white" />
+                {/* iLovePDF style: white card, coloured icon, plain-text badge. No motion.
+                    Mobile is a horizontal row; sm and up is the full card. */}
+                <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 h-full flex flex-row sm:flex-col items-center sm:items-stretch gap-3 p-3 sm:p-5">
+                  <div className="flex items-center gap-3 sm:contents">
+                    <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center flex-shrink-0`}>
+                      <feature.icon className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-wide text-gray-400 flex-shrink-0 pt-1.5">
+                    <p className="text-sm sm:text-lg font-bold text-gray-900 leading-tight sm:mb-2 flex-1 min-w-0 truncate">{feature.title}</p>
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-gray-400 flex-shrink-0 sm:hidden">
                       {feature.badge}
                     </span>
                   </div>
-                  <p className="text-gray-900 font-bold text-lg leading-tight mb-2">{feature.title}</p>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-4">{feature.description}</p>
-                  <ul className="space-y-1.5 mb-4 flex-1">
+                  <div className="hidden sm:block">
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-gray-400">
+                      {feature.badge}
+                    </span>
+                  </div>
+                  <p className="hidden sm:block text-gray-500 text-sm leading-relaxed mb-4">{feature.description}</p>
+                  <ul className="hidden sm:block space-y-1.5 mb-4 flex-1">
                     {feature.features.map((item, idx) => (
                       <li key={idx} className="flex items-center gap-1.5 text-xs text-gray-600">
                         <CheckCircle2 className="w-3 h-3 text-emerald-500 flex-shrink-0" />
@@ -223,9 +233,10 @@ const Home: FC = () => {
                       </li>
                     ))}
                   </ul>
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-gray-900">
+                  <span className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-gray-900">
                     Try Now <ArrowRight className="w-3.5 h-3.5" />
                   </span>
+                  <ArrowRight className="w-4 h-4 text-gray-300 flex-shrink-0 sm:hidden" />
                 </div>
               </Link>
             ))}
