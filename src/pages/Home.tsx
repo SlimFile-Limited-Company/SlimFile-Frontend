@@ -164,22 +164,7 @@ const Home: FC = () => {
       {/* Hero Section */}
       {/* pt-20 clears the fixed 64px header now that the purple banner is gone.
           Kept tight on mobile so ~10 slim cards fit in one viewport. */}
-      {/* One wrapper so the pattern runs continuously behind both the tab strip
-          and the card grid, instead of restarting inside each section. */}
-      <div className="relative bg-white">
-
-        {/* iLovePDF keeps a .pattern-bg behind everything: a fixed SVG of soft
-            blurred gradient blobs at 10% opacity with z-index -1. z-0 rather
-            than -z-10 here, because a relative parent with z-index auto does
-            not form a stacking context, so a negative child ends up painted
-            underneath this section's own background. */}
-        <div aria-hidden className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-48 -left-40 w-[560px] h-[560px] rounded-full bg-[radial-gradient(circle,rgba(229,50,45,0.20),transparent_70%)] blur-2xl" />
-          <div className="absolute top-1/4 -right-40 w-[460px] h-[460px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.16),transparent_70%)] blur-2xl" />
-          <div className="absolute -bottom-56 left-1/4 w-[620px] h-[620px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.14),transparent_70%)] blur-3xl" />
-        </div>
-
-      <section className="relative z-10 pt-20 sm:pt-28 md:pt-32 pb-6 sm:pb-14 md:pb-16 px-4 sm:px-6 lg:px-8">
+      <section className="pt-20 sm:pt-28 md:pt-32 pb-6 sm:pb-14 md:pb-16 px-4 sm:px-6 lg:px-8 bg-white">
 
         <div className="container mx-auto">
           {/* Category tabs — narrow text tabs, iLovePDF style. The old hero
@@ -210,7 +195,7 @@ const Home: FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="relative z-10 pt-4 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="pt-4 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="container mx-auto max-w-[1600px]">
           {/* Arrows and dots removed — the category tabs above now drive this grid. */}
           <div className="relative">
@@ -243,7 +228,6 @@ const Home: FC = () => {
           </div>
         </div>
       </section>
-      </div>
 
       {/* Office Documents Highlight Section */}
       <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white border-y border-gray-200">
