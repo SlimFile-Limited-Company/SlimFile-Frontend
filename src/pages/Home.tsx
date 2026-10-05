@@ -104,20 +104,20 @@ const Home: FC = () => {
 
   // General Features (no duplicates)
   const generalFeatures = [
-    { icon: FileImage,  title: "Compress Files",        description: "Shrink images, PDFs, DOCX & XLSX while keeping quality.",               features: ["JPEG, PNG, WebP, PDF", "DOCX & XLSX support", "Up to 95% reduction"],       gradient: "from-blue-500 to-blue-600", color: "text-blue-600",     href: "/compress",        badge: "Popular",   flip: "Sneaky peek! 👀"          },
-    { icon: FileText,  title: "Convert Formats",       description: "Transform files between formats — no quality loss.",                     features: ["Images, Office to PDF", "PDF to Images ZIP", "No quality loss"],              gradient: "from-purple-500 to-purple-600", color: "text-purple-600", href: "/convert-only",    badge: "New",       flip: "Oh you curious one! 🐱"   },
-    { icon: Zap,       title: "Convert & Compress",    description: "Convert format AND reduce size in one single step.",                     features: ["All conversion features", "Max size reduction", "One-step processing"],       gradient: "from-red-500 to-red-600", color: "text-red-600",       href: "/convert-compress", badge: "Best Value", flip: "You snooped! 🕵️"          },
-    { icon: FilePlus2, title: "PDF Merger & Splitter", description: "Combine multiple PDFs or split one into custom sections.",               features: ["Merge up to 20 PDFs", "Split by page ranges", "Drag to reorder"],           gradient: "from-amber-500 to-orange-500", color: "text-amber-600",  href: "/forge",           badge: "New",       flip: "Busted! 🫢"                },
-    { icon: Layers,    title: "Merge & Compress PDFs", description: "Combine PDFs into one and compress the result in a single step.",       features: ["Up to 20 PDFs", "Compressed after merging", "One file out"],          gradient: "from-teal-500 to-emerald-600", color: "text-teal-600",  href: "/merge-compress",  badge: "New",       flip: "Two birds, one stone! 🪶"    },
-    { icon: GitMerge,  title: "Split & Compress PDFs", description: "Split a PDF into pages and compress every piece at once.",            features: ["Split by page ranges", "Each piece compressed", "ZIP download"],      gradient: "from-cyan-600 to-blue-600", color: "text-cyan-700",    href: "/split-compress",  badge: "New",       flip: "Shrink that split! ✂️"         },
-    { icon: ScanText,  title: "OCR Tool",              description: "Extract editable text from images and scanned documents.",               features: ["Scan images & PDFs", "Multiple languages", "Export as text/PDF"],            gradient: "from-orange-500 to-orange-600", color: "text-orange-600", href: "/ocr-tool",        badge: "New",       flip: "Well well well... 😏"      },
-    { icon: Radio,     title: "Activity Feed",         description: "Stay updated with live activity across all your workspaces.",             features: ["Real-time updates", "Activity tracking", "Team notifications"],              gradient: "from-indigo-500 to-indigo-600", color: "text-indigo-600", href: "/feed",            badge: "Live",      flip: "Look who's here! 👋"       },
-    { icon: Video,     title: "Video Meetings",        description: "Host HD video calls and share your screen instantly.",                   features: ["HD video calls", "Screen sharing", "No downloads needed"],                   gradient: "from-cyan-500 to-cyan-600", color: "text-cyan-600",     href: "/meet",            badge: "New",       flip: "You found me! 🙈"          },
-    { icon: PenTool,   title: "Whiteboards",           description: "Brainstorm ideas and sketch concepts on visual boards.",                 features: ["Drawing tools", "Text & shapes", "Multiple boards"],                         gradient: "from-pink-500 to-pink-600", color: "text-pink-600",     href: "/my-whiteboards",  badge: "New",       flip: "Peek-a-boo! 🫣"            },
-    { icon: FileType,  title: "My Documents",          description: "Write and edit documents with a rich text editor.",                      features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600", color: "text-sky-600",       href: "/documents",       badge: "New",       flip: "Gotcha! 😏"                },
-    { icon: Users,     title: "Team Workspaces",       description: "Collaborate in real-time with your team in shared spaces.",               features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600", color: "text-green-600",   href: "/workspaces",      badge: "Team",      flip: "Caught ya! 😄"             },
-    { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", color: "text-violet-600", href: "/lock",            badge: "New",       flip: "Oh snap! 😮"               },
-    { icon: QrCode,    title: "QR Code Generator",     description: "Create QR codes for links, text, WhatsApp, WiFi & email — instantly.",   features: ["PNG & SVG download", "No sign-up needed", "100% in your browser"],         gradient: "from-fuchsia-500 to-pink-600", color: "text-fuchsia-600", href: "/qr-code",        badge: "New",       flip: "You scanned me! 🔍"          },
+    { icon: FileImage,  title: "Compress Files",        description: "Shrink images, PDFs, DOCX & XLSX while keeping quality.",               features: ["JPEG, PNG, WebP, PDF", "DOCX & XLSX support", "Up to 95% reduction"],       gradient: "from-blue-500 to-blue-600", color: "text-blue-600",     href: "/compress",   flip: "Sneaky peek! 👀"          },
+    { icon: FileText,  title: "Convert Formats",       description: "Transform files between formats — no quality loss.",                     features: ["Images, Office to PDF", "PDF to Images ZIP", "No quality loss"],              gradient: "from-purple-500 to-purple-600", color: "text-purple-600", href: "/convert-only",       flip: "Oh you curious one! 🐱"   },
+    { icon: Zap,       title: "Convert & Compress",    description: "Convert format AND reduce size in one single step.",                     features: ["All conversion features", "Max size reduction", "One-step processing"],       gradient: "from-red-500 to-red-600", color: "text-red-600",       href: "/convert-compress", flip: "You snooped! 🕵️"          },
+    { icon: FilePlus2, title: "PDF Merger & Splitter", description: "Combine multiple PDFs or split one into custom sections.",               features: ["Merge up to 20 PDFs", "Split by page ranges", "Drag to reorder"],           gradient: "from-amber-500 to-orange-500", color: "text-amber-600",  href: "/forge",       flip: "Busted! 🫢"                },
+    { icon: Layers,    title: "Merge & Compress PDFs", description: "Combine PDFs into one and compress the result in a single step.",       features: ["Up to 20 PDFs", "Compressed after merging", "One file out"],          gradient: "from-teal-500 to-emerald-600", color: "text-teal-600",  href: "/merge-compress",       flip: "Two birds, one stone! 🪶"    },
+    { icon: GitMerge,  title: "Split & Compress PDFs", description: "Split a PDF into pages and compress every piece at once.",            features: ["Split by page ranges", "Each piece compressed", "ZIP download"],      gradient: "from-cyan-600 to-blue-600", color: "text-cyan-700",    href: "/split-compress",       flip: "Shrink that split! ✂️"         },
+    { icon: ScanText,  title: "OCR Tool",              description: "Extract editable text from images and scanned documents.",               features: ["Scan images & PDFs", "Multiple languages", "Export as text/PDF"],            gradient: "from-orange-500 to-orange-600", color: "text-orange-600", href: "/ocr-tool",       flip: "Well well well... 😏"      },
+    { icon: Radio,     title: "Activity Feed",         description: "Stay updated with live activity across all your workspaces.",             features: ["Real-time updates", "Activity tracking", "Team notifications"],              gradient: "from-indigo-500 to-indigo-600", color: "text-indigo-600", href: "/feed",      flip: "Look who's here! 👋"       },
+    { icon: Video,     title: "Video Meetings",        description: "Host HD video calls and share your screen instantly.",                   features: ["HD video calls", "Screen sharing", "No downloads needed"],                   gradient: "from-cyan-500 to-cyan-600", color: "text-cyan-600",     href: "/meet",       flip: "You found me! 🙈"          },
+    { icon: PenTool,   title: "Whiteboards",           description: "Brainstorm ideas and sketch concepts on visual boards.",                 features: ["Drawing tools", "Text & shapes", "Multiple boards"],                         gradient: "from-pink-500 to-pink-600", color: "text-pink-600",     href: "/my-whiteboards",       flip: "Peek-a-boo! 🫣"            },
+    { icon: FileType,  title: "My Documents",          description: "Write and edit documents with a rich text editor.",                      features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600", color: "text-sky-600",       href: "/documents",       flip: "Gotcha! 😏"                },
+    { icon: Users,     title: "Team Workspaces",       description: "Collaborate in real-time with your team in shared spaces.",               features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600", color: "text-green-600",   href: "/workspaces",      flip: "Caught ya! 😄"             },
+    { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", color: "text-violet-600", href: "/lock",       flip: "Oh snap! 😮"               },
+    { icon: QrCode,    title: "QR Code Generator",     description: "Create QR codes for links, text, WhatsApp, WiFi & email — instantly.",   features: ["PNG & SVG download", "No sign-up needed", "100% in your browser"],         gradient: "from-fuchsia-500 to-pink-600", color: "text-fuchsia-600", href: "/qr-code",       flip: "You scanned me! 🔍"          },
   ];
 
   // Category tabs, iLovePDF style. Every feature belongs to exactly one tab,
@@ -202,27 +202,19 @@ const Home: FC = () => {
 
           {/* 5 columns on wide screens, not 4. At max-w-7xl with 4 columns the cards
               were ~300px each and read as zoomed out next to iLovePDF.
-              Below sm each card collapses to a single slim row — icon, title,
-              badge — so roughly 10 fit on screen without scrolling. */}
+              Below sm each card collapses to a single slim row — icon and title
+              — so roughly 10 fit on screen without scrolling. */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-5">
             {visibleFeatures.map((feature) => (
               <Link key={feature.title} to={feature.href} className="block h-full">
-                {/* iLovePDF style: white card, coloured icon, plain-text badge. No motion.
+                {/* iLovePDF style: white card, coloured icon. No motion, no badge.
                     Mobile is a horizontal row; sm and up is the full card. */}
                 <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 h-full flex flex-row sm:flex-col items-center sm:items-stretch gap-3 p-3 sm:p-5">
                   <div className="flex items-center gap-3 sm:contents">
                     <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center flex-shrink-0`}>
                       <feature.icon className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <p className="text-sm sm:text-lg font-bold text-gray-900 leading-tight sm:mb-2 flex-1 min-w-0 truncate">{feature.title}</p>
-                    <span className="text-[10px] font-bold uppercase tracking-wide text-gray-400 flex-shrink-0 sm:hidden">
-                      {feature.badge}
-                    </span>
-                  </div>
-                  <div className="hidden sm:block">
-                    <span className="text-[10px] font-bold uppercase tracking-wide text-gray-400">
-                      {feature.badge}
-                    </span>
+                    <p className="text-sm sm:text-lg font-bold text-gray-900 leading-tight sm:mb-2 truncate">{feature.title}</p>
                   </div>
                   <p className="hidden sm:block text-gray-500 text-sm leading-relaxed mb-4">{feature.description}</p>
                   <ul className="hidden sm:block space-y-1.5 mb-4 flex-1">
