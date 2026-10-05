@@ -21,6 +21,7 @@ export default function CEODashboard() {
   const [engagement, setEngagement] = useState<any>(null);
   const [security, setSecurity] = useState<any>(null);
   const [mobileStats, setMobileStats] = useState<any>(null);
+  const [operations, setOperations] = useState<any>(null);
   const [searchConsoleData, setSearchConsoleData] = useState<any>(null);
 
   useEffect(() => {
@@ -87,6 +88,7 @@ export default function CEODashboard() {
         globalStatsRes,
         usersRes,
         compressionRes,
+        operationsRes,
         revenueRes,
         engagementRes,
         securityRes,
@@ -96,6 +98,7 @@ export default function CEODashboard() {
         fetch(`${API_BASE_URL}/feed/stats`),
         fetch(`${API_BASE_URL}/ceo-dashboard/users-analytics?period=${period}`, { headers }),
         fetch(`${API_BASE_URL}/ceo-dashboard/compression-analytics?period=${period}`, { headers }),
+        fetch(`${API_BASE_URL}/ceo-dashboard/operations?period=${period}&days=30`, { headers }),
         fetch(`${API_BASE_URL}/ceo-dashboard/revenue?period=${period}`, { headers }),
         fetch(`${API_BASE_URL}/ceo-dashboard/engagement?period=${period}`, { headers }),
         fetch(`${API_BASE_URL}/ceo-dashboard/security?period=${period}`, { headers }),
@@ -112,6 +115,7 @@ export default function CEODashboard() {
       setGlobalStats(await globalStatsRes.json());
       setUsersAnalytics(await usersRes.json());
       setCompressionAnalytics(await compressionRes.json());
+      setOperations(operationsRes.ok ? await operationsRes.json() : null);
       setRevenue(await revenueRes.json());
       setEngagement(await engagementRes.json());
       setSecurity(await securityRes.json());
@@ -151,6 +155,7 @@ export default function CEODashboard() {
             { id: 'overview', label: 'Overview' },
             { id: 'users', label: 'Users' },
             { id: 'compressions', label: 'Compressions' },
+            { id: 'operations', label: 'Operations' },
             { id: 'revenue', label: 'Revenue' },
             { id: 'engagement', label: 'Engagement' },
             { id: 'mobile', label: 'Mobile' },
@@ -369,6 +374,96 @@ export default function CEODashboard() {
             </div>
           )}
 
+          {activeSection === 'operations' && operations && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+                <StatCard label="Total Feature Uses" value={operations.totalUses.toLocaleString()} />
+                <StatCard label="Operations Tracked" value={operations.totalOperations} />
+                <StatCard label="Unique Visitors" value={operations.uniqueVisitors.toLocaleString()} />
+              </div>
+
+              <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+                <h3 className="text-base lg:text-lg font-semibold mb-1">All Operations</h3>
+                <p className="text-white/40 text-xs lg:text-sm mb-4">
+                  Counted from the dedicated usage collections on every successful call, so signed-out
+                  visitors are included and nothing here depends on a compression ratio.
+                </p>
+
+                {operations.operations.length === 0 ? (
+                  <p className="text-white/40 text-sm py-6 text-center">No usage recorded for this period.</p>
+                ) : (
+                  <>
+                    {/* Desktop table */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-white/40 text-left border-b border-white/10">
+                            <th className="pb-3 pr-4 font-medium">Operation</th>
+                            <th className="pb-3 pr-4 font-medium text-right">Uses</th>
+                            <th className="pb-3 pr-4 font-medium text-right">Signed in</th>
+                            <th className="pb-3 pr-4 font-medium text-right">Anonymous</th>
+                            <th className="pb-3 pr-4 font-medium text-right">Visitors</th>
+                            <th className="pb-3 pr-4 font-medium text-right">Pages</th>
+                            <th className="pb-3 pr-4 font-medium text-right">Avg in</th>
+                            <th className="pb-3 font-medium text-right">Last used</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {operations.operations.map((op: any) => (
+                            <tr key={op.collection + op.operation} className="border-b border-white/5">
+                              <td className="py-3 pr-4">
+                                <span className="font-semibold">{formatOperation(op.operation)}</span>
+                                <span className="block text-white/30 text-xs">{op.collection}</span>
+                              </td>
+                              <td className="py-3 pr-4 text-right font-semibold">{op.uses.toLocaleString()}</td>
+                              <td className="py-3 pr-4 text-right text-white/60">{op.signedIn.toLocaleString()}</td>
+                              <td className="py-3 pr-4 text-right text-white/60">{op.anonymous.toLocaleString()}</td>
+                              <td className="py-3 pr-4 text-right text-white/60">{op.uniqueVisitors.toLocaleString()}</td>
+                              <td className="py-3 pr-4 text-right text-white/60">{op.pages ?? '-'}</td>
+                              <td className="py-3 pr-4 text-right text-white/60">{formatBytes(op.originalBytes / op.uses)}</td>
+                              <td className="py-3 text-right text-white/40 text-xs whitespace-nowrap">
+                                {new Date(op.lastUsedAt).toLocaleDateString()}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile cards */}
+                    <div className="md:hidden space-y-3">
+                      {operations.operations.map((op: any) => (
+                        <div key={op.collection + op.operation} className="p-3 bg-white/5 rounded-lg">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="font-semibold text-sm">{formatOperation(op.operation)}</p>
+                              <p className="text-white/30 text-xs">{op.collection}</p>
+                            </div>
+                            <p className="text-lg font-semibold shrink-0">{op.uses.toLocaleString()}</p>
+                          </div>
+                          <div className="grid grid-cols-3 gap-2 mt-3 text-xs">
+                            <div>
+                              <p className="text-white/40">Signed in</p>
+                              <p className="font-semibold">{op.signedIn.toLocaleString()}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/40">Anonymous</p>
+                              <p className="font-semibold">{op.anonymous.toLocaleString()}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/40">Visitors</p>
+                              <p className="font-semibold">{op.uniqueVisitors.toLocaleString()}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
           {activeSection === 'revenue' && revenue && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
@@ -565,6 +660,29 @@ export default function CEODashboard() {
       </main>
     </div>
   );
+}
+
+function formatBytes(bytes: number) {
+  if (!bytes || !isFinite(bytes)) return '-';
+  if (bytes < 1024) return `${Math.round(bytes)} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function formatOperation(op: string) {
+  const labels: Record<string, string> = {
+    'scan-compress': 'Scan & Compress',
+    'scan-merge': 'Batch Scan & Merge',
+    'scan-split': 'Batch Scan & Split',
+    'scan-convert': 'Scan & Convert',
+    'forge-merge': 'PDF Merge',
+    'forge-split': 'PDF Split',
+    'pdf-protect': 'Password Protect',
+    'pdf-unlock': 'Remove Password',
+    'b2b-compress': 'B2B API Compress',
+    'ai-grok': 'AI Lab'
+  };
+  return labels[op] || op;
 }
 
 function StatCard({ label, value, subtitle }: { label: string; value: string | number; subtitle?: string }) {
