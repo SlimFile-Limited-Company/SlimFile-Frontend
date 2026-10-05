@@ -12,7 +12,7 @@ interface FeedActivity {
   spaceSaved: number;
   compressionRatio: number;
   fileType: string;
-  operation: 'compress' | 'convert' | 'convert-compress';
+  operation: 'compress' | 'convert' | 'convert-compress' | 'merge-compress' | 'split-compress';
   targetFormat?: string;
   createdAt: string;
   isNew?: boolean;
@@ -108,6 +108,18 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
   const Icon = cfg.icon;
   const ext = getFileExt(activity.filename);
   const isConvert = activity.operation === 'convert';
+  const isMergeCompress = activity.operation === 'merge-compress';
+  const isSplitCompress = activity.operation === 'split-compress';
+
+  // Merge and split are compression operations too, so they were falling
+  // through to the plain "Compressed" label and read as a single-file squeeze.
+  const actionLabel = isConvert
+    ? `Convert → ${activity.targetFormat?.toUpperCase()}`
+    : isMergeCompress
+      ? 'Merged & Compressed'
+      : isSplitCompress
+        ? 'Split & Compressed'
+        : 'Compressed';
 
   return (
     <motion.div
@@ -134,7 +146,7 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0 pr-3">
             <p className="text-white/60 text-[11px] font-medium uppercase tracking-wider mb-1">
-              {isConvert ? `Convert → ${activity.targetFormat?.toUpperCase()}` : 'Compressed'}
+              {actionLabel}
             </p>
             <p className="text-white font-semibold text-sm leading-snug">
               {cfg.label} File
@@ -267,7 +279,7 @@ export const Feed = () => {
 
   const filtered = activities.filter(a => {
     if (!clean(a)) return false;
-    if (filter === 'compress') return a.operation === 'compress';
+    if (filter === 'compress') return a.operation !== 'convert';
     if (filter === 'convert') return a.operation.includes('convert');
     return true;
   }).slice(0, 100);

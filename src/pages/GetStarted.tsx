@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit, Sparkles, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, Shield, QrCode } from 'lucide-react';
+import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit, Sparkles, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, Shield, QrCode, Layers, GitMerge } from 'lucide-react';
 
 const FEATURES = [
   {
@@ -23,6 +23,16 @@ const FEATURES = [
     icon: FilePlus2, title: 'PDF Merger & Splitter', badge: 'New',        gradient: 'from-amber-500 to-orange-500',
     href: '/forge',             description: 'Combine multiple PDFs or split one into custom sections.',
     features: ['Merge up to 20 PDFs', 'Split by page ranges', 'Drag to reorder'],
+  },
+  {
+    icon: Layers,    title: 'Merge & Compress PDFs', badge: 'New',        gradient: 'from-teal-500 to-emerald-600',
+    href: '/merge-compress', description: 'Combine PDFs into one and compress the result in a single step.',
+    features: ['Up to 20 PDFs', 'Compressed after merging', 'One file out'],
+  },
+  {
+    icon: GitMerge,  title: 'Split & Compress PDFs', badge: 'New',        gradient: 'from-cyan-600 to-blue-600',
+    href: '/split-compress', description: 'Split a PDF into pages and compress every piece at once.',
+    features: ['Split by page ranges', 'Each piece compressed', 'ZIP download'],
   },
   {
     icon: ScanText,  title: 'OCR Tool',              badge: 'New',        gradient: 'from-orange-500 to-orange-600',
