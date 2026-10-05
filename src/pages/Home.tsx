@@ -173,7 +173,7 @@ const Home: FC = () => {
           <img
             src="/bg-hero.png"
             alt=""
-            className="w-full h-full object-cover object-center opacity-30"
+            className="w-full h-full object-cover object-center"
           />
         </div>
 
