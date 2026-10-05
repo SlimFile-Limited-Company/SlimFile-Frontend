@@ -165,6 +165,10 @@ import PushListener from './components/PushListener';
 import SlimFileForge from './pages/SlimFileForge';
 import SlimFileMergeCompress from './pages/SlimFileMergeCompress';
 import SlimFileSplitCompress from './pages/SlimFileSplitCompress';
+import SlimFileScanCompress from './pages/SlimFileScanCompress';
+import SlimFileScanMerge from './pages/SlimFileScanMerge';
+import SlimFileScanSplit from './pages/SlimFileScanSplit';
+import SlimFileScanConvert from './pages/SlimFileScanConvert';
 import SlimFileLock from './pages/SlimFileLock';
 import SlimFileQR from './pages/SlimFileQR';
 import AILab from './pages/AILab';
@@ -376,6 +380,10 @@ ReactDOM.createRoot(root).render(
           <Route path="forge" element={<SlimFileForge />} />
           <Route path="merge-compress" element={<SlimFileMergeCompress />} />
           <Route path="split-compress" element={<SlimFileSplitCompress />} />
+          <Route path="scan-compress" element={<SlimFileScanCompress />} />
+          <Route path="scan-merge" element={<SlimFileScanMerge />} />
+          <Route path="scan-split" element={<SlimFileScanSplit />} />
+          <Route path="scan-convert" element={<SlimFileScanConvert />} />
           <Route path="lock" element={<SlimFileLock />} />
           <Route path="qr-code" element={<SlimFileQR />} />
           <Route path="ai-lab" element={<AILab />} />

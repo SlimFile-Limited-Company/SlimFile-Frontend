@@ -12,7 +12,8 @@ interface FeedActivity {
   spaceSaved: number;
   compressionRatio: number;
   fileType: string;
-  operation: 'compress' | 'convert' | 'convert-compress' | 'merge-compress' | 'split-compress';
+  operation: 'compress' | 'convert' | 'convert-compress' | 'merge-compress' | 'split-compress'
+    | 'scan-compress' | 'scan-merge' | 'scan-split' | 'scan-convert';
   targetFormat?: string;
   createdAt: string;
   isNew?: boolean;
@@ -113,13 +114,23 @@ const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }
 
   // Merge and split are compression operations too, so they were falling
   // through to the plain "Compressed" label and read as a single-file squeeze.
+  // The scan tools need their own labels for the same reason: each one is a
+  // different job, not a squeeze on a file the user already had.
+  const SCAN_LABELS: Partial<Record<FeedActivity['operation'], string>> = {
+    'scan-compress': 'Scanned & Compressed',
+    'scan-merge': 'Batch Scan Merged',
+    'scan-split': 'Batch Scan Split',
+    'scan-convert': 'Scanned & Converted',
+  };
+  const scanLabel = SCAN_LABELS[activity.operation];
+
   const actionLabel = isConvert
     ? `Convert → ${activity.targetFormat?.toUpperCase()}`
     : isMergeCompress
       ? 'Merged & Compressed'
       : isSplitCompress
         ? 'Split & Compressed'
-        : 'Compressed';
+        : scanLabel ?? 'Compressed';
 
   return (
     <motion.div

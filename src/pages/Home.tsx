@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, QrCode } from "lucide-react";
+import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, QrCode, Smartphone, Scissors } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useSEO } from "@/hooks/useSEO";
 
@@ -120,6 +120,16 @@ const Home: FC = () => {
     { icon: QrCode,    title: "QR Code Generator",     description: "Create QR codes for links, text, WhatsApp, WiFi & email — instantly.",   features: ["PNG & SVG download", "No sign-up needed", "100% in your browser"],         gradient: "from-fuchsia-500 to-pink-600", color: "text-fuchsia-600", href: "/qr-code",       flip: "You scanned me! 🔍"          },
   ];
 
+  // Scanner tools. Kept out of generalFeatures so they appear only under the
+  // Scan tab — they run off the phone camera and have nothing to do with
+  // desktop uploads, so burying them in All would just be noise there.
+  const scanFeatures = [
+    { icon: Smartphone,  title: "Scan & Compress",   description: "Photograph pages and get one small, shareable PDF.",              gradient: "from-orange-400 to-orange-500", href: "/scan-compress" },
+    { icon: Layers,      title: "Batch Scan & Merge", description: "Scan several documents and combine every page into one PDF.",       gradient: "from-blue-400 to-blue-500",     href: "/scan-merge" },
+    { icon: Scissors,    title: "Batch Scan & Split", description: "Scan a document and split it into separate small PDFs.",            gradient: "from-green-400 to-green-500",   href: "/scan-split" },
+    { icon: RefreshCw,   title: "Scan & Convert",     description: "Turn a photo into Word, Excel, PowerPoint or images.",             gradient: "from-purple-400 to-purple-500", href: "/scan-convert" },
+  ];
+
   // Category tabs, iLovePDF style. Every feature belongs to exactly one tab,
   // except "All" which is the union — so no tool appears twice. Summarize
   // Document lives only in AI Lab; it used to be duplicated in generalFeatures.
@@ -130,6 +140,7 @@ const Home: FC = () => {
     { key: "all",  label: "All",     blurb: "All your file tools in one place.",                                    items: [...generalFeatures, ...aiLabTab] },
     { key: "pdf",  label: "PDF",     blurb: "Merge, split, compress and protect your PDFs.",                        items: [byTitle("PDF Merger & Splitter"), byTitle("Merge & Compress PDFs"), byTitle("Split & Compress PDFs"), byTitle("OCR Tool"), byTitle("PDF Password Protect")] },
     { key: "files", label: "Files",  blurb: "Shrink, convert and generate files.",                                  items: [byTitle("Compress Files"), byTitle("Convert Formats"), byTitle("Convert & Compress"), byTitle("QR Code Generator")] },
+    { key: "scan",  label: "Scan",   blurb: "Photograph paper with your phone and turn it into a PDF.",             items: scanFeatures },
     { key: "ai",   label: "AI Lab",  blurb: "Translate, summarise, rewrite and analyse with AI.",                   items: aiLabTab },
     { key: "team", label: "Team",   blurb: "Meet, sketch, write and collaborate together.",                       items: [byTitle("Video Meetings"), byTitle("Whiteboards"), byTitle("My Documents"), byTitle("Team Workspaces"), byTitle("Activity Feed")] },
   ];
@@ -168,24 +179,28 @@ const Home: FC = () => {
 
         <div className="container mx-auto">
           {/* Category tabs — narrow text tabs, iLovePDF style. The old hero
-              (headline, subtitle and three CTA buttons) was removed. */}
-          <div className="flex flex-wrap items-center justify-center gap-1 border-b border-gray-200">
-            {featureTabs.map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`relative px-3 py-2 text-[13px] font-medium transition-colors duration-200 ${
-                  activeTab === tab.key
-                    ? "text-red-600"
-                    : "text-gray-500 hover:text-gray-800"
-                }`}
-              >
-                {tab.label}
-                {activeTab === tab.key && (
-                  <span className="absolute left-2 right-2 -bottom-px h-0.5 bg-red-600 rounded-full" />
-                )}
-              </button>
-            ))}
+              (headline, subtitle and three CTA buttons) was removed.
+              Six tabs now overflow a narrow phone, so this scrolls sideways
+              instead of wrapping and pushing the grid off screen. */}
+          <div className="-mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto">
+            <div className="flex items-center justify-start sm:justify-center gap-1 border-b border-gray-200 w-max sm:w-full min-w-full">
+              {featureTabs.map(tab => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`relative px-3 py-2 text-[13px] font-medium whitespace-nowrap transition-colors duration-200 ${
+                    activeTab === tab.key
+                      ? "text-red-600"
+                      : "text-gray-500 hover:text-gray-800"
+                  }`}
+                >
+                  {tab.label}
+                  {activeTab === tab.key && (
+                    <span className="absolute left-2 right-2 -bottom-px h-0.5 bg-red-600 rounded-full" />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
 
           <p className="text-center text-sm text-gray-500 mt-3">
