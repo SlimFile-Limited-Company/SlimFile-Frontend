@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown, Star, Bot } from "lucide-react";
+import { Menu, X, ChevronDown, Bot } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isAuthenticated, logout } from "@/lib/auth";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -337,7 +337,6 @@ export const Header = () => {
               </button>
             </Link>
             <Link to="/reviews" className={pillBtn}>
-              <Star className="w-4 h-4 fill-gray-400" />
               Reviews
             </Link>
             {isAuthenticated() ? (
@@ -513,8 +512,7 @@ export const Header = () => {
               {/* Mobile Reviews Button */}
               <div className="px-4 pt-2">
                 <Link to="/reviews" onClick={() => setMobileMenuOpen(false)} className={`${pillBtn} w-full justify-center`}>
-                  <Star className="w-4 h-4 fill-gray-400" />
-                  Reviews
+                      Reviews
                 </Link>
               </div>
 
