@@ -111,14 +111,14 @@ const Home: FC = () => {
     { icon: Layers,    title: "Merge & Compress PDFs", description: "Combine PDFs into one and compress the result in a single step.",       features: ["Up to 20 PDFs", "Compressed after merging", "One file out"],          gradient: "from-teal-500 to-emerald-600", color: "text-teal-600",  href: "/merge-compress",       flip: "Two birds, one stone! 🪶"    },
     { icon: GitMerge,  title: "Split & Compress PDFs", description: "Split a PDF into pages and compress every piece at once.",            features: ["Split by page ranges", "Each piece compressed", "ZIP download"],      gradient: "from-cyan-600 to-blue-600", color: "text-cyan-700",    href: "/split-compress",       flip: "Shrink that split! ✂️"         },
     { icon: ScanText,  title: "OCR Tool",              description: "Extract editable text from images and scanned documents.",               features: ["Scan images & PDFs", "Multiple languages", "Export as text/PDF"],            gradient: "from-orange-500 to-orange-600", color: "text-orange-600", href: "/ocr-tool",       flip: "Well well well... 😏"      },
+    { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", color: "text-violet-600", href: "/lock",       flip: "Oh snap! 😮"               },
+    { icon: FileArchive,title: "Zip Files & Folders",    description: "Bundle files or a whole folder into one ZIP, folders kept. Unzip too.",    features: ["Keeps folder paths", "Up to 5 GB", "Nothing stored"],               gradient: "from-slate-500 to-gray-600", color: "text-gray-700",    href: "/zip",         flip: "Pack it up! 🗜️"          },
+    { icon: QrCode,    title: "QR Code Generator",     description: "Create QR codes for links, text, WhatsApp, WiFi & email — instantly.",   features: ["PNG & SVG download", "No sign-up needed", "100% in your browser"],         gradient: "from-fuchsia-500 to-pink-600", color: "text-fuchsia-600", href: "/qr-code",       flip: "You scanned me! 🔍"          },
     { icon: Radio,     title: "Activity Feed",         description: "Stay updated with live activity across all your workspaces.",             features: ["Real-time updates", "Activity tracking", "Team notifications"],              gradient: "from-indigo-500 to-indigo-600", color: "text-indigo-600", href: "/feed",      flip: "Look who's here! 👋"       },
     { icon: Video,     title: "Video Meetings",        description: "Host HD video calls and share your screen instantly.",                   features: ["HD video calls", "Screen sharing", "No downloads needed"],                   gradient: "from-cyan-500 to-cyan-600", color: "text-cyan-600",     href: "/meet",       flip: "You found me! 🙈"          },
     { icon: PenTool,   title: "Whiteboards",           description: "Brainstorm ideas and sketch concepts on visual boards.",                 features: ["Drawing tools", "Text & shapes", "Multiple boards"],                         gradient: "from-pink-500 to-pink-600", color: "text-pink-600",     href: "/my-whiteboards",       flip: "Peek-a-boo! 🫣"            },
     { icon: FileType,  title: "My Documents",          description: "Write and edit documents with a rich text editor.",                      features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600", color: "text-sky-600",       href: "/documents",       flip: "Gotcha! 😏"                },
     { icon: Users,     title: "Team Workspaces",       description: "Collaborate in real-time with your team in shared spaces.",               features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600", color: "text-green-600",   href: "/workspaces",      flip: "Caught ya! 😄"             },
-    { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", color: "text-violet-600", href: "/lock",       flip: "Oh snap! 😮"               },
-    { icon: FileArchive,title: "Zip Files & Folders",    description: "Bundle files or a whole folder into one ZIP, folders kept. Unzip too.",    features: ["Keeps folder paths", "Up to 5 GB", "Nothing stored"],               gradient: "from-slate-500 to-gray-600", color: "text-gray-700",    href: "/zip",         flip: "Pack it up! 🗜️"          },
-    { icon: QrCode,    title: "QR Code Generator",     description: "Create QR codes for links, text, WhatsApp, WiFi & email — instantly.",   features: ["PNG & SVG download", "No sign-up needed", "100% in your browser"],         gradient: "from-fuchsia-500 to-pink-600", color: "text-fuchsia-600", href: "/qr-code",       flip: "You scanned me! 🔍"          },
   ];
 
   // Scanner tools. Kept out of generalFeatures so they appear only under the
@@ -136,9 +136,18 @@ const Home: FC = () => {
   // Document lives only in AI Lab; it used to be duplicated in generalFeatures.
   const aiLabTab = aiLabFeatures.map(f => ({ ...f, flip: "AI Power! 🤖" }));
   const byTitle = (t: string) => generalFeatures.find(f => f.title === t)!;
+  const TEAM_TITLES = new Set(["Activity Feed", "Video Meetings", "Whiteboards", "My Documents", "Team Workspaces"]);
 
   const featureTabs = [
-    { key: "all",  label: "All",     blurb: "All your file tools in one place.",                                    items: [...generalFeatures, ...aiLabTab] },
+    // Grouped deliberately: file tools, then AI Lab, then Team. Slicing off
+    // the Team cards by title keeps byTitle() working off one flat array while
+    // stopping collaboration tools from landing in the middle of file tools.
+    { key: "all",  label: "All",     blurb: "All your file tools in one place.",
+      items: [
+        ...generalFeatures.filter(f => !TEAM_TITLES.has(f.title)),
+        ...aiLabTab,
+        ...generalFeatures.filter(f => TEAM_TITLES.has(f.title))
+      ] },
     { key: "pdf",  label: "PDF",     blurb: "Merge, split, compress and protect your PDFs.",                        items: [byTitle("PDF Merger & Splitter"), byTitle("Merge & Compress PDFs"), byTitle("Split & Compress PDFs"), byTitle("OCR Tool"), byTitle("PDF Password Protect")] },
     { key: "files", label: "Files",  blurb: "Shrink, convert and generate files.",                                  items: [byTitle("Compress Files"), byTitle("Convert Formats"), byTitle("Convert & Compress"), byTitle("Zip Files & Folders"), byTitle("QR Code Generator")] },
     { key: "scan",  label: "Scan",   blurb: "Photograph paper with your phone and turn it into a PDF.",             items: scanFeatures },
