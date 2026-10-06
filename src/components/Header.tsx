@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown, Bot } from "lucide-react";
+import { Menu, X, ChevronDown, Bot, Grid3x3, Star, Mail } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isAuthenticated, logout } from "@/lib/auth";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -24,10 +24,12 @@ export const Header = () => {
     tools: boolean;
     devtools: boolean;
     internal: boolean;
+    more: boolean;
   }>({
     tools: false,
     devtools: false,
     internal: false,
+    more: false,
   });
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -132,6 +134,18 @@ export const Header = () => {
     { name: "Security Terminal", href: "/security-terminal" },
   ];
 
+  /* The 9-dot "apps" menu in the header. Everything that used to sit as loose
+     buttons on the right — Play Store, the Assistant bot, Reviews — is folded
+     in here, plus SlimFile Business which opens a mail to administration. */
+  const moreNavigation = [
+    { name: "Play Store", href: "https://play.google.com/store/apps/details?id=com.slimfile.app", external: true },
+    { name: "SlimFile Assistant", href: "/community-manager" },
+    { name: "Reviews", href: "/reviews" },
+    { name: "SlimFile Business", href: "mailto:administration@gmail.com" },
+  ];
+
+  const isMail = (href: string) => href.startsWith("mailto:");
+
 
   const isActiveRoute = (href: string) => {
     return location.pathname === href;
@@ -154,7 +168,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'tools' | 'devtools' | 'internal') => {
+  const toggleMobileDropdown = (dropdown: 'tools' | 'devtools' | 'internal' | 'more') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -317,28 +331,66 @@ export const Header = () => {
           </nav>
           </div>
 
-          {/* Auth buttons - Desktop */}
+          {/* Apps / 9-dot menu - Desktop */}
           <div className="hidden md:flex items-center gap-3">
-            <a
-              href="https://play.google.com/store/apps/details?id=com.slimfile.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Get it on Google Play"
-              className="flex items-center gap-1.5 h-9 px-3 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200 text-xs font-semibold"
+            <div
+              className="relative"
+              onMouseEnter={() => handleDropdownHover('more')}
+              onMouseLeave={() => handleDropdownHover(null)}
             >
-              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
-                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
-              </svg>
-              Play Store
-            </a>
-            <Link to="/community-manager" title="SlimFile Assistant">
-              <button className="w-9 h-9 rounded-full bg-purple-100 hover:bg-purple-200 flex items-center justify-center transition-colors">
-                <Bot className="w-5 h-5 text-purple-600" />
+              <button
+                title="More"
+                aria-label="More"
+                aria-expanded={hoveredDropdown === 'more'}
+                className="w-9 h-9 rounded-full border border-gray-300 bg-white hover:bg-gray-50 hover:border-gray-400 flex items-center justify-center transition-colors duration-200"
+              >
+                <Grid3x3 className="w-5 h-5 text-gray-700" />
               </button>
-            </Link>
-            <Link to="/reviews" className={pillBtn}>
-              Reviews
-            </Link>
+              {hoveredDropdown === 'more' && (
+                <div className="absolute top-full right-0 mt-2 w-60 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
+                  {moreNavigation.map((item) => {
+                    const inner = (
+                      <>
+                        {item.name === "Play Store" ? (
+                          <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="currentColor">
+                            <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
+                          </svg>
+                        ) : item.name === "SlimFile Assistant" ? (
+                          <Bot className="w-4 h-4 shrink-0" />
+                        ) : item.name === "Reviews" ? (
+                          <Star className="w-4 h-4 shrink-0" />
+                        ) : (
+                          <Mail className="w-4 h-4 shrink-0" />
+                        )}
+                        <span>{item.name}</span>
+                      </>
+                    );
+                    const cls =
+                      "flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200";
+
+                    return item.external ? (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cls}
+                      >
+                        {inner}
+                      </a>
+                    ) : isMail(item.href) ? (
+                      <a key={item.name} href={item.href} className={cls}>
+                        {inner}
+                      </a>
+                    ) : (
+                      <Link key={item.name} to={item.href} className={cls}>
+                        {inner}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
             {isAuthenticated() ? (
               <button onClick={() => logout()} className={pillBtn}>
                 {t('header.logout')}
@@ -509,25 +561,59 @@ export const Header = () => {
                 </div>
               )}
 
-              {/* Mobile Reviews Button */}
+              {/* Mobile 9-dot / apps menu */}
               <div className="px-4 pt-2">
-                <Link to="/reviews" onClick={() => setMobileMenuOpen(false)} className={`${pillBtn} w-full justify-center`}>
-                      Reviews
-                </Link>
-              </div>
-
-              {/* Mobile SlimFile Assistant Link */}
-              <div className="px-4 pt-2">
-                <Link to="/community-manager" onClick={() => setMobileMenuOpen(false)}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full text-purple-600 hover:bg-purple-50 flex items-center justify-center gap-2"
-                  >
-                    <Bot className="w-4 h-4" />
-                    <span>SlimFile Assistant</span>
-                  </Button>
-                </Link>
+                <button
+                  onClick={() => toggleMobileDropdown('more')}
+                  className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-300 rounded-lg"
+                >
+                  <span className="flex items-center gap-2">
+                    <Grid3x3 className="w-4 h-4" />
+                    More
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      mobileDropdownsOpen.more && "transform rotate-180"
+                    )}
+                  />
+                </button>
+                {mobileDropdownsOpen.more && (
+                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
+                    {moreNavigation.map((item) =>
+                      item.external || isMail(item.href) ? (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                          className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-300 rounded-lg"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {item.name === "Play Store" ? (
+                            <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="currentColor">
+                              <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
+                            </svg>
+                          ) : item.name === "Reviews" ? (
+                            <Star className="w-4 h-4 shrink-0" />
+                          ) : (
+                            <Mail className="w-4 h-4 shrink-0" />
+                          )}
+                          {item.name}
+                        </a>
+                      ) : (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-300 rounded-lg"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <Bot className="w-4 h-4 shrink-0" />
+                          {item.name}
+                        </Link>
+                      )
+                    )}
+                  </div>
+                )}
               </div>
 
               {isAuthenticated() ? (
