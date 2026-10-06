@@ -1,11 +1,25 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown, Bot, Grid3x3, Star, Mail } from "lucide-react";
+import { Menu, X, ChevronDown, Bot, Star, Mail } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isAuthenticated, logout } from "@/lib/auth";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
+
+/* 9-dot launcher, matching the `ico--more` glyph iLovePDF uses to open its
+   header overflow menu: 3x3 solid circles in a 24px box, r=2.17, centres on
+   2.17 / 12 / 21.83 (measured off their sprite). lucide's Grid3x3 is a square
+   grid with divider lines, which reads as a windowpane, not a launcher. */
+const GridDots = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    {[2.17, 12, 21.83].map((cy) =>
+      [2.17, 12, 21.83].map((cx) => (
+        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={2.17} />
+      ))
+    )}
+  </svg>
+);
 
 export const Header = () => {
   const { t } = useTranslation();
@@ -344,7 +358,7 @@ export const Header = () => {
                 aria-expanded={hoveredDropdown === 'more'}
                 className="w-9 h-9 rounded-full border border-gray-300 bg-white hover:bg-gray-50 hover:border-gray-400 flex items-center justify-center transition-colors duration-200"
               >
-                <Grid3x3 className="w-5 h-5 text-gray-700" />
+                <GridDots className="w-5 h-5 text-gray-700" />
               </button>
               {hoveredDropdown === 'more' && (
                 <div className="absolute top-full right-0 mt-2 w-60 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
@@ -568,7 +582,7 @@ export const Header = () => {
                   className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-300 rounded-lg"
                 >
                   <span className="flex items-center gap-2">
-                    <Grid3x3 className="w-4 h-4" />
+                    <GridDots className="w-4 h-4" />
                     More
                   </span>
                   <ChevronDown
