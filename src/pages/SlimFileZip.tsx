@@ -32,7 +32,7 @@ type Mode = 'zip' | 'unzip';
 
 export default function SlimFileZip() {
   useSEO({
-    title: 'Zip Files Online — Compress & Unzip Folders | SlimFile',
+    title: 'Zip Files & Folders Online — Unzip Too | SlimFile',
     description: 'Upload files or whole folders, get a ZIP back with the folder structure intact. Unzip any archive too. Free, no sign-up.',
   });
   const { toast } = useToast();
@@ -187,7 +187,7 @@ export default function SlimFileZip() {
         </div>
 
         <div className="flex justify-center gap-2 mb-6">
-          {tabBtn('zip', 'Compress to ZIP')}
+          {tabBtn('zip', 'Zip')}
           {tabBtn('unzip', 'Unzip')}
         </div>
 
