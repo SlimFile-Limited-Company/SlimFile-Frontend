@@ -42,6 +42,9 @@ export default function SlimFileZip() {
   const [zipFile, setZipFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<{ name: string; size: number } | null>(null);
+  // fetch cannot report upload progress, so submit() runs on XHR. Without this
+  // the button just sits on "Zipping…" for the whole transfer and reads as hung.
+  const [progress, setProgress] = useState<{ phase: 'upload' | 'download'; pct: number } | null>(null);
   const [showReviewPrompt, setShowReviewPrompt] = useState(false);
 
   // Two inputs because the browser exposes folders and loose files through
@@ -53,7 +56,7 @@ export default function SlimFileZip() {
     if (!list) return;
     const next: { path: string; file: File }[] = [];
     for (const file of Array.from(list)) {
-      const rel = (file as any).webkitRelativePath as string | undefined;
+      const rel = file.webkitRelativePath;
       const path = rel && rel.includes('/') ? rel : file.name;
       // De-dupe by path so re-adding the same folder doesn't double entries.
       next.push({ path, file });
@@ -69,10 +72,13 @@ export default function SlimFileZip() {
   const clearAll = () => { setItems([]); setDone(null); };
   const removeAt = (idx: number) => setItems(prev => prev.filter((_, i) => i !== idx));
 
-  const submit = async () => {
+  // XHR rather than fetch: it is the only browser API that reports upload
+  // progress, and the upload is the slow half of this request.
+  const submit = () => {
     if (!items.length || busy) return;
     setBusy(true);
     setDone(null);
+    setProgress({ phase: 'upload', pct: 0 });
     const started = Date.now();
 
     try {
@@ -81,25 +87,47 @@ export default function SlimFileZip() {
       // server zips under that path, so `photos/2026/a.jpg` keeps both folders.
       for (const item of items) form.append('files', item.file, item.path);
 
-      const res = await fetch(`${API}/zip/compress`, { method: 'POST', body: form });
-      if (!res.ok) {
-        let message = 'Zip failed.';
-        try { message = (await res.json()).error || message; } catch { /* body wasn't JSON */ }
-        throw new Error(message);
-      }
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${API}/zip/compress`);
 
-      const blob = await res.blob();
-      if (!blob.size) throw new Error('The server returned an empty ZIP.');
-      await downloadBlob(blob, 'slimfile-zip.zip');
-      const size = blob.size;
-      setDone({ name: 'slimfile-zip.zip', size });
-      if (Date.now() - started > 3000) toast({ title: 'Downloaded!', description: `ZIP is ${fmtSize(size)}.` });
-      if (items.length > 1) setShowReviewPrompt(true);
+      xhr.upload.onprogress = e => {
+        if (e.lengthComputable) {
+          setProgress({ phase: 'upload', pct: Math.round((e.loaded / e.total) * 100) });
+        }
+      };
+      xhr.upload.onload = () => setProgress({ phase: 'download', pct: 0 });
+
+      xhr.onload = () => {
+        if (xhr.status < 200 || xhr.status >= 300) {
+          let message = 'Zip failed.';
+          try { message = JSON.parse(xhr.responseText).error || message; } catch { /* not JSON */ }
+          return fail(new Error(message));
+        }
+        const blob = xhr.response;
+        if (!blob.size) return fail(new Error('The server returned an empty ZIP.'));
+        downloadBlob(blob, 'slimfile-zip.zip');
+        setDone({ name: 'slimfile-zip.zip', size: blob.size });
+        if (Date.now() - started > 3000) {
+          toast({ title: 'Downloaded!', description: `ZIP is ${fmtSize(blob.size)}.` });
+        }
+        if (items.length > 1) setShowReviewPrompt(true);
+        setBusy(false);
+        setProgress(null);
+      };
+
+      xhr.onerror = () => fail(new Error('Network error while zipping.'));
+      xhr.onabort = () => fail(new Error('Zip was cancelled.'));
+      xhr.responseType = 'blob';
+      xhr.send(form);
     } catch (err) {
-      toast({ title: 'Zip failed', description: err instanceof Error ? err.message : 'Something went wrong.', variant: 'destructive' });
-    } finally {
-      setBusy(false);
+      fail(err instanceof Error ? err : new Error('Something went wrong.'));
     }
+  };
+
+  const fail = (err: Error) => {
+    toast({ title: 'Zip failed', description: err.message, variant: 'destructive' });
+    setBusy(false);
+    setProgress(null);
   };
 
   const extract = async () => {
@@ -203,15 +231,28 @@ export default function SlimFileZip() {
                 </div>
               )}
 
+              {progress && progress.phase === 'upload' && (
+                <div className="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gray-900 transition-[width] duration-200 rounded-full"
+                    style={{ width: `${progress.pct}%` }}
+                  />
+                </div>
+              )}
+
               <div className="mt-4 flex items-center justify-between">
                 <p className="text-sm text-gray-500">
                   {items.length
                     ? `${items.length} file${items.length === 1 ? '' : 's'} · ${fmtSize(totalBytes)}`
                     : 'No files chosen yet'}
                 </p>
-                <Button onClick={submit} disabled={!items.length || busy} className="gap-2">
+                <Button onClick={submit} disabled={!items.length || busy} className="gap-2 min-w-[9.5rem]">
                   {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileArchive className="w-4 h-4" />}
-                  {busy ? 'Zipping…' : 'Download ZIP'}
+                  {progress
+                    ? progress.phase === 'upload'
+                      ? `Uploading ${progress.pct}%`
+                      : 'Finishing…'
+                    : 'Download ZIP'}
                 </Button>
               </div>
             </>
