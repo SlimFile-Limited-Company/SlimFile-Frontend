@@ -722,6 +722,7 @@ function formatOperation(op: string) {
     'b2b-compress': 'B2B API Compress',
     'ai-grok': 'AI Lab',
     ocr: 'OCR Tool',
+    'zip-compress': 'Zip Files & Folders',
     qr: 'QR Code Generator',
     compress: 'Compress Files',
     'split-compress': 'Split & Compress PDFs'

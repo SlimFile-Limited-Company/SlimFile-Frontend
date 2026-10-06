@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, QrCode, Smartphone, Scissors } from "lucide-react";
+import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, Video, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, QrCode, Smartphone, Scissors, FileArchive } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useSEO } from "@/hooks/useSEO";
 
@@ -117,6 +117,7 @@ const Home: FC = () => {
     { icon: FileType,  title: "My Documents",          description: "Write and edit documents with a rich text editor.",                      features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600", color: "text-sky-600",       href: "/documents",       flip: "Gotcha! 😏"                },
     { icon: Users,     title: "Team Workspaces",       description: "Collaborate in real-time with your team in shared spaces.",               features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600", color: "text-green-600",   href: "/workspaces",      flip: "Caught ya! 😄"             },
     { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", color: "text-violet-600", href: "/lock",       flip: "Oh snap! 😮"               },
+    { icon: FileArchive,title: "Zip Files & Folders",    description: "Bundle files or a whole folder into one ZIP, folders kept. Unzip too.",    features: ["Keeps folder paths", "Up to 5 GB", "Nothing stored"],               gradient: "from-slate-500 to-gray-600", color: "text-gray-700",    href: "/zip",         flip: "Pack it up! 🗜️"          },
     { icon: QrCode,    title: "QR Code Generator",     description: "Create QR codes for links, text, WhatsApp, WiFi & email — instantly.",   features: ["PNG & SVG download", "No sign-up needed", "100% in your browser"],         gradient: "from-fuchsia-500 to-pink-600", color: "text-fuchsia-600", href: "/qr-code",       flip: "You scanned me! 🔍"          },
   ];
 
@@ -139,7 +140,7 @@ const Home: FC = () => {
   const featureTabs = [
     { key: "all",  label: "All",     blurb: "All your file tools in one place.",                                    items: [...generalFeatures, ...aiLabTab] },
     { key: "pdf",  label: "PDF",     blurb: "Merge, split, compress and protect your PDFs.",                        items: [byTitle("PDF Merger & Splitter"), byTitle("Merge & Compress PDFs"), byTitle("Split & Compress PDFs"), byTitle("OCR Tool"), byTitle("PDF Password Protect")] },
-    { key: "files", label: "Files",  blurb: "Shrink, convert and generate files.",                                  items: [byTitle("Compress Files"), byTitle("Convert Formats"), byTitle("Convert & Compress"), byTitle("QR Code Generator")] },
+    { key: "files", label: "Files",  blurb: "Shrink, convert and generate files.",                                  items: [byTitle("Compress Files"), byTitle("Convert Formats"), byTitle("Convert & Compress"), byTitle("Zip Files & Folders"), byTitle("QR Code Generator")] },
     { key: "scan",  label: "Scan",   blurb: "Photograph paper with your phone and turn it into a PDF.",             items: scanFeatures },
     { key: "ai",   label: "AI Lab",  blurb: "Translate, summarise, rewrite and analyse with AI.",                   items: aiLabTab },
     { key: "team", label: "Team",   blurb: "Meet, sketch, write and collaborate together.",                       items: [byTitle("Video Meetings"), byTitle("Whiteboards"), byTitle("My Documents"), byTitle("Team Workspaces"), byTitle("Activity Feed")] },

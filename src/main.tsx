@@ -170,6 +170,7 @@ import SlimFileScanMerge from './pages/SlimFileScanMerge';
 import SlimFileScanSplit from './pages/SlimFileScanSplit';
 import SlimFileScanConvert from './pages/SlimFileScanConvert';
 import SlimFileLock from './pages/SlimFileLock';
+import SlimFileZip from './pages/SlimFileZip';
 import SlimFileQR from './pages/SlimFileQR';
 import AILab from './pages/AILab';
 import Reviews from './pages/Reviews';
@@ -385,6 +386,7 @@ ReactDOM.createRoot(root).render(
           <Route path="scan-split" element={<SlimFileScanSplit />} />
           <Route path="scan-convert" element={<SlimFileScanConvert />} />
           <Route path="lock" element={<SlimFileLock />} />
+          <Route path="zip" element={<SlimFileZip />} />
           <Route path="qr-code" element={<SlimFileQR />} />
           <Route path="ai-lab" element={<AILab />} />
 
