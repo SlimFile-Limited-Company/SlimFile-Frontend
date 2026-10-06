@@ -356,7 +356,7 @@ export const Header = () => {
                 title="More"
                 aria-label="More"
                 aria-expanded={hoveredDropdown === 'more'}
-                className="w-9 h-9 rounded-full border border-gray-300 bg-white hover:bg-gray-50 hover:border-gray-400 flex items-center justify-center transition-colors duration-200"
+                className="p-1.5 -m-1.5 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors duration-200"
               >
                 <GridDots className="w-5 h-5 text-gray-700" />
               </button>
