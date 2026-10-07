@@ -8,7 +8,7 @@ import {
   Loader2, Trash2, Scissors, FileText,
   Download, ShieldCheck, MergeIcon, Sparkles,
 } from 'lucide-react';
-import { ReviewPrompt } from '@/components/ReviewPrompt';
+import { ReviewButton } from '@/components/ReviewButton';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -62,7 +62,7 @@ const SlimFileSplitCompress = () => {
         description: 'Every piece was compressed — check the downloaded ZIP.',
       });
       setFile(null); setRanges('');
-      setTimeout(() => setShowReviewPrompt(true), 1500);
+      setShowReviewPrompt(true);
     } catch (err: any) {
       toast({ title: 'Error', description: err.message, variant: 'destructive' });
     } finally {
@@ -174,12 +174,7 @@ const SlimFileSplitCompress = () => {
         </div>
       </div>
 
-      {/* Review Prompt */}
-      <ReviewPrompt
-        isOpen={showReviewPrompt}
-        onClose={() => setShowReviewPrompt(false)}
-        operationType="forge-split"
-      />
+      {showReviewPrompt && <ReviewButton operationType="forge-split" />}
     </div>
   );
 };

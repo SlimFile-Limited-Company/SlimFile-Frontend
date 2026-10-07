@@ -8,7 +8,7 @@ import {
   Loader2, FileText, Lock, LockOpen, Eye, EyeOff,
   Trash2, ShieldCheck, Upload,
 } from 'lucide-react';
-import { ReviewPrompt } from '@/components/ReviewPrompt';
+import { ReviewButton } from '@/components/ReviewButton';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -305,7 +305,7 @@ const SlimFileLock = () => {
 
         {/* Card */}
         <div className="bg-white rounded-3xl border border-gray-200/80 p-7 shadow-sm">
-          {tab === 'protect' ? <ProtectTab onSuccess={() => setTimeout(() => setShowReviewPrompt(true), 1500)} /> : <RemovePasswordTab onSuccess={() => setTimeout(() => setShowReviewPrompt(true), 1500)} />}
+          {tab === 'protect' ? <ProtectTab onSuccess={() => setShowReviewPrompt(true)} /> : <RemovePasswordTab onSuccess={() => setShowReviewPrompt(true)} />}
         </div>
 
         {/* Footer */}
@@ -315,12 +315,7 @@ const SlimFileLock = () => {
         </div>
       </div>
 
-      {/* Review Prompt */}
-      <ReviewPrompt
-        isOpen={showReviewPrompt}
-        onClose={() => setShowReviewPrompt(false)}
-        operationType="lock"
-      />
+      {showReviewPrompt && <ReviewButton operationType="lock" />}
     </div>
   );
 };

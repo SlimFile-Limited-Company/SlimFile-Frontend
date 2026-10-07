@@ -7,7 +7,7 @@ import {
   Loader2, Trash2, GripVertical, FilePlus2,
   FileText, Download, ShieldCheck, MergeIcon, Sparkles,
 } from 'lucide-react';
-import { ReviewPrompt } from '@/components/ReviewPrompt';
+import { ReviewButton } from '@/components/ReviewButton';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -107,7 +107,7 @@ const SlimFileMergeCompress = () => {
         description: `${files.length} PDFs combined into one file${savedKb > 0 ? `, saving about ${savedKb} KB.` : '.'}`,
       });
       setFiles([]);
-      setTimeout(() => setShowReviewPrompt(true), 1500);
+      setShowReviewPrompt(true);
     } catch (err: any) {
       toast({ title: 'Error', description: err.message, variant: 'destructive' });
     } finally {
@@ -230,12 +230,7 @@ const SlimFileMergeCompress = () => {
         </div>
       </div>
 
-      {/* Review Prompt */}
-      <ReviewPrompt
-        isOpen={showReviewPrompt}
-        onClose={() => setShowReviewPrompt(false)}
-        operationType="forge-merge"
-      />
+      {showReviewPrompt && <ReviewButton operationType="forge-merge" />}
     </div>
   );
 };

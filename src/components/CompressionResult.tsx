@@ -15,6 +15,7 @@ import {
   getRemainingDownloads
 } from "@/utils/guestTracking";
 import { GuestDownloadLimitModal } from "@/components/GuestDownloadLimitModal";
+import { ReviewButton } from "@/components/ReviewButton";
 
 interface CompressionResultProps {
   originalFiles: File[];
@@ -37,7 +38,7 @@ export const CompressionResult = ({
   const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
   const [hasPlayedSound, setHasPlayedSound] = useState(false);
   const [showGuestLimitModal, setShowGuestLimitModal] = useState(false);
-  const [showReviewPrompt, setShowReviewPrompt] = useState(false);
+  const [reviewReady, setReviewReady] = useState(false);
   const navigate = useNavigate();
 
   // Play sound when compression is complete
@@ -152,6 +153,7 @@ export const CompressionResult = ({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      setReviewReady(true);
     } catch (error) {
       console.error('Download failed:', error);
       toast({
@@ -248,6 +250,7 @@ export const CompressionResult = ({
         URL.revokeObjectURL(url);
       }
     });
+    setReviewReady(true);
   };
 
   const { totalOriginalSize, totalCompressedSize, totalSizeReduction, totalCompressionRatio } = calculateTotalStats();
@@ -417,6 +420,8 @@ export const CompressionResult = ({
           </Button>
         </div>
       )}
+      {reviewReady && <ReviewButton operationType="compress" />}
+
       <div className="flex justify-center mt-4">
         <Button 
           variant="outline" 

@@ -6,7 +6,7 @@ import {
   Loader2, FileArchive, FolderArchive, FilePlus2, FolderPlus,
   Trash2, Download, CheckCircle2, X, FileText, Folder,
 } from 'lucide-react';
-import { ReviewPrompt } from '@/components/ReviewPrompt';
+import { ReviewButton } from '@/components/ReviewButton';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://service.slim-file.com/api';
 
@@ -298,12 +298,7 @@ export default function SlimFileZip() {
           </p>
         </div>
       </div>
-
-      <ReviewPrompt
-        operationType={mode === 'zip' ? 'zip' : 'unzip'}
-        isOpen={showReviewPrompt}
-        onClose={() => setShowReviewPrompt(false)}
-      />
+      {showReviewPrompt && <ReviewButton operationType={mode === 'zip' ? 'zip' : 'unzip'} />}
     </div>
   );
 }

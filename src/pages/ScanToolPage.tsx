@@ -3,7 +3,7 @@ import { useSEO } from '@/hooks/useSEO';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Loader2, Download, Smartphone } from 'lucide-react';
-import { ReviewPrompt } from '@/components/ReviewPrompt';
+import { ReviewButton } from '@/components/ReviewButton';
 import ScanUploader, { type ScanPage } from '@/components/ScanUploader';
 import { accent } from '@/lib/scanAccents';
 
@@ -98,7 +98,7 @@ export default function ScanToolPage({ config }: { config: ScanToolConfig }) {
       toast({ title: config.successTitle, description: config.successBody(pages.length, savedKb) });
 
       setPages([]);
-      setTimeout(() => setShowReview(true), 1500);
+      setShowReview(true);
     } catch (err: any) {
       toast({ title: 'Error', description: err.message, variant: 'destructive' });
     } finally {
@@ -162,8 +162,7 @@ export default function ScanToolPage({ config }: { config: ScanToolConfig }) {
           <span>Scanning runs on your phone's camera</span>
         </div>
       </div>
-
-      <ReviewPrompt isOpen={showReview} onClose={() => setShowReview(false)} operationType={config.operationType} />
+      {showReview && <ReviewButton operationType={config.operationType} />}
     </div>
   );
 }

@@ -13,6 +13,7 @@ import {
   getRemainingDownloads
 } from '@/utils/guestTracking';
 import { GuestDownloadLimitModal } from '@/components/GuestDownloadLimitModal';
+import { ReviewButton } from '@/components/ReviewButton';
 
 interface ConversionResultProps {
   originalFiles: File[];
@@ -36,7 +37,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
   const [showGuestLimitModal, setShowGuestLimitModal] = useState(false);
-  const [showReviewPrompt, setShowReviewPrompt] = useState(false);
+  const [reviewReady, setReviewReady] = useState(false);
   const navigate = useNavigate();
 
   // Track conversion activity for guests when complete
@@ -115,6 +116,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      setReviewReady(true);
     } catch (error) {
       console.error('Download failed:', error);
       toast({
@@ -208,6 +210,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
         URL.revokeObjectURL(url);
       }
     });
+    setReviewReady(true);
   };
 
   const allComplete = convertedFiles.every((f, i) => conversionProgress[i] === 100);
@@ -367,6 +370,8 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
           </div>
         </div>
       )}
+
+      {reviewReady && <ReviewButton operationType="convert" />}
 
       {/* Reset Button */}
       <div

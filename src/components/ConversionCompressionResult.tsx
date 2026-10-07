@@ -13,6 +13,7 @@ import {
   getRemainingDownloads
 } from '@/utils/guestTracking';
 import { GuestDownloadLimitModal } from '@/components/GuestDownloadLimitModal';
+import { ReviewButton } from '@/components/ReviewButton';
 
 interface ConversionCompressionResultProps {
   originalFiles: File[];
@@ -38,7 +39,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
   const [showGuestLimitModal, setShowGuestLimitModal] = useState(false);
-  const [showReviewPrompt, setShowReviewPrompt] = useState(false);
+  const [reviewReady, setReviewReady] = useState(false);
   const navigate = useNavigate();
 
   // Track conversion+compression activity for guests when complete
@@ -133,6 +134,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      setReviewReady(true);
     } catch (error) {
       console.error('Download failed:', error);
       toast({
@@ -226,6 +228,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
         URL.revokeObjectURL(url);
       }
     });
+    setReviewReady(true);
   };
 
   const allComplete = processedFiles.every((f, i) => processingProgress[i] === 100 && f !== null);
@@ -441,6 +444,8 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
           </div>
         </div>
       )}
+
+      {reviewReady && <ReviewButton operationType="convert-compress" />}
 
       {/* Reset Button */}
       <div

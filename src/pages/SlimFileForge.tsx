@@ -8,7 +8,7 @@ import {
   Loader2, Trash2, GripVertical, FilePlus2,
   Scissors, FileText, Download, ShieldCheck, MergeIcon,
 } from 'lucide-react';
-import { ReviewPrompt } from '@/components/ReviewPrompt';
+import { ReviewButton } from '@/components/ReviewButton';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -329,9 +329,9 @@ const SlimFileForge = () => {
         {/* Card */}
         <div className="bg-white rounded-3xl border border-gray-200/80 p-7 shadow-sm">
           {tab === 'merge' ? (
-            <MergeTab onSuccess={() => setTimeout(() => { setPromptTool('forge-merge'); setShowReviewPrompt(true); }, 1500)} />
+            <MergeTab onSuccess={() => { setPromptTool('forge-merge'); setShowReviewPrompt(true); }} />
           ) : (
-            <SplitTab onSuccess={() => setTimeout(() => { setPromptTool('forge-split'); setShowReviewPrompt(true); }, 1500)} />
+            <SplitTab onSuccess={() => { setPromptTool('forge-split'); setShowReviewPrompt(true); }} />
           )}
         </div>
 
@@ -342,12 +342,7 @@ const SlimFileForge = () => {
         </div>
       </div>
 
-      {/* Review Prompt */}
-      <ReviewPrompt
-        isOpen={showReviewPrompt}
-        onClose={() => setShowReviewPrompt(false)}
-        operationType={promptTool}
-      />
+      {showReviewPrompt && <ReviewButton operationType={promptTool} />}
     </div>
   );
 };

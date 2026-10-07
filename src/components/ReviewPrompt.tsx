@@ -2,10 +2,24 @@ import { useState, useEffect } from 'react';
 import { X, Star } from 'lucide-react';
 import { isAuthenticated } from '@/lib/auth';
 
+export type OperationType =
+  | 'compress'
+  | 'convert'
+  | 'convert-compress'
+  | 'forge'
+  | 'forge-merge'
+  | 'forge-split'
+  | 'lock'
+  | 'ocr'
+  | 'qr'
+  | 'summarize'
+  | 'zip'
+  | 'unzip';
+
 interface ReviewPromptProps {
   isOpen: boolean;
   onClose: () => void;
-  operationType: 'compress' | 'convert' | 'convert-compress' | 'forge' | 'forge-merge' | 'forge-split' | 'lock' | 'ocr' | 'qr' | 'summarize' | 'zip' | 'unzip';
+  operationType: OperationType;
 }
 
 export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptProps) => {
@@ -110,28 +124,29 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
+      <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl sm:p-6">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-lg transition-colors"
+          aria-label="Close"
+          className="absolute top-4 right-4 z-10 rounded-lg p-2 transition-colors hover:bg-gray-100"
         >
-          <X className="w-5 h-5 text-gray-500" />
+          <X className="h-5 w-5 text-gray-500" />
         </button>
 
         {submitted ? (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Star className="w-8 h-8 text-green-600 fill-green-600" />
+          <div className="py-8 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <Star className="h-8 w-8 fill-green-600 text-green-600" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Thank You!</h3>
+            <h3 className="mb-2 text-xl font-bold text-gray-900">Thank You!</h3>
             <p className="text-gray-600">Your review has been published. Check out all reviews on our Reviews page!</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="mb-2 pr-10 text-xl font-bold text-gray-900 sm:text-2xl">
               {userName ? `Hi ${userName}` : 'Hi there'}!
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="mb-6 text-sm leading-relaxed text-gray-600 sm:text-base">
               This is Isaac Abakah, the Founder of SlimFile. We appreciate you using SlimFile.
               Please leave us a review.
             </p>
@@ -213,18 +228,18 @@ export const ReviewPrompt = ({ isOpen, onClose, operationType }: ReviewPromptPro
             </div>
 
             {/* Buttons */}
-            <div className="flex gap-3">
+            <div className="flex flex-col-reverse gap-3 sm:flex-row">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                className="min-h-[44px] flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-gray-700 transition-colors font-medium hover:bg-gray-50"
               >
                 Maybe Later
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting || rating === 0 || !comment.trim()}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="min-h-[44px] flex-1 rounded-lg bg-red-600 px-4 py-2.5 font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Review'}
               </button>

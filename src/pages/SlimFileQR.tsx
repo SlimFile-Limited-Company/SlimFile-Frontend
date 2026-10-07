@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import {
   QrCode, Link2, Type, Send, Wifi, Mail, Download, Copy, ShieldCheck, Sparkles, Loader2, Check,
 } from 'lucide-react';
-import { ReviewPrompt } from '@/components/ReviewPrompt';
+import { ReviewButton } from '@/components/ReviewButton';
 import { trackGuestActivity } from '@/utils/guestTracking';
 import { reportClientTool } from '@/utils/clientToolTracking';
 
@@ -119,7 +119,7 @@ const SlimFileQR = () => {
   const finish = (format: 'png' | 'svg') => {
     trackGuestActivity('qr', format);
     reportClientTool('qr', 'complete', { detail: `${tab}:${format}` });
-    setTimeout(() => setShowReviewPrompt(true), 1500);
+    setShowReviewPrompt(true);
   };
 
   const downloadPng = () => {
@@ -439,12 +439,7 @@ const SlimFileQR = () => {
         </div>
       </div>
 
-      {/* Review Prompt */}
-      <ReviewPrompt
-        isOpen={showReviewPrompt}
-        onClose={() => setShowReviewPrompt(false)}
-        operationType="qr"
-      />
+      {showReviewPrompt && <ReviewButton operationType="qr" />}
     </div>
   );
 };
