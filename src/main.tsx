@@ -172,6 +172,7 @@ import SlimFileScanConvert from './pages/SlimFileScanConvert';
 import SlimFileLock from './pages/SlimFileLock';
 import SlimFileZip from './pages/SlimFileZip';
 import SlimFileQR from './pages/SlimFileQR';
+import TextToPdf from './pages/TextToPdf';
 import AILab from './pages/AILab';
 import Reviews from './pages/Reviews';
 import CommunityManager from './pages/CommunityManager';
@@ -388,6 +389,7 @@ ReactDOM.createRoot(root).render(
           <Route path="lock" element={<SlimFileLock />} />
           <Route path="zip" element={<SlimFileZip />} />
           <Route path="qr-code" element={<SlimFileQR />} />
+          <Route path="text-to-pdf" element={<TextToPdf />} />
           <Route path="ai-lab" element={<AILab />} />
 
           {/* Image Processing Tools */}
