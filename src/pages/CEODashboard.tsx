@@ -725,7 +725,8 @@ function formatOperation(op: string) {
     'zip-compress': 'Zip Files & Folders',
     qr: 'QR Code Generator',
     compress: 'Compress Files',
-    'split-compress': 'Split & Compress PDFs'
+    'split-compress': 'Split & Compress PDFs',
+    'text-to-pdf': 'Text to PDF'
   };
   return labels[op] || op;
 }
