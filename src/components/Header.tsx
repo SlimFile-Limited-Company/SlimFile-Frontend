@@ -409,7 +409,7 @@ export const Header = () => {
               href="https://meet.slim-file.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden lg:flex items-center gap-1.5 h-9 px-4 rounded-full bg-red-600 text-white hover:bg-red-700 transition-colors duration-200 text-xs font-semibold"
+              className="hidden md:flex items-center gap-1.5 h-9 px-4 rounded-full bg-red-600 text-white hover:bg-red-700 transition-colors duration-200 text-xs font-semibold"
             >
               <Video className="w-3.5 h-3.5" />
               SlimFile Meet
@@ -426,7 +426,16 @@ export const Header = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center gap-1">
+          <div className="md:hidden flex items-center gap-1.5">
+            <a
+              href="https://meet.slim-file.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-red-600 text-white hover:bg-red-700 transition-colors duration-200 text-xs font-semibold whitespace-nowrap"
+            >
+              <Video className="w-3.5 h-3.5" />
+              SlimFile Meet
+            </a>
             <Button
               variant="ghost"
               size="sm"
