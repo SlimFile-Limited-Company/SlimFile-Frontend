@@ -21,6 +21,25 @@ import {
 const API = import.meta.env.VITE_API_BASE_URL || 'https://service.slim-file.com/api';
 const MAX_BYTES = 25 * 1024 * 1024;
 
+const stripTags = (s: string) => s.replace(/<[^>]+>/g, ' ').replace(/[ \t]{2,}/g, ' ').trim();
+
+function tablesToGfm(s: string): string {
+  if (!/<table/i.test(s)) return s;
+  return s.replace(/<table[\s\S]*?<\/table>/gi, tbl => {
+    const rows = [...tbl.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)].map(m =>
+      [...m[1].matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)].map(c => stripTags(c[1]))
+    ).filter(r => r.length);
+    if (!rows.length) return '';
+    const w = Math.max(...rows.map(r => r.length));
+    const pad = (r: string[]) => [...r, ...Array(w - r.length).fill('')];
+    const out = [`| ${pad(rows[0]).join(' | ')} |`, `| ${Array(w).fill('---').join(' | ')} |`];
+    for (const r of rows.slice(1)) out.push(`| ${pad(r).join(' | ')} |`);
+    return `\n${out.join('\n')}\n`;
+  });
+}
+
+const toPlainText = (s: string) => stripTags(tablesToGfm(s));
+
 const markdownComponents = {
   h1: ({ children }: { children?: React.ReactNode }) => (
     <h1 className="text-xl font-bold text-gray-900 mt-4 mb-2 first:mt-0">{children}</h1>
@@ -141,8 +160,8 @@ export default function OCRTool() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || data.detail || 'Text extraction failed');
 
-      const md = data.markdown || data.text || '';
-      const plain = data.text || md;
+      const md = tablesToGfm(data.markdown || data.text || '');
+      const plain = toPlainText(data.text || md);
       setMarkdown(md);
       setText(plain);
       setMeta(
