@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown, Bot, Star, Mail } from "lucide-react";
+import { Menu, X, ChevronDown, Bot, Star, Mail, Video } from "lucide-react";
 import { useState, useEffect } from "react";
 import { isAuthenticated, logout } from "@/lib/auth";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -104,7 +104,7 @@ export const Header = () => {
     ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces" }] : []),
     ...(isAuthenticated() ? [{ name: "Documents", href: "/documents" }] : []),
     ...(isAuthenticated() ? [{ name: "My Whiteboards", href: "/my-whiteboards" }] : []),
-    { name: "Meet", href: "/meet" },
+    { name: "SlimFile Meet", href: "https://meet.slim-file.com", external: true },
   ];
 
   const devToolsNavigation = [
@@ -405,6 +405,15 @@ export const Header = () => {
                 </div>
               )}
             </div>
+            <a
+              href="https://meet.slim-file.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden lg:flex items-center gap-1.5 h-9 px-4 rounded-full bg-red-600 text-white hover:bg-red-700 transition-colors duration-200 text-xs font-semibold"
+            >
+              <Video className="w-3.5 h-3.5" />
+              SlimFile Meet
+            </a>
             {isAuthenticated() ? (
               <button onClick={() => logout()} className={pillBtn}>
                 {t('header.logout')}

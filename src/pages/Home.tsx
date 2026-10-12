@@ -116,7 +116,7 @@ const Home: FC = () => {
     { icon: FileArchive,title: "Zip Files & Folders",    description: "Bundle files or a whole folder into one ZIP, folders kept. Unzip too.",    features: ["Keeps folder paths", "Up to 5 GB", "Nothing stored"],               gradient: "from-slate-500 to-gray-600", color: "text-gray-700",    href: "/zip",         flip: "Pack it up! 🗜️"          },
     { icon: QrCode,    title: "QR Code Generator",     description: "Create QR codes for links, text, WhatsApp, WiFi & email — instantly.",   features: ["PNG & SVG download", "No sign-up needed", "100% in your browser"],         gradient: "from-fuchsia-500 to-pink-600", color: "text-fuchsia-600", href: "/qr-code",       flip: "You scanned me! 🔍"          },
     { icon: Radio,     title: "Activity Feed",         description: "Stay updated with live activity across all your workspaces.",             features: ["Real-time updates", "Activity tracking", "Team notifications"],              gradient: "from-indigo-500 to-indigo-600", color: "text-indigo-600", href: "/feed",      flip: "Look who's here! 👋"       },
-    { icon: Video,     title: "Video Meetings",        description: "Host HD video calls and share your screen instantly.",                   features: ["HD video calls", "Screen sharing", "No downloads needed"],                   gradient: "from-cyan-500 to-cyan-600", color: "text-cyan-600",     href: "/meet",       flip: "You found me! 🙈"          },
+    { icon: Video,     title: "Video Meetings",        description: "Host HD video calls and share your screen instantly.",                   features: ["HD video calls", "Screen sharing", "No downloads needed"],                   gradient: "from-cyan-500 to-cyan-600", color: "text-cyan-600",     href: "https://meet.slim-file.com", flip: "You found me! 🙈"          },
     { icon: PenTool,   title: "Whiteboards",           description: "Brainstorm ideas and sketch concepts on visual boards.",                 features: ["Drawing tools", "Text & shapes", "Multiple boards"],                         gradient: "from-pink-500 to-pink-600", color: "text-pink-600",     href: "/my-whiteboards",       flip: "Peek-a-boo! 🫣"            },
     { icon: FileType,  title: "My Documents",          description: "Write and edit documents with a rich text editor.",                      features: ["Rich text formatting", "Import & export DOCX", "Auto-save & organize"],      gradient: "from-sky-500 to-sky-600", color: "text-sky-600",       href: "/documents",       flip: "Gotcha! 😏"                },
     { icon: Users,     title: "Team Workspaces",       description: "Collaborate in real-time with your team in shared spaces.",               features: ["Real-time chat", "Share links & resources", "Member management"],            gradient: "from-green-500 to-green-600", color: "text-green-600",   href: "/workspaces",      flip: "Caught ya! 😄"             },
@@ -231,10 +231,8 @@ const Home: FC = () => {
               Below sm each card collapses to a single slim row — icon and title
               — so roughly 10 fit on screen without scrolling. */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-5">
-            {visibleFeatures.map((feature) => (
-              <Link key={feature.title} to={feature.href} className="block h-full">
-                {/* iLovePDF style: white card, coloured icon. No motion, no badge.
-                    Mobile is a horizontal row; sm and up is the full card. */}
+            {visibleFeatures.map((feature) => {
+              const card = (
                 <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 h-full flex flex-row sm:flex-col items-center sm:items-stretch gap-3 p-3 sm:p-5">
                   <div className="flex items-center gap-3 flex-1 min-w-0 sm:contents">
                     <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center flex-shrink-0`}>
@@ -248,8 +246,23 @@ const Home: FC = () => {
                   </span>
                   <ArrowRight className="w-4 h-4 text-gray-300 flex-shrink-0 sm:hidden" />
                 </div>
-              </Link>
-            ))}
+              );
+              return feature.href.startsWith('http') ? (
+                <a
+                  key={feature.title}
+                  href={feature.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block h-full"
+                >
+                  {card}
+                </a>
+              ) : (
+                <Link key={feature.title} to={feature.href} className="block h-full">
+                  {card}
+                </Link>
+              );
+            })}
           </div>
           </div>
         </div>
