@@ -103,10 +103,10 @@ const OCRTool = () => {
       return;
     }
 
-    if (file.size > 20 * 1024 * 1024) {
+    if (file.size > 25 * 1024 * 1024) {
       toast({
         title: 'File too large',
-        description: 'Please upload a file smaller than 20MB',
+        description: 'Max size is 25MB. Please compress your file at slim-file.com/compress, then re-upload it.',
         variant: 'destructive',
       });
       return;
@@ -276,7 +276,7 @@ const OCRTool = () => {
                       {isDragActive ? 'Drop file here' : 'Drag & drop an image or PDF here'}
                     </p>
                     <p className="text-sm text-gray-500">or click to browse files</p>
-                    <p className="text-xs text-gray-400 mt-2">Max file size: 20MB</p>
+                    <p className="text-xs text-gray-400 mt-2">Max file size: 25MB — larger files? compress at slim-file.com/compress</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
