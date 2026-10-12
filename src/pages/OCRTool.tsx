@@ -1,14 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 import { useDropzone } from 'react-dropzone';
-import { createWorker } from 'tesseract.js';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { reportClientTool } from '@/utils/clientToolTracking';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import {
   Upload,
   FileText,
@@ -18,225 +17,173 @@ import {
   CheckCircle2,
   X,
   Image as ImageIcon,
-  Languages
+  Sparkles
 } from 'lucide-react';
 
-// Popular languages for OCR
-const LANGUAGES = [
-  { code: 'eng', name: 'English' },
-  { code: 'spa', name: 'Spanish' },
-  { code: 'fra', name: 'French' },
-  { code: 'deu', name: 'German' },
-  { code: 'ita', name: 'Italian' },
-  { code: 'por', name: 'Portuguese' },
-  { code: 'rus', name: 'Russian' },
-  { code: 'chi_sim', name: 'Chinese (Simplified)' },
-  { code: 'chi_tra', name: 'Chinese (Traditional)' },
-  { code: 'jpn', name: 'Japanese' },
-  { code: 'kor', name: 'Korean' },
-  { code: 'ara', name: 'Arabic' },
-  { code: 'hin', name: 'Hindi' },
-  { code: 'ben', name: 'Bengali' },
-  { code: 'tur', name: 'Turkish' },
-  { code: 'pol', name: 'Polish' },
-  { code: 'ukr', name: 'Ukrainian' },
-  { code: 'vie', name: 'Vietnamese' },
-  { code: 'tha', name: 'Thai' },
-  { code: 'nld', name: 'Dutch' },
-];
+const API = import.meta.env.VITE_API_BASE_URL || 'https://service.slim-file.com/api';
+
+const markdownComponents = {
+  h1: ({ children }: { children?: React.ReactNode }) => (
+    <h1 className="text-2xl font-bold text-gray-900 mt-4 mb-2 first:mt-0">{children}</h1>
+  ),
+  h2: ({ children }: { children?: React.ReactNode }) => (
+    <h2 className="text-xl font-semibold text-gray-900 mt-4 mb-2 first:mt-0">{children}</h2>
+  ),
+  h3: ({ children }: { children?: React.ReactNode }) => (
+    <h3 className="text-lg font-semibold text-gray-900 mt-3 mb-1 first:mt-0">{children}</h3>
+  ),
+  h4: ({ children }: { children?: React.ReactNode }) => (
+    <h4 className="text-base font-semibold text-gray-900 mt-3 mb-1 first:mt-0">{children}</h4>
+  ),
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <p className="text-gray-700 leading-relaxed my-2">{children}</p>
+  ),
+  strong: ({ children }: { children?: React.ReactNode }) => (
+    <strong className="font-semibold text-gray-900">{children}</strong>
+  ),
+  em: ({ children }: { children?: React.ReactNode }) => (
+    <em className="italic text-gray-800">{children}</em>
+  ),
+  ul: ({ children }: { children?: React.ReactNode }) => (
+    <ul className="list-disc pl-6 my-2 space-y-1 text-gray-700">{children}</ul>
+  ),
+  ol: ({ children }: { children?: React.ReactNode }) => (
+    <ol className="list-decimal pl-6 my-2 space-y-1 text-gray-700">{children}</ol>
+  ),
+  li: ({ children }: { children?: React.ReactNode }) => <li className="leading-relaxed">{children}</li>,
+  table: ({ children }: { children?: React.ReactNode }) => (
+    <div className="my-4 overflow-x-auto border border-gray-200 rounded-lg">
+      <table className="w-full text-sm border-collapse">{children}</table>
+    </div>
+  ),
+  thead: ({ children }: { children?: React.ReactNode }) => (
+    <thead className="bg-gray-100 text-left">{children}</thead>
+  ),
+  th: ({ children }: { children?: React.ReactNode }) => (
+    <th className="px-4 py-2.5 font-semibold text-gray-900 border-b border-gray-200 whitespace-nowrap">
+      {children}
+    </th>
+  ),
+  td: ({ children }: { children?: React.ReactNode }) => (
+    <td className="px-4 py-2 border-b border-gray-100 text-gray-700 align-top">{children}</td>
+  ),
+};
 
 const OCRTool = () => {
   useSEO({
-    title: 'OCR Tool — Extract Text From Images & PDFs | SlimFile',
-    description: 'Convert scanned images and PDFs to editable text with SlimFile\'s free OCR tool. Supports 100+ languages, no signup required.',
+    title: 'OCR Tool — Extract Text, Tables & Formatting From Images & PDFs | SlimFile',
+    description: 'Convert scanned images and PDFs to editable, formatted text with SlimFile\'s free OCR tool. Keeps headings, lists and tables. No signup required.',
   });
   const { toast } = useToast();
 
-  // OCR runs entirely in the browser via Tesseract.js, so there is no request
-  // for the backend to count. Report the visit ourselves.
   useEffect(() => {
     reportClientTool('ocr', 'visit');
   }, []);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [extractedText, setExtractedText] = useState<string>('');
+  const [markdown, setMarkdown] = useState('');
+  const [extractedText, setExtractedText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [selectedLanguage, setSelectedLanguage] = useState('eng');
-  const [processingStage, setProcessingStage] = useState('');
+  const [statusMessage, setStatusMessage] = useState('');
+  const [resultMeta, setResultMeta] = useState<string>('');
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        toast({
-          title: 'Invalid file type',
-          description: 'Please upload an image file (JPG, PNG, WebP, etc.)',
-          variant: 'destructive',
-        });
-        return;
-      }
+    if (!file) return;
 
-      // Validate file size (max 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        toast({
-          title: 'File too large',
-          description: 'Please upload an image smaller than 10MB',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      setSelectedFile(file);
-      setExtractedText('');
-      setProgress(0);
-
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPreviewUrl(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-
+    const isImage = file.type.startsWith('image/');
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    if (!isImage && !isPdf) {
       toast({
-        title: 'Image loaded',
-        description: 'Click "Extract Text" to start OCR',
+        title: 'Invalid file type',
+        description: 'Please upload an image (JPG, PNG, WebP, TIFF) or a PDF',
+        variant: 'destructive',
       });
+      return;
     }
+
+    if (file.size > 20 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please upload a file smaller than 20MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSelectedFile(file);
+    setMarkdown('');
+    setExtractedText('');
+    setResultMeta('');
+
+    if (isImage) {
+      const reader = new FileReader();
+      reader.onload = (e) => setPreviewUrl(e.target?.result as string);
+      reader.readAsDataURL(file);
+    } else {
+      setPreviewUrl(null);
+    }
+
+    toast({
+      title: 'File loaded',
+      description: 'Click "Extract Text" to start OCR',
+    });
   }, [toast]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.tiff']
+      'image/*': ['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.tiff'],
+      'application/pdf': ['.pdf']
     },
     multiple: false,
   });
 
-  const preprocessImage = (imageUrl: string): Promise<string> => {
-    return new Promise((resolve) => {
-      const img = new window.Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d')!;
-
-        // Scale up small images for better recognition (min 1500px wide)
-        const scale = Math.max(1, 1500 / img.width);
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-
-        // Draw scaled image
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-        // Get image data for processing
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-
-        // Convert to grayscale and increase contrast
-        for (let i = 0; i < data.length; i += 4) {
-          // Grayscale using luminance formula
-          const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-
-          // Increase contrast (1.5x)
-          const contrast = 1.5;
-          const adjusted = ((gray / 255 - 0.5) * contrast + 0.5) * 255;
-
-          // Clamp and apply threshold for cleaner text
-          const val = Math.max(0, Math.min(255, adjusted));
-
-          // Adaptive binarization: if close to middle, push to black or white
-          const final = val < 140 ? Math.max(0, val * 0.7) : Math.min(255, val * 1.2);
-
-          data[i] = final;
-          data[i + 1] = final;
-          data[i + 2] = final;
-        }
-
-        ctx.putImageData(imageData, 0, 0);
-
-        // Sharpen using convolution (unsharp mask approximation)
-        const sharpCanvas = document.createElement('canvas');
-        sharpCanvas.width = canvas.width;
-        sharpCanvas.height = canvas.height;
-        const sharpCtx = sharpCanvas.getContext('2d')!;
-
-        // Apply slight blur then subtract for sharpening
-        sharpCtx.filter = 'contrast(1.1) brightness(1.05)';
-        sharpCtx.drawImage(canvas, 0, 0);
-
-        resolve(sharpCanvas.toDataURL('image/png'));
-      };
-      img.src = imageUrl;
-    });
-  };
-
   const extractText = async () => {
-    if (!selectedFile || !previewUrl) return;
+    if (!selectedFile) return;
 
-    reportClientTool('ocr', 'complete', {
-      detail: selectedLanguage,
-      pages: 1,
-    });
+    reportClientTool('ocr', 'complete');
 
     setIsProcessing(true);
-    setProgress(0);
-    setProcessingStage('Preprocessing image...');
+    setStatusMessage('Uploading to our OCR engine...');
+    setMarkdown('');
+    setExtractedText('');
 
     try {
-      // Preprocess image for better OCR accuracy
-      const processedImage = await preprocessImage(previewUrl);
-      setProgress(5);
+      const form = new FormData();
+      form.append('file', selectedFile);
 
-      setProcessingStage('Initializing OCR engine...');
-      const worker = await createWorker(selectedLanguage, 1, {
-        logger: (m) => {
-          if (m.status === 'recognizing text') {
-            setProgress(30 + Math.round(m.progress * 70));
-            setProcessingStage(`Recognizing text... ${Math.round(m.progress * 100)}%`);
-          } else if (m.status === 'loading tesseract core') {
-            setProcessingStage('Loading OCR engine...');
-            setProgress(10);
-          } else if (m.status === 'initializing tesseract') {
-            setProcessingStage('Initializing...');
-            setProgress(15);
-          } else if (m.status === 'loading language traineddata') {
-            setProcessingStage(`Loading ${LANGUAGES.find(l => l.code === selectedLanguage)?.name} language data...`);
-            setProgress(20);
-          }
-        },
-      });
+      setStatusMessage('Extracting text, layout & tables...');
+      const response = await fetch(`${API}/ocr`, { method: 'POST', body: form });
 
-      // Set optimal parameters for text recognition
-      await worker.setParameters({
-        tessedit_pageseg_mode: '3', // Fully automatic page segmentation
-        preserve_interword_spaces: '1',
-        tessedit_char_blacklist: '|~`',
-      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || data.detail || 'Text extraction failed');
+      }
 
-      setProcessingStage('Analyzing image...');
-      const { data: { text, confidence } } = await worker.recognize(processedImage);
+      const md = data.markdown || data.text || '';
+      const text = data.text || md.replace(/\*\*/g, '').replace(/[|#>-]/g, '');
 
-      await worker.terminate();
-
-      // Post-process: clean up common OCR artifacts
-      const cleanedText = text
-        .replace(/\n{3,}/g, '\n\n') // collapse excessive newlines
-        .replace(/[ \t]{2,}/g, ' ') // collapse excessive spaces
-        .replace(/([a-z])\s*\n\s*([a-z])/g, '$1 $2') // rejoin broken words mid-sentence
-        .trim();
-
-      setExtractedText(cleanedText);
-      setProgress(100);
-      setProcessingStage('Complete!');
+      setMarkdown(md);
+      setExtractedText(text);
+      setResultMeta(
+        [
+          (data.pages || 1) > 1 ? `${data.pages} pages` : '1 page',
+          data.elapsedMs ? `done in ${(data.elapsedMs / 1000).toFixed(1)}s` : null,
+        ]
+          .filter(Boolean)
+          .join(' · ')
+      );
+      setStatusMessage('Complete!');
 
       toast({
         title: 'Text extracted successfully!',
-        description: `Confidence: ${confidence.toFixed(1)}% | ${cleanedText.split(/\s+/).filter(w => w).length} words found`,
+        description: `${text.split(/\s+/).filter(w => w).length} words found${data.pages > 1 ? ` across ${data.pages} pages` : ''}`,
       });
     } catch (error) {
       console.error('OCR Error:', error);
+      setStatusMessage('');
       toast({
         title: 'Extraction failed',
         description: error instanceof Error ? error.message : 'An error occurred during OCR',
@@ -249,17 +196,12 @@ const OCRTool = () => {
 
   const copyToClipboard = () => {
     if (!extractedText) return;
-
     navigator.clipboard.writeText(extractedText);
-    toast({
-      title: 'Copied to clipboard',
-      description: 'Text has been copied to your clipboard',
-    });
+    toast({ title: 'Copied to clipboard' });
   };
 
   const downloadAsText = () => {
     if (!extractedText) return;
-
     const blob = new Blob([extractedText], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -269,19 +211,16 @@ const OCRTool = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-
-    toast({
-      title: 'Downloaded',
-      description: 'Text file has been downloaded',
-    });
+    toast({ title: 'Downloaded', description: 'Text file has been downloaded' });
   };
 
   const resetTool = () => {
     setSelectedFile(null);
     setPreviewUrl(null);
+    setMarkdown('');
     setExtractedText('');
-    setProgress(0);
-    setProcessingStage('');
+    setResultMeta('');
+    setStatusMessage('');
   };
 
   return (
@@ -293,10 +232,11 @@ const OCRTool = () => {
             <FileText className="w-10 h-10 text-blue-600" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            OCR Tool - Extract Text from Images
+            OCR Tool - Extract Text from Images & PDFs
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Upload an image and extract all text from it instantly — works fully in your browser, nothing is uploaded to any server.
+            Powered by the PaddleOCR engine — recognizes text, keeps headings, lists and bold formatting,
+            and reconstructs tables exactly as they appear.
           </p>
         </div>
 
@@ -308,30 +248,16 @@ const OCRTool = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ImageIcon className="w-5 h-5" />
-                  Upload Image
+                  Upload File
                 </CardTitle>
                 <CardDescription>
-                  Upload an image containing text (JPG, PNG, WebP, etc.)
+                  Upload an image or scanned PDF (JPG, PNG, WebP, TIFF, PDF)
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Language Selector */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Select Language
-                  </label>
-                  <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select language" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LANGUAGES.map((lang) => (
-                        <SelectItem key={lang.code} value={lang.code}>
-                          {lang.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 text-sm text-blue-700">
+                  <Sparkles className="w-4 h-4 shrink-0" />
+                  Auto-detects 100+ languages · keeps tables & formatting
                 </div>
 
                 {/* Dropzone */}
@@ -347,31 +273,45 @@ const OCRTool = () => {
                     <input {...getInputProps()} />
                     <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                     <p className="text-gray-700 font-medium mb-2">
-                      {isDragActive ? 'Drop image here' : 'Drag & drop an image here'}
+                      {isDragActive ? 'Drop file here' : 'Drag & drop an image or PDF here'}
                     </p>
-                    <p className="text-sm text-gray-500">
-                      or click to browse files
-                    </p>
-                    <p className="text-xs text-gray-400 mt-2">
-                      Max file size: 10MB
-                    </p>
+                    <p className="text-sm text-gray-500">or click to browse files</p>
+                    <p className="text-xs text-gray-400 mt-2">Max file size: 20MB</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {/* Image Preview */}
-                    <div className="relative rounded-xl overflow-hidden border-2 border-gray-200">
-                      <img
-                        src={previewUrl!}
-                        alt="Preview"
-                        className="w-full h-auto max-h-96 object-contain bg-gray-50"
-                      />
-                      <button
-                        onClick={resetTool}
-                        className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
+                    {/* Preview */}
+                    {previewUrl && (
+                      <div className="relative rounded-xl overflow-hidden border-2 border-gray-200">
+                        <img
+                          src={previewUrl}
+                          alt="Preview"
+                          className="w-full h-auto max-h-96 object-contain bg-gray-50"
+                        />
+                        <button
+                          onClick={resetTool}
+                          className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+
+                    {!previewUrl && !isProcessing && (
+                      <div className="flex items-center justify-center gap-3 rounded-xl border-2 border-dashed border-blue-300 bg-blue-50/50 p-8">
+                        <FileText className="w-10 h-10 text-blue-400" />
+                        <div className="text-sm text-blue-700">
+                          <p className="font-medium">{selectedFile.name}</p>
+                          <p>PDF selected — ready to extract</p>
+                        </div>
+                        <button
+                          onClick={resetTool}
+                          className="ml-auto p-2 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
 
                     {/* File Info */}
                     <div className="bg-gray-50 rounded-lg p-3 text-sm">
@@ -404,11 +344,11 @@ const OCRTool = () => {
                       )}
                     </Button>
 
-                    {/* Progress */}
+                    {/* Status */}
                     {isProcessing && (
-                      <div className="space-y-2">
-                        <Progress value={progress} className="h-2" />
-                        <p className="text-sm text-center text-gray-600">{processingStage}</p>
+                      <div className="space-y-2 flex items-center gap-2 text-sm text-gray-600">
+                        <CheckCircle2 className="w-4 h-4 animate-pulse text-blue-500" />
+                        <span>{statusMessage}</span>
                       </div>
                     )}
                   </div>
@@ -426,7 +366,9 @@ const OCRTool = () => {
                   Extracted Text
                 </CardTitle>
                 <CardDescription>
-                  The text extracted from your image will appear here
+                  {resultMeta
+                    ? `Extracted · ${resultMeta}`
+                    : 'The text with its layout and tables will appear here'}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -438,8 +380,10 @@ const OCRTool = () => {
                         <TabsTrigger value="raw">Raw Text</TabsTrigger>
                       </TabsList>
                       <TabsContent value="formatted" className="space-y-4">
-                        <div className="bg-gray-50 rounded-lg p-4 min-h-[300px] max-h-[500px] overflow-y-auto whitespace-pre-wrap font-mono text-sm">
-                          {extractedText}
+                        <div className="bg-gray-50 rounded-lg p-4 min-h-[300px] max-h-[500px] overflow-y-auto text-sm">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                            {markdown || extractedText}
+                          </ReactMarkdown>
                         </div>
                         <div className="text-sm text-gray-600">
                           <p>Words: {extractedText.split(/\s+/).filter(w => w).length}</p>
@@ -458,19 +402,11 @@ const OCRTool = () => {
 
                     {/* Action Buttons */}
                     <div className="flex gap-2">
-                      <Button
-                        onClick={copyToClipboard}
-                        variant="outline"
-                        className="flex-1"
-                      >
+                      <Button onClick={copyToClipboard} variant="outline" className="flex-1">
                         <Copy className="w-4 h-4 mr-2" />
                         Copy Text
                       </Button>
-                      <Button
-                        onClick={downloadAsText}
-                        variant="outline"
-                        className="flex-1"
-                      >
+                      <Button onClick={downloadAsText} variant="outline" className="flex-1">
                         <Download className="w-4 h-4 mr-2" />
                         Download TXT
                       </Button>
@@ -481,7 +417,7 @@ const OCRTool = () => {
                     <FileText className="w-16 h-16 text-gray-300 mb-4" />
                     <p className="text-gray-500 font-medium">No text extracted yet</p>
                     <p className="text-sm text-gray-400 mt-2">
-                      Upload an image and click "Extract Text" to get started
+                      Upload an image or PDF and click "Extract Text" to get started
                     </p>
                   </div>
                 )}
@@ -506,13 +442,13 @@ const OCRTool = () => {
               <div className="space-y-2">
                 <h4 className="font-semibold text-gray-900">💼 Business Professionals</h4>
                 <p className="text-sm text-gray-600">
-                  Digitize receipts, business cards, and scanned documents
+                  Digitize invoices, receipts, and financial tables with the structure intact
                 </p>
               </div>
               <div className="space-y-2">
                 <h4 className="font-semibold text-gray-900">🌐 Translators</h4>
                 <p className="text-sm text-gray-600">
-                  Extract text from images for translation and localization
+                  Extract text from images and PDFs for translation and localization
                 </p>
               </div>
             </div>
