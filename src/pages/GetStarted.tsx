@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, FileText, FileImage, Users, Radio, Video, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit, Sparkles, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, Shield, QrCode, Layers, GitMerge } from 'lucide-react';
+import { ArrowRight, Zap, FileText, FileImage, Users, Radio, PenTool, ScanText, FileType, FilePlus2, Lock, CheckCircle2, FileEdit, Sparkles, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, Shield, QrCode, Layers, GitMerge } from 'lucide-react';
 
 const FEATURES = [
   {
@@ -43,11 +43,6 @@ const FEATURES = [
     icon: Radio,     title: 'Activity Feed',         badge: 'Live',       gradient: 'from-indigo-500 to-indigo-600',
     href: '/feed',              description: 'Stay updated with live activity across all your workspaces.',
     features: ['Real-time updates', 'Activity tracking', 'Team notifications'],
-  },
-  {
-    icon: Video,     title: 'Video Meetings',        badge: 'New',        gradient: 'from-cyan-500 to-cyan-600',
-    href: '/meet',              description: 'Host HD video calls and share your screen instantly.',
-    features: ['HD video calls', 'Screen sharing', 'No downloads needed'],
   },
   {
     icon: PenTool,   title: 'Whiteboards',           badge: 'New',        gradient: 'from-pink-500 to-pink-600',

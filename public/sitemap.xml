@@ -145,11 +145,6 @@
     <changefreq>daily</changefreq>
   </url>
 
-  <url>
-    <loc>https://slim-file.com/meet</loc>
-    <changefreq>daily</changefreq>
-  </url>
-
   <!-- ===== Legal Pages ===== -->
   <url>
     <loc>https://slim-file.com/terms</loc>

@@ -1,12 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
   Home, Rss, Minimize2, RefreshCw, LayoutDashboard,
-  GitMerge, Lock, Layers, Users, FileText, PenLine, Video, Scan, Sparkles,
+  GitMerge, Lock, Layers, Users, FileText, PenLine, Scan, Sparkles,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 
-const HIDDEN_PREFIXES = ['/meet/', '/my-whiteboards/', '/documents/', '/login', '/ai-lab', '/admin/review-emails'];
+const HIDDEN_PREFIXES = ['/my-whiteboards/', '/documents/', '/login', '/ai-lab', '/admin/review-emails'];
 function isHiddenRoute(pathname: string) {
   if (HIDDEN_PREFIXES.some(p => pathname.startsWith(p))) return true;
   if (/^\/workspaces\/[^/]+/.test(pathname)) return true;
@@ -25,7 +25,6 @@ const tabs = [
   { label: 'Workspaces', icon: Users,           to: '/workspaces',      section: 'connect' },
   { label: 'Documents',  icon: FileText,        to: '/documents',       section: 'connect' },
   { label: 'Boards',     icon: PenLine,         to: '/my-whiteboards',  section: 'connect' },
-  { label: 'Meet',       icon: Video,           to: '/meet',            section: 'connect' },
   { label: 'AI Lab',     icon: Sparkles,        to: '/ai-lab',          section: 'ai' },
   { label: 'Dashboard',  icon: LayoutDashboard, to: '/dashboard',       section: null },
 ];

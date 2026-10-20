@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   X, Zap, Users, Lock, ScanText, FileImage, FilePlus2,
-  FileText, Radio, Video, PenTool, FileType,
+  FileText, Radio, PenTool, FileType,
 } from 'lucide-react';
 
 const FEATURES = [
@@ -12,7 +12,6 @@ const FEATURES = [
   { icon: <Users className="w-3.5 h-3.5" />, text: 'Team workspaces & chat' },
   { icon: <ScanText className="w-3.5 h-3.5" />, text: 'OCR text extraction' },
   { icon: <Radio className="w-3.5 h-3.5" />, text: 'Activity feed' },
-  { icon: <Video className="w-3.5 h-3.5" />, text: 'Video meetings' },
   { icon: <PenTool className="w-3.5 h-3.5" />, text: 'Whiteboards' },
   { icon: <FileType className="w-3.5 h-3.5" />, text: 'Document editor' },
   { icon: <FilePlus2 className="w-3.5 h-3.5" />, text: 'PDF merger & splitter' },

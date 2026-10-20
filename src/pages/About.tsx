@@ -1,4 +1,4 @@
-import { Minimize2, RefreshCw, Users, FileImage, FileText, FileType, FileSpreadsheet, Scan, GitMerge, Lock, Rss, PenLine, Video, LayoutDashboard, CheckCircle2, Sparkles, Brain, FileSearch, ListChecks, Code2, Terminal, Package, Building2, Webhook, BookOpen, Zap, Key } from "lucide-react";
+import { Minimize2, RefreshCw, Users, FileImage, FileText, FileType, FileSpreadsheet, Scan, GitMerge, Lock, Rss, PenLine, LayoutDashboard, CheckCircle2, Sparkles, Brain, FileSearch, ListChecks, Code2, Terminal, Package, Building2, Webhook, BookOpen, Zap, Key } from "lucide-react";
 import { useSEO } from '@/hooks/useSEO';
 
 const About: React.FC = () => {
@@ -328,7 +328,7 @@ const About: React.FC = () => {
               </h2>
               <p className="text-gray-500 text-base leading-relaxed mb-6">
                 SlimFile is more than a file tool. It's a collaboration platform where teams
-                can write documents, brainstorm on whiteboards, hold video meetings, and stay
+                can write documents, brainstorm on whiteboards, and stay
                 connected through a live feed — all completely independent of file compression.
               </p>
               <ul className="space-y-2.5">
@@ -336,7 +336,6 @@ const About: React.FC = () => {
                   'Team Workspaces for shared projects',
                   'Rich text document editor',
                   'Real-time collaborative whiteboards',
-                  'Built-in video meetings',
                   'Live Feed to see global activity',
                   'Personal dashboard to track your work',
                 ].map((item) => (
@@ -352,7 +351,6 @@ const About: React.FC = () => {
                 { icon: Users,           label: 'Workspaces', desc: 'Shared team projects',     color: 'text-cyan-600',    bg: 'bg-cyan-50',    border: 'border-cyan-100' },
                 { icon: FileText,        label: 'Documents',  desc: 'Rich text editor',          color: 'text-blue-500',    bg: 'bg-blue-50',    border: 'border-blue-100' },
                 { icon: PenLine,         label: 'Boards',     desc: 'Collaborative whiteboards', color: 'text-violet-500',  bg: 'bg-violet-50',  border: 'border-violet-100' },
-                { icon: Video,           label: 'Meet',       desc: 'Video meetings',            color: 'text-purple-500',  bg: 'bg-purple-50',  border: 'border-purple-100' },
                 { icon: Rss,             label: 'Live Feed',  desc: 'Global activity stream',    color: 'text-teal-500',    bg: 'bg-teal-50',    border: 'border-teal-100' },
                 { icon: LayoutDashboard, label: 'Dashboard',  desc: 'Your personal overview',    color: 'text-pink-500',    bg: 'bg-pink-50',    border: 'border-pink-100' },
               ].map(({ icon: Icon, label, desc, color, bg, border }) => (

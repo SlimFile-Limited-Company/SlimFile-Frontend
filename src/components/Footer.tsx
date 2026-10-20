@@ -52,7 +52,6 @@ export const Footer = () => {
       heading: "SlimFile Connect",
       links: [
         { label: "Feed", path: "/feed" },
-        { label: "Meet", path: "/meet" },
         { label: "Reviews", path: "/reviews" },
         { label: "Community Manager", path: "/community-manager" },
       ],

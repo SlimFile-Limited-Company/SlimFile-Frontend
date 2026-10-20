@@ -150,8 +150,6 @@ import Workspaces from './pages/Workspaces';
 import SummitRegistration from './pages/SummitRegistration';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import WorkspaceInvitations from './pages/WorkspaceInvitations';
-import Meet from './pages/Meet';
-import MeetingRoom from './pages/MeetingRoom';
 import OCRTool from './pages/OCRTool';
 import PersonalWhiteboards from './pages/PersonalWhiteboards';
 import PersonalWhiteboardCanvas from './pages/PersonalWhiteboardCanvas';
@@ -377,7 +375,6 @@ ReactDOM.createRoot(root).render(
               <WorkspaceInvitations />
             </ProtectedRoute>
           } />
-          <Route path="meet" element={<ProtectedRoute><Meet /></ProtectedRoute>} />
           <Route path="ocr-tool" element={<OCRTool />} />
           <Route path="forge" element={<SlimFileForge />} />
           <Route path="merge-compress" element={<SlimFileMergeCompress />} />
@@ -458,9 +455,6 @@ ReactDOM.createRoot(root).render(
             <SlimFileDrive />
           </ProtectedRoute>
         } />
-
-        {/* Meeting room - Full screen without header/footer */}
-        <Route path="meet/:meetingCode" element={<ProtectedRoute><MeetingRoom /></ProtectedRoute>} />
 
         {/* Messages - Full screen DM chat without header/footer */}
         <Route path="messages" element={
