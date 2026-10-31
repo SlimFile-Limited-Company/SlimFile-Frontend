@@ -97,34 +97,25 @@ export const Header = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   };
 
-  const connectNavigation = [
-    { name: "Feed", href: "/feed" },
-    ...(isAuthenticated() ? [{ name: "Workspaces", href: "/workspaces" }] : []),
-    ...(isAuthenticated() ? [{ name: "Documents", href: "/documents" }] : []),
-    ...(isAuthenticated() ? [{ name: "My Whiteboards", href: "/my-whiteboards" }] : []),
-  ];
-
-  const suitesNavigation = [
+  // File tools only, in the same order as the home page tabs (Files, PDF,
+  // Scan, AI Lab). Team pages are reached from the home page Team tab.
+  const toolsNavigation: { name: string; href: string; external?: boolean }[] = [
     { name: "Compress", href: "/compress" },
     { name: "Convert", href: "/convert-only" },
     { name: "Compress and Convert", href: "/convert-compress" },
-    { name: "Audio Compression", href: "https://audio.slim-file.com", external: true },
-    { name: "OCR Tool", href: "/ocr-tool" },
-    { name: "PDF Merger & Splitter", href: "/forge" },
-    { name: "PDF Password Protect", href: "/lock" },
-    { name: "Summarize Document", href: "/ai-lab?feature=summarize" },
+    { name: "Zip Files & Folders", href: "/zip" },
     { name: "QR Code Generator", href: "/qr-code" },
+    { name: "PDF Merger & Splitter", href: "/forge" },
+    { name: "Merge & Compress PDFs", href: "/merge-compress" },
+    { name: "Split & Compress PDFs", href: "/split-compress" },
+    { name: "Text to PDF", href: "/text-to-pdf" },
+    { name: "OCR Tool", href: "/ocr-tool" },
+    { name: "PDF Password Protect", href: "/lock" },
+    { name: "Scan & Compress", href: "/scan-compress" },
+    { name: "Batch Scan & Merge", href: "/scan-merge" },
+    { name: "Batch Scan & Split", href: "/scan-split" },
+    { name: "Scan & Convert", href: "/scan-convert" },
     { name: "AI Lab", href: "/ai-lab" },
-  ];
-
-  // iLovePDF keeps every tool inside one dropdown. "SlimFile Connect" and
-  // "SlimFile Suites" were two separate dropdowns and are gone from the header
-  // bar, so their items are merged here — otherwise Compress, Convert, Forge,
-  // Lock, QR, AI Lab, Feed, Meet and the workspace pages become unreachable
-  // from the header.
-  const toolsNavigation = [
-    ...suitesNavigation,
-    ...connectNavigation.filter(c => !suitesNavigation.some(s => s.href === c.href)),
   ];
 
   const internalNavigation = [
