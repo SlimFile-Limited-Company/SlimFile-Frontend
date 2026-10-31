@@ -128,7 +128,8 @@ const ActivityTile = ({ activity, index }: { activity: FeedActivity; index: numb
       ) : (
         <>
           <p className="mt-6 text-5xl font-semibold tracking-tight text-red-600 tabular-nums">
-            −{activity.compressionRatio}%
+            {activity.compressionRatio}%
+            <span className="ml-2 text-[17px] font-medium tracking-normal text-[#6e6e73]">smaller</span>
           </p>
           <p className="mt-3 text-[13px] text-[#6e6e73] tabular-nums">
             {formatBytes(activity.originalSize)} → {formatBytes(activity.compressedSize)}
