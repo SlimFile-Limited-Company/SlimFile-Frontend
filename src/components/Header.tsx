@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown, Bot, Star, Mail } from "lucide-react";
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { isAuthenticated, logout } from "@/lib/auth";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -118,6 +120,54 @@ export const Header = () => {
     { name: "AI Lab", href: "/ai-lab" },
   ];
 
+  // Full-width Tools menu, laid out like Apple's: a first column of large
+  // links to the most used tools, then smaller grouped columns.
+  const toolsMenu = {
+    featured: {
+      title: "Explore Tools",
+      links: [
+        { name: "Compress", href: "/compress" },
+        { name: "Convert & Compress", href: "/convert-compress" },
+        { name: "Merge & Compress PDFs", href: "/merge-compress" },
+        { name: "Scan & Compress", href: "/scan-compress" },
+        { name: "AI Lab", href: "/ai-lab" },
+      ],
+    },
+    groups: [
+      {
+        title: "PDF",
+        links: [
+          { name: "PDF Merger & Splitter", href: "/forge" },
+          { name: "Split & Compress PDFs", href: "/split-compress" },
+          { name: "Text to PDF", href: "/text-to-pdf" },
+          { name: "OCR Tool", href: "/ocr-tool" },
+          { name: "PDF Password Protect", href: "/lock" },
+        ],
+      },
+      {
+        title: "Files",
+        links: [
+          { name: "Convert", href: "/convert-only" },
+          { name: "Compress and Convert", href: "/convert-compress" },
+          { name: "Zip Files & Folders", href: "/zip" },
+          { name: "QR Code Generator", href: "/qr-code" },
+        ],
+      },
+      {
+        title: "Scan",
+        links: [
+          { name: "Scan & Compress", href: "/scan-compress" },
+          { name: "Batch Scan & Merge", href: "/scan-merge" },
+          { name: "Batch Scan & Split", href: "/scan-split" },
+          { name: "Scan & Convert", href: "/scan-convert" },
+        ],
+      },
+    ],
+  };
+
+  const isToolActive = (href: string) =>
+    location.pathname === href || (href === '/ai-lab' && location.pathname.startsWith('/ai-lab'));
+
   const internalNavigation = [
     { name: "CEO Dashboard", href: "/ceo-dashboard" },
     { name: "B2B API Keys", href: "/b2b-api-keys-admin" },
@@ -226,35 +276,93 @@ export const Header = () => {
                 <span>Tools</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
-              {hoveredDropdown === 'tools' && (
-                <div className="absolute top-full left-0 mt-2 w-56 max-h-[70vh] overflow-y-auto bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
-                  {toolsNavigation.map((item) => (
-                    item.external ? (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200"
+              {typeof document !== 'undefined' && createPortal(
+                <AnimatePresence>
+                  {hoveredDropdown === 'tools' && (
+                    <>
+                      {/* Blur and dim the page behind the menu. It ignores the
+                          pointer, so moving onto the page closes the menu. */}
+                      <motion.div
+                        key="tools-backdrop"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="hidden md:block fixed inset-x-0 top-16 bottom-0 z-40 bg-gray-900/10 backdrop-blur-md pointer-events-none"
+                      />
+                      <motion.div
+                        key="tools-panel"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                        onMouseEnter={() => handleDropdownHover('tools')}
+                        onMouseLeave={() => handleDropdownHover(null)}
+                        className="hidden md:block fixed inset-x-0 top-16 z-50 overflow-hidden bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-[0_20px_40px_-20px_rgba(0,0,0,0.15)]"
                       >
-                        {item.name}
-                      </a>
-                    ) : (
-                      <Link
-                        key={item.name}
-                        to={item.href}
-                        className={cn(
-                          "block px-4 py-2 text-sm transition-colors duration-200",
-                          (location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')) || (item.href === '/ai-lab' && location.pathname.startsWith('/ai-lab')))
-                            ? "text-red-600 bg-red-50"
-                            : "text-gray-700 hover:text-red-600 hover:bg-red-50"
-                        )}
-                      >
-                        {item.name}
-                      </Link>
-                    )
-                  ))}
-                </div>
+                        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                          <div className="flex gap-16 pl-[3.25rem]">
+                            {/* Featured column: large links */}
+                            <motion.div
+                              initial={{ opacity: 0, y: -8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: 0.05 }}
+                              className="min-w-[16rem]"
+                            >
+                              <p className="text-xs font-medium text-gray-500 mb-3">{toolsMenu.featured.title}</p>
+                              <ul className="space-y-1.5">
+                                {toolsMenu.featured.links.map(item => (
+                                  <li key={item.href}>
+                                    <Link
+                                      to={item.href}
+                                      onClick={() => setHoveredDropdown(null)}
+                                      className={cn(
+                                        "text-2xl font-semibold tracking-tight transition-colors duration-200",
+                                        isToolActive(item.href) ? "text-red-600" : "text-gray-900 hover:text-red-600"
+                                      )}
+                                    >
+                                      {item.name}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </motion.div>
+
+                            {/* Grouped columns: smaller links */}
+                            {toolsMenu.groups.map((group, i) => (
+                              <motion.div
+                                key={group.title}
+                                initial={{ opacity: 0, y: -8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
+                                className="min-w-[10rem]"
+                              >
+                                <p className="text-xs font-medium text-gray-500 mb-3">{group.title}</p>
+                                <ul className="space-y-2">
+                                  {group.links.map(item => (
+                                    <li key={item.href}>
+                                      <Link
+                                        to={item.href}
+                                        onClick={() => setHoveredDropdown(null)}
+                                        className={cn(
+                                          "text-sm font-medium transition-colors duration-200",
+                                          isToolActive(item.href) ? "text-red-600" : "text-gray-700 hover:text-red-600"
+                                        )}
+                                      >
+                                        {item.name}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </motion.div>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>,
+                document.body
               )}
             </div>
 
