@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import io from 'socket.io-client';
-import { FileText, Image, Archive, TrendingUp, HardDrive, Zap, ArrowRight, BarChart2, Monitor } from 'lucide-react';
+import { FileText, Image, Archive, BarChart2, Monitor, ArrowRight, Radio } from 'lucide-react';
 
 interface FeedActivity {
   _id: string;
@@ -24,7 +24,7 @@ interface FeedActivity {
 const formatBytes = (bytes: number) => {
   if (!bytes || bytes <= 0) return '0 B';
   const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 };
@@ -35,217 +35,120 @@ const formatCount = (n: number) => {
   return n.toString();
 };
 
-const getFileExt = (filename: string) => {
-  const parts = filename.split('.');
-  return parts.length > 1 ? parts[parts.length - 1].toUpperCase() : 'FILE';
-};
-
 const timeAgo = (date: string) => {
   const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
-  if (seconds < 60) return 'just now';
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  return `${Math.floor(seconds / 86400)}d ago`;
+  if (seconds < 60) return 'Just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)} h ago`;
+  return `${Math.floor(seconds / 86400)} d ago`;
 };
 
-// ── File type config ──────────────────────────────────────────────────────────
-
-type FileConfig = {
-  icon: typeof FileText;
-  gradient: string;
-  iconBg: string;
-  iconColor: string;
-  label: string;
+// Line icon and colour per file type. Colour is only on the icon, as on the
+// home tiles; everything else stays neutral.
+const fileKind = (fileType: string) => {
+  if (fileType.includes('image')) return { icon: Image, color: 'text-amber-500', label: 'Image' };
+  if (fileType.includes('pdf')) return { icon: FileText, color: 'text-red-600', label: 'PDF' };
+  if (fileType.includes('presentation') || fileType.includes('powerpoint')) return { icon: Monitor, color: 'text-orange-500', label: 'Presentation' };
+  if (fileType.includes('sheet') || fileType.includes('excel')) return { icon: BarChart2, color: 'text-emerald-600', label: 'Spreadsheet' };
+  if (fileType.includes('word') || fileType.includes('document')) return { icon: FileText, color: 'text-blue-600', label: 'Document' };
+  if (fileType.includes('zip') || fileType.includes('archive')) return { icon: Archive, color: 'text-purple-600', label: 'Archive' };
+  return { icon: FileText, color: 'text-[#6e6e73]', label: 'File' };
 };
 
-const getFileConfig = (fileType: string): FileConfig => {
-  if (fileType.includes('image'))
-    return { icon: Image,    gradient: 'from-amber-500 to-orange-500',   iconBg: 'bg-amber-500/20',   iconColor: 'text-amber-300',  label: 'Image' };
-  if (fileType.includes('pdf'))
-    return { icon: FileText, gradient: 'from-red-500 to-rose-600',       iconBg: 'bg-red-500/20',     iconColor: 'text-red-300',    label: 'PDF' };
-  if (fileType.includes('presentation') || fileType.includes('powerpoint'))
-    return { icon: Monitor,  gradient: 'from-orange-500 to-amber-600',   iconBg: 'bg-orange-500/20',  iconColor: 'text-orange-300', label: 'Presentation' };
-  if (fileType.includes('sheet') || fileType.includes('excel'))
-    return { icon: BarChart2,gradient: 'from-emerald-500 to-teal-600',   iconBg: 'bg-emerald-500/20', iconColor: 'text-emerald-300',label: 'Spreadsheet' };
-  if (fileType.includes('word') || fileType.includes('document'))
-    return { icon: FileText, gradient: 'from-blue-500 to-indigo-600',    iconBg: 'bg-blue-500/20',    iconColor: 'text-blue-300',   label: 'Document' };
-  if (fileType.includes('zip') || fileType.includes('archive'))
-    return { icon: Archive,  gradient: 'from-purple-500 to-violet-600',  iconBg: 'bg-purple-500/20',  iconColor: 'text-purple-300', label: 'Archive' };
-  return   { icon: FileText, gradient: 'from-slate-500 to-slate-700',    iconBg: 'bg-slate-500/20',   iconColor: 'text-slate-300',  label: 'File' };
+// Merge, split and the scan tools are different jobs from a plain squeeze,
+// so each keeps its own label.
+const ACTION_LABELS: Record<FeedActivity['operation'], string> = {
+  'compress': 'Compressed',
+  'convert': 'Converted',
+  'convert-compress': 'Converted & compressed',
+  'merge-compress': 'Merged & compressed',
+  'split-compress': 'Split & compressed',
+  'scan-compress': 'Scanned & compressed',
+  'scan-merge': 'Batch scan merged',
+  'scan-split': 'Batch scan split',
+  'scan-convert': 'Scanned & converted',
 };
 
-const getRatioColor = (ratio: number) => {
-  if (ratio >= 70) return 'text-emerald-400';
-  if (ratio >= 40) return 'text-blue-400';
-  return 'text-amber-400';
-};
+// ── Pieces ────────────────────────────────────────────────────────────────────
 
-// ── Skeleton ──────────────────────────────────────────────────────────────────
+const Stat = ({ value, label, delay }: { value: string; label: string; delay: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4, delay }}
+    className="rounded-[28px] bg-[#f5f5f7] p-6 sm:p-8"
+  >
+    <p className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#1d1d1f] tabular-nums">{value}</p>
+    <p className="mt-2 text-[15px] text-[#6e6e73]">{label}</p>
+  </motion.div>
+);
 
-const SkeletonCard = () => (
-  <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 animate-pulse">
-    <div className="h-24 bg-gray-200" />
-    <div className="p-5 space-y-3">
-      <div className="h-3 bg-gray-200 rounded w-3/4" />
-      <div className="h-2.5 bg-gray-100 rounded w-1/2" />
-      <div className="flex justify-between mt-4">
-        <div className="space-y-1.5">
-          <div className="h-2 bg-gray-100 rounded w-16" />
-          <div className="h-5 bg-gray-200 rounded w-20" />
-        </div>
-        <div className="space-y-1.5">
-          <div className="h-2 bg-gray-100 rounded w-16" />
-          <div className="h-5 bg-gray-200 rounded w-20" />
-        </div>
-      </div>
-    </div>
+const SkeletonTile = () => (
+  <div className="rounded-[22px] bg-[#f5f5f7] p-6 animate-pulse">
+    <div className="h-8 w-8 rounded-lg bg-[#e8e8ed]" />
+    <div className="mt-5 h-3 w-1/2 rounded-full bg-[#e8e8ed]" />
+    <div className="mt-6 h-10 w-1/3 rounded-xl bg-[#e8e8ed]" />
+    <div className="mt-4 h-3 w-2/3 rounded-full bg-[#e8e8ed]" />
   </div>
 );
 
-// ── Feed card ─────────────────────────────────────────────────────────────────
-
-const FeedCard = ({ activity, index }: { activity: FeedActivity; index: number }) => {
-  const cfg = getFileConfig(activity.fileType);
-  const Icon = cfg.icon;
-  const ext = getFileExt(activity.filename);
+const ActivityTile = ({ activity, index }: { activity: FeedActivity; index: number }) => {
+  const kind = fileKind(activity.fileType);
+  const Icon = kind.icon;
   const isConvert = activity.operation === 'convert';
-  const isMergeCompress = activity.operation === 'merge-compress';
-  const isSplitCompress = activity.operation === 'split-compress';
-
-  // Merge and split are compression operations too, so they were falling
-  // through to the plain "Compressed" label and read as a single-file squeeze.
-  // The scan tools need their own labels for the same reason: each one is a
-  // different job, not a squeeze on a file the user already had.
-  const SCAN_LABELS: Partial<Record<FeedActivity['operation'], string>> = {
-    'scan-compress': 'Scanned & Compressed',
-    'scan-merge': 'Batch Scan Merged',
-    'scan-split': 'Batch Scan Split',
-    'scan-convert': 'Scanned & Converted',
-  };
-  const scanLabel = SCAN_LABELS[activity.operation];
-
-  const actionLabel = isConvert
-    ? `Convert → ${activity.targetFormat?.toUpperCase()}`
-    : isMergeCompress
-      ? 'Merged & Compressed'
-      : isSplitCompress
-        ? 'Split & Compressed'
-        : scanLabel ?? 'Compressed';
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.97 }}
-      transition={{ duration: 0.3, delay: Math.min(index * 0.035, 0.5) }}
-      className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+      transition={{ duration: 0.35, delay: Math.min(index * 0.03, 0.4), ease: [0.4, 0, 0.2, 1] }}
+      className={`relative rounded-[22px] p-6 transition-colors duration-700 ${activity.isNew ? 'bg-red-50' : 'bg-[#f5f5f7]'}`}
     >
-      {/* Coloured header */}
-      <div className={`relative bg-gradient-to-br ${cfg.gradient} px-5 pt-5 pb-8`}>
-        {/* NEW badge */}
-        {activity.isNew && (
-          <motion.span
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold tracking-wide"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> NEW
-          </motion.span>
-        )}
-
-        <div className="flex items-start justify-between">
-          <div className="flex-1 min-w-0 pr-3">
-            <p className="text-white/60 text-[11px] font-medium uppercase tracking-wider mb-1">
-              {actionLabel}
-            </p>
-            <p className="text-white font-semibold text-sm leading-snug">
-              {cfg.label} File
-            </p>
-          </div>
-          <div className={`w-10 h-10 rounded-xl ${cfg.iconBg} flex items-center justify-center flex-shrink-0`}>
-            <Icon className={`w-5 h-5 ${cfg.iconColor}`} />
-          </div>
-        </div>
+      <div className="flex items-start justify-between">
+        <Icon className={`w-7 h-7 ${kind.color}`} strokeWidth={1.75} />
+        <span className={`text-[13px] ${activity.isNew ? 'text-red-600 font-medium' : 'text-[#6e6e73]'}`}>
+          {activity.isNew && <span className="inline-block w-1.5 h-1.5 mr-1.5 mb-0.5 rounded-full bg-red-600 animate-pulse" />}
+          {timeAgo(activity.createdAt)}
+        </span>
       </div>
 
-      {/* Body — overlaps header with negative margin */}
-      <div className="relative -mt-4 mx-4 mb-4 bg-white rounded-xl shadow-sm border border-gray-100 px-4 py-4">
-        {/* Extension + time row */}
-        <div className="flex items-center justify-between mb-4">
-          <span className="px-2 py-0.5 rounded-md bg-gray-100 text-gray-500 text-[11px] font-mono font-semibold">
-            {ext}
+      <p className="mt-5 text-[15px] font-semibold text-[#1d1d1f]">{kind.label}</p>
+      <p className="text-[13px] text-[#6e6e73]">{ACTION_LABELS[activity.operation] ?? 'Compressed'}</p>
+
+      {isConvert ? (
+        <div className="mt-6 flex items-center gap-3">
+          <span className="text-[15px] text-[#6e6e73]">{formatBytes(activity.originalSize)}</span>
+          <ArrowRight className="w-4 h-4 text-[#d2d2d7]" />
+          <span className="text-4xl font-semibold tracking-tight text-[#1d1d1f]">
+            {activity.targetFormat?.toUpperCase() || 'Done'}
           </span>
-          <span className="text-[11px] text-gray-400">{timeAgo(activity.createdAt)}</span>
         </div>
-
-        {isConvert ? (
-          /* Convert card body */
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Original</p>
-              <p className="text-base font-bold text-gray-900">{formatBytes(activity.originalSize)}</p>
-            </div>
-            <ArrowRight className="w-4 h-4 text-gray-300" />
-            <div className="text-right">
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Output</p>
-              <p className="text-base font-bold text-violet-600">{activity.targetFormat?.toUpperCase()}</p>
-            </div>
-          </div>
-        ) : (
-          /* Compress card body */
-          <div className="flex items-end justify-between">
-            <div className="space-y-3 flex-1 mr-4">
-              <div>
-                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Size saved</p>
-                <p className="text-lg font-bold text-gray-900">{formatBytes(activity.spaceSaved)}</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <div>
-                  <p className="text-[10px] text-gray-400 mb-0.5">Before</p>
-                  <p className="text-xs font-semibold text-gray-600">{formatBytes(activity.originalSize)}</p>
-                </div>
-                <ArrowRight className="w-3 h-3 text-gray-300 flex-shrink-0" />
-                <div>
-                  <p className="text-[10px] text-gray-400 mb-0.5">After</p>
-                  <p className="text-xs font-semibold text-emerald-600">{formatBytes(activity.compressedSize)}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Big ratio number */}
-            <div className="text-right flex-shrink-0">
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Reduced by</p>
-              <p className={`text-4xl font-black leading-none ${getRatioColor(activity.compressionRatio)}`}>
-                {activity.compressionRatio}
-                <span className="text-xl font-bold">%</span>
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
+      ) : (
+        <>
+          <p className="mt-6 text-5xl font-semibold tracking-tight text-red-600 tabular-nums">
+            −{activity.compressionRatio}%
+          </p>
+          <p className="mt-3 text-[13px] text-[#6e6e73] tabular-nums">
+            {formatBytes(activity.originalSize)} → {formatBytes(activity.compressedSize)}
+            <span className="text-[#1d1d1f]"> · Saved {formatBytes(activity.spaceSaved)}</span>
+          </p>
+        </>
+      )}
     </motion.div>
   );
 };
 
-// ── Hero stat ─────────────────────────────────────────────────────────────────
-
-const HeroStat = ({ icon: Icon, label, value, sub }: { icon: typeof TrendingUp; label: string; value: string; sub: string }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="flex flex-col gap-1"
-  >
-    <div className="flex items-center gap-2 text-black/60 text-xs font-medium uppercase tracking-wider">
-      <Icon className="w-3.5 h-3.5" />
-      {label}
-    </div>
-    <p className="text-2xl sm:text-4xl font-black text-red-600">{value}</p>
-    <p className="text-black/50 text-xs">{sub}</p>
-  </motion.div>
-);
-
 // ── Main ──────────────────────────────────────────────────────────────────────
+
+const FILTERS = [
+  { key: 'all', label: 'All' },
+  { key: 'compress', label: 'Compressed' },
+  { key: 'convert', label: 'Converted' },
+] as const;
+
+type FilterKey = (typeof FILTERS)[number]['key'];
 
 export const Feed = () => {
   useSEO({
@@ -255,7 +158,7 @@ export const Feed = () => {
   const [activities, setActivities] = useState<FeedActivity[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'compress' | 'convert'>('all');
+  const [filter, setFilter] = useState<FilterKey>('all');
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -285,6 +188,7 @@ export const Feed = () => {
     return () => { socket.disconnect(); };
   }, [API_BASE_URL]);
 
+  // Hide compressions that did not actually save anything.
   const clean = (a: FeedActivity) =>
     a.operation !== 'convert' ? (a.compressionRatio > 0 && a.spaceSaved > 0) : true;
 
@@ -295,80 +199,83 @@ export const Feed = () => {
     return true;
   }).slice(0, 100);
 
-  const FILTERS = [
-    { key: 'all',      label: 'All' },
-    { key: 'compress', label: 'Compressed' },
-    { key: 'convert',  label: 'Converted' },
-  ] as const;
-
   return (
-    <div className="min-h-screen bg-[#F5F5F7]">
+    <div className="min-h-screen bg-white">
 
-      {/* ── Hero ── */}
-      <div className="bg-white pt-36 pb-8 sm:pb-16 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-6">
-            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/20 text-emerald-600 text-xs font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Live
+      {/* Hero */}
+      <div className="pt-28 sm:pt-32 pb-12 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="inline-flex items-center gap-2 text-sm font-semibold text-red-600 mb-3">
+            <span className="relative flex w-2 h-2">
+              <span className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-75" />
+              <span className="relative w-2 h-2 rounded-full bg-emerald-500" />
             </span>
-            <span className="text-black/40 text-xs">Updates in real time</span>
+            Live from SlimFile
           </div>
-
-          <h1 className="text-4xl sm:text-5xl font-black text-black tracking-tight mb-2">
-            Community Feed
+          <h1 className="text-4xl sm:text-[56px] sm:leading-[1.07] font-semibold tracking-tight text-[#1d1d1f]">
+            Files getting lighter,<br className="hidden sm:block" /> right now.
           </h1>
-          <p className="text-black/50 text-base mb-8 sm:mb-14">
-            Every file compressed around the world, as it happens.
+          <p className="mt-4 text-[#6e6e73] text-lg sm:text-[21px] leading-snug max-w-2xl">
+            Every compression and conversion on SlimFile appears here the moment it happens. File names are never shown.
           </p>
 
-          <div className="grid grid-cols-3 gap-4 sm:gap-10 border-t border-black/10 pt-6 sm:pt-10">
-            <HeroStat icon={Zap}        label="Total compressions" value={stats ? formatCount(stats.totalCompressions) : '—'} sub="all time, across all users" />
-            <HeroStat icon={HardDrive}  label="Space saved"        value={stats ? formatBytes(stats.totalSpaceSaved)   : '—'} sub="all time, freed globally"   />
-            <HeroStat icon={TrendingUp} label="Avg compression"    value={stats ? `${stats.avgCompressionRatio}%`      : '—'} sub="all time average ratio"     />
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Stat value={stats ? formatCount(stats.totalCompressions) : '—'} label="Files compressed" delay={0.05} />
+            <Stat value={stats ? formatBytes(stats.totalSpaceSaved) : '—'} label="Space saved for people" delay={0.1} />
+            <Stat value={stats ? `${stats.avgCompressionRatio}%` : '—'} label="Smaller, on average" delay={0.15} />
           </div>
         </div>
       </div>
 
-      {/* ── Sticky filter bar ── */}
-      <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-gray-200/80">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-2">
-          {FILTERS.map(f => (
-            <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
-                filter === f.key
-                  ? 'bg-purple-600 text-white'
-                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
+      {/* Filter bar, pinned below the site header */}
+      <div className="sticky top-12 z-20 bg-[#fbfbfd]/80 backdrop-blur-xl backdrop-saturate-150 border-y border-black/[0.06]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
+          <div className="inline-flex items-center gap-0.5 p-1 rounded-full bg-[#e8e8ed]">
+            {FILTERS.map(f => (
+              <button
+                key={f.key}
+                onClick={() => setFilter(f.key)}
+                className={`relative px-4 py-1.5 text-[13px] font-medium rounded-full transition-colors ${
+                  filter === f.key ? 'text-[#1d1d1f]' : 'text-[#6e6e73] hover:text-[#1d1d1f]'
+                }`}
+              >
+                {filter === f.key && (
+                  <motion.span
+                    layoutId="feed-filter-pill"
+                    className="absolute inset-0 rounded-full bg-white shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
+                    transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                  />
+                )}
+                <span className="relative">{f.label}</span>
+              </button>
+            ))}
+          </div>
+          <span className="hidden sm:flex items-center gap-1.5 text-[13px] text-[#6e6e73]">
+            <Radio className="w-3.5 h-3.5" /> Updates in real time
+          </span>
         </div>
       </div>
 
-      {/* ── Grid ── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+      {/* Activity */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 pb-24">
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: 9 }).map((_, i) => <SkeletonCard key={i} />)}
+            {Array.from({ length: 6 }).map((_, i) => <SkeletonTile key={i} />)}
           </div>
         ) : filtered.length > 0 ? (
           <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <AnimatePresence mode="popLayout">
-              {filtered.map((a, i) => <FeedCard key={a._id} activity={a} index={i} />)}
+              {filtered.map((a, i) => <ActivityTile key={a._id} activity={a} index={i} />)}
             </AnimatePresence>
           </motion.div>
         ) : (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-32">
-            <div className="w-16 h-16 rounded-2xl bg-white border border-gray-200 flex items-center justify-center mx-auto mb-4 shadow-sm">
-              <FileText className="w-7 h-7 text-gray-300" />
+          <div className="rounded-[28px] bg-[#f5f5f7] py-24 text-center">
+            <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center mx-auto mb-5 shadow-sm">
+              <Radio className="w-6 h-6 text-red-600" strokeWidth={1.75} />
             </div>
-            <p className="text-gray-500 font-semibold">Nothing here yet</p>
-            <p className="text-sm text-gray-400 mt-1">Check back soon</p>
-          </motion.div>
+            <p className="text-[21px] font-semibold tracking-tight text-[#1d1d1f]">Nothing here yet</p>
+            <p className="mt-1 text-[15px] text-[#6e6e73]">New activity will appear the moment it happens.</p>
+          </div>
         )}
       </div>
     </div>
