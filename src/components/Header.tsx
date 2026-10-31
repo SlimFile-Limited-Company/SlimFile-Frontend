@@ -251,34 +251,36 @@ export const Header = () => {
 
   /* Reviews, Login and Logout all use this one neutral pill, matching the
      Google Play button above them: no brand colour, just a grey outline. */
+  const appleTextLink =
+    "text-[13px] tracking-[-0.01em] text-[#1d1d1f]/75 hover:text-[#1d1d1f] transition-colors duration-200";
+
   const pillBtn =
     "flex items-center gap-1.5 h-9 px-4 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200 text-xs font-semibold";
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#fbfbfd]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-black/[0.06]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-4">
-            <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+        {/* apple.com-style bar: thin and frosted, logo left, menu centred in
+            small plain text, icons right. The outer blocks share the spare
+            width equally so the menu stays centred without overlapping. */}
+        <div className="flex items-center justify-between h-12">
+          <div className="flex flex-1 items-center">
+            <Link to="/" className="flex items-center gap-2 hover:opacity-70 transition-opacity">
               <img
                 src="/logo.gif"
                 alt="SlimFile Logo"
-                className="h-10 w-10 object-contain rounded-lg"
+                className="h-7 w-7 object-contain rounded-md"
               />
-              <span className="text-2xl font-bold text-gray-900">SlimFile</span>
+              <span className="text-[17px] font-semibold tracking-tight text-[#1d1d1f]">SlimFile</span>
             </Link>
+          </div>
 
-          {/* Desktop Navigation — left aligned next to the logo, iLovePDF style.
-              It used to be absolutely centred, which overlapped the logo and the
-              auth buttons as items were added. */}
-          <nav className="hidden md:flex items-center space-x-1 ml-6">
+          <nav className="hidden md:flex flex-none items-center gap-2">
             <Link
               to="/"
               className={cn(
-                "text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full",
-                location.pathname === "/"
-                  ? "text-white bg-red-600 shadow-md font-semibold"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                "text-[13px] tracking-[-0.01em] transition-colors duration-200 px-3 py-1 whitespace-nowrap",
+                location.pathname === "/" ? "text-[#1d1d1f] font-medium" : "text-[#1d1d1f]/75 hover:text-[#1d1d1f]"
               )}
             >
               {t('header.home')}
@@ -291,13 +293,12 @@ export const Header = () => {
               onMouseLeave={() => handleDropdownHover(null)}
             >
               <button className={cn(
-                "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
-                toolsNavigation.some(item => location.pathname === item.href || (item.href === '/workspaces' && location.pathname.startsWith('/workspaces')) || (item.href === '/my-whiteboards' && location.pathname.startsWith('/my-whiteboards')) || (item.href === '/ai-lab' && location.pathname.startsWith('/ai-lab')))
-                  ? "text-white bg-red-600 shadow-md font-semibold"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                "text-[13px] tracking-[-0.01em] transition-colors duration-200 px-3 py-1 whitespace-nowrap",
+                hoveredDropdown === 'tools' || toolsNavigation.some(item => isToolActive(item.href))
+                  ? "text-[#1d1d1f] font-medium"
+                  : "text-[#1d1d1f]/75 hover:text-[#1d1d1f]"
               )}>
-                <span>Tools</span>
-                <ChevronDown className="w-4 h-4" />
+                Tools
               </button>
               <MegaMenu
                 open={hoveredDropdown === 'tools'}
@@ -314,10 +315,8 @@ export const Header = () => {
             <Link
               to="/api"
               className={cn(
-                "flex items-center text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
-                isActiveRoute("/api")
-                  ? "text-white bg-red-600 shadow-md font-semibold"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                "text-[13px] tracking-[-0.01em] transition-colors duration-200 px-3 py-1 whitespace-nowrap",
+                isActiveRoute("/api") ? "text-[#1d1d1f] font-medium" : "text-[#1d1d1f]/75 hover:text-[#1d1d1f]"
               )}
             >
               Dev Tools
@@ -331,13 +330,12 @@ export const Header = () => {
                 onMouseLeave={() => handleDropdownHover(null)}
               >
                 <button className={cn(
-                  "flex items-center space-x-1 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
-                  internalNavigation.some(item => isActiveRoute(item.href))
-                    ? "text-white bg-red-600 shadow-md font-semibold"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  "text-[13px] tracking-[-0.01em] transition-colors duration-200 px-3 py-1 whitespace-nowrap",
+                  hoveredDropdown === 'internal' || internalNavigation.some(item => isActiveRoute(item.href))
+                    ? "text-[#1d1d1f] font-medium"
+                    : "text-[#1d1d1f]/75 hover:text-[#1d1d1f]"
                 )}>
-                  <span>Internal</span>
-                  <ChevronDown className="w-4 h-4" />
+                  Internal
                 </button>
                 <MegaMenu
                   open={hoveredDropdown === 'internal'}
@@ -352,10 +350,9 @@ export const Header = () => {
             )}
 
           </nav>
-          </div>
 
           {/* Apps / 9-dot menu - Desktop */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex flex-1 items-center justify-end gap-4">
             <div
               className="relative"
               onMouseEnter={() => handleDropdownHover('more')}
@@ -365,9 +362,9 @@ export const Header = () => {
                 title="More"
                 aria-label="More"
                 aria-expanded={hoveredDropdown === 'more'}
-                className="p-1.5 -m-1.5 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                className="p-1.5 -m-1.5 flex items-center justify-center text-[#1d1d1f]/75 hover:text-[#1d1d1f] transition-colors duration-200"
               >
-                <GridDots className="w-5 h-5 text-gray-700" />
+                <GridDots className="w-4 h-4" />
               </button>
               {hoveredDropdown === 'more' && (
                 <div className="absolute top-full right-0 mt-2 w-60 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
@@ -415,11 +412,11 @@ export const Header = () => {
               )}
             </div>
             {isAuthenticated() ? (
-              <button onClick={() => logout()} className={pillBtn}>
+              <button onClick={() => logout()} className={appleTextLink}>
                 {t('header.logout')}
               </button>
             ) : (
-              <Link to="/login" className={pillBtn}>
+              <Link to="/login" className={appleTextLink}>
                 {t('header.login')}
               </Link>
             )}
@@ -680,7 +677,7 @@ const MegaMenu = ({ open, featured, groups, isActive, onEnter, onLeave, onPick }
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="hidden md:block fixed inset-x-0 top-16 bottom-0 z-40 bg-gray-900/10 backdrop-blur-md pointer-events-none"
+            className="hidden md:block fixed inset-x-0 top-12 bottom-0 z-40 bg-gray-900/10 backdrop-blur-md pointer-events-none"
           />
           <motion.div
             key="mega-panel"
@@ -690,7 +687,7 @@ const MegaMenu = ({ open, featured, groups, isActive, onEnter, onLeave, onPick }
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             onMouseEnter={onEnter}
             onMouseLeave={onLeave}
-            className="hidden md:block fixed inset-x-0 top-16 z-50 overflow-hidden bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-[0_20px_40px_-20px_rgba(0,0,0,0.15)]"
+            className="hidden md:block fixed inset-x-0 top-12 z-50 overflow-hidden bg-[#fbfbfd]/95 backdrop-blur-xl backdrop-saturate-150 border-b border-black/[0.06] shadow-[0_20px_40px_-20px_rgba(0,0,0,0.15)]"
           >
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
               <div className="flex gap-16 pl-[3.25rem]">
