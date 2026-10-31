@@ -169,7 +169,8 @@ import PersonalWhiteboards from './pages/PersonalWhiteboards';
 // Excalidraw is large, so the board editor loads only when a board is opened.
 const PersonalWhiteboardCanvas = lazy(() => import('./pages/PersonalWhiteboardCanvas'));
 import Documents from './pages/Documents';
-import DocumentEditor from './pages/DocumentEditor';
+// BlockNote is large, so the document editor loads only when a document is opened.
+const DocumentEditor = lazy(() => import('./pages/DocumentEditor'));
 import AdminNewsletter from './pages/AdminNewsletter';
 import ReviewEmails from './pages/admin/ReviewEmails';
 import SlimFileDrive from './pages/SlimFileDrive';
@@ -451,7 +452,9 @@ ReactDOM.createRoot(root).render(
           {/* Document Editor */}
           <Route path="documents/:documentId" element={
             <ProtectedRoute>
+              <Suspense fallback={null}>
               <DocumentEditor />
+            </Suspense>
             </ProtectedRoute>
           } />
         </Route>

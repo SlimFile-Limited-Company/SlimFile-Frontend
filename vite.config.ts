@@ -63,12 +63,30 @@ export default defineConfig(({ mode }) => ({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        // Precache only the core app: the main bundles, styles, page shell and
+        // icons. The whiteboard and document editors (and Excalidraw's diagram
+        // code) are large and load on demand; precaching them made every
+        // visitor download over 20 MB up front.
+        globPatterns: [
+          '**/*.{css,html,ico,png,svg}',
+          'assets/index-*.js',
+          'assets/*-vendor-*.js',
+        ],
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB
         skipWaiting: true, // Auto-activate new service worker
         clientsClaim: true, // Take control immediately
         cleanupOutdatedCaches: true, // Remove old caches
         runtimeCaching: [
+          // Lazily loaded chunks are cached the first time they are used.
+          // Their names are content-hashed, so a cached copy never goes stale.
+          {
+            urlPattern: ({ url }) => url.origin === self.location.origin && url.pathname.startsWith('/assets/') && url.pathname.endsWith('.js'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'lazy-chunks',
+              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 60 },
+            },
+          },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',
