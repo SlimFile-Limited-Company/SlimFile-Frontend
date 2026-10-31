@@ -139,7 +139,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-white/10 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/30 p-8"
+        className="p-1 sm:p-2"
         style={{ backdropFilter: 'blur(15px)' }}
       >
         <div className="text-center mb-6">
@@ -153,12 +153,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${
+            className={`relative border-2 border-dashed rounded-[22px] p-10 sm:p-14 text-center transition-colors duration-200 ${
               dragActive
-                ? 'border-red-400 bg-red-50/50 scale-105 shadow-[0_0_30px_rgba(239,68,68,0.3)] border-white/60 backdrop-blur-2xl'
-                : 'border-white/40 hover:border-red-300 hover:bg-red-50/30 hover:shadow-[0_0_20px_rgba(239,68,68,0.2)] backdrop-blur-2xl'
+                ? 'border-red-500 bg-red-50'
+                : 'border-[#d2d2d7] bg-white hover:border-red-400'
             } ${isProcessing ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
-            style={{ backdropFilter: dragActive ? 'blur(12px)' : 'blur(10px)' }}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
@@ -167,18 +166,17 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
           >
             <div className="flex flex-col items-center space-y-4">
               <motion.div
-                className="w-16 h-16 bg-red-50/70 backdrop-blur-lg rounded-2xl flex items-center justify-center border-2 border-white/50 shadow-xl"
-                whileHover={{ scale: 1.1 }}
+                className="w-16 h-16 bg-[#f5f5f7] rounded-full flex items-center justify-center"
+                whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
-                style={{ backdropFilter: 'blur(8px)' }}
               >
                 <Upload className="w-8 h-8 text-red-600" />
               </motion.div>
               <div>
-                <p className="text-lg font-semibold text-gray-900 mb-2">
+                <p className="text-[19px] font-semibold tracking-tight text-[#1d1d1f] mb-1.5">
                   {t('fileUpload.dropFiles')}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-[#6e6e73]">
                   {t('fileUpload.dragDropText')}
                 </p>
               </div>
@@ -199,7 +197,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border-2 border-white/40 shadow-2xl"
+            className="bg-white rounded-[22px] p-4 sm:p-6"
             style={{ backdropFilter: 'blur(12px)' }}
           >
             <div className="flex items-center justify-between">
@@ -210,7 +208,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: idx * 0.1 }}
-                    className="flex items-center space-x-4 bg-white/30 backdrop-blur-lg rounded-xl p-3 border border-white/30 shadow-lg"
+                    className="flex items-center space-x-4 bg-[#f5f5f7] rounded-2xl p-3"
                     style={{ backdropFilter: 'blur(8px)' }}
                   >
                     {getFileIcon(file.type)}
@@ -243,7 +241,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, isProcessi
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="mt-4 p-4 bg-red-50/50 backdrop-blur-lg border-2 border-red-200/50 rounded-xl shadow-lg"
+            className="mt-4 p-4 bg-red-50 rounded-2xl"
             style={{ backdropFilter: 'blur(8px)' }}
           >
             <p className="text-sm text-red-600">{error}</p>

@@ -173,13 +173,13 @@ export default function SlimFileZip() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-32 pb-20">
+    <div className="min-h-screen bg-white pt-28 sm:pt-32 pb-24">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-4xl sm:text-5xl sm:leading-[1.08] font-semibold text-[#1d1d1f] tracking-tight">
             {mode === 'zip' ? 'Zip Files & Folders' : 'Unzip a ZIP File'}
           </h1>
-          <p className="text-gray-500 mt-2">
+          <p className="text-[#6e6e73] text-lg sm:text-[21px] leading-snug mt-3">
             {mode === 'zip'
               ? 'Upload files or a whole folder. Folder structure is kept inside the ZIP.'
               : 'Drop a ZIP and pull everything out, folders included.'}
@@ -191,7 +191,7 @@ export default function SlimFileZip() {
           {tabBtn('unzip', 'Unzip')}
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+        <div className="bg-[#f5f5f7] rounded-[28px] p-6 sm:p-8">
           {mode === 'zip' ? (
             <>
               <div className="flex flex-wrap gap-2">

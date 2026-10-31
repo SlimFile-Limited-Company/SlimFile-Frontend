@@ -107,28 +107,28 @@ export default function ScanToolPage({ config }: { config: ScanToolConfig }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-32 pb-20">
+    <div className="min-h-screen bg-white pt-28 sm:pt-32 pb-24">
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
 
         <div className="text-center mb-10">
-          <div className={`inline-flex items-center gap-1.5 ${a.badge} text-xs font-semibold px-3 py-1 rounded-full mb-5 border`}>
+          <div className={`inline-flex items-center gap-1.5 text-red-600 text-sm font-semibold mb-3`}>
             <Smartphone className="w-3 h-3" />
             Mobile Scanner
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-3">{config.title}</h1>
-          <p className="text-gray-500 text-base max-w-md mx-auto leading-relaxed">{config.blurb}</p>
+          <h1 className="text-4xl sm:text-5xl sm:leading-[1.08] font-semibold text-[#1d1d1f] tracking-tight mb-4">{config.title}</h1>
+          <p className="text-[#6e6e73] text-lg sm:text-[21px] leading-snug max-w-xl mx-auto">{config.blurb}</p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10">
           {config.pills.map(({ icon, label }) => (
-            <span key={label} className="flex items-center gap-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 px-3 py-1.5 rounded-full shadow-sm">
+            <span key={label} className="flex items-center gap-1.5 text-sm text-[#6e6e73]">
               {icon}
               {label}
             </span>
           ))}
         </div>
 
-        <div className="bg-white rounded-3xl border border-gray-200/80 p-7 shadow-sm">
+        <div className="bg-[#f5f5f7] rounded-[28px] p-6 sm:p-8">
           <div className="space-y-5">
             <ScanUploader
               pages={pages}

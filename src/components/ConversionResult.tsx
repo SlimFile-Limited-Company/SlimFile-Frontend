@@ -232,7 +232,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
             {!isComplete && fileProgress?.[index] ? (
               <FileProgressCard file={originalFile} progress={fileProgress[index]} mode="convert" />
             ) : !isComplete ? (
-              <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-lg">
+              <div className="bg-white rounded-[22px] p-6">
                 <div className="text-center">
                   <div className="h-8 w-8 border-2 border-blue-600 border-r-transparent rounded-full mx-auto mb-4 animate-spin" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -242,7 +242,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl p-6 border-2 border-blue-100 shadow-lg">
+              <div className="bg-white rounded-[22px] p-6">
                 <div className="text-center mb-6">
                   <CheckCircle2 className="h-12 w-12 text-blue-600 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -255,7 +255,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
 
                 {/* File Info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                  <div className="bg-[#f5f5f7] rounded-2xl p-4">
                     <div className="flex items-center space-x-3 mb-3">
                       {getFileIcon(originalFile.type)}
                       <div className="flex-1 min-w-0">
@@ -270,7 +270,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
                     </p>
                   </div>
 
-                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                  <div className="bg-blue-50 rounded-2xl p-4">
                     <div className="flex items-center space-x-3 mb-3">
                       {getFileIcon(convertedFile.type)}
                       <div className="flex-1 min-w-0">
@@ -348,25 +348,25 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-lg"
+          className="bg-white rounded-[22px] p-6"
         >
           <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">
             Total Conversion Statistics
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+            <div className="bg-[#f5f5f7] rounded-2xl p-4">
               <p className="text-2xl font-bold text-blue-600">
                 {convertedFiles.filter(f => f !== null).length}
               </p>
               <p className="text-sm text-gray-600">Files Converted</p>
             </div>
-            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+            <div className="bg-blue-50 rounded-2xl p-4">
               <p className="text-2xl font-bold text-green-600">
                 {targetFormat.toUpperCase()}
               </p>
               <p className="text-sm text-gray-600">Output Format</p>
             </div>
-            <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
+            <div className="bg-purple-50 rounded-2xl p-4">
               <p className="text-2xl font-bold text-purple-600">
                 {formatFileSize(
                   convertedSizes.reduce((sum, size) => sum + size, 0)

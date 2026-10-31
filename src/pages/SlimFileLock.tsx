@@ -164,7 +164,7 @@ function ProtectTab({ onSuccess }: { onSuccess?: () => void }) {
       <Button
         onClick={handleProtect}
         disabled={processing || !file || !password || password !== confirm}
-        className="w-full bg-red-600 hover:bg-red-700 text-white rounded-xl h-12 text-sm font-semibold shadow-sm"
+        className="w-full bg-red-600 hover:bg-red-700 text-white rounded-full h-12 text-[15px] font-medium"
       >
         {processing
           ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Protecting PDF…</>
@@ -220,7 +220,7 @@ function RemovePasswordTab({ onSuccess }: { onSuccess?: () => void }) {
       <Button
         onClick={handleUnlock}
         disabled={processing || !file || !password}
-        className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-xl h-12 text-sm font-semibold shadow-sm"
+        className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-full h-12 text-[15px] font-medium"
       >
         {processing
           ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Removing password…</>
@@ -240,19 +240,19 @@ const SlimFileLock = () => {
   const [showReviewPrompt, setShowReviewPrompt] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-32 pb-20">
+    <div className="min-h-screen bg-white pt-28 sm:pt-32 pb-24">
       <div className="max-w-xl mx-auto px-4 sm:px-6">
 
         {/* Hero */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-1.5 bg-red-50 text-red-600 text-xs font-semibold px-3 py-1 rounded-full mb-5 border border-red-100">
+          <div className="inline-flex items-center gap-1.5 text-red-600 text-sm font-semibold mb-3">
             <Lock className="w-3 h-3" />
             SlimFile Lock
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-3">
+          <h1 className="text-4xl sm:text-5xl sm:leading-[1.08] font-semibold text-[#1d1d1f] tracking-tight mb-4">
             PDF Password Protect
           </h1>
-          <p className="text-gray-500 text-base max-w-sm mx-auto leading-relaxed">
+          <p className="text-[#6e6e73] text-lg sm:text-[21px] leading-snug max-w-xl mx-auto">
             Add a password to any PDF so only you can open it — or remove one you no longer need.
             Files are never stored on our servers.
           </p>
@@ -278,10 +278,10 @@ const SlimFileLock = () => {
         </div>
 
         {/* Tab switcher */}
-        <div className="flex gap-1 bg-gray-100/80 rounded-2xl p-1 mb-6">
+        <div className="flex gap-1 bg-[#e8e8ed] rounded-full p-1 mb-6">
           <button
             onClick={() => setTab('protect')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-semibold transition-all ${
               tab === 'protect'
                 ? 'bg-white shadow-sm text-gray-900'
                 : 'text-gray-400 hover:text-gray-600'
@@ -292,7 +292,7 @@ const SlimFileLock = () => {
           </button>
           <button
             onClick={() => setTab('remove')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-semibold transition-all ${
               tab === 'remove'
                 ? 'bg-white shadow-sm text-gray-900'
                 : 'text-gray-400 hover:text-gray-600'
@@ -304,7 +304,7 @@ const SlimFileLock = () => {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-3xl border border-gray-200/80 p-7 shadow-sm">
+        <div className="bg-[#f5f5f7] rounded-[28px] p-6 sm:p-8">
           {tab === 'protect' ? <ProtectTab onSuccess={() => setShowReviewPrompt(true)} /> : <RemovePasswordTab onSuccess={() => setShowReviewPrompt(true)} />}
         </div>
 

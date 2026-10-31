@@ -267,7 +267,7 @@ export const CompressionResult = ({
           {isCompressing && (!compressedFiles[idx]) && fileProgress?.[idx] ? (
             <FileProgressCard file={file} progress={fileProgress[idx]} />
           ) : isCompressing && (!compressedFiles[idx]) ? (
-            <Card className="bg-white shadow-lg border border-gray-100 mb-6">
+            <Card className="bg-white rounded-[22px] border-0 shadow-none mb-6">
               <CardContent className="p-6">
                 <div className="text-center">
                   <div className="h-8 w-8 border-2 border-red-600 border-r-transparent rounded-full mx-auto mb-4 animate-spin" />
@@ -279,7 +279,7 @@ export const CompressionResult = ({
               </CardContent>
             </Card>
           ) : compressedFiles[idx] ? (
-            <Card className="bg-white shadow-lg border border-red-100 mb-6">
+            <Card className="bg-white rounded-[22px] border-0 shadow-none mb-6">
               <CardContent className="p-4 sm:p-6">
                 <div className="text-center mb-6">
                   <CheckCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
@@ -291,7 +291,7 @@ export const CompressionResult = ({
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-6">
-                  <Card className="bg-gray-50 border border-gray-200">
+                  <Card className="bg-[#f5f5f7] border-0 rounded-2xl">
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-3 mb-3">
                         {getFileIcon(file.type)}
@@ -307,7 +307,7 @@ export const CompressionResult = ({
                       </p>
                     </CardContent>
                   </Card>
-                  <Card className="bg-red-50 border border-red-200">
+                  <Card className="bg-red-50 border-0 rounded-2xl">
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-3 mb-3">
                         {getFileIcon(file.type)}
@@ -375,13 +375,13 @@ export const CompressionResult = ({
       {/* Total Compression Stats for Multiple Files */}
       {compressedFiles.filter(Boolean).length > 1 && (
         <div>
-          <Card className="bg-white shadow-lg border border-gray-100 mb-6">
+          <Card className="bg-white rounded-[22px] border-0 shadow-none mb-6">
             <CardContent className="p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">
                 Total Compression Statistics
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <Card className="bg-gray-50 border border-gray-200">
+                <Card className="bg-[#f5f5f7] border-0 rounded-2xl">
                   <CardContent className="p-4">
                     <h4 className="font-medium text-gray-900 mb-2">Total Original Size</h4>
                     <p className="text-lg font-semibold text-gray-900">
@@ -389,7 +389,7 @@ export const CompressionResult = ({
                     </p>
                   </CardContent>
                 </Card>
-                <Card className="bg-red-50 border border-red-200">
+                <Card className="bg-red-50 border-0 rounded-2xl">
                   <CardContent className="p-4">
                     <h4 className="font-medium text-gray-900 mb-2">Total Compressed Size</h4>
                     <p className="text-lg font-semibold text-red-600">

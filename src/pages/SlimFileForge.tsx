@@ -89,7 +89,7 @@ function MergeTab({ onSuccess }: { onSuccess?: () => void }) {
     <div className="space-y-5">
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
+        className={`border-2 border-dashed rounded-[22px] p-10 bg-white/70 text-center cursor-pointer transition-all ${
           isDragActive ? 'border-orange-400 bg-orange-50' : 'border-gray-200 hover:border-orange-300 hover:bg-gray-50'
         }`}
       >
@@ -144,7 +144,7 @@ function MergeTab({ onSuccess }: { onSuccess?: () => void }) {
       <Button
         onClick={handleMerge}
         disabled={merging || files.length < 2}
-        className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl h-12 text-sm font-semibold shadow-sm"
+        className="w-full bg-red-600 hover:bg-red-700 text-white rounded-full h-12 text-[15px] font-medium"
       >
         {merging
           ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Merging PDFs…</>
@@ -203,7 +203,7 @@ function SplitTab({ onSuccess }: { onSuccess?: () => void }) {
       {!file ? (
         <div
           {...getRootProps()}
-          className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
+          className={`border-2 border-dashed rounded-[22px] p-10 bg-white/70 text-center cursor-pointer transition-all ${
             isDragActive ? 'border-orange-400 bg-orange-50' : 'border-gray-200 hover:border-orange-300 hover:bg-gray-50'
           }`}
         >
@@ -253,7 +253,7 @@ function SplitTab({ onSuccess }: { onSuccess?: () => void }) {
       <Button
         onClick={handleSplit}
         disabled={splitting || !file}
-        className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl h-12 text-sm font-semibold shadow-sm"
+        className="w-full bg-red-600 hover:bg-red-700 text-white rounded-full h-12 text-[15px] font-medium"
       >
         {splitting
           ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Splitting PDF…</>
@@ -274,31 +274,31 @@ const SlimFileForge = () => {
   const [promptTool, setPromptTool] = useState<'forge-merge' | 'forge-split'>('forge-merge');
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-32 pb-20">
+    <div className="min-h-screen bg-white pt-28 sm:pt-32 pb-24">
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
 
         {/* Hero */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-600 text-xs font-semibold px-3 py-1 rounded-full mb-5 border border-orange-100">
+          <div className="inline-flex items-center gap-1.5 text-red-600 text-sm font-semibold mb-3">
             <MergeIcon className="w-3 h-3" />
             SlimFile Forge
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-3">
+          <h1 className="text-4xl sm:text-5xl sm:leading-[1.08] font-semibold text-[#1d1d1f] tracking-tight mb-4">
             PDF Merger & Splitter
           </h1>
-          <p className="text-gray-500 text-base max-w-md mx-auto leading-relaxed">
+          <p className="text-[#6e6e73] text-lg sm:text-[21px] leading-snug max-w-xl mx-auto">
             Combine multiple PDF files into one, or split a PDF into separate pages or custom sections.
           </p>
         </div>
 
         {/* Feature pills */}
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10">
           {[
             { icon: <FilePlus2 className="w-3.5 h-3.5 text-orange-500" />, label: 'Merge up to 20 PDFs' },
             { icon: <Scissors   className="w-3.5 h-3.5 text-orange-500" />, label: 'Split by page ranges' },
             { icon: <Download   className="w-3.5 h-3.5 text-orange-500" />, label: 'Instant download' },
           ].map(({ icon, label }) => (
-            <span key={label} className="flex items-center gap-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 px-3 py-1.5 rounded-full shadow-sm">
+            <span key={label} className="flex items-center gap-1.5 text-sm text-[#6e6e73]">
               {icon}
               {label}
             </span>
@@ -306,10 +306,10 @@ const SlimFileForge = () => {
         </div>
 
         {/* Tab switcher */}
-        <div className="flex gap-1 bg-gray-100/80 rounded-2xl p-1 mb-6">
+        <div className="flex gap-1 bg-[#e8e8ed] rounded-full p-1 mb-6">
           <button
             onClick={() => setTab('merge')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-semibold transition-all ${
               tab === 'merge'
                 ? 'bg-white shadow-sm text-gray-900'
                 : 'text-gray-400 hover:text-gray-600'
@@ -320,7 +320,7 @@ const SlimFileForge = () => {
           </button>
           <button
             onClick={() => setTab('split')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-semibold transition-all ${
               tab === 'split'
                 ? 'bg-white shadow-sm text-gray-900'
                 : 'text-gray-400 hover:text-gray-600'
@@ -332,7 +332,7 @@ const SlimFileForge = () => {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-3xl border border-gray-200/80 p-7 shadow-sm">
+        <div className="bg-[#f5f5f7] rounded-[28px] p-6 sm:p-8">
           {tab === 'merge' ? (
             <MergeTab onSuccess={() => { setPromptTool('forge-merge'); setShowReviewPrompt(true); }} />
           ) : (

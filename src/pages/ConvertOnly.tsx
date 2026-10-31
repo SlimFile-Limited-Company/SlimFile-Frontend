@@ -263,200 +263,44 @@ const ConvertOnly = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+    <div className="min-h-screen bg-white">
 
       {/* Main Content */}
       <main className="relative pt-28 z-10">
         {/* Enhanced Hero Section */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <section className="pt-10 pb-4 px-4 sm:px-6 lg:px-8">
           <div className="container mx-auto">
-            <div className="max-w-5xl mx-auto text-center space-y-6">
+            <div className="max-w-4xl mx-auto text-center space-y-5">
               {/* Title */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-                <span className="block text-gray-900 mb-2">
+              <h1 className="text-4xl sm:text-[56px] sm:leading-[1.07] font-semibold tracking-tight text-[#1d1d1f]">
+                <span className="block">
                   {t('convert.heroTitle')}
                 </span>
-                <span className="block bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
+                <span className="block text-red-600">
                   {t('convert.heroSubtitle')}
                 </span>
               </h1>
 
               {/* Description */}
-              <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+              <p className="text-[#6e6e73] text-lg sm:text-[21px] leading-snug max-w-2xl mx-auto">
                 {t('convert.heroDescription')}
                 <span className="text-blue-600 font-semibold"> {t('convert.lightningFast')}</span>.
               </p>
 
-              {/* Scroll to Upload Button */}
-              <button
-                onClick={() => {
-                  const uploadSection = document.getElementById('upload-section');
-                  if (uploadSection) {
-                    uploadSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              >
-                {t('convert.start')}
-                <ArrowDown className="w-5 h-5" />
-              </button>
-
-              {/* Features Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-3xl mx-auto pt-8">
-                {[
-                  {
-                    icon: Zap,
-                    title: t('convert.feature.fast'),
-                    description: t('convert.feature.fastDesc'),
-                    gradient: "from-yellow-400 to-orange-500"
-                  },
-                  {
-                    icon: Shield,
-                    title: t('convert.feature.secure'),
-                    description: t('convert.feature.secureDesc'),
-                    gradient: "from-blue-400 to-blue-600"
-                  },
-                  {
-                    icon: Clock,
-                    title: t('convert.feature.available'),
-                    description: t('convert.feature.availableDesc'),
-                    gradient: "from-green-400 to-green-600"
-                  }
-                ].map((feature, index) => (
-                  <div
-                    key={feature.title}
-                    className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                  >
-                    <div className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center mx-auto mb-4`}>
-                      <feature.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="font-bold text-gray-900 mb-1 text-sm">{feature.title}</h3>
-                    <p className="text-xs text-gray-600">{feature.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Supported Conversions Section */}
-        <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
-          <div className="container mx-auto">
-            <div className="max-w-6xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-                {t('convert.conversionsTitle')}
-              </h2>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Image Conversions */}
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-200">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                      <Image className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900">{t('convert.imageConversions')}</h3>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">JPG/JPEG ↔ PNG ↔ WEBP</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">Any image format to any other image format</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">PDF → JPG/PNG (returns ZIP of all pages)</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Document Conversions */}
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                      <FileText className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900">{t('convert.documentConversions')}</h3>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">DOCX ↔ PPTX ↔ XLSX</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">DOCX/PPTX/XLSX → PDF</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">PDF → DOCX/PPTX/XLSX</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-gray-700">JPG/PNG/WEBP → PDF</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* How It Works Section */}
-        <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-          <div className="container mx-auto">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-                {t('convert.howItWorks')}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[
-                  {
-                    step: "1",
-                    title: t('convert.step1'),
-                    description: t('convert.step1Desc')
-                  },
-                  {
-                    step: "2",
-                    title: t('convert.step2'),
-                    description: t('convert.step2Desc')
-                  },
-                  {
-                    step: "3",
-                    title: t('convert.step3'),
-                    description: t('convert.step3Desc')
-                  }
-                ].map((item, index) => (
-                  <div key={item.step} className="text-center">
-                    <div className="relative inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full text-white text-2xl font-bold mb-4">
-                      {item.step}
-                      {index < 2 && (
-                        <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 w-full">
-                          <div className="h-0.5 bg-gradient-to-r from-blue-500 to-blue-300"></div>
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-600">{item.description}</p>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </section>
 
         {/* File Upload/Result Section */}
-        <section id="upload-section" className="py-16 px-4 sm:px-6 lg:px-8">
+        <section id="upload-section" className="pt-6 pb-20 px-4 sm:px-6 lg:px-8">
           <div className="container mx-auto">
             <div className="max-w-5xl mx-auto">
               {/* Section Header */}
               <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                <h2 className="text-[28px] font-semibold tracking-tight text-[#1d1d1f] mb-2">
                   {!selectedFiles.length ? t('convert.uploadTitle') : showFormatSelector ? t('convert.chooseFormat') : t('convert.resultsTitle')}
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-[#6e6e73]">
                   {!selectedFiles.length
                     ? t('convert.uploadSubtitle')
                     : showFormatSelector
@@ -466,10 +310,7 @@ const ConvertOnly = () => {
               </div>
 
               {/* Upload/Result Card */}
-              <div className="relative bg-white rounded-3xl border-2 border-gray-200 shadow-xl p-4 sm:p-6 md:p-8 hover:shadow-2xl transition-all duration-300">
-                {/* Decorative corner accents */}
-                <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-blue-500 rounded-tl-3xl"></div>
-                <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-blue-500 rounded-br-3xl"></div>
+              <div className="relative bg-[#f5f5f7] rounded-[28px] p-4 sm:p-6 md:p-8">
 
                 {!selectedFiles.length ? (
                   <FileUpload
@@ -542,11 +383,120 @@ const ConvertOnly = () => {
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white">
+        {/* Supported Conversions Section */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+          <div className="container mx-auto">
+            <div className="max-w-6xl mx-auto">
+              <h2 className="text-3xl sm:text-[40px] font-semibold tracking-tight text-[#1d1d1f] text-center mb-12">
+                {t('convert.conversionsTitle')}
+              </h2>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Image Conversions */}
+                <div className="bg-[#f5f5f7] rounded-[28px] p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                      <Image className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-[#1d1d1f]">{t('convert.imageConversions')}</h3>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <span className="text-gray-700">JPG/JPEG ↔ PNG ↔ WEBP</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <span className="text-gray-700">Any image format to any other image format</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <span className="text-gray-700">PDF → JPG/PNG (returns ZIP of all pages)</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Document Conversions */}
+                <div className="bg-[#f5f5f7] rounded-[28px] p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-[#1d1d1f]">{t('convert.documentConversions')}</h3>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <span className="text-gray-700">DOCX ↔ PPTX ↔ XLSX</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <span className="text-gray-700">DOCX/PPTX/XLSX → PDF</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <span className="text-gray-700">PDF → DOCX/PPTX/XLSX</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <span className="text-gray-700">JPG/PNG/WEBP → PDF</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* How It Works Section */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-[#f5f5f7]">
           <div className="container mx-auto">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+              <h2 className="text-3xl sm:text-[40px] font-semibold tracking-tight text-[#1d1d1f] text-center mb-12">
+                {t('convert.howItWorks')}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  {
+                    step: "1",
+                    title: t('convert.step1'),
+                    description: t('convert.step1Desc')
+                  },
+                  {
+                    step: "2",
+                    title: t('convert.step2'),
+                    description: t('convert.step2Desc')
+                  },
+                  {
+                    step: "3",
+                    title: t('convert.step3'),
+                    description: t('convert.step3Desc')
+                  }
+                ].map((item, index) => (
+                  <div key={item.step} className="text-center">
+                    <div className="relative inline-flex items-center justify-center w-16 h-16 bg-red-600 rounded-full text-white text-2xl font-semibold mb-4">
+                      {item.step}
+                      {index < 2 && (
+                        <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 w-full">
+                          <div className="h-0.5 bg-gradient-to-r from-blue-500 to-blue-300"></div>
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="text-lg font-semibold text-[#1d1d1f] mb-2">{item.title}</h3>
+                    <p className="text-sm text-[#6e6e73]">{item.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        {/* Features Section */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+          <div className="container mx-auto">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-3xl sm:text-[40px] font-semibold tracking-tight text-[#1d1d1f] text-center mb-12">
                 {t('convert.whyChoose')}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -574,16 +524,16 @@ const ConvertOnly = () => {
                 ].map((feature, index) => (
                   <div
                     key={feature.title}
-                    className="flex items-start gap-4 p-6 bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
+                    className="flex items-start gap-4 p-7 bg-[#f5f5f7] rounded-[28px]"
                   >
                     <div className="flex-shrink-0">
-                      <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center">
-                        <feature.icon className="w-5 h-5 text-white" />
+                      <div className="w-10 h-10 flex items-center justify-center">
+                        <feature.icon className="w-5 h-5 text-red-600" />
                       </div>
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900 mb-1">{feature.title}</h3>
-                      <p className="text-sm text-gray-600">{feature.description}</p>
+                      <h3 className="font-semibold text-[#1d1d1f] mb-1">{feature.title}</h3>
+                      <p className="text-sm text-[#6e6e73]">{feature.description}</p>
                     </div>
                   </div>
                 ))}

@@ -75,31 +75,31 @@ const SlimFileSplitCompress = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-32 pb-20">
+    <div className="min-h-screen bg-white pt-28 sm:pt-32 pb-24">
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
 
         {/* Hero */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-600 text-xs font-semibold px-3 py-1 rounded-full mb-5 border border-orange-100">
+          <div className="inline-flex items-center gap-1.5 text-red-600 text-sm font-semibold mb-3">
             <MergeIcon className="w-3 h-3" />
             SlimFile Forge
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-3">
+          <h1 className="text-4xl sm:text-5xl sm:leading-[1.08] font-semibold text-[#1d1d1f] tracking-tight mb-4">
             Split &amp; Compress PDFs
           </h1>
-          <p className="text-gray-500 text-base max-w-md mx-auto leading-relaxed">
+          <p className="text-[#6e6e73] text-lg sm:text-[21px] leading-snug max-w-xl mx-auto">
             Split one PDF into separate pages or custom sections, with every piece compressed.
           </p>
         </div>
 
         {/* Feature pills */}
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10">
           {[
             { icon: <Scissors   className="w-3.5 h-3.5 text-orange-500" />, label: 'Split by page ranges' },
             { icon: <Sparkles   className="w-3.5 h-3.5 text-orange-500" />, label: 'Each piece compressed' },
             { icon: <Download   className="w-3.5 h-3.5 text-orange-500" />, label: 'PDF or ZIP download' },
           ].map(({ icon, label }) => (
-            <span key={label} className="flex items-center gap-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 px-3 py-1.5 rounded-full shadow-sm">
+            <span key={label} className="flex items-center gap-1.5 text-sm text-[#6e6e73]">
               {icon}
               {label}
             </span>
@@ -107,12 +107,12 @@ const SlimFileSplitCompress = () => {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-3xl border border-gray-200/80 p-7 shadow-sm">
+        <div className="bg-[#f5f5f7] rounded-[28px] p-6 sm:p-8">
           <div className="space-y-5">
             {!file ? (
               <div
                 {...getRootProps()}
-                className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
+                className={`border-2 border-dashed rounded-[22px] p-10 bg-white/70 text-center cursor-pointer transition-all ${
                   isDragActive ? 'border-orange-400 bg-orange-50' : 'border-gray-200 hover:border-orange-300 hover:bg-gray-50'
                 }`}
               >
@@ -162,7 +162,7 @@ const SlimFileSplitCompress = () => {
             <Button
               onClick={handleSplitCompress}
               disabled={working || !file}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl h-12 text-sm font-semibold shadow-sm"
+              className="w-full bg-red-600 hover:bg-red-700 text-white rounded-full h-12 text-[15px] font-medium"
             >
               {working
                 ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Splitting &amp; compressing…</>
