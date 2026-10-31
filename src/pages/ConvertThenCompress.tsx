@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { ConversionCompressionResult } from "@/components/ConversionCompressionResult";
+import { uploadWithProgress, queuedProgress, type TransferProgress } from "@/lib/uploadWithProgress";
 import { toast } from "@/hooks/use-toast";
 import { isAuthenticated, getToken } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image, ArrowRight } from "lucide-react";
@@ -17,6 +18,7 @@ const ConvertThenCompress = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingProgress, setProcessingProgress] = useState<number[]>([]);
+  const [fileProgress, setFileProgress] = useState<TransferProgress[]>([]); // real per-file transfer state
   const [processedFiles, setProcessedFiles] = useState<(File | null)[]>([]);
   const [processedSizes, setProcessedSizes] = useState<number[]>([]);
   const [processingWarnings, setProcessingWarnings] = useState<string[]>([]);
@@ -98,23 +100,31 @@ const ConvertThenCompress = () => {
     formData.append('file', file);
     formData.append('targetFormat', targetFormat);
     
+    const setProgress = (p: TransferProgress) =>
+      setFileProgress(prev => {
+        const updated = [...prev];
+        updated[idx] = p;
+        return updated;
+      });
+
     try {
       const token = getToken();
-      const response = await fetch(`${API_BASE_URL}/convert-compress`, {
-        method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: formData,
-      });
-      
+      const response = await uploadWithProgress(
+        `${API_BASE_URL}/convert-compress`,
+        formData,
+        token ? { Authorization: `Bearer ${token}` } : {},
+        setProgress
+      );
+
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
+        const data = await response.blob.text().then(t => JSON.parse(t)).catch(() => ({}));
         return { file: null, warning: data.error || 'Processing failed' };
       }
-      
-      const blob = await response.blob();
-      
+
+      const blob = response.blob;
+
       // FIXED: Better header parsing
-      const contentDisposition = response.headers.get('Content-Disposition') || response.headers.get('content-disposition');
+      const contentDisposition = response.getHeader('Content-Disposition');
       let filename = `converted_compressed_${file.name.replace(/\.[^/.]+$/, '')}.${targetFormat}`; // Better fallback
       
       console.log('Content-Disposition header:', contentDisposition); // Debug log
@@ -147,57 +157,28 @@ const ConvertThenCompress = () => {
   };
 
   // UPDATED: Processing with selected format
-  const simulateProcessing = async (files: File[], targetFormat: string) => {
+  const runProcessing = async (files: File[], targetFormat: string) => {
     setIsProcessing(true);
     setProcessingProgress(Array(files.length).fill(0));
     setProcessedFiles(Array(files.length).fill(null));
     setProcessedSizes(Array(files.length).fill(0));
     setProcessingWarnings(Array(files.length).fill(''));
     setCurrentStep(Array(files.length).fill(''));
+    // Files go one at a time; the rest wait in the queue until their turn.
+    setFileProgress(files.map(() => queuedProgress()));
 
     for (let idx = 0; idx < files.length; idx++) {
       const file = files[idx];
-      
-      // Step 1: Converting (0-50% progress)
-      setCurrentStep(prev => {
-        const updated = [...prev];
-        updated[idx] = t('convertCompress.converting');
-        return updated;
-      });
-      
-      // Shorter delays - just show initial progress
-      const convertProgress = [5, 15, 30, 45];
-      const convertDelays = [100, 150, 200, 150];
-      for (let i = 0; i < convertProgress.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, convertDelays[i]));
-        setProcessingProgress(prev => {
-          const updated = [...prev];
-          updated[idx] = convertProgress[i];
-          return updated;
-        });
-      }
 
-      // Step 2: Compressing (50-95% progress) - DON'T go to 100% yet!
-      setCurrentStep(prev => {
-        const updated = [...prev];
-        updated[idx] = t('convertCompress.compressing');
-        return updated;
-      });
-      
-      const compressProgress = [50, 65, 80, 95]; // Stop at 95%!
-      const compressDelays = [150, 200, 150, 100];
-      for (let i = 0; i < compressProgress.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, compressDelays[i]));
-        setProcessingProgress(prev => {
-          const updated = [...prev];
-          updated[idx] = compressProgress[i];
-          return updated;
-        });
-      }
-      
-      // NOW make the actual API call (progress stays at 95%)
       try {
         const { file: processed, warning } = await convertAndCompressFile(file, targetFormat, idx);
+        if (!processed) {
+          setFileProgress(prev => {
+            const updated = [...prev];
+            updated[idx] = { ...updated[idx], stage: 'error' };
+            return updated;
+          });
+        }
         
         // Only NOW set to 100% after API completes
         setProcessedFiles(prev => {
@@ -275,7 +256,7 @@ const ConvertThenCompress = () => {
   // NEW: Start processing when user clicks the button
   const handleStartProcessing = () => {
     setShowFormatSelector(false);
-    simulateProcessing(selectedFiles, selectedFormat);
+    runProcessing(selectedFiles, selectedFormat);
   };
 
   const handleReset = () => {
@@ -283,6 +264,7 @@ const ConvertThenCompress = () => {
     setProcessedFiles([]);
     setProcessedSizes([]);
     setProcessingProgress([]);
+    setFileProgress([]);
     setProcessingWarnings([]);
     setCurrentStep([]);
     setIsProcessing(false);
@@ -576,6 +558,7 @@ const ConvertThenCompress = () => {
                     processedFiles={processedFiles}
                     processedSizes={processedSizes}
                     processingProgress={processingProgress}
+                    fileProgress={fileProgress}
                     isProcessing={isProcessing}
                     onReset={handleReset}
                     targetFormat={selectedFormat}

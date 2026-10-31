@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle2, Download, RefreshCw, FileText, Image, File, Zap, ArrowRight, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProcessingText } from '@/components/ProcessingText';
+import { FileProgressCard } from '@/components/FileProgressCard';
+import type { TransferProgress } from '@/lib/uploadWithProgress';
 import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from '@/lib/auth';
 import { toast } from '@/hooks/use-toast';
@@ -20,6 +22,8 @@ interface ConversionCompressionResultProps {
   processedFiles: (File | null)[];
   processedSizes: number[];
   processingProgress: number[];
+  /** Real per-file transfer progress. When given, replaces the percent-only card. */
+  fileProgress?: TransferProgress[];
   isProcessing: boolean;
   onReset: () => void;
   targetFormat?: string;
@@ -31,6 +35,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
   processedFiles,
   processedSizes,
   processingProgress,
+  fileProgress,
   isProcessing,
   onReset,
   targetFormat = 'PDF',
@@ -251,7 +256,9 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
             
             
           >
-            {!isComplete ? (
+            {!isComplete && fileProgress?.[index] ? (
+              <FileProgressCard file={originalFile} progress={fileProgress[index]} mode="both" />
+            ) : !isComplete ? (
               <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-lg">
                 <div className="text-center">
                   <div

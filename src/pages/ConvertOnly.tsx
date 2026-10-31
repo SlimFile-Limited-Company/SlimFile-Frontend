@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { ConversionResult } from "@/components/ConversionResult";
+import { uploadWithProgress, queuedProgress, type TransferProgress } from "@/lib/uploadWithProgress";
 import { toast } from "@/hooks/use-toast";
 import { isAuthenticated, getToken } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2, FileText, Image } from "lucide-react";
@@ -17,6 +18,7 @@ const ConvertOnly = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isConverting, setIsConverting] = useState(false);
   const [conversionProgress, setConversionProgress] = useState<number[]>([]);
+  const [fileProgress, setFileProgress] = useState<TransferProgress[]>([]); // real per-file transfer state
   const [convertedFiles, setConvertedFiles] = useState<(File | null)[]>([]);
   const [convertedSizes, setConvertedSizes] = useState<number[]>([]);
   const [conversionWarnings, setConversionWarnings] = useState<string[]>([]);
@@ -97,23 +99,31 @@ const ConvertOnly = () => {
     formData.append('file', file);
     formData.append('targetFormat', targetFormat);
     
+    const setProgress = (p: TransferProgress) =>
+      setFileProgress(prev => {
+        const updated = [...prev];
+        updated[idx] = p;
+        return updated;
+      });
+
     try {
       const token = getToken();
-      const response = await fetch(`${API_BASE_URL}/convert`, {
-        method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: formData,
-      });
-      
+      const response = await uploadWithProgress(
+        `${API_BASE_URL}/convert`,
+        formData,
+        token ? { Authorization: `Bearer ${token}` } : {},
+        setProgress
+      );
+
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
+        const data = await response.blob.text().then(t => JSON.parse(t)).catch(() => ({}));
         return { file: null, warning: data.error || 'Conversion failed' };
       }
-      
-      const blob = await response.blob();
-      
+
+      const blob = response.blob;
+
       // FIXED: Better header parsing
-      const contentDisposition = response.headers.get('Content-Disposition') || response.headers.get('content-disposition');
+      const contentDisposition = response.getHeader('Content-Disposition');
       let filename = `converted_${file.name.replace(/\.[^/.]+$/, '')}.${targetFormat}`; // Better fallback
       
       console.log('Content-Disposition header:', contentDisposition); // Debug log
@@ -146,32 +156,27 @@ const ConvertOnly = () => {
   };
 
   // UPDATED: Conversion with selected format
-  const simulateConversion = async (files: File[], targetFormat: string) => {
+  const runConversion = async (files: File[], targetFormat: string) => {
     setIsConverting(true);
     setConversionProgress(Array(files.length).fill(0));
     setConvertedFiles(Array(files.length).fill(null));
     setConvertedSizes(Array(files.length).fill(0));
     setConversionWarnings(Array(files.length).fill(''));
+    // Files go one at a time; the rest wait in the queue until their turn.
+    setFileProgress(files.map(() => queuedProgress()));
 
     for (let idx = 0; idx < files.length; idx++) {
       const file = files[idx];
-      
-      // Progress simulation - Stop at 95%!
-      const progressSteps = [10, 25, 45, 65, 80, 95]; // Don't go to 100 yet!
-      const delays = [200, 300, 400, 300, 200, 100];
-      
-      for (let i = 0; i < progressSteps.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, delays[i]));
-        setConversionProgress(prev => {
-          const updated = [...prev];
-          updated[idx] = progressSteps[i];
-          return updated;
-        });
-      }
-      
-      // NOW make the actual API call (progress stays at 95%)
+
       try {
         const { file: converted, warning } = await convertFile(file, targetFormat, idx);
+        if (!converted) {
+          setFileProgress(prev => {
+            const updated = [...prev];
+            updated[idx] = { ...updated[idx], stage: 'error' };
+            return updated;
+          });
+        }
         
         // Only NOW set to 100% after API completes
         setConvertedFiles(prev => {
@@ -242,7 +247,7 @@ const ConvertOnly = () => {
   // NEW: Start conversion when user clicks the button
   const handleStartConversion = () => {
     setShowFormatSelector(false);
-    simulateConversion(selectedFiles, selectedFormat);
+    runConversion(selectedFiles, selectedFormat);
   };
 
   const handleReset = () => {
@@ -250,6 +255,7 @@ const ConvertOnly = () => {
     setConvertedFiles([]);
     setConvertedSizes([]);
     setConversionProgress([]);
+    setFileProgress([]);
     setConversionWarnings([]);
     setIsConverting(false);
     setShowFormatSelector(false);
@@ -525,6 +531,7 @@ const ConvertOnly = () => {
                     convertedFiles={convertedFiles}
                     convertedSizes={convertedSizes}
                     conversionProgress={conversionProgress}
+                    fileProgress={fileProgress}
                     isConverting={isConverting}
                     onReset={handleReset}
                     targetFormat={selectedFormat}

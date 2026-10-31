@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle2, Download, RefreshCw, FileText, Image, File, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProcessingText } from '@/components/ProcessingText';
+import { FileProgressCard } from '@/components/FileProgressCard';
+import type { TransferProgress } from '@/lib/uploadWithProgress';
 import { useNavigate } from 'react-router-dom';
 import { isAuthenticated } from '@/lib/auth';
 import { toast } from '@/hooks/use-toast';
@@ -20,6 +22,8 @@ interface ConversionResultProps {
   convertedFiles: (File | null)[];
   convertedSizes: number[];
   conversionProgress: number[];
+  /** Real per-file transfer progress. When given, replaces the percent-only card. */
+  fileProgress?: TransferProgress[];
   isConverting: boolean;
   onReset: () => void;
   targetFormat?: string;
@@ -30,6 +34,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
   convertedFiles,
   convertedSizes,
   conversionProgress,
+  fileProgress,
   isConverting,
   onReset,
   targetFormat = 'PDF'
@@ -224,7 +229,9 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
 
         return (
           <div key={`${originalFile.name}-${index}`}>
-            {!isComplete ? (
+            {!isComplete && fileProgress?.[index] ? (
+              <FileProgressCard file={originalFile} progress={fileProgress[index]} mode="convert" />
+            ) : !isComplete ? (
               <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-lg">
                 <div className="text-center">
                   <div className="h-8 w-8 border-2 border-blue-600 border-r-transparent rounded-full mx-auto mb-4 animate-spin" />

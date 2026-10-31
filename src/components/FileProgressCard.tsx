@@ -21,13 +21,32 @@ const formatDuration = (seconds: number) => {
 // one playful verb at a time, swapped every couple of seconds.
 const VERBS = {
   uploading: ['Uploading', 'Sending', 'Beaming up', 'Handing over'],
-  processing: [
+  downloading: ['Fetching', 'Delivering', 'Wrapping up'],
+} as const;
+
+type Mode = 'compress' | 'convert' | 'both';
+
+const PROCESSING_VERBS: Record<Mode, readonly string[]> = {
+  compress: [
     'Slimming', 'SlimFiling', 'Squeezing', 'Shrinking', 'Compacting', 'Condensing',
     'Trimming', 'Tightening', 'Crunching', 'Distilling', 'Decluttering', 'Streamlining',
     'Flattening', 'Pressing', 'Tidying', 'Polishing',
   ],
-  downloading: ['Fetching', 'Delivering', 'Wrapping up'],
-} as const;
+  convert: [
+    'Converting', 'Reformatting', 'Transforming', 'Reshaping', 'Rebuilding', 'Translating',
+    'Rearranging', 'Remapping', 'Retyping', 'Re-laying out', 'Morphing', 'SlimFiling',
+  ],
+  both: [
+    'Converting', 'Reformatting', 'Transforming', 'Slimming', 'SlimFiling', 'Squeezing',
+    'Shrinking', 'Compacting', 'Rebuilding', 'Condensing', 'Crunching', 'Polishing',
+  ],
+};
+
+const PROCESSING_LABEL: Record<Mode, string> = {
+  compress: 'Compress',
+  convert: 'Convert',
+  both: 'Convert & compress',
+};
 
 const SPARKS = ['·', '✢', '✳', '✶', '✻', '✽', '✻', '✶', '✳', '✢'];
 
@@ -42,11 +61,6 @@ const useTicker = (active: boolean, ms: number) => {
   return tick;
 };
 
-const STEP_LABELS = [
-  { stage: 'uploading', label: 'Upload' },
-  { stage: 'processing', label: 'Compress' },
-  { stage: 'downloading', label: 'Download' },
-] as const;
 
 const stepIndex = (stage: TransferProgress['stage']) =>
   stage === 'uploading' ? 0 : stage === 'processing' ? 1 : stage === 'downloading' ? 2 : stage === 'done' ? 3 : -1;
@@ -54,9 +68,16 @@ const stepIndex = (stage: TransferProgress['stage']) =>
 interface FileProgressCardProps {
   file: File;
   progress: TransferProgress;
+  /** Which words and step label to use while the server works. */
+  mode?: Mode;
 }
 
-export const FileProgressCard = ({ file, progress }: FileProgressCardProps) => {
+export const FileProgressCard = ({ file, progress, mode = 'compress' }: FileProgressCardProps) => {
+  const steps = [
+    { stage: 'uploading', label: 'Upload' },
+    { stage: 'processing', label: PROCESSING_LABEL[mode] },
+    { stage: 'downloading', label: 'Download' },
+  ];
   const { stage, loaded, total, speed, stageStartedAt } = progress;
   const running = stage === 'uploading' || stage === 'processing' || stage === 'downloading';
   const spark = useTicker(running, 120);
@@ -67,7 +88,7 @@ export const FileProgressCard = ({ file, progress }: FileProgressCardProps) => {
   const percent = total ? Math.round((loaded / total) * 100) : 0;
   const remaining = speed > 0 && total ? (total - loaded) / speed : null;
 
-  const verbs = running ? VERBS[stage] : null;
+  const verbs = stage === 'processing' ? PROCESSING_VERBS[mode] : running ? VERBS[stage as 'uploading' | 'downloading'] : null;
   const verb = verbs ? verbs[verbTick % verbs.length] : '';
 
   // Right-hand figure: a real percent while bytes move, a timer while the
@@ -142,7 +163,7 @@ export const FileProgressCard = ({ file, progress }: FileProgressCardProps) => {
 
       {/* Steps, as text */}
       <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-mono">
-        {STEP_LABELS.map((step, i) => {
+        {steps.map((step, i) => {
           const done = current > i;
           const active = current === i;
           return (
