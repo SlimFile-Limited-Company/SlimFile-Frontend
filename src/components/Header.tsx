@@ -36,12 +36,10 @@ export const Header = () => {
   const [globalStats, setGlobalStats] = useState<{ totalCompressions: number; totalSpaceSaved: number; avgCompressionRatio: number } | null>(null);
   const [mobileDropdownsOpen, setMobileDropdownsOpen] = useState<{
     tools: boolean;
-    devtools: boolean;
     internal: boolean;
     more: boolean;
   }>({
     tools: false,
-    devtools: false,
     internal: false,
     more: false,
   });
@@ -106,16 +104,6 @@ export const Header = () => {
     ...(isAuthenticated() ? [{ name: "My Whiteboards", href: "/my-whiteboards" }] : []),
   ];
 
-  const devToolsNavigation = [
-    { name: "API Dashboard", href: "https://api.slim-file.com/", external: true },
-    { name: "Developer Program", href: "https://api.slim-file.com/developer-program", external: true },
-    { name: "Audio API", href: "https://system.slim-file.com", external: true },
-    { name: "SlimFile SDK", href: "https://www.npmjs.com/package/@slimfile/sdk", external: true },
-    { name: "SlimFile CLI", href: "https://www.npmjs.com/package/@slimfile/cli", external: true },
-    { name: "SDK on GitHub", href: "https://github.com/ikaydreams-dev/SlimFile-SDK", external: true },
-    { name: "CLI on GitHub", href: "https://github.com/ikaydreams-dev/slimfile-cli", external: true },
-  ];
-
   const suitesNavigation = [
     { name: "Compress", href: "/compress" },
     { name: "Convert", href: "/convert-only" },
@@ -124,7 +112,7 @@ export const Header = () => {
     { name: "OCR Tool", href: "/ocr-tool" },
     { name: "PDF Merger & Splitter", href: "/forge" },
     { name: "PDF Password Protect", href: "/lock" },
-    { name: "Summarize Document", href: "/summarize" },
+    { name: "Summarize Document", href: "/ai-lab?feature=summarize" },
     { name: "QR Code Generator", href: "/qr-code" },
     { name: "AI Lab", href: "/ai-lab" },
   ];
@@ -154,7 +142,7 @@ export const Header = () => {
     { name: "Play Store", href: "https://play.google.com/store/apps/details?id=com.slimfile.app", external: true },
     { name: "SlimFile Assistant", href: "/community-manager" },
     { name: "Reviews", href: "/reviews" },
-    { name: "SlimFile Business", href: "mailto:administration@gmail.com" },
+    { name: "SlimFile Business", href: "mailto:administration@slim-file.com" },
   ];
 
   const isMail = (href: string) => href.startsWith("mailto:");
@@ -181,7 +169,7 @@ export const Header = () => {
     }
   };
 
-  const toggleMobileDropdown = (dropdown: 'tools' | 'devtools' | 'internal' | 'more') => {
+  const toggleMobileDropdown = (dropdown: 'tools' | 'internal' | 'more') => {
     setMobileDropdownsOpen(prev => ({
       ...prev,
       [dropdown]: !prev[dropdown],
@@ -279,32 +267,18 @@ export const Header = () => {
               )}
             </div>
 
-            {/* Dev Tools Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleDropdownHover('devtools')}
-              onMouseLeave={() => handleDropdownHover(null)}
-            >
-              <button className="flex items-center space-x-1 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap">
-                <span>Dev Tools</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              {hoveredDropdown === 'devtools' && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-gray-200 py-2 z-50">
-                  {devToolsNavigation.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200"
-                    >
-                      {item.name}
-                    </a>
-                  ))}
-                </div>
+            {/* Dev Tools: one page; access is arranged through sales */}
+            <Link
+              to="/api"
+              className={cn(
+                "flex items-center text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-full whitespace-nowrap",
+                isActiveRoute("/api")
+                  ? "text-white bg-red-600 shadow-md font-semibold"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}
-            </div>
+            >
+              Dev Tools
+            </Link>
 
             {/* Internal Dropdown (Admin Only) */}
             {isAdmin && (
@@ -500,36 +474,15 @@ export const Header = () => {
                 )}
               </div>
 
-              {/* Mobile Dev Tools Dropdown */}
+              {/* Mobile Dev Tools */}
               <div className="px-4">
-                <button
-                  onClick={() => toggleMobileDropdown('devtools')}
-                  className="w-full flex items-center justify-between px-0 py-2.5 text-sm font-medium text-gray-700 hover:text-red-600 transition-all duration-300 rounded-lg"
+                <Link
+                  to="/api"
+                  className="block py-2.5 text-sm font-medium text-gray-700 hover:text-red-600 transition-all duration-300 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
-                  <span>Dev Tools</span>
-                  <ChevronDown
-                    className={cn(
-                      "w-4 h-4 transition-transform duration-200",
-                      mobileDropdownsOpen.devtools && "transform rotate-180"
-                    )}
-                  />
-                </button>
-                {mobileDropdownsOpen.devtools && (
-                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
-                    {devToolsNavigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-300 rounded-lg"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {item.name}
-                      </a>
-                    ))}
-                  </div>
-                )}
+                  Dev Tools
+                </Link>
               </div>
 
               {/* Mobile Internal Dropdown (Admin Only) */}

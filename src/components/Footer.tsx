@@ -59,13 +59,8 @@ export const Footer = () => {
     {
       heading: "Dev Tools",
       links: [
-        { label: "API Dashboard", path: "https://api.slim-file.com/", external: true },
-        { label: "Developer Program", path: "https://api.slim-file.com/developer-program", external: true },
-        { label: "Audio API", path: "https://system.slim-file.com", external: true },
-        { label: "SlimFile SDK", path: "https://www.npmjs.com/package/@slimfile/sdk", external: true },
-        { label: "SlimFile CLI", path: "https://www.npmjs.com/package/@slimfile/cli", external: true },
-        { label: "SDK on GitHub", path: "https://github.com/ikaydreams-dev/SlimFile-SDK", external: true },
-        { label: "CLI on GitHub", path: "https://github.com/ikaydreams-dev/slimfile-cli", external: true },
+        { label: "Developer Tools", path: "/api" },
+        { label: "Contact Sales", path: "mailto:administration@slim-file.com", external: true },
       ],
     },
     {
