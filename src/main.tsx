@@ -35,6 +35,11 @@ import SlimFileSDGs from './pages/SlimFileSDGs';
 import Partnerships from './pages/Partnerships';
 import News from './pages/News';
 import ProtectedRoute from './components/ProtectedRoute';
+import SignInRequired from './components/SignInRequired';
+import { PenTool } from 'lucide-react';
+
+const WHITEBOARD_PITCH = 'Sketch ideas, plan projects and brainstorm on an endless canvas. Your boards are saved to your account so you can pick up where you left off.';
+const WHITEBOARD_BENEFITS = ['Free to use', 'Saved automatically as you draw', 'Open them on any device'];
 import FileCompressionEducation from './pages/FileCompressionEducation';
 import CompressPdfOnline from './pages/CompressPdfOnline';
 import CompressPptxOnline from './pages/CompressPptxOnline';
@@ -411,18 +416,18 @@ ReactDOM.createRoot(root).render(
 
         {/* Personal whiteboards */}
         <Route path="my-whiteboards" element={
-          <ProtectedRoute>
+          <SignInRequired feature="Whiteboards" icon={PenTool} description={WHITEBOARD_PITCH} benefits={WHITEBOARD_BENEFITS}>
             <PersonalWhiteboards />
-          </ProtectedRoute>
+          </SignInRequired>
         } />
 
         {/* Personal whiteboard canvas */}
         <Route path="my-whiteboards/:whiteboardId" element={
-          <ProtectedRoute>
+          <SignInRequired feature="Whiteboards" icon={PenTool} description={WHITEBOARD_PITCH} benefits={WHITEBOARD_BENEFITS}>
             <Suspense fallback={null}>
               <PersonalWhiteboardCanvas />
             </Suspense>
-          </ProtectedRoute>
+          </SignInRequired>
         } />
 
         {/* Documents */}

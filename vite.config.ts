@@ -33,6 +33,10 @@ export default defineConfig(({ mode }) => ({
     componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Leave files over the precache limit out of the offline cache with a
+      // warning instead of failing the build. Large features such as the
+      // Excalidraw whiteboard load on demand and do not belong in the cache.
+      showMaximumFileSizeToCacheInBytesWarning: true,
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg', 'icon.svg'],
       manifest: {
         name: 'SlimFile - File Compressor',
