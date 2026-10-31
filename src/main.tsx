@@ -1,5 +1,6 @@
 import './index.css';
 import { StrictMode } from 'react';
+import { lazy, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -152,7 +153,8 @@ import WorkspaceDetail from './pages/WorkspaceDetail';
 import WorkspaceInvitations from './pages/WorkspaceInvitations';
 import OCRTool from './pages/OCRTool';
 import PersonalWhiteboards from './pages/PersonalWhiteboards';
-import PersonalWhiteboardCanvas from './pages/PersonalWhiteboardCanvas';
+// Excalidraw is large, so the board editor loads only when a board is opened.
+const PersonalWhiteboardCanvas = lazy(() => import('./pages/PersonalWhiteboardCanvas'));
 import Documents from './pages/Documents';
 import DocumentEditor from './pages/DocumentEditor';
 import AdminNewsletter from './pages/AdminNewsletter';
@@ -417,7 +419,9 @@ ReactDOM.createRoot(root).render(
         {/* Personal whiteboard canvas */}
         <Route path="my-whiteboards/:whiteboardId" element={
           <ProtectedRoute>
-            <PersonalWhiteboardCanvas />
+            <Suspense fallback={null}>
+              <PersonalWhiteboardCanvas />
+            </Suspense>
           </ProtectedRoute>
         } />
 
