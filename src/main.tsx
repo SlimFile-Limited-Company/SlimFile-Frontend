@@ -2,7 +2,7 @@ import './index.css';
 import { StrictMode } from 'react';
 import { lazy, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -36,6 +36,14 @@ import Partnerships from './pages/Partnerships';
 import News from './pages/News';
 import ProtectedRoute from './components/ProtectedRoute';
 import SignInRequired from './components/SignInRequired';
+import { Header } from './components/Header';
+
+const HeaderOnlyLayout = () => (
+  <>
+    <Header />
+    <Outlet />
+  </>
+);
 import { PenTool } from 'lucide-react';
 
 const WHITEBOARD_PITCH = 'Sketch ideas, plan projects and brainstorm on an endless canvas. Your boards are saved to your account so you can pick up where you left off.';
@@ -414,35 +422,39 @@ ReactDOM.createRoot(root).render(
           </ProtectedRoute>
         } />
 
-        {/* Personal whiteboards */}
-        <Route path="my-whiteboards" element={
-          <SignInRequired feature="Whiteboards" icon={PenTool} description={WHITEBOARD_PITCH} benefits={WHITEBOARD_BENEFITS}>
-            <PersonalWhiteboards />
-          </SignInRequired>
-        } />
+        {/* Whiteboards and documents are full-screen editors: they get the
+            site header but not the footer or chat bubble of the main layout. */}
+        <Route element={<HeaderOnlyLayout />}>
+          {/* Personal whiteboards */}
+          <Route path="my-whiteboards" element={
+            <SignInRequired feature="Whiteboards" icon={PenTool} description={WHITEBOARD_PITCH} benefits={WHITEBOARD_BENEFITS}>
+              <PersonalWhiteboards />
+            </SignInRequired>
+          } />
 
-        {/* Personal whiteboard canvas */}
-        <Route path="my-whiteboards/:whiteboardId" element={
-          <SignInRequired feature="Whiteboards" icon={PenTool} description={WHITEBOARD_PITCH} benefits={WHITEBOARD_BENEFITS}>
-            <Suspense fallback={null}>
-              <PersonalWhiteboardCanvas />
-            </Suspense>
-          </SignInRequired>
-        } />
+          {/* Personal whiteboard canvas */}
+          <Route path="my-whiteboards/:whiteboardId" element={
+            <SignInRequired feature="Whiteboards" icon={PenTool} description={WHITEBOARD_PITCH} benefits={WHITEBOARD_BENEFITS}>
+              <Suspense fallback={null}>
+                <PersonalWhiteboardCanvas />
+              </Suspense>
+            </SignInRequired>
+          } />
 
-        {/* Documents */}
-        <Route path="documents" element={
-          <ProtectedRoute>
-            <Documents />
-          </ProtectedRoute>
-        } />
+          {/* Documents */}
+          <Route path="documents" element={
+            <ProtectedRoute>
+              <Documents />
+            </ProtectedRoute>
+          } />
 
-        {/* Document Editor */}
-        <Route path="documents/:documentId" element={
-          <ProtectedRoute>
-            <DocumentEditor />
-          </ProtectedRoute>
-        } />
+          {/* Document Editor */}
+          <Route path="documents/:documentId" element={
+            <ProtectedRoute>
+              <DocumentEditor />
+            </ProtectedRoute>
+          } />
+        </Route>
 
         {/* Admin newsletter — protected by server-side email check */}
         <Route path="admin/newsletter" element={

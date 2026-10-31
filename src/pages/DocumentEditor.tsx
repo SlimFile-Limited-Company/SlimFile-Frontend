@@ -513,9 +513,9 @@ const DocumentEditor = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col pt-12">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+      <div className="bg-white border-b border-gray-200 sticky top-12 z-10 shadow-sm">
         <div className="px-4 sm:px-6 py-3">
           {/* Top Row */}
           <div className="flex items-center justify-between gap-4 mb-3">

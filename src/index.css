@@ -177,3 +177,10 @@ All colors MUST be HSL.
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Whiteboard editor: hide Excalidraw's Library and Help buttons. Both open
+   panels that link to excalidraw.com, its socials and paid plan. */
+.sf-board .default-sidebar-trigger,
+.sf-board .help-icon {
+  display: none !important;
+}

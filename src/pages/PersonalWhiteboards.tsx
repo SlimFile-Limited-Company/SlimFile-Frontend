@@ -55,7 +55,7 @@ const PersonalWhiteboards = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/my-whiteboards`, { headers: authHeaders() });
+        const res = await fetch(`${API_BASE_URL}/my-whiteboards`, { headers: authHeaders(), cache: 'no-store' });
         if (!res.ok) throw new Error('Failed to fetch whiteboards');
         const data = await res.json();
         setBoards(data.whiteboards || []);

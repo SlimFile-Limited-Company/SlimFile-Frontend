@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Excalidraw, exportToBlob, hashElementsVersion, MIME_TYPES } from '@excalidraw/excalidraw';
+import { Excalidraw, MainMenu, WelcomeScreen, exportToBlob, hashElementsVersion, MIME_TYPES } from '@excalidraw/excalidraw';
 import type { AppState, BinaryFiles, ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types';
 import '@excalidraw/excalidraw/index.css';
 import { useToast } from '@/hooks/use-toast';
@@ -78,7 +78,7 @@ const PersonalWhiteboardCanvas = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/my-whiteboards/${whiteboardId}`, { headers: authHeaders() });
+        const res = await fetch(`${API_BASE_URL}/my-whiteboards/${whiteboardId}`, { headers: authHeaders(), cache: 'no-store' });
         if (!res.ok) throw new Error('Failed to load whiteboard');
         const { whiteboard } = await res.json();
         setName(whiteboard.name);
@@ -258,7 +258,7 @@ const PersonalWhiteboardCanvas = () => {
         </div>
       )}
 
-      <div className="flex-1 min-h-0">
+      <div className="sf-board flex-1 min-h-0">
         {isLoading || !initialData ? (
           <div className="h-full flex items-center justify-center text-[#6e6e73]">
             <Loader2 className="w-5 h-5 animate-spin" />
@@ -268,8 +268,28 @@ const PersonalWhiteboardCanvas = () => {
             initialData={initialData}
             onChange={handleChange}
             name={name}
-            UIOptions={{ canvasActions: { loadScene: false, saveToActiveFile: false } }}
-          />
+            UIOptions={{ canvasActions: { loadScene: false, saveToActiveFile: false, export: false } }}
+          >
+            {/* SlimFile's own menu and welcome screen replace Excalidraw's,
+                which link to Excalidraw's site, socials and paid plan. */}
+            <MainMenu>
+              <MainMenu.DefaultItems.SaveAsImage />
+              <MainMenu.DefaultItems.SearchMenu />
+              <MainMenu.DefaultItems.ClearCanvas />
+              <MainMenu.Separator />
+              <MainMenu.DefaultItems.ToggleTheme />
+              <MainMenu.DefaultItems.ChangeCanvasBackground />
+            </MainMenu>
+            <WelcomeScreen>
+              <WelcomeScreen.Center>
+                <WelcomeScreen.Center.Heading>
+                  Start drawing. Your board saves automatically.
+                </WelcomeScreen.Center.Heading>
+              </WelcomeScreen.Center>
+              <WelcomeScreen.Hints.ToolbarHint />
+              <WelcomeScreen.Hints.MenuHint />
+            </WelcomeScreen>
+          </Excalidraw>
         )}
       </div>
     </div>
