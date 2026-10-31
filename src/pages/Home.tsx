@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, ChevronRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, QrCode, Smartphone, Scissors, FileArchive } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -192,28 +193,33 @@ const Home: FC = () => {
               (headline, subtitle and three CTA buttons) was removed.
               Six tabs now overflow a narrow phone, so this scrolls sideways
               instead of wrapping and pushing the grid off screen. */}
-          <div className="-mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto">
-            <div className="flex items-center justify-start sm:justify-center gap-1 border-b border-gray-200 w-max sm:w-full min-w-full">
+          {/* Apple-style segmented control: a grey track with a white pill
+              that slides to the selected tab. On narrow phones the track
+              scrolls sideways instead of wrapping. */}
+          <div className="-mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto flex sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="inline-flex items-center gap-0.5 p-1 rounded-full bg-[#e8e8ed]">
               {featureTabs.map(tab => (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`relative px-3 py-2 text-[13px] font-medium whitespace-nowrap transition-colors duration-200 ${
-                    activeTab === tab.key
-                      ? "text-red-600"
-                      : "text-gray-500 hover:text-gray-800"
+                  className={`relative px-4 sm:px-5 py-1.5 sm:py-2 text-[13px] sm:text-sm font-medium whitespace-nowrap rounded-full transition-colors duration-200 ${
+                    activeTab === tab.key ? "text-[#1d1d1f]" : "text-[#6e6e73] hover:text-[#1d1d1f]"
                   }`}
                 >
-                  {tab.label}
                   {activeTab === tab.key && (
-                    <span className="absolute left-2 right-2 -bottom-px h-0.5 bg-red-600 rounded-full" />
+                    <motion.span
+                      layoutId="home-tab-pill"
+                      className="absolute inset-0 rounded-full bg-white shadow-[0_1px_4px_rgba(0,0,0,0.12)]"
+                      transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                    />
                   )}
+                  <span className="relative">{tab.label}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          <p className="text-center text-sm text-gray-500 mt-3">
+          <p className="text-center text-[15px] text-[#6e6e73] mt-4">
             {featureTabs.find(t => t.key === activeTab)!.blurb}
           </p>
         </div>

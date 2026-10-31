@@ -219,12 +219,21 @@ const Compress = () => {
                 <span className="text-red-600 font-semibold"> {t('compress.lightningFast')}</span>.
               </p>
 
+
+              {/* Jump to the upload box */}
+              <button
+                onClick={() => document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                className="group inline-flex items-center gap-2 h-11 px-6 rounded-full bg-red-600 hover:bg-red-700 text-white text-[15px] font-medium transition-colors duration-200"
+              >
+                {t('compress.start')}
+                <ArrowDown className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-0.5" />
+              </button>
             </div>
           </div>
         </section>
 
         {/* File Upload/Result Section */}
-        <section id="upload-section" className="pt-6 pb-20 px-4 sm:px-6 lg:px-8">
+        <section id="upload-section" className="scroll-mt-16 pt-6 pb-20 px-4 sm:px-6 lg:px-8">
           <div className="container mx-auto">
             <div className="max-w-5xl mx-auto">
               {/* Section Header */}
