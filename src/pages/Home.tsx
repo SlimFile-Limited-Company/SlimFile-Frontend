@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, QrCode, Smartphone, Scissors, FileArchive } from "lucide-react";
+import { ArrowRight, ChevronRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, QrCode, Smartphone, Scissors, FileArchive } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useSEO } from "@/hooks/useSEO";
 
@@ -125,10 +125,10 @@ const Home: FC = () => {
   // Scan tab — they run off the phone camera and have nothing to do with
   // desktop uploads, so burying them in All would just be noise there.
   const scanFeatures = [
-    { icon: Smartphone,  title: "Scan & Compress",   description: "Photograph pages and get one small, shareable PDF.",              gradient: "from-orange-400 to-orange-500", href: "/scan-compress" },
-    { icon: Layers,      title: "Batch Scan & Merge", description: "Scan several documents and combine every page into one PDF.",       gradient: "from-blue-400 to-blue-500",     href: "/scan-merge" },
-    { icon: Scissors,    title: "Batch Scan & Split", description: "Scan a document and split it into separate small PDFs.",            gradient: "from-green-400 to-green-500",   href: "/scan-split" },
-    { icon: RefreshCw,   title: "Scan & Convert",     description: "Turn a photo into Word, Excel, PowerPoint or images.",             gradient: "from-purple-400 to-purple-500", href: "/scan-convert" },
+    { icon: Smartphone,  title: "Scan & Compress",   description: "Photograph pages and get one small, shareable PDF.",              gradient: "from-orange-400 to-orange-500", color: "text-orange-500", href: "/scan-compress" },
+    { icon: Layers,      title: "Batch Scan & Merge", description: "Scan several documents and combine every page into one PDF.",       gradient: "from-blue-400 to-blue-500",     color: "text-blue-500",   href: "/scan-merge" },
+    { icon: Scissors,    title: "Batch Scan & Split", description: "Scan a document and split it into separate small PDFs.",            gradient: "from-green-400 to-green-500",   color: "text-green-500",  href: "/scan-split" },
+    { icon: RefreshCw,   title: "Scan & Convert",     description: "Turn a photo into Word, Excel, PowerPoint or images.",             gradient: "from-purple-400 to-purple-500", color: "text-purple-500", href: "/scan-convert" },
   ];
 
   // Category tabs, iLovePDF style. Every feature belongs to exactly one tab,
@@ -231,19 +231,20 @@ const Home: FC = () => {
               — so roughly 10 fit on screen without scrolling. */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-5">
             {visibleFeatures.map((feature) => {
+              // Apple-style tile: soft grey surface, no border, a coloured line
+              // icon, large title and a quiet "Try it" link. On phones it
+              // collapses to a slim row so ~10 tools fit on one screen.
               const card = (
-                <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 h-full flex flex-row sm:flex-col items-center sm:items-stretch gap-3 p-3 sm:p-5">
-                  <div className="flex items-center gap-3 flex-1 min-w-0 sm:contents">
-                    <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center flex-shrink-0`}>
-                      <feature.icon className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
-                    </div>
-                    <p className="text-sm sm:text-lg font-bold text-gray-900 leading-tight sm:mb-2 truncate">{feature.title}</p>
+                <div className="group h-full flex flex-row sm:flex-col items-center sm:items-start gap-3 sm:gap-0 rounded-2xl sm:rounded-[28px] bg-[#f5f5f7] p-3.5 sm:p-7 transition-all duration-300 ease-out hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:hover:scale-[1.015]">
+                  <feature.icon className={`w-6 h-6 sm:w-9 sm:h-9 ${feature.color} shrink-0 sm:mb-6`} strokeWidth={1.75} />
+                  <div className="min-w-0 flex-1 sm:flex-none">
+                    <p className="text-[15px] sm:text-[21px] font-semibold tracking-tight text-[#1d1d1f] leading-snug truncate sm:whitespace-normal">{feature.title}</p>
+                    <p className="hidden sm:block mt-2 text-[15px] leading-relaxed text-[#6e6e73]">{feature.description}</p>
                   </div>
-                  <p className="hidden sm:block text-gray-500 text-sm leading-relaxed mb-4">{feature.description}</p>
-                  <span className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-gray-900 mt-auto">
-                    Try Now <ArrowRight className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline-flex items-center gap-0.5 mt-auto pt-6 text-[15px] font-medium text-red-600 transition-all duration-300 group-hover:gap-1.5">
+                    Try it <ChevronRight className="w-4 h-4" />
                   </span>
-                  <ArrowRight className="w-4 h-4 text-gray-300 flex-shrink-0 sm:hidden" />
+                  <ChevronRight className="w-4 h-4 text-gray-400 shrink-0 sm:hidden" />
                 </div>
               );
               return feature.href.startsWith('http') ? (
