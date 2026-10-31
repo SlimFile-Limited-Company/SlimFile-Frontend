@@ -26,7 +26,7 @@ async function downloadBlob(blob: Blob, filename: string) {
 const SlimFileSplitCompress = () => {
   useSEO({
     title: 'Split & Compress PDFs — Split Pages and Shrink File Size',
-    description: 'Split a PDF into pages or custom page ranges and compress every piece in one step. Downloads as a ZIP. Fast, free and secure.',
+    description: 'Split a PDF into pages or custom page ranges and compress every piece in one step. One piece downloads as a PDF, several as a ZIP. Fast, free and secure.',
   });
 
   const { toast } = useToast();
@@ -56,10 +56,14 @@ const SlimFileSplitCompress = () => {
         throw new Error(err.error || 'Split and compress failed');
       }
       const blob = await res.blob();
-      await downloadBlob(blob, 'compressed_split.zip');
+      // A single piece comes back as the PDF itself; two or more as a zip.
+      const isZip = blob.type.includes('zip');
+      await downloadBlob(blob, isZip ? 'compressed_split.zip' : 'compressed_split.pdf');
       toast({
         title: 'Split & compressed!',
-        description: 'Every piece was compressed — check the downloaded ZIP.',
+        description: isZip
+          ? 'Every piece was compressed — check the downloaded ZIP.'
+          : 'Your compressed PDF is ready.',
       });
       setFile(null); setRanges('');
       setShowReviewPrompt(true);
@@ -93,7 +97,7 @@ const SlimFileSplitCompress = () => {
           {[
             { icon: <Scissors   className="w-3.5 h-3.5 text-orange-500" />, label: 'Split by page ranges' },
             { icon: <Sparkles   className="w-3.5 h-3.5 text-orange-500" />, label: 'Each piece compressed' },
-            { icon: <Download   className="w-3.5 h-3.5 text-orange-500" />, label: 'ZIP download' },
+            { icon: <Download   className="w-3.5 h-3.5 text-orange-500" />, label: 'PDF or ZIP download' },
           ].map(({ icon, label }) => (
             <span key={label} className="flex items-center gap-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 px-3 py-1.5 rounded-full shadow-sm">
               {icon}
@@ -149,7 +153,7 @@ const SlimFileSplitCompress = () => {
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
                 <p className="text-xs text-gray-500 leading-relaxed">
                   <span className="font-semibold text-gray-700">How it works:</span> Each group becomes its own
-                  compressed PDF inside a ZIP file.{' '}
+                  compressed PDF. Several groups come as a ZIP file.{' '}
                   <span className="text-gray-400">Example: "1-3, 5, 7-9" → three PDFs (pages 1–3, page 5, pages 7–9).</span>
                 </p>
               </div>

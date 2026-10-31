@@ -182,8 +182,13 @@ function SplitTab({ onSuccess }: { onSuccess?: () => void }) {
         throw new Error(err.error || 'Split failed');
       }
       const blob = await res.blob();
-      await downloadBlob(blob, 'split_pages.zip');
-      toast({ title: 'Split complete!', description: 'Your PDF pages are ready — check the downloaded ZIP.' });
+      // A single piece comes back as the PDF itself; two or more as a zip.
+      const isZip = blob.type.includes('zip');
+      await downloadBlob(blob, isZip ? 'split_pages.zip' : 'split_pages.pdf');
+      toast({
+        title: 'Split complete!',
+        description: isZip ? 'Your PDF pages are ready — check the downloaded ZIP.' : 'Your PDF is ready.',
+      });
       setFile(null); setRanges('');
       onSuccess?.();
     } catch (err: any) {
@@ -239,7 +244,7 @@ function SplitTab({ onSuccess }: { onSuccess?: () => void }) {
         <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
           <p className="text-xs text-gray-500 leading-relaxed">
             <span className="font-semibold text-gray-700">How it works:</span> Use commas to separate groups.
-            Each group becomes its own PDF inside a ZIP file.{' '}
+            Each group becomes its own PDF. Several groups come as a ZIP file.{' '}
             <span className="text-gray-400">Example: "1-3, 5, 7-9" → three PDFs (pages 1–3, page 5, pages 7–9).</span>
           </p>
         </div>
@@ -252,7 +257,7 @@ function SplitTab({ onSuccess }: { onSuccess?: () => void }) {
       >
         {splitting
           ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Splitting PDF…</>
-          : <><Download className="w-4 h-4 mr-2" />Split & Download ZIP</>}
+          : <><Download className="w-4 h-4 mr-2" />Split & Download</>}
       </Button>
     </div>
   );

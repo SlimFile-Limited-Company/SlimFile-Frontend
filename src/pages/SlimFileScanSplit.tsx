@@ -19,15 +19,20 @@ const SlimFileScanSplit = () => {
         workingLabel: 'Splitting your scan…',
         downloadName: 'scanned_split.zip',
         successTitle: 'Scan split!',
-        successBody: pages => `${pages} page${pages > 1 ? 's' : ''} split into separate PDFs, delivered as a zip.`,
+        successBody: pages => `${pages} page${pages > 1 ? 's' : ''} split and downloaded.`,
         desktopHint: 'Scan and split into separate PDFs. Open this page on your phone to use the camera.',
         operationType: 'scan-split',
         pills: [
           { icon: <Smartphone className="w-3.5 h-3.5 text-green-500" />, label: 'Uses your camera' },
           { icon: <Scissors   className="w-3.5 h-3.5 text-green-500" />, label: 'One PDF per page' },
-          { icon: <Download   className="w-3.5 h-3.5 text-green-500" />, label: 'Delivered as a zip' },
+          { icon: <Download   className="w-3.5 h-3.5 text-green-500" />, label: 'Zipped when there are several' },
         ],
         extraBody: () => ({ ranges: ranges.trim() }),
+        // A single piece comes back as the PDF itself; two or more as a zip.
+        postProcess: async blob => ({
+          blob,
+          filename: blob.type.includes('zip') ? 'scanned_split.zip' : 'scanned_split.pdf',
+        }),
         extraFields: (
           <div className="space-y-1.5">
             <label htmlFor="scan-split-ranges" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider">
