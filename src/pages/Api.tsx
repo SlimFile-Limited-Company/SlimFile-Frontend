@@ -21,17 +21,17 @@ const tools = [
   {
     icon: Package,
     name: "SlimFile SDK",
-    tagline: "For JavaScript and TypeScript developers",
-    description: "Add SlimFile compression to your Node.js app in a few lines of code, without writing the HTTP calls yourself.",
-    points: ["Node.js and TypeScript", "Typed responses", "Uses your SlimFile API key"],
+    tagline: "For developers in any language",
+    description: "Add SlimFile compression to your app in a few lines of code, whatever language you build in: Python, JavaScript, PHP, Java, C#, Go and more.",
+    points: ["Works with any programming language", "Simple to integrate", "Uses your SlimFile API key"],
     subject: "SlimFile SDK access",
   },
   {
     icon: Terminal,
     name: "SlimFile CLI",
     tagline: "For the terminal and automation",
-    description: "Compress single files or whole folders from the command line, or plug SlimFile into scripts and build pipelines.",
-    points: ["Single files or batches", "Works in scripts and CI", "Uses your SlimFile API key"],
+    description: "Compress single files or whole folders from the command line, or plug SlimFile into scripts and build pipelines in any language.",
+    points: ["Single files or batches", "Works with any language, script or CI", "Uses your SlimFile API key"],
     subject: "SlimFile CLI access",
   },
 ];
