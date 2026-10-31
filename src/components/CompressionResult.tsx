@@ -3,6 +3,8 @@ import { Download, FileText, Image as ImageIcon, RotateCcw, CheckCircle, Share2 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProcessingText } from "@/components/ProcessingText";
+import { FileProgressCard } from "@/components/FileProgressCard";
+import type { TransferProgress } from "@/lib/uploadWithProgress";
 import { useNavigate } from "react-router-dom";
 import { isAuthenticated } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
@@ -22,6 +24,8 @@ interface CompressionResultProps {
   compressedFiles: (File | null)[];
   compressedSizes: number[];
   compressionProgress: number[];
+  /** Real per-file transfer progress. When given, replaces the percent-only card. */
+  fileProgress?: TransferProgress[];
   isCompressing: boolean;
   onReset: () => void;
 }
@@ -31,6 +35,7 @@ export const CompressionResult = ({
   compressedFiles,
   compressedSizes,
   compressionProgress,
+  fileProgress,
   isCompressing,
   onReset,
 }: CompressionResultProps) => {
@@ -259,7 +264,9 @@ export const CompressionResult = ({
     <div className="w-full space-y-6">
       {originalFiles.map((file, idx) => (
         <div key={file.name + idx}>
-          {isCompressing && (!compressedFiles[idx]) ? (
+          {isCompressing && (!compressedFiles[idx]) && fileProgress?.[idx] ? (
+            <FileProgressCard file={file} progress={fileProgress[idx]} />
+          ) : isCompressing && (!compressedFiles[idx]) ? (
             <Card className="bg-white shadow-lg border border-gray-100 mb-6">
               <CardContent className="p-6">
                 <div className="text-center">

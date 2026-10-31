@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { CompressionResult } from "@/components/CompressionResult";
+import { uploadWithProgress, queuedProgress, type TransferProgress } from "@/lib/uploadWithProgress";
 import { toast } from "@/hooks/use-toast";
 import { isAuthenticated, getUserProfile } from "@/lib/auth";
 import { Zap, Shield, Clock, ArrowDown, CheckCircle2 } from "lucide-react";
@@ -17,6 +18,7 @@ const Compress = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isCompressing, setIsCompressing] = useState(false);
   const [compressionProgress, setCompressionProgress] = useState<number[]>([]); // per file
+  const [fileProgress, setFileProgress] = useState<TransferProgress[]>([]); // real per-file transfer state
   const [compressedFiles, setCompressedFiles] = useState<(File | null)[]>([]);
   const [compressedSizes, setCompressedSizes] = useState<number[]>([]);
   const [pdfWarnings, setPdfWarnings] = useState<string[]>([]);
@@ -71,23 +73,26 @@ const Compress = () => {
 
     // Include JWT token if user is logged in (for history tracking)
     const token = localStorage.getItem('jwt');
-    const headers: HeadersInit = {};
+    const headers: Record<string, string> = {};
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/compress`, {
-        method: 'POST',
-        body: formData,
-        headers
+    const setProgress = (p: TransferProgress) =>
+      setFileProgress(prev => {
+        const updated = [...prev];
+        updated[idx] = p;
+        return updated;
       });
+
+    try {
+      const response = await uploadWithProgress(`${API_BASE_URL}/compress`, formData, headers, setProgress);
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
+        const data = await response.blob.text().then(t => JSON.parse(t)).catch(() => ({}));
         return { file: null, warning: data.error || 'Compression failed' };
       }
-      const blob = await response.blob();
-      const contentDisposition = response.headers.get('Content-Disposition');
+      const blob = response.blob;
+      const contentDisposition = response.getHeader('Content-Disposition');
       let filename = `slimfile_${file.name}`;
       if (contentDisposition) {
         const match = contentDisposition.match(/filename="(.+)"/);
@@ -100,36 +105,26 @@ const Compress = () => {
     }
   };
 
-  const simulateCompression = async (files: File[]) => {
+  const runCompression = async (files: File[]) => {
     setIsCompressing(true);
     setCompressionProgress(Array(files.length).fill(0));
     setCompressedFiles(Array(files.length).fill(null));
     setCompressedSizes(Array(files.length).fill(0));
     setPdfWarnings(Array(files.length).fill(''));
+    // Files go one at a time; the rest wait in the queue until their turn.
+    setFileProgress(files.map(() => queuedProgress()));
 
     for (let idx = 0; idx < files.length; idx++) {
       const file = files[idx];
-      // Progress simulation
-      const progressSteps = [10, 25, 45, 65, 80, 95, 100];
-      const delays = [300, 400, 500, 400, 300, 200, 100];
-      for (let i = 0; i < progressSteps.length - 1; i++) {
-        await new Promise(resolve => setTimeout(resolve, delays[i]));
-        setCompressionProgress(prev => {
-          const updated = [...prev];
-          updated[idx] = progressSteps[i];
-          return updated;
-        });
-        // Show "Hang in there..." at 95%
-        if (progressSteps[i] === 95) {
-          toast({
-            title: `${t('compress.almostDone')} (${file.name})`,
-            description: t('compress.hangInThere'),
-            variant: "default",
-          });
-        }
-      }
       try {
         const { file: compressed, warning } = await compressFile(file, idx);
+        if (!compressed) {
+          setFileProgress(prev => {
+            const updated = [...prev];
+            updated[idx] = { ...updated[idx], stage: 'error' };
+            return updated;
+          });
+        }
         setCompressedFiles(prev => {
           const updated = [...prev];
           updated[idx] = compressed;
@@ -185,7 +180,7 @@ const Compress = () => {
     setCompressedSizes(Array(files.length).fill(0));
     setCompressionProgress(Array(files.length).fill(0));
     setPdfWarnings(Array(files.length).fill(''));
-    simulateCompression(files);
+    runCompression(files);
   };
 
   const handleReset = () => {
@@ -193,6 +188,7 @@ const Compress = () => {
     setCompressedFiles([]);
     setCompressedSizes([]);
     setCompressionProgress([]);
+    setFileProgress([]);
     setPdfWarnings([]);
     setIsCompressing(false);
   };
@@ -416,6 +412,7 @@ const Compress = () => {
                     compressedFiles={compressedFiles}
                     compressedSizes={compressedSizes}
                     compressionProgress={compressionProgress}
+                    fileProgress={fileProgress}
                     isCompressing={isCompressing}
                     onReset={handleReset}
                   />
