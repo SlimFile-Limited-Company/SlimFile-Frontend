@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Loader2, MapPin, Wifi, Mail } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import io from 'socket.io-client';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -18,6 +19,7 @@ interface CampusStats {
   new30: number;
   files: number;
   files30: number;
+  today: number;
   visits: number;
   visits30: number;
   visitors: number;
@@ -29,12 +31,52 @@ interface CampusStats {
 
 interface DailyRow { day: string; campusId: string; count: number }
 
-type SortKey = 'people' | 'visits30' | 'active30' | 'new30' | 'files';
+interface FeedItem {
+  id: string;
+  campusId: string;
+  short: string;
+  kind: 'visit' | 'file' | 'slimdocx' | 'whiteboard';
+  method: 'gps' | 'wifi' | 'email';
+  newPerson?: boolean;
+  signedIn: boolean;
+  at: string;
+}
+
+const KIND_TEXT: Record<FeedItem['kind'], string> = {
+  visit: 'visited slim-file.com',
+  file: 'finished a file',
+  slimdocx: 'opened a SlimDocx document',
+  whiteboard: 'opened a whiteboard',
+};
+const METHOD_TEXT: Record<FeedItem['method'], string> = { gps: 'GPS', wifi: 'campus Wi-Fi', email: 'school email' };
+
+const timeAgo = (iso: string, now: number) => {
+  const s = Math.max(0, Math.round((now - new Date(iso).getTime()) / 1000));
+  if (s < 10) return 'just now';
+  if (s < 60) return `${s}s ago`;
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+};
+
+// A live event moves that campus's numbers straight away.
+const applyEvent = (c: CampusStats, e: FeedItem): CampusStats => ({
+  ...c,
+  today: c.today + 1,
+  people: c.people + (e.newPerson ? 1 : 0),
+  new7: c.new7 + (e.newPerson ? 1 : 0),
+  new30: c.new30 + (e.newPerson ? 1 : 0),
+  visits: c.visits + (e.kind === 'visit' ? 1 : 0),
+  files: c.files + (e.kind === 'file' ? 1 : 0),
+  slimdocx: { ...c.slimdocx, opens: c.slimdocx.opens + (e.kind === 'slimdocx' ? 1 : 0) },
+  whiteboards: { ...c.whiteboards, opens: c.whiteboards.opens + (e.kind === 'whiteboard' ? 1 : 0) },
+});
+
+type SortKey = 'people' | 'today' | 'visits' | 'files';
 const SORTS: { key: SortKey; label: string }[] = [
   { key: 'people', label: 'People' },
-  { key: 'visits30', label: 'Visits' },
-  { key: 'active30', label: 'Active' },
-  { key: 'new30', label: 'New' },
+  { key: 'today', label: 'Today' },
+  { key: 'visits', label: 'Visits' },
   { key: 'files', label: 'Files' },
 ];
 
@@ -50,32 +92,70 @@ export default function CampusDashboard() {
   const [daily, setDaily] = useState<DailyRow[]>([]);
   const [state, setState] = useState<'loading' | 'ready' | 'failed'>('loading');
   const [sort, setSort] = useState<SortKey>('people');
+  const [feed, setFeed] = useState<FeedItem[]>([]);
+  const [live, setLive] = useState(false);
+  const [now, setNow] = useState(Date.now());
 
+  // Full numbers on load, then again every two minutes to keep "active" and
+  // per-day counts exact; live events fill the gaps in between.
   useEffect(() => {
-    fetch(`${API_BASE_URL}/campus/stats`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
-      cache: 'no-store',
-    })
-      .then(res => (res.ok ? res.json() : Promise.reject(res.status)))
-      .then(data => {
-        setCampuses(data.campuses || []);
-        setDaily(data.daily || []);
-        setState('ready');
+    const load = () =>
+      fetch(`${API_BASE_URL}/campus/stats`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
+        cache: 'no-store',
       })
-      .catch(() => setState('failed'));
+        .then(res => (res.ok ? res.json() : Promise.reject(res.status)))
+        .then(data => {
+          setCampuses(data.campuses || []);
+          setDaily(data.daily || []);
+          setFeed(data.feed || []);
+          setState('ready');
+        })
+        .catch(() => setState(s => (s === 'ready' ? s : 'failed')));
+    load();
+    const timer = setInterval(load, 120000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Live events as they happen
+  useEffect(() => {
+    const socket = io(API_BASE_URL.replace(/\/api\/?$/, ''));
+    const join = () => socket.emit('joinCampusFeed', localStorage.getItem('jwt'));
+    socket.on('connect', join);
+    socket.on('campusFeedJoined', () => setLive(true));
+    socket.on('disconnect', () => setLive(false));
+    socket.on('campusEvent', (e: FeedItem) => {
+      setFeed(f => (f.some(x => x.id === e.id) ? f : [e, ...f].slice(0, 30)));
+      setCampuses(cs => cs.map(c => (c.id === e.campusId ? applyEvent(c, e) : c)));
+      const day = new Date(e.at).toISOString().slice(0, 10);
+      if (e.kind === 'visit') {
+        setDaily(d => {
+          const row = d.find(r => r.day === day && r.campusId === e.campusId);
+          return row ? d.map(r => (r === row ? { ...r, count: r.count + 1 } : r)) : [...d, { day, campusId: e.campusId, count: 1 }];
+        });
+      }
+    });
+    return () => { socket.disconnect(); };
+  }, []);
+
+  // Keeps "2m ago" fresh
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 15000);
+    return () => clearInterval(t);
   }, []);
 
   const sorted = useMemo(() => [...campuses].sort((a, b) => b[sort] - a[sort]), [campuses, sort]);
   const totals = useMemo(() => campuses.reduce(
     (t, c) => ({
       people: t.people + c.people,
-      visits30: t.visits30 + c.visits30,
+      today: t.today + c.today,
+      visits: t.visits + c.visits,
       new7: t.new7 + c.new7,
       files: t.files + c.files,
       docs: t.docs + c.slimdocx.opens,
       boards: t.boards + c.whiteboards.opens,
     }),
-    { people: 0, visits30: 0, new7: 0, files: 0, docs: 0, boards: 0 }
+    { people: 0, today: 0, visits: 0, new7: 0, files: 0, docs: 0, boards: 0 }
   ), [campuses]);
 
   // Visitors per day across all campuses
@@ -87,7 +167,7 @@ export default function CampusDashboard() {
   const ambassadors = useMemo(() => sorted.flatMap(c =>
     c.ambassadors.map(name => ({
       name, campus: c.short, shared: c.ambassadors.length > 1,
-      people: c.people, visits30: c.visits30, files: c.files, tools: c.slimdocx.opens + c.whiteboards.opens,
+      people: c.people, visits: c.visits, files: c.files, tools: c.slimdocx.opens + c.whiteboards.opens,
     }))
   ), [sorted]);
 
@@ -114,9 +194,9 @@ export default function CampusDashboard() {
       <section className="px-4 sm:px-6 pb-10">
         <div className="max-w-6xl mx-auto grid gap-4 grid-cols-2 lg:grid-cols-3">
           {[
-            { label: 'Visits to slim-file.com, 30 days', value: totals.visits30 },
+            { label: 'Visits to slim-file.com', value: totals.visits },
             { label: 'People on campuses', value: totals.people },
-            { label: 'New this week', value: totals.new7 },
+            { label: 'Activity today', value: totals.today },
             { label: 'Files processed', value: totals.files },
             { label: 'SlimDocx documents opened', value: totals.docs },
             { label: 'Whiteboards opened', value: totals.boards },
@@ -129,12 +209,53 @@ export default function CampusDashboard() {
         </div>
       </section>
 
+      {/* Live activity, as it happens */}
+      <section className="px-4 sm:px-6 pb-10">
+        <div className="max-w-6xl mx-auto rounded-[28px] bg-[#f5f5f7] p-6 sm:p-8">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-[21px] font-semibold tracking-tight">Live activity</h2>
+            <span className="flex items-center gap-2 text-[13px] text-[#6e6e73]">
+              <span className={`relative flex w-2 h-2 ${live ? '' : 'opacity-40'}`}>
+                {live && <span className="absolute inset-0 rounded-full bg-[#30d158] animate-ping opacity-60" />}
+                <span className={`relative w-2 h-2 rounded-full ${live ? 'bg-[#30d158]' : 'bg-[#6e6e73]'}`} />
+              </span>
+              {live ? 'Live' : 'Connecting…'}
+            </span>
+          </div>
+          {feed.length === 0 ? (
+            <p className="py-8 text-center text-[15px] text-[#6e6e73]">Nothing yet. Activity on any campus shows up here the moment it happens.</p>
+          ) : (
+            <ul className="max-h-[360px] overflow-y-auto -mx-2">
+              <AnimatePresence initial={false}>
+                {feed.map(e => (
+                  <motion.li
+                    key={e.id}
+                    layout
+                    initial={{ opacity: 0, y: -8, backgroundColor: 'rgba(48,209,88,0.12)' }}
+                    animate={{ opacity: 1, y: 0, backgroundColor: 'rgba(0,0,0,0)' }}
+                    transition={{ duration: 0.4, backgroundColor: { duration: 2 } }}
+                    className="flex items-center gap-3 px-2 py-2.5 rounded-xl border-b border-black/[0.04] last:border-0"
+                  >
+                    <span className="w-16 shrink-0 text-[13px] font-semibold truncate">{e.short}</span>
+                    <span className="flex-1 min-w-0 text-[15px] truncate">
+                      {e.newPerson ? 'A new person ' : 'Someone '}{KIND_TEXT[e.kind]}
+                      <span className="text-[#6e6e73]"> · {METHOD_TEXT[e.method]}{e.signedIn ? ' · signed in' : ''}</span>
+                    </span>
+                    <span className="shrink-0 text-[12px] text-[#6e6e73]">{timeAgo(e.at, now)}</span>
+                  </motion.li>
+                ))}
+              </AnimatePresence>
+            </ul>
+          )}
+        </div>
+      </section>
+
       {/* Last 30 days */}
       <section className="px-4 sm:px-6 pb-14">
         <div className="max-w-6xl mx-auto rounded-[28px] bg-[#f5f5f7] p-6 sm:p-8">
           <div className="flex items-baseline justify-between mb-6">
-            <h2 className="text-[21px] font-semibold tracking-tight">People on campuses, last 30 days</h2>
-            <span className="text-[13px] text-[#6e6e73]">per day</span>
+            <h2 className="text-[21px] font-semibold tracking-tight">Visitors per day</h2>
+            <span className="text-[13px] text-[#6e6e73]">last 30 days</span>
           </div>
           <div className="flex items-end gap-1 h-36">
             {perDay.map((n, i) => (
@@ -186,9 +307,9 @@ export default function CampusDashboard() {
 
                 <dl className="mt-5 grid grid-cols-3 gap-2 text-center">
                   {[
-                    { k: 'Visits 30d', v: c.visits30 },
+                    { k: 'Visits', v: c.visits },
+                    { k: 'Today', v: c.today },
                     { k: 'Active 30d', v: c.active30 },
-                    { k: 'New 30d', v: c.new30 },
                     { k: 'Files', v: c.files },
                     { k: 'SlimDocx', v: c.slimdocx.opens },
                     { k: 'Whiteboards', v: c.whiteboards.opens },
@@ -228,7 +349,7 @@ export default function CampusDashboard() {
                   <th className="font-medium px-5 pt-4 pb-2">Ambassador</th>
                   <th className="font-medium px-3 pt-4 pb-2">Campus</th>
                   <th className="font-medium px-3 pt-4 pb-2 text-right">People</th>
-                  <th className="font-medium px-3 pt-4 pb-2 text-right">Visits 30d</th>
+                  <th className="font-medium px-3 pt-4 pb-2 text-right">Visits</th>
                   <th className="font-medium px-3 pt-4 pb-2 text-right">Files</th>
                   <th className="font-medium px-5 pt-4 pb-2 text-right">SlimDocx & Boards</th>
                 </tr>
@@ -239,7 +360,7 @@ export default function CampusDashboard() {
                     <td className="px-5 py-3 font-medium">{a.name}</td>
                     <td className="px-3 py-3 text-[#6e6e73]">{a.campus}{a.shared && ' (shared)'}</td>
                     <td className="px-3 py-3 text-right">{a.people.toLocaleString()}</td>
-                    <td className="px-3 py-3 text-right">{a.visits30.toLocaleString()}</td>
+                    <td className="px-3 py-3 text-right">{a.visits.toLocaleString()}</td>
                     <td className="px-3 py-3 text-right">{a.files.toLocaleString()}</td>
                     <td className="px-5 py-3 text-right">{a.tools.toLocaleString()}</td>
                   </tr>
