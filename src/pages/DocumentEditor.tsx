@@ -75,7 +75,8 @@ const DocumentEditor = () => {
         holder.current.appendChild(placeholder);
         editor = new window.DocsAPI.DocEditor(placeholder.id, {
           ...config,
-          type: window.innerWidth < 768 ? 'mobile' : 'desktop',
+          // The free edition's phone layout is view-only, so phones get the full editor too.
+          type: 'desktop',
           width: '100%',
           height: '100%',
           events: {
