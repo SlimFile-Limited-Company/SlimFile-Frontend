@@ -45,8 +45,29 @@ const BOT = /facebookexternalhit|facebot|linkedinbot|twitterbot|whatsapp|slackbo
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
+// Vercel reads this at build time, so it must be written out, not computed.
+// Keep it in step with PAGES.
 export const config = {
-  matcher: Object.keys(PAGES),
+  matcher: [
+    '/compress',
+    '/convert-only',
+    '/convert-compress',
+    '/forge',
+    '/merge-compress',
+    '/split-compress',
+    '/lock',
+    '/ocr-tool',
+    '/zip',
+    '/qr-code',
+    '/scan-compress',
+    '/scan-convert',
+    '/scan-merge',
+    '/scan-split',
+    '/my-whiteboards',
+    '/workspaces',
+    '/feed',
+    '/ai-lab',
+  ],
 };
 
 export default async function middleware(request) {
