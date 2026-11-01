@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useSEO } from '@/hooks/useSEO';
-import { Mail, Code2, Package, Terminal, KeyRound, Building2, Rocket, ShieldCheck } from "lucide-react";
+import { Mail, Code2, Package, Terminal, KeyRound, Rocket, ShieldCheck } from "lucide-react";
 
 const SALES_EMAIL = "administration@slim-file.com";
 
@@ -49,87 +49,91 @@ const Api = () => {
   });
 
   return (
-    <div className="min-h-screen pt-28 bg-gray-50">
+    <div className="min-h-screen bg-white pt-12 text-[#1d1d1f]">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-red-50 via-white to-gray-50 py-16 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto max-w-4xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-red-100 text-red-700 px-4 py-1.5 text-sm font-semibold mb-6">
-            <Building2 className="w-4 h-4" /> For developers and businesses
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-5">SlimFile Developer Tools</h1>
-          <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Bring SlimFile's compression into your own apps and workflows. Access to the API, SDK and CLI is set up by our team, so get in touch and we'll get you started.
-          </p>
+      <section className="px-4 sm:px-6 pt-20 sm:pt-28 pb-16 sm:pb-20 text-center">
+        <p className="text-[17px] font-semibold text-red-600 mb-3">For developers and businesses</p>
+        <h1 className="text-5xl sm:text-7xl font-semibold tracking-tight leading-[1.05] max-w-4xl mx-auto">
+          SlimFile Developer Tools.
+        </h1>
+        <p className="mt-6 text-xl sm:text-2xl text-[#6e6e73] max-w-2xl mx-auto leading-snug">
+          Bring SlimFile's compression into your own apps and workflows. Our team sets up your access.
+        </p>
+        <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
           <a href={salesLink("SlimFile developer access")}>
-            <Button size="lg" className="rounded-full px-8 py-6 text-base bg-red-600 hover:bg-red-700 text-white gap-2">
-              <Mail className="w-5 h-5" /> Contact sales
+            <Button size="lg" className="rounded-full px-7 h-11 text-[17px] bg-red-600 hover:bg-red-700 text-white">
+              Contact sales
             </Button>
           </a>
-          <p className="text-sm text-gray-500 mt-4">{SALES_EMAIL}</p>
+          <a href="#how-it-works" className="text-[17px] text-red-600 hover:underline">
+            How access works ›
+          </a>
         </div>
-      </div>
+        <p className="mt-5 text-sm text-[#6e6e73]">{SALES_EMAIL}</p>
+      </section>
 
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-14">
-        {/* Products */}
-        <div className="grid gap-6 md:grid-cols-3">
+      {/* Products */}
+      <section className="px-4 sm:px-6 pb-4">
+        <div className="max-w-6xl mx-auto grid gap-4 md:grid-cols-3">
           {tools.map(tool => (
-            <div key={tool.name} className="flex flex-col rounded-2xl bg-white border border-gray-200 shadow-sm p-7">
-              <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-5">
-                <tool.icon className="w-6 h-6 text-red-600" />
-              </div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-red-600 mb-1">{tool.tagline}</p>
-              <h2 className="text-xl font-bold text-gray-900 mb-3">{tool.name}</h2>
-              <p className="text-gray-600 mb-5 leading-relaxed">{tool.description}</p>
-              <ul className="space-y-2 mb-7 text-sm text-gray-700">
+            <div key={tool.name} className="flex flex-col rounded-[28px] bg-[#f5f5f7] p-8 sm:p-10">
+              <tool.icon className="w-9 h-9 text-red-600 mb-6" strokeWidth={1.5} />
+              <p className="text-[13px] font-semibold text-[#6e6e73] mb-1">{tool.tagline}</p>
+              <h2 className="text-[28px] font-semibold tracking-tight leading-tight mb-3">{tool.name}</h2>
+              <p className="text-[17px] text-[#6e6e73] leading-relaxed mb-6">{tool.description}</p>
+              <ul className="space-y-2.5 mb-8 text-[15px]">
                 {tool.points.map(point => (
-                  <li key={point} className="flex items-start gap-2">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-red-500 flex-none" />
+                  <li key={point} className="flex items-start gap-2.5 border-t border-black/[0.06] pt-2.5">
                     {point}
                   </li>
                 ))}
               </ul>
-              <a href={salesLink(tool.subject)} className="mt-auto">
-                <Button variant="outline" className="w-full rounded-full border-red-200 text-red-700 hover:bg-red-50 gap-2">
-                  <Mail className="w-4 h-4" /> Contact sales
-                </Button>
+              <a href={salesLink(tool.subject)} className="mt-auto text-[17px] text-red-600 hover:underline">
+                Contact sales ›
               </a>
             </div>
           ))}
         </div>
+      </section>
 
-        {/* How access works */}
-        <div className="mt-16">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-10">How to get access</h2>
-          <div className="grid gap-6 md:grid-cols-3">
+      {/* How access works */}
+      <section id="how-it-works" className="px-4 sm:px-6 py-20 sm:py-28 scroll-mt-12">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl sm:text-5xl font-semibold tracking-tight text-center mb-14">
+            How to get access.
+          </h2>
+          <div className="grid gap-10 md:gap-8 md:grid-cols-3">
             {steps.map((step, i) => (
-              <div key={step.title} className="rounded-2xl bg-white border border-gray-200 p-7">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="w-8 h-8 rounded-full bg-red-600 text-white text-sm font-bold flex items-center justify-center">{i + 1}</span>
-                  <step.icon className="w-5 h-5 text-red-600" />
+              <div key={step.title} className="text-center md:text-left">
+                <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
+                  <span className="w-9 h-9 rounded-full bg-[#1d1d1f] text-white text-[15px] font-semibold flex items-center justify-center">{i + 1}</span>
+                  <step.icon className="w-5 h-5 text-[#6e6e73]" strokeWidth={1.75} />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{step.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{step.text}</p>
+                <h3 className="text-[21px] font-semibold tracking-tight mb-2">{step.title}</h3>
+                <p className="text-[17px] text-[#6e6e73] leading-relaxed">{step.text}</p>
               </div>
             ))}
           </div>
         </div>
+      </section>
 
-        {/* Old keys */}
-        <div className="mt-12 rounded-2xl bg-white border border-gray-200 p-7 flex flex-col sm:flex-row sm:items-center gap-5">
-          <ShieldCheck className="w-10 h-10 text-red-600 flex-none" />
+      {/* Old keys */}
+      <section className="px-4 sm:px-6 pb-24">
+        <div className="max-w-6xl mx-auto rounded-[28px] bg-[#f5f5f7] p-8 sm:p-12 flex flex-col sm:flex-row sm:items-center gap-6">
+          <ShieldCheck className="w-10 h-10 text-red-600 flex-none" strokeWidth={1.5} />
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">Have an older SlimFile developer key?</h3>
-            <p className="text-gray-600">
+            <h3 className="text-[24px] font-semibold tracking-tight mb-1">Have an older SlimFile developer key?</h3>
+            <p className="text-[17px] text-[#6e6e73]">
               Keys from the previous developer dashboard no longer work. Contact our sales team and we'll issue you a new key.
             </p>
           </div>
           <a href={salesLink("Replace my old SlimFile developer key")}>
-            <Button className="rounded-full bg-red-600 hover:bg-red-700 text-white gap-2">
-              <Mail className="w-4 h-4" /> Get a new key
+            <Button className="rounded-full px-6 h-10 bg-red-600 hover:bg-red-700 text-white">
+              Get a new key
             </Button>
           </a>
         </div>
-      </div>
+      </section>
     </div>
   );
 };
