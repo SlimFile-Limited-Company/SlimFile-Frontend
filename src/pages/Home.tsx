@@ -77,6 +77,7 @@ import { useEffect, useState } from 'react';
 import io from "socket.io-client";
 import FeatureArt from '@/components/FeatureArt';
 import TiltCard from '@/components/TiltCard';
+import HeroRings from '@/components/HeroRings';
 
 const getApiBase = (): string => {
   return import.meta.env.VITE_API_URL || "https://slimfile-backend.onrender.com";
@@ -184,11 +185,12 @@ const Home: FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="relative isolate min-h-screen bg-white overflow-x-hidden">
+      <HeroRings />
       {/* Hero Section */}
       {/* pt-20 clears the fixed 64px header now that the purple banner is gone.
           Kept tight on mobile so ~10 slim cards fit in one viewport. */}
-      <section className="pt-20 sm:pt-28 md:pt-32 pb-6 sm:pb-14 md:pb-16 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="pt-20 sm:pt-28 md:pt-32 pb-6 sm:pb-14 md:pb-16 px-4 sm:px-6 lg:px-8">
 
         <div className="container mx-auto">
           {/* Category tabs — narrow text tabs, iLovePDF style. The old hero
@@ -228,7 +230,7 @@ const Home: FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="pt-4 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="pt-4 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-[1600px]">
           {/* Arrows and dots removed — the category tabs above now drive this grid. */}
           <div className="relative">
