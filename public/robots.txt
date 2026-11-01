@@ -19,4 +19,4 @@ Disallow: /login
 Disallow: /logout
 
 # Sitemap
-Sitemap: https://slim-file.com/sitemap.xml
+Sitemap: https://www.slim-file.com/sitemap.xml

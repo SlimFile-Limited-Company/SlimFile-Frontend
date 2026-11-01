@@ -3,7 +3,7 @@
 
   <!-- ===== Home ===== -->
   <url>
-    <loc>https://slim-file.com/</loc>
+    <loc>https://www.slim-file.com/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -11,37 +11,37 @@
 
   <!-- ===== File tools ===== -->
   <url>
-    <loc>https://slim-file.com/compress</loc>
+    <loc>https://www.slim-file.com/compress</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/convert-only</loc>
+    <loc>https://www.slim-file.com/convert-only</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/convert-compress</loc>
+    <loc>https://www.slim-file.com/convert-compress</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/zip</loc>
+    <loc>https://www.slim-file.com/zip</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/qr-code</loc>
+    <loc>https://www.slim-file.com/qr-code</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/ocr-tool</loc>
+    <loc>https://www.slim-file.com/ocr-tool</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -49,31 +49,31 @@
 
   <!-- ===== PDF tools ===== -->
   <url>
-    <loc>https://slim-file.com/forge</loc>
+    <loc>https://www.slim-file.com/forge</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/merge-compress</loc>
+    <loc>https://www.slim-file.com/merge-compress</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/split-compress</loc>
+    <loc>https://www.slim-file.com/split-compress</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/text-to-pdf</loc>
+    <loc>https://www.slim-file.com/text-to-pdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/lock</loc>
+    <loc>https://www.slim-file.com/lock</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -81,25 +81,25 @@
 
   <!-- ===== Scan ===== -->
   <url>
-    <loc>https://slim-file.com/scan-compress</loc>
+    <loc>https://www.slim-file.com/scan-compress</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/scan-convert</loc>
+    <loc>https://www.slim-file.com/scan-convert</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/scan-merge</loc>
+    <loc>https://www.slim-file.com/scan-merge</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/scan-split</loc>
+    <loc>https://www.slim-file.com/scan-split</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -107,25 +107,25 @@
 
   <!-- ===== Team ===== -->
   <url>
-    <loc>https://slim-file.com/documents</loc>
+    <loc>https://www.slim-file.com/documents</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/my-whiteboards</loc>
+    <loc>https://www.slim-file.com/my-whiteboards</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/workspaces</loc>
+    <loc>https://www.slim-file.com/workspaces</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/feed</loc>
+    <loc>https://www.slim-file.com/feed</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -133,7 +133,7 @@
 
   <!-- ===== AI Lab ===== -->
   <url>
-    <loc>https://slim-file.com/ai-lab</loc>
+    <loc>https://www.slim-file.com/ai-lab</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -141,67 +141,67 @@
 
   <!-- ===== News ===== -->
   <url>
-    <loc>https://slim-file.com/news</loc>
+    <loc>https://www.slim-file.com/news</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/news/introducing-slimfile-atlas</loc>
+    <loc>https://www.slim-file.com/news/introducing-slimfile-atlas</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/news/slimfile-university-ambassador-program</loc>
+    <loc>https://www.slim-file.com/news/slimfile-university-ambassador-program</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/news/introducing-slimdocx</loc>
+    <loc>https://www.slim-file.com/news/introducing-slimdocx</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/news/new-slimfile-whiteboards</loc>
+    <loc>https://www.slim-file.com/news/new-slimfile-whiteboards</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/news/slimfile-whatsapp-channel</loc>
+    <loc>https://www.slim-file.com/news/slimfile-whatsapp-channel</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/news/slimfile-mobile-app-launch</loc>
+    <loc>https://www.slim-file.com/news/slimfile-mobile-app-launch</loc>
     <lastmod>2026-08-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/news/ai-lab-launch</loc>
+    <loc>https://www.slim-file.com/news/ai-lab-launch</loc>
     <lastmod>2026-08-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/news/10k-users-milestone</loc>
+    <loc>https://www.slim-file.com/news/10k-users-milestone</loc>
     <lastmod>2026-07-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/news/gtv-ghana</loc>
+    <loc>https://www.slim-file.com/news/gtv-ghana</loc>
     <lastmod>2026-01-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/news/ghana-youth-tech-summit</loc>
+    <loc>https://www.slim-file.com/news/ghana-youth-tech-summit</loc>
     <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -209,571 +209,571 @@
 
   <!-- ===== Blog ===== -->
   <url>
-    <loc>https://slim-file.com/blog</loc>
+    <loc>https://www.slim-file.com/blog</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/batch-compress-multiple-pdfs</loc>
+    <loc>https://www.slim-file.com/blog/batch-compress-multiple-pdfs</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/best-ai-document-summarizers-free</loc>
+    <loc>https://www.slim-file.com/blog/best-ai-document-summarizers-free</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/best-free-alternatives-to-adobe-acrobat</loc>
+    <loc>https://www.slim-file.com/blog/best-free-alternatives-to-adobe-acrobat</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/best-free-image-compressor-online</loc>
+    <loc>https://www.slim-file.com/blog/best-free-image-compressor-online</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/best-free-pdf-compressor-online</loc>
+    <loc>https://www.slim-file.com/blog/best-free-pdf-compressor-online</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/best-ocr-tools-online</loc>
+    <loc>https://www.slim-file.com/blog/best-ocr-tools-online</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/best-pdf-tools-for-students</loc>
+    <loc>https://www.slim-file.com/blog/best-pdf-tools-for-students</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/best-tools-to-compress-images-online</loc>
+    <loc>https://www.slim-file.com/blog/best-tools-to-compress-images-online</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-excel-files</loc>
+    <loc>https://www.slim-file.com/blog/compress-excel-files</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-files-for-dropbox</loc>
+    <loc>https://www.slim-file.com/blog/compress-files-for-dropbox</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-files-for-google-drive</loc>
+    <loc>https://www.slim-file.com/blog/compress-files-for-google-drive</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-files-for-slack</loc>
+    <loc>https://www.slim-file.com/blog/compress-files-for-slack</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-files-for-whatsapp</loc>
+    <loc>https://www.slim-file.com/blog/compress-files-for-whatsapp</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-files-on-windows-11</loc>
+    <loc>https://www.slim-file.com/blog/compress-files-on-windows-11</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-gif-files-online</loc>
+    <loc>https://www.slim-file.com/blog/compress-gif-files-online</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-images-for-email</loc>
+    <loc>https://www.slim-file.com/blog/compress-images-for-email</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-images-for-facebook</loc>
+    <loc>https://www.slim-file.com/blog/compress-images-for-facebook</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-images-for-instagram</loc>
+    <loc>https://www.slim-file.com/blog/compress-images-for-instagram</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-images-for-shopify</loc>
+    <loc>https://www.slim-file.com/blog/compress-images-for-shopify</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-images-for-wordpress</loc>
+    <loc>https://www.slim-file.com/blog/compress-images-for-wordpress</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-pdf-for-printing</loc>
+    <loc>https://www.slim-file.com/blog/compress-pdf-for-printing</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-pdf-in-chrome</loc>
+    <loc>https://www.slim-file.com/blog/compress-pdf-in-chrome</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-pdf-without-adobe</loc>
+    <loc>https://www.slim-file.com/blog/compress-pdf-without-adobe</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-powerpoint-without-losing-quality</loc>
+    <loc>https://www.slim-file.com/blog/compress-powerpoint-without-losing-quality</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-pptx-presentations-without-losing-quality</loc>
+    <loc>https://www.slim-file.com/blog/compress-pptx-presentations-without-losing-quality</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-scanned-pdf</loc>
+    <loc>https://www.slim-file.com/blog/compress-scanned-pdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-word-document-online</loc>
+    <loc>https://www.slim-file.com/blog/compress-word-document-online</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compressing-pdf-for-printing-vs-emailing</loc>
+    <loc>https://www.slim-file.com/blog/compressing-pdf-for-printing-vs-emailing</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-docx-to-pdf</loc>
+    <loc>https://www.slim-file.com/blog/convert-docx-to-pdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-excel-to-pdf</loc>
+    <loc>https://www.slim-file.com/blog/convert-excel-to-pdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-heic-to-jpg</loc>
+    <loc>https://www.slim-file.com/blog/convert-heic-to-jpg</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-jpg-to-pdf</loc>
+    <loc>https://www.slim-file.com/blog/convert-jpg-to-pdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-jpg-to-png</loc>
+    <loc>https://www.slim-file.com/blog/convert-jpg-to-png</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-pdf-to-image</loc>
+    <loc>https://www.slim-file.com/blog/convert-pdf-to-image</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-pdf-to-jpeg</loc>
+    <loc>https://www.slim-file.com/blog/convert-pdf-to-jpeg</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-pdf-to-png</loc>
+    <loc>https://www.slim-file.com/blog/convert-pdf-to-png</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-pdf-to-pptx</loc>
+    <loc>https://www.slim-file.com/blog/convert-pdf-to-pptx</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-pdf-to-text</loc>
+    <loc>https://www.slim-file.com/blog/convert-pdf-to-text</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-pdf-to-word</loc>
+    <loc>https://www.slim-file.com/blog/convert-pdf-to-word</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-pdf-to-xlsx</loc>
+    <loc>https://www.slim-file.com/blog/convert-pdf-to-xlsx</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-png-to-jpg</loc>
+    <loc>https://www.slim-file.com/blog/convert-png-to-jpg</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-png-to-pdf</loc>
+    <loc>https://www.slim-file.com/blog/convert-png-to-pdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-png-to-webp</loc>
+    <loc>https://www.slim-file.com/blog/convert-png-to-webp</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-pptx-to-pdf</loc>
+    <loc>https://www.slim-file.com/blog/convert-pptx-to-pdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-webp-to-jpg</loc>
+    <loc>https://www.slim-file.com/blog/convert-webp-to-jpg</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/convert-word-to-pdf</loc>
+    <loc>https://www.slim-file.com/blog/convert-word-to-pdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/extract-pages-from-pdf</loc>
+    <loc>https://www.slim-file.com/blog/extract-pages-from-pdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/extract-text-from-pdf-using-ocr</loc>
+    <loc>https://www.slim-file.com/blog/extract-text-from-pdf-using-ocr</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/how-dpi-affects-pdf-file-size</loc>
+    <loc>https://www.slim-file.com/blog/how-dpi-affects-pdf-file-size</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/how-to-compress-files-for-faster-website-loading</loc>
+    <loc>https://www.slim-file.com/blog/how-to-compress-files-for-faster-website-loading</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/how-to-compress-large-videos-before-uploading</loc>
+    <loc>https://www.slim-file.com/blog/how-to-compress-large-videos-before-uploading</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/how-to-compress-pdf-for-email</loc>
+    <loc>https://www.slim-file.com/blog/how-to-compress-pdf-for-email</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/lossless-vs-lossy-compression</loc>
+    <loc>https://www.slim-file.com/blog/lossless-vs-lossy-compression</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/merge-pdf-files-online-free</loc>
+    <loc>https://www.slim-file.com/blog/merge-pdf-files-online-free</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/password-protect-pdf</loc>
+    <loc>https://www.slim-file.com/blog/password-protect-pdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/reduce-pdf-file-size-on-mobile</loc>
+    <loc>https://www.slim-file.com/blog/reduce-pdf-file-size-on-mobile</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/reduce-pdf-size-below-1mb</loc>
+    <loc>https://www.slim-file.com/blog/reduce-pdf-size-below-1mb</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/reduce-photo-size-on-android</loc>
+    <loc>https://www.slim-file.com/blog/reduce-photo-size-on-android</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/reduce-photo-size-on-iphone</loc>
+    <loc>https://www.slim-file.com/blog/reduce-photo-size-on-iphone</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/reduce-word-file-size</loc>
+    <loc>https://www.slim-file.com/blog/reduce-word-file-size</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/remove-password-from-pdf</loc>
+    <loc>https://www.slim-file.com/blog/remove-password-from-pdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/rotate-pdf-pages-online</loc>
+    <loc>https://www.slim-file.com/blog/rotate-pdf-pages-online</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/send-large-files-via-email</loc>
+    <loc>https://www.slim-file.com/blog/send-large-files-via-email</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/share-large-pdf-files-online</loc>
+    <loc>https://www.slim-file.com/blog/share-large-pdf-files-online</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/slimfile-vs-ilovepdf</loc>
+    <loc>https://www.slim-file.com/blog/slimfile-vs-ilovepdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/slimfile-vs-smallpdf</loc>
+    <loc>https://www.slim-file.com/blog/slimfile-vs-smallpdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/split-pdf-into-separate-pages</loc>
+    <loc>https://www.slim-file.com/blog/split-pdf-into-separate-pages</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/summarize-pdf-with-ai</loc>
+    <loc>https://www.slim-file.com/blog/summarize-pdf-with-ai</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/understanding-pdf-compression-algorithms</loc>
+    <loc>https://www.slim-file.com/blog/understanding-pdf-compression-algorithms</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/what-is-a-pdf</loc>
+    <loc>https://www.slim-file.com/blog/what-is-a-pdf</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/what-is-ocr</loc>
+    <loc>https://www.slim-file.com/blog/what-is-ocr</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/what-is-webp</loc>
+    <loc>https://www.slim-file.com/blog/what-is-webp</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/why-file-compression-is-essential-for-remote-work</loc>
+    <loc>https://www.slim-file.com/blog/why-file-compression-is-essential-for-remote-work</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/why-file-compression-matters-for-seo</loc>
+    <loc>https://www.slim-file.com/blog/why-file-compression-matters-for-seo</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/why-is-my-pdf-so-large</loc>
+    <loc>https://www.slim-file.com/blog/why-is-my-pdf-so-large</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/adobe-acrobat-alternatives</loc>
+    <loc>https://www.slim-file.com/blog/adobe-acrobat-alternatives</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/batch-compress-pdfs</loc>
+    <loc>https://www.slim-file.com/blog/batch-compress-pdfs</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/best-pdf-compressors-2026</loc>
+    <loc>https://www.slim-file.com/blog/best-pdf-compressors-2026</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-pdf-for-business</loc>
+    <loc>https://www.slim-file.com/blog/compress-pdf-for-business</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-pdf-for-gmail</loc>
+    <loc>https://www.slim-file.com/blog/compress-pdf-for-gmail</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-pdf-for-linkedin</loc>
+    <loc>https://www.slim-file.com/blog/compress-pdf-for-linkedin</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-pdf-for-students</loc>
+    <loc>https://www.slim-file.com/blog/compress-pdf-for-students</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-pdf-for-whatsapp</loc>
+    <loc>https://www.slim-file.com/blog/compress-pdf-for-whatsapp</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-pdf-online-free</loc>
+    <loc>https://www.slim-file.com/blog/compress-pdf-online-free</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-pdf-without-losing-quality</loc>
+    <loc>https://www.slim-file.com/blog/compress-pdf-without-losing-quality</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/compress-pptx-online-free</loc>
+    <loc>https://www.slim-file.com/blog/compress-pptx-online-free</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/how-to-compress-multiple-pdfs</loc>
+    <loc>https://www.slim-file.com/blog/how-to-compress-multiple-pdfs</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/how-to-merge-pdf-files</loc>
+    <loc>https://www.slim-file.com/blog/how-to-merge-pdf-files</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/how-to-split-pdf-files</loc>
+    <loc>https://www.slim-file.com/blog/how-to-split-pdf-files</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/ilovepdf-alternatives</loc>
+    <loc>https://www.slim-file.com/blog/ilovepdf-alternatives</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/pdf-compressor-for-mac</loc>
+    <loc>https://www.slim-file.com/blog/pdf-compressor-for-mac</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/pdf-compressor-for-windows</loc>
+    <loc>https://www.slim-file.com/blog/pdf-compressor-for-windows</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/reduce-pdf-file-size</loc>
+    <loc>https://www.slim-file.com/blog/reduce-pdf-file-size</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://slim-file.com/blog/what-is-pdf-compression</loc>
+    <loc>https://www.slim-file.com/blog/what-is-pdf-compression</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
