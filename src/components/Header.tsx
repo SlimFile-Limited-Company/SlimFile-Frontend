@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown, Bot, Star, Mail } from "lucide-react";
+import { Menu, X, ChevronDown, Bot, Star, Mail, Newspaper } from "lucide-react";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -204,6 +204,7 @@ export const Header = () => {
     { name: "Play Store", href: "https://play.google.com/store/apps/details?id=com.slimfile.app", external: true },
     { name: "SlimFile Assistant", href: "/community-manager" },
     { name: "Reviews", href: "/reviews" },
+    { name: "Newsroom", href: "/news" },
     { name: "SlimFile Business", href: "mailto:administration@slim-file.com" },
   ];
 
@@ -397,6 +398,8 @@ export const Header = () => {
                           <Bot className="w-4 h-4 shrink-0" />
                         ) : item.name === "Reviews" ? (
                           <Star className="w-4 h-4 shrink-0" />
+                        ) : item.name === "Newsroom" ? (
+                          <Newspaper className="w-4 h-4 shrink-0" />
                         ) : (
                           <Mail className="w-4 h-4 shrink-0" />
                         )}

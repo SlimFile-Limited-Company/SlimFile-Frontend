@@ -21,6 +21,10 @@ export interface NewsItem {
   imageAlt: string;
   /** Optional line under the image, e.g. who is in the photo */
   imageCaption?: string;
+  /** Set on the one story the home page should point to, as its short line */
+  homeLine?: string;
+  /** Shorter version of homeLine for phones */
+  homeLineShort?: string;
   highlights: { title: string; note: string }[];
   ctas: NewsCta[];
 }
@@ -31,6 +35,9 @@ const SITE = 'https://www.slim-file.com';
 export const NEWS: NewsItem[] = [...(newsData as NewsItem[])].sort((a, b) => b.date.localeCompare(a.date));
 
 export const findNews = (id?: string) => NEWS.find(n => n.id === id);
+
+/** The story the home page points to: the one with a homeLine, else the newest. */
+export const homeNews = () => NEWS.find(n => n.homeLine) ?? NEWS[0];
 
 export const absoluteUrl = (src: string) => (src.startsWith('http') ? src : `${SITE}${src}`);
 

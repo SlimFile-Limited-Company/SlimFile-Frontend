@@ -78,6 +78,7 @@ import io from "socket.io-client";
 import FeatureArt from '@/components/FeatureArt';
 import TiltCard from '@/components/TiltCard';
 import HeroRings from '@/components/HeroRings';
+import HomeNewsStrip from '@/components/HomeNewsStrip';
 
 const getApiBase = (): string => {
   return import.meta.env.VITE_API_URL || "https://slimfile-backend.onrender.com";
@@ -193,6 +194,7 @@ const Home: FC = () => {
       <section className="pt-20 sm:pt-28 md:pt-32 pb-6 sm:pb-14 md:pb-16 px-4 sm:px-6 lg:px-8">
 
         <div className="container mx-auto">
+          <HomeNewsStrip />
           {/* Category tabs — narrow text tabs, iLovePDF style. The old hero
               (headline, subtitle and three CTA buttons) was removed.
               Six tabs now overflow a narrow phone, so this scrolls sideways

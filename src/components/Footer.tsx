@@ -42,7 +42,7 @@ export const Footer = () => {
         // { label: "Partnerships", path: "/partnerships" },
         { label: "Website", path: "https://company.slim-file.com", external: true },
         { label: "SDGs", path: "/sdgs" },
-        { label: "News", path: "/news" },
+        { label: "Newsroom", path: "/news" },
         { label: "Why Compression?", path: "/file-compression-education" },
         { label: "Our Blogs", path: "/blog" },
         { label: "Contact", path: "/contact" },
