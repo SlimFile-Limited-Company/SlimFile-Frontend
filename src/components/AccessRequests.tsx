@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Loader2, Mail } from 'lucide-react';
+import { adminHeaders } from '@/components/AdminOnly';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -31,10 +32,7 @@ const STATUS_STYLE: Record<Status, string> = {
  * API access requests from the Dev Tools page. "Create key" fills in the
  * key form above with the requester's details.
  */
-export default function AccessRequests({ adminPassword, onCreateKey }: {
-  adminPassword: string;
-  onCreateKey: (r: AccessRequest) => void;
-}) {
+export default function AccessRequests({ onCreateKey }: { onCreateKey: (r: AccessRequest) => void }) {
   const [requests, setRequests] = useState<AccessRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'open' | 'all'>('open');
@@ -42,20 +40,20 @@ export default function AccessRequests({ adminPassword, onCreateKey }: {
   const load = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api-access-requests`, { headers: { 'X-Admin-Password': adminPassword } });
+      const res = await fetch(`${API_BASE_URL}/api-access-requests`, { headers: adminHeaders() });
       if (res.ok) setRequests((await res.json()).requests || []);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { if (adminPassword) load(); }, [adminPassword]);
+  useEffect(() => { load(); }, []);
 
   const setStatus = async (r: AccessRequest, status: Status) => {
     setRequests(rs => rs.map(x => (x._id === r._id ? { ...x, status } : x)));
     await fetch(`${API_BASE_URL}/api-access-requests/${r._id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': adminPassword },
+      headers: adminHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ status }),
     }).catch(() => load());
   };

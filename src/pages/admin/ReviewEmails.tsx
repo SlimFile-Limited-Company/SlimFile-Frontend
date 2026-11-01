@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Mail, Send, Loader2, CheckCircle2, XCircle, Filter, History, X, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import AdminOnly, { adminHeaders } from '@/components/AdminOnly';
 
 interface Review {
   _id: string;
@@ -29,8 +30,8 @@ export default function ReviewEmails() {
   const [emailMessage, setEmailMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [sendResults, setSendResults] = useState<any[]>([]);
-  const [adminPassword, setAdminPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Access comes from the admin email list on the server
+  const [access, setAccess] = useState<'checking' | 'ok' | 'denied'>('checking');
   const [filterRating, setFilterRating] = useState('');
   const [filterOperation, setFilterOperation] = useState('');
   const [emailHistoryMap, setEmailHistoryMap] = useState<Record<string, EmailHistory[]>>({});
@@ -41,28 +42,10 @@ export default function ReviewEmails() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
   useEffect(() => {
-    const savedPassword = sessionStorage.getItem('admin-password');
-    if (savedPassword) {
-      setAdminPassword(savedPassword);
-      setIsAuthenticated(true);
-      fetchReviews(savedPassword);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isAuthenticated && adminPassword) {
-      fetchReviews(adminPassword);
-    }
+    fetchReviews();
   }, [filterRating, filterOperation]);
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    sessionStorage.setItem('admin-password', adminPassword);
-    setIsAuthenticated(true);
-    fetchReviews(adminPassword);
-  };
-
-  const fetchReviews = async (password: string) => {
+  const fetchReviews = async () => {
     try {
       setLoading(true);
 
@@ -75,12 +58,13 @@ export default function ReviewEmails() {
       if (filterRating) params.append('rating', filterRating);
       if (filterOperation) params.append('operationType', filterOperation);
 
-      const response = await fetch(`${API_BASE_URL}/internal/reviews?${params}`, {
-        headers: {
-          'X-Admin-Password': password,
-        },
-      });
+      const response = await fetch(`${API_BASE_URL}/internal/reviews?${params}`, { headers: adminHeaders() });
 
+      if (response.status === 401 || response.status === 403) {
+        setAccess('denied');
+        return;
+      }
+      setAccess('ok');
       if (!response.ok) {
         throw new Error('Failed to fetch reviews');
       }
@@ -89,25 +73,23 @@ export default function ReviewEmails() {
       setReviews(data.reviews || []);
 
       // Fetch email history for all reviews
-      fetchAllEmailHistory(password, data.reviews || []);
+      fetchAllEmailHistory(data.reviews || []);
     } catch (error) {
       console.error('Error fetching reviews:', error);
-      alert('Failed to load reviews. Check your admin password.');
-      setIsAuthenticated(false);
-      sessionStorage.removeItem('admin-password');
+      alert('Failed to load reviews.');
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchAllEmailHistory = async (password: string, reviewsList: Review[]) => {
+  const fetchAllEmailHistory = async (reviewsList: Review[]) => {
     const historyMap: Record<string, EmailHistory[]> = {};
 
     await Promise.all(
       reviewsList.map(async (review) => {
         try {
           const response = await fetch(`${API_BASE_URL}/internal/reviews/${review._id}/email-history`, {
-            headers: { 'X-Admin-Password': password },
+            headers: adminHeaders(),
           });
 
           if (response.ok) {
@@ -166,7 +148,7 @@ export default function ReviewEmails() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-Admin-Password': adminPassword,
+            ...adminHeaders(),
           },
           body: JSON.stringify({
             subject: emailSubject,
@@ -187,7 +169,7 @@ export default function ReviewEmails() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-Admin-Password': adminPassword,
+            ...adminHeaders(),
           },
           body: JSON.stringify({
             reviewIds,
@@ -214,35 +196,7 @@ export default function ReviewEmails() {
     }
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen pt-12 bg-white">
-        <div className="container mx-auto px-4 py-32">
-          <div className="max-w-md mx-auto bg-[#f5f5f7] rounded-[28px] p-8">
-            <h1 className="text-2xl font-semibold text-[#1d1d1f] mb-6">Admin Authentication</h1>
-            <form onSubmit={handleAuth} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
-                  Admin Password
-                </label>
-                <input
-                  type="password"
-                  value={adminPassword}
-                  onChange={(e) => setAdminPassword(e.target.value)}
-                  className="w-full px-4 py-2 bg-[#f5f5f7] text-[#1d1d1f] rounded-lg focus:ring-2 focus:ring-red-500/30 placeholder:text-[#86868b]"
-                  placeholder="Enter admin password"
-                  required
-                />
-              </div>
-              <Button type="submit" className="w-full ">
-                Authenticate
-              </Button>
-            </form>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (access === 'denied') return <AdminOnly title="Review Emails" />;
 
   const operationTypes = ['compress', 'convert', 'convert-compress', 'forge', 'forge-merge', 'forge-split', 'lock', 'ocr', 'qr', 'summarize'];
 

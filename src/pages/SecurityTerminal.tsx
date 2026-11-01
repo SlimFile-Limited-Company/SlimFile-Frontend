@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSEO } from '@/hooks/useSEO';
+import AdminOnly, { adminHeaders } from '@/components/AdminOnly';
 
 // Hide the footer on mount
 const useFullScreen = () => {
@@ -73,8 +74,8 @@ export default function SecurityTerminal() {
     description: 'Security monitoring and threat detection system',
   });
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
+  // Access comes from the admin email list on the server
+  const [access, setAccess] = useState<'checking' | 'ok' | 'denied'>('checking');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -115,14 +116,32 @@ export default function SecurityTerminal() {
     return () => clearInterval(uptimeInterval);
   }, []);
 
-  // Fetch stats every 5 seconds when authenticated
+  // Fetch stats every 5 seconds; the first answer also says whether this is an admin
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (access === 'denied') return;
 
     const fetchStats = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/security/dashboard-stats`);
+        const response = await fetch(`${API_BASE_URL}/security/dashboard-stats`, { headers: adminHeaders() });
+        if (response.status === 401 || response.status === 403) {
+          setAccess('denied');
+          return;
+        }
         if (response.ok) {
+          setAccess(a => {
+            if (a === 'checking') {
+              setOutput([
+                'ACCESS GRANTED',
+                '━'.repeat(60),
+                'SlimFile Security Command Center v1.0',
+                'Connection established.',
+                '',
+                'Type "help" for available commands',
+                ''
+              ]);
+            }
+            return 'ok';
+          });
           const data = await response.json();
           setStats(data.stats);
 
@@ -140,44 +159,8 @@ export default function SecurityTerminal() {
     const interval = setInterval(fetchStats, 5000); // 5 seconds
 
     return () => clearInterval(interval);
-  }, [isAuthenticated, API_BASE_URL]);
+  }, [access === 'denied', API_BASE_URL]);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/security/authenticate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setIsAuthenticated(true);
-        setOutput([
-          'ACCESS GRANTED',
-          '━'.repeat(60),
-          'SlimFile Security Command Center v1.0',
-          'Initializing threat detection systems...',
-          'Loading security modules...',
-          'Connection established.',
-          '',
-          'Type "help" for available commands',
-          ''
-        ]);
-      } else {
-        setError(data.error || 'Access denied');
-      }
-    } catch (error) {
-      setError('Connection failed');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleCommand = (cmd: string) => {
     const trimmed = cmd.trim().toLowerCase();
@@ -308,7 +291,7 @@ export default function SecurityTerminal() {
       case 'summit':
         setOutput(prev => [...prev, 'Fetching Summit 2027 registrations...', '']);
         fetch(`${API_BASE_URL}/summit/admin/registrations`, {
-          headers: { 'X-Admin-Password': password }
+          headers: adminHeaders()
         })
           .then(r => r.json())
           .then(data => {
@@ -337,9 +320,8 @@ export default function SecurityTerminal() {
         break;
 
       case 'exit':
-        setIsAuthenticated(false);
-        setPassword('');
         setOutput([]);
+        window.location.assign('/');
         break;
 
       default:
@@ -349,7 +331,7 @@ export default function SecurityTerminal() {
 
           setOutput(prev => [...prev, `Looking up ${ip}...`, '']);
 
-          fetch(`${API_BASE_URL}/security/ip-lookup/${ip}`)
+          fetch(`${API_BASE_URL}/security/ip-lookup/${ip}`, { headers: adminHeaders() })
             .then(r => r.json())
             .then(data => {
               if (data.success) {
@@ -409,69 +391,11 @@ export default function SecurityTerminal() {
     }
   }, [output]);
 
-  if (!isAuthenticated) {
+  if (access === 'denied') return <AdminOnly title="Security Terminal" />;
+  if (access === 'checking') {
     return (
-      <div className="fixed inset-x-0 top-12 bottom-0 bg-[#f5f5f7] text-[#f5f5f7] font-mono flex items-center justify-center p-4 z-30">
-        <div className="w-full max-w-md rounded-[14px] bg-[#1d1d1f] overflow-hidden shadow-[0_30px_80px_-20px_rgba(0,0,0,0.35)]">
-          <div className="flex items-center gap-2 px-4 h-10 border-b border-white/10 flex-shrink-0">
-            <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
-            <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
-            <span className="w-3 h-3 rounded-full bg-[#28c840]" />
-            <span className="flex-1 text-center text-xs text-[#86868b] -ml-12">SlimFile Security — sign in</span>
-          </div>
-          <div className="p-6">
-            <pre className="text-xs mb-6 text-center">
-{`
-███████╗██╗     ██╗███╗   ███╗███████╗██╗██╗     ███████╗
-██╔════╝██║     ██║████╗ ████║██╔════╝██║██║     ██╔════╝
-███████╗██║     ██║██╔████╔██║█████╗  ██║██║     █████╗
-╚════██║██║     ██║██║╚██╔╝██║██╔══╝  ██║██║     ██╔══╝
-███████║███████╗██║██║ ╚═╝ ██║██║     ██║███████╗███████╗
-╚══════╝╚══════╝╚═╝╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚══════╝
-`}
-            </pre>
-            <div className="text-center mb-6">
-              <p className="text-sm">SECURITY COMMAND CENTER</p>
-              <p className="text-xs text-[#30d158]">v1.0 - RESTRICTED ACCESS</p>
-            </div>
-
-            <form onSubmit={handleLogin}>
-              <div className="mb-4">
-                <label className="block text-sm mb-2">
-                  &gt; ENTER PASSWORD:
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white/5 border border-white/15 rounded-lg text-[#f5f5f7] p-2.5 focus:outline-none focus:border-[#30d158]"
-                  placeholder="••••••••••••"
-                  disabled={loading}
-                  autoFocus
-                />
-              </div>
-
-              {error && (
-                <div className="mb-4 text-[#ff453a] text-sm">
-                  ⚠ {error}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#30d158] text-[#1d1d1f] font-semibold rounded-lg p-2.5 hover:bg-[#2ac14f] transition-colors disabled:opacity-50"
-              >
-                {loading ? 'AUTHENTICATING...' : 'ACCESS TERMINAL'}
-              </button>
-            </form>
-
-            <div className="mt-6 text-xs text-[#86868b] text-center">
-              <p>⚠ UNAUTHORIZED ACCESS IS PROHIBITED</p>
-              <p>ALL ATTEMPTS ARE LOGGED AND MONITORED</p>
-            </div>
-          </div>
-        </div>
+      <div className="fixed inset-x-0 top-12 bottom-0 bg-[#f5f5f7] flex items-center justify-center z-30 font-mono text-[#6e6e73] text-sm">
+        Connecting…
       </div>
     );
   }

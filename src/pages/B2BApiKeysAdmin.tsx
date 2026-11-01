@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Key, Copy, Check, Trash2, Lock, Unlock, Plus, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AccessRequests from '@/components/AccessRequests';
+import AdminOnly, { adminHeaders } from '@/components/AdminOnly';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -20,10 +21,8 @@ interface B2BApiKey {
 }
 
 export default function B2BApiKeysAdmin() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const [adminPassword, setAdminPassword] = useState(''); // Store password for API calls
-  const [passwordError, setPasswordError] = useState('');
+  // Access comes from the admin email list on the server
+  const [access, setAccess] = useState<'checking' | 'ok' | 'denied'>('checking');
 
   const [keys, setKeys] = useState<B2BApiKey[]>([]);
   const [loading, setLoading] = useState(false);
@@ -40,57 +39,20 @@ export default function B2BApiKeysAdmin() {
   });
   const [generating, setGenerating] = useState(false);
 
-  // Check for saved password on mount
-  useEffect(() => {
-    const savedPassword = sessionStorage.getItem('b2b-admin-password');
-    if (savedPassword) {
-      setAdminPassword(savedPassword);
-      setIsAuthenticated(true);
-      loadKeys(savedPassword);
-    }
-  }, []);
-
-  // Check password by validating with backend
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPasswordError('');
-
-    // Try to load keys - if successful, password is correct
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/admin/b2b-keys`, {
-        headers: {
-          'X-Admin-Password': password
-        }
-      });
-
-      if (response.ok) {
-        setIsAuthenticated(true);
-        setAdminPassword(password);
-        sessionStorage.setItem('b2b-admin-password', password);
-        loadKeys(password);
-      } else {
-        setPasswordError('Invalid password');
-      }
-    } catch (error) {
-      setPasswordError('Authentication failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => { loadKeys(); }, []);
 
   // Load all API keys
-  const loadKeys = async (pwd?: string) => {
-    const passwordToUse = pwd || adminPassword;
+  const loadKeys = async () => {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/b2b-keys`, {
-        headers: {
-          'X-Admin-Password': passwordToUse
-        }
-      });
+      const response = await fetch(`${API_BASE_URL}/admin/b2b-keys`, { headers: adminHeaders() });
 
+      if (response.status === 401 || response.status === 403) {
+        setAccess('denied');
+        return;
+      }
+      setAccess('ok');
       if (!response.ok) {
         throw new Error('Failed to load API keys');
       }
@@ -114,7 +76,7 @@ export default function B2BApiKeysAdmin() {
       const response = await fetch(`${API_BASE_URL}/admin/b2b-keys/generate`, {
         method: 'POST',
         headers: {
-          'X-Admin-Password': adminPassword,
+          ...adminHeaders(),
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
@@ -158,7 +120,7 @@ export default function B2BApiKeysAdmin() {
       const response = await fetch(`${API_BASE_URL}/admin/b2b-keys/${id}/revoke`, {
         method: 'PUT',
         headers: {
-          'X-Admin-Password': adminPassword
+          ...adminHeaders()
         }
       });
 
@@ -182,7 +144,7 @@ export default function B2BApiKeysAdmin() {
       const response = await fetch(`${API_BASE_URL}/admin/b2b-keys/${id}/activate`, {
         method: 'PUT',
         headers: {
-          'X-Admin-Password': adminPassword
+          ...adminHeaders()
         }
       });
 
@@ -208,7 +170,7 @@ export default function B2BApiKeysAdmin() {
       const response = await fetch(`${API_BASE_URL}/admin/b2b-keys/${id}`, {
         method: 'DELETE',
         headers: {
-          'X-Admin-Password': adminPassword
+          ...adminHeaders()
         }
       });
 
@@ -237,39 +199,9 @@ export default function B2BApiKeysAdmin() {
     return new Date(dateString).toLocaleString();
   };
 
-  // Login screen
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center p-4">
-        <div className="bg-white rounded-[22px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-8 w-full max-w-md border border-black/[0.08]">
-          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-red-50 mx-auto mb-6">
-            <Key className="w-8 h-8 text-red-600" />
-          </div>
-          <h1 className="text-3xl font-semibold text-[#1d1d1f] text-center mb-2">B2B API Keys Admin</h1>
-          <p className="text-[#6e6e73] text-center mb-8">Enter password to access</p>
-
-          <form onSubmit={handleLogin}>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter admin password"
-              className="w-full px-4 py-3 rounded-lg bg-[#e8e8ed] text-[#1d1d1f] border border-black/10 focus:outline-none focus:ring-2 focus:ring-red-500/30 mb-4"
-              autoFocus
-            />
-            {passwordError && (
-              <p className="text-red-600 text-sm mb-4">{passwordError}</p>
-            )}
-            <Button
-              type="submit"
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold"
-            >
-              Access Admin Panel
-            </Button>
-          </form>
-        </div>
-      </div>
-    );
+  if (access === 'denied') return <AdminOnly title="B2B API Keys" />;
+  if (access === 'checking') {
+    return <div className="min-h-screen bg-white pt-12 flex items-center justify-center text-[#6e6e73]">Loading…</div>;
   }
 
   // Admin dashboard
@@ -284,7 +216,7 @@ export default function B2BApiKeysAdmin() {
           </div>
           <div className="flex gap-3">
             <Button
-              onClick={loadKeys}
+              onClick={() => loadKeys()}
               variant="outline"
               className="flex items-center gap-2"
             >
@@ -389,7 +321,6 @@ export default function B2BApiKeysAdmin() {
 
         {/* Requests from the Dev Tools page */}
         <AccessRequests
-          adminPassword={adminPassword}
           onCreateKey={r => {
             setFormData({
               customerName: r.name,
