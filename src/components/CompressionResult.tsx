@@ -92,7 +92,7 @@ export const CompressionResult = ({
     if (type === 'application/pdf') {
       return <FileText className="h-8 w-8 text-red-500" />;
     }
-    return <ImageIcon className="h-8 w-8 text-blue-500" />;
+    return <ImageIcon className="h-8 w-8 text-red-500" />;
   };
 
   // Calculate total compression stats
@@ -332,7 +332,7 @@ export const CompressionResult = ({
                         {getCompressionRatio(file, compressedFiles[idx])}% size reduction
                       </span>
                     </div>
-                    <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-3 sm:px-4 py-2 rounded-full">
+                    <div className="inline-flex items-center space-x-2 bg-gray-100 text-red-800 px-3 sm:px-4 py-2 rounded-full">
                       <span className="text-xs sm:text-sm font-medium">
                         Saved: {formatFileSize(file.size - (compressedFiles[idx]?.size || 0))}
                       </span>
@@ -404,7 +404,7 @@ export const CompressionResult = ({
                     {totalCompressionRatio}% size reduction
                   </span>
                 </div>
-                <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full">
+                <div className="inline-flex items-center space-x-2 bg-gray-100 text-red-800 px-4 py-2 rounded-full">
                   <span className="text-sm font-medium">
                     Total Saved: {formatFileSize(totalSizeReduction)}
                   </span>

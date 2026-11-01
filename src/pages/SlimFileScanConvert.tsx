@@ -33,9 +33,9 @@ const SlimFileScanConvert = () => {
         desktopHint: 'Convert scans into Word, Excel or images. Open this page on your phone to use the camera.',
         operationType: 'scan-convert',
         pills: [
-          { icon: <Smartphone className="w-3.5 h-3.5 text-purple-500" />, label: 'Uses your camera' },
-          { icon: <Repeat    className="w-3.5 h-3.5 text-purple-500" />, label: 'Word, Excel, PPT' },
-          { icon: <Download  className="w-3.5 h-3.5 text-purple-500" />, label: 'One file out' },
+          { icon: <Smartphone className="w-3.5 h-3.5 text-red-500" />, label: 'Uses your camera' },
+          { icon: <Repeat    className="w-3.5 h-3.5 text-red-500" />, label: 'Word, Excel, PPT' },
+          { icon: <Download  className="w-3.5 h-3.5 text-red-500" />, label: 'One file out' },
         ],
         extraBody: () => ({ targetFormat: format }),
         extraFields: (
@@ -51,8 +51,8 @@ const SlimFileScanConvert = () => {
                   onClick={() => setFormat(f.value)}
                   className={`px-3 py-2.5 rounded-xl border text-xs font-semibold transition-all ${
                     format === f.value
-                      ? 'border-purple-400 bg-purple-50 text-purple-600'
-                      : 'border-gray-200 text-gray-600 hover:border-purple-200'
+                      ? 'border-red-400 bg-gray-50 text-red-600'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-200'
                   }`}
                 >
                   {f.label}

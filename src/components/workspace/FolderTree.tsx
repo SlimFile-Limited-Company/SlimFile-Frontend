@@ -121,7 +121,7 @@ function FolderItem({
       {/* Folder header */}
       <div
         className={`flex items-center gap-1 py-2 px-2 rounded-lg group cursor-pointer transition-colors ${
-          isOver ? 'bg-blue-100 ring-2 ring-blue-400' : 'hover:bg-slate-100'
+          isOver ? 'bg-gray-100 ring-2 ring-red-400' : 'hover:bg-slate-100'
         }`}
         style={{ paddingLeft: `${paddingLeft}px` }}
       >
@@ -439,7 +439,7 @@ export function FolderTree({
       {/* Drag overlay */}
       <DragOverlay>
         {activeWorkspace && (
-          <div className="bg-white shadow-lg rounded-lg border-2 border-blue-500 opacity-90">
+          <div className="bg-white shadow-lg rounded-lg border-2 border-red-500 opacity-90">
             <WorkspaceCard
               workspace={activeWorkspace}
               onClick={() => {}}

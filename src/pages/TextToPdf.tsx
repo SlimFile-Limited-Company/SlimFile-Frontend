@@ -125,7 +125,7 @@ export default function TextToPdf() {
               onChange={e => { setTitle(e.target.value); setDone(null); }}
               maxLength={120}
               placeholder="My document"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
 
@@ -142,7 +142,7 @@ export default function TextToPdf() {
               maxLength={MAX_CHARS}
               rows={14}
               placeholder={'Paste your text here…\n\n# Use # for a title\n- Use - for bullet lists\n1. Use 1. for numbered lists\n**Use ** around bold**, and * around *italic*.'}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-red-500 resize-y"
             />
           </div>
 

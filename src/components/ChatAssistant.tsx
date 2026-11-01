@@ -120,7 +120,7 @@ export default function ChatAssistant() {
             href={part}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-purple-600 dark:text-purple-400 underline hover:text-purple-700 dark:hover:text-purple-300 font-medium"
+            className="text-red-600 dark:text-red-400 underline hover:text-red-700 dark:hover:text-red-300 font-medium"
           >
             {part}
           </a>
@@ -140,7 +140,7 @@ export default function ChatAssistant() {
       {/* Floating Chat Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
         title="Chat with SlimFile Assistant"
       >
         {isOpen ? (
@@ -155,14 +155,14 @@ export default function ChatAssistant() {
       {isOpen && (
         <div className="fixed bottom-24 right-4 left-4 sm:left-auto sm:right-6 sm:w-96 h-[calc(100dvh-8rem)] sm:h-[500px] z-50 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700">
           {/* Header */}
-          <div className="bg-gradient-to-r from-purple-600 to-purple-700 p-4 flex items-center justify-between">
+          <div className="bg-gradient-to-r from-red-600 to-red-700 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                <Bot className="w-6 h-6 text-purple-600" />
+                <Bot className="w-6 h-6 text-red-600" />
               </div>
               <div>
                 <h3 className="text-white font-semibold">SlimFile Assistant</h3>
-                <p className="text-purple-100 text-xs">Always here to help</p>
+                <p className="text-red-100 text-xs">Always here to help</p>
               </div>
             </div>
             <button
@@ -183,7 +183,7 @@ export default function ChatAssistant() {
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-2 ${
                     message.role === 'user'
-                      ? 'bg-purple-600 text-white'
+                      ? 'bg-red-600 text-white'
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
                   }`}
                 >
@@ -191,7 +191,7 @@ export default function ChatAssistant() {
                     {renderMessageWithLinks(message.content)}
                   </p>
                   <p className={`text-xs mt-1 ${
-                    message.role === 'user' ? 'text-purple-100' : 'text-gray-500 dark:text-gray-400'
+                    message.role === 'user' ? 'text-red-100' : 'text-gray-500 dark:text-gray-400'
                   }`}>
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
@@ -221,13 +221,13 @@ export default function ChatAssistant() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ask me anything..."
-                className="flex-1 px-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="flex-1 px-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
                 disabled={isLoading}
               />
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || isLoading}
-                className="w-10 h-10 rounded-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors"
               >
                 <Send className="w-5 h-5" />
               </button>

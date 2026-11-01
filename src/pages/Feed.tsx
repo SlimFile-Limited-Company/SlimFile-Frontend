@@ -50,8 +50,8 @@ const fileKind = (fileType: string) => {
   if (fileType.includes('pdf')) return { icon: FileText, color: 'text-red-600', label: 'PDF' };
   if (fileType.includes('presentation') || fileType.includes('powerpoint')) return { icon: Monitor, color: 'text-orange-500', label: 'Presentation' };
   if (fileType.includes('sheet') || fileType.includes('excel')) return { icon: BarChart2, color: 'text-emerald-600', label: 'Spreadsheet' };
-  if (fileType.includes('word') || fileType.includes('document')) return { icon: FileText, color: 'text-blue-600', label: 'Document' };
-  if (fileType.includes('zip') || fileType.includes('archive')) return { icon: Archive, color: 'text-purple-600', label: 'Archive' };
+  if (fileType.includes('word') || fileType.includes('document')) return { icon: FileText, color: 'text-red-600', label: 'Document' };
+  if (fileType.includes('zip') || fileType.includes('archive')) return { icon: Archive, color: 'text-red-600', label: 'Archive' };
   return { icon: FileText, color: 'text-[#6e6e73]', label: 'File' };
 };
 

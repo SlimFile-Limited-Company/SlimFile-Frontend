@@ -48,63 +48,63 @@ const features = [
     name: 'Translate Text',
     description: 'Translate text to any language',
     icon: Languages,
-    color: 'from-blue-500 to-cyan-500',
+    color: 'from-red-500 to-red-600',
   },
   {
     id: 'summarize' as AIFeature,
     name: 'Summarize Document',
     description: 'Get key points and summaries',
     icon: FileText,
-    color: 'from-purple-500 to-pink-500',
+    color: 'from-red-500 to-red-600',
   },
   {
     id: 'rewrite' as AIFeature,
     name: 'Rewrite Content',
     description: 'Improve, formalize, or simplify text',
     icon: PenTool,
-    color: 'from-green-500 to-emerald-500',
+    color: 'from-red-500 to-red-600',
   },
   {
     id: 'question' as AIFeature,
     name: 'Ask Questions',
     description: 'Upload a document or paste text, then ask me anything about it',
     icon: MessageCircleQuestion,
-    color: 'from-orange-500 to-purple-500',
+    color: 'from-red-500 to-red-600',
   },
   {
     id: 'keywords' as AIFeature,
     name: 'Extract Keywords',
     description: 'Get tags, topics, and key terms',
     icon: Tags,
-    color: 'from-yellow-500 to-orange-500',
+    color: 'from-red-500 to-red-600',
   },
   {
     id: 'sentiment' as AIFeature,
     name: 'Analyze Sentiment',
     description: 'Detect tone and emotions in text',
     icon: Smile,
-    color: 'from-pink-500 to-rose-500',
+    color: 'from-red-500 to-red-600',
   },
   {
     id: 'compare' as AIFeature,
     name: 'Compare Texts',
     description: 'Find differences between two texts',
     icon: GitCompare,
-    color: 'from-indigo-500 to-purple-500',
+    color: 'from-red-500 to-red-600',
   },
   {
     id: 'email' as AIFeature,
     name: 'Email Generator',
     description: 'Generate professional emails from bullet points',
     icon: Mail,
-    color: 'from-blue-500 to-cyan-500',
+    color: 'from-red-500 to-red-600',
   },
   {
     id: 'plagiarism' as AIFeature,
     name: 'Remove Plagiarism',
     description: 'Rewrite text to make it 100% original',
     icon: Shield,
-    color: 'from-teal-500 to-green-500',
+    color: 'from-red-500 to-red-600',
   },
 ];
 
@@ -772,9 +772,9 @@ export default function AILab() {
                 </div>
 
                 {/* Helper text based on email type */}
-                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-xs font-medium text-blue-900 mb-1">What to include:</p>
-                  <p className="text-xs text-blue-700">
+                <div className="mb-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                  <p className="text-xs font-medium text-red-900 mb-1">What to include:</p>
+                  <p className="text-xs text-red-700">
                     {emailType === 'Job Application' && '• Position applying for • Company name • Your relevant experience • Why you\'re interested'}
                     {emailType === 'Apology Letter' && '• What happened • Why you\'re sorry • How you\'ll fix it • What you\'ll do differently'}
                     {emailType === 'Thank You Email' && '• What you\'re thanking for • Specific details • Impact it had • Your appreciation'}

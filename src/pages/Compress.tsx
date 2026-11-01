@@ -308,7 +308,7 @@ const Compress = () => {
                 {/* Document Compression */}
                 <div className="bg-[#f5f5f7] rounded-[28px] p-8">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-500 rounded-xl flex items-center justify-center">
                       <Shield className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="text-xl font-semibold text-[#1d1d1f]">{t('compress.documentCompression')}</h3>

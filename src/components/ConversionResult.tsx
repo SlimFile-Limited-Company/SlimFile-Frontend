@@ -68,7 +68,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
 
   const getFileIcon = (type: string) => {
     if (type.startsWith('image/')) {
-      return <Image className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />;
+      return <Image className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />;
     } else if (type === 'application/pdf') {
       return <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />;
     }
@@ -234,7 +234,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
             ) : !isComplete ? (
               <div className="bg-white rounded-[22px] p-6">
                 <div className="text-center">
-                  <div className="h-8 w-8 border-2 border-blue-600 border-r-transparent rounded-full mx-auto mb-4 animate-spin" />
+                  <div className="h-8 w-8 border-2 border-red-600 border-r-transparent rounded-full mx-auto mb-4 animate-spin" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Converting: {originalFile.name}
                   </h3>
@@ -244,7 +244,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
             ) : (
               <div className="bg-white rounded-[22px] p-6">
                 <div className="text-center mb-6">
-                  <CheckCircle2 className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                  <CheckCircle2 className="h-12 w-12 text-red-600 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
                     Conversion Complete!
                   </h3>
@@ -270,7 +270,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
                     </p>
                   </div>
 
-                  <div className="bg-blue-50 rounded-2xl p-4">
+                  <div className="bg-gray-50 rounded-2xl p-4">
                     <div className="flex items-center space-x-3 mb-3">
                       {getFileIcon(convertedFile.type)}
                       <div className="flex-1 min-w-0">
@@ -280,7 +280,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
                         </p>
                       </div>
                     </div>
-                    <p className="text-lg font-semibold text-blue-600">
+                    <p className="text-lg font-semibold text-red-600">
                       {formatFileSize(convertedFile.size)}
                     </p>
                   </div>
@@ -333,7 +333,7 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
         >
           <Button
             onClick={handleDownloadAll}
-            className="bg-blue-600 text-white hover:bg-blue-700"
+            className="bg-red-600 text-white hover:bg-red-700"
             disabled={!isAuthenticated()}
           >
             <Download className="h-4 w-4 mr-2" />
@@ -355,19 +355,19 @@ export const ConversionResult: React.FC<ConversionResultProps> = ({
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
             <div className="bg-[#f5f5f7] rounded-2xl p-4">
-              <p className="text-2xl font-bold text-blue-600">
+              <p className="text-2xl font-bold text-red-600">
                 {convertedFiles.filter(f => f !== null).length}
               </p>
               <p className="text-sm text-gray-600">Files Converted</p>
             </div>
-            <div className="bg-blue-50 rounded-2xl p-4">
+            <div className="bg-gray-50 rounded-2xl p-4">
               <p className="text-2xl font-bold text-green-600">
                 {targetFormat.toUpperCase()}
               </p>
               <p className="text-sm text-gray-600">Output Format</p>
             </div>
-            <div className="bg-purple-50 rounded-2xl p-4">
-              <p className="text-2xl font-bold text-purple-600">
+            <div className="bg-gray-50 rounded-2xl p-4">
+              <p className="text-2xl font-bold text-red-600">
                 {formatFileSize(
                   convertedSizes.reduce((sum, size) => sum + size, 0)
                 )}

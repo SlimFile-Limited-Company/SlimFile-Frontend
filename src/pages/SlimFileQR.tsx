@@ -183,9 +183,9 @@ const SlimFileQR = () => {
         {/* Feature pills */}
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10">
           {[
-            { icon: <Sparkles className="w-3.5 h-3.5 text-fuchsia-500" />, label: 'Free, no sign-up' },
-            { icon: <QrCode className="w-3.5 h-3.5 text-fuchsia-500" />, label: 'PNG & SVG download' },
-            { icon: <ShieldCheck className="w-3.5 h-3.5 text-fuchsia-500" />, label: '100% in your browser' },
+            { icon: <Sparkles className="w-3.5 h-3.5 text-red-500" />, label: 'Free, no sign-up' },
+            { icon: <QrCode className="w-3.5 h-3.5 text-red-500" />, label: 'PNG & SVG download' },
+            { icon: <ShieldCheck className="w-3.5 h-3.5 text-red-500" />, label: '100% in your browser' },
           ].map(({ icon, label }) => (
             <span key={label} className="flex items-center gap-1.5 text-sm text-[#6e6e73]">
               {icon}
@@ -219,7 +219,7 @@ const SlimFileQR = () => {
                   <label className="block">
                     <span className="text-sm font-medium text-gray-700">Website URL</span>
                     <Input
-                      className="mt-1.5 h-11 border-gray-200 focus:border-fuchsia-400 focus:ring-fuchsia-400/20 rounded-xl"
+                      className="mt-1.5 h-11 border-gray-200 focus:border-red-400 focus:ring-red-400/20 rounded-xl"
                       placeholder="https://example.com"
                       value={linkValue}
                       onChange={e => setLinkValue(e.target.value)}
@@ -233,7 +233,7 @@ const SlimFileQR = () => {
                 <label className="block">
                   <span className="text-sm font-medium text-gray-700">Text</span>
                   <textarea
-                    className="mt-1.5 w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-fuchsia-400 focus:ring-fuchsia-400/20 text-sm min-h-[120px] resize-none"
+                    className="mt-1.5 w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-red-400 focus:ring-red-400/20 text-sm min-h-[120px] resize-none"
                     placeholder="Enter any text to encode..."
                     value={textValue}
                     onChange={e => setTextValue(e.target.value)}
@@ -246,7 +246,7 @@ const SlimFileQR = () => {
                   <label className="block">
                     <span className="text-sm font-medium text-gray-700">Phone number</span>
                     <Input
-                      className="mt-1.5 h-11 border-gray-200 focus:border-fuchsia-400 focus:ring-fuchsia-400/20 rounded-xl"
+                      className="mt-1.5 h-11 border-gray-200 focus:border-red-400 focus:ring-red-400/20 rounded-xl"
                       placeholder="233550000000 (with country code)"
                       value={waPhone}
                       onChange={e => setWaPhone(e.target.value)}
@@ -255,7 +255,7 @@ const SlimFileQR = () => {
                   <label className="block">
                     <span className="text-sm font-medium text-gray-700">Pre-filled message <span className="text-gray-400 font-normal">(optional)</span></span>
                     <textarea
-                      className="mt-1.5 w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-fuchsia-400 focus:ring-fuchsia-400/20 text-sm min-h-[80px] resize-none"
+                      className="mt-1.5 w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-red-400 focus:ring-red-400/20 text-sm min-h-[80px] resize-none"
                       placeholder="Hi, I scanned your QR code..."
                       value={waMessage}
                       onChange={e => setWaMessage(e.target.value)}
@@ -270,7 +270,7 @@ const SlimFileQR = () => {
                   <label className="block">
                     <span className="text-sm font-medium text-gray-700">Network name (SSID)</span>
                     <Input
-                      className="mt-1.5 h-11 border-gray-200 focus:border-fuchsia-400 focus:ring-fuchsia-400/20 rounded-xl"
+                      className="mt-1.5 h-11 border-gray-200 focus:border-red-400 focus:ring-red-400/20 rounded-xl"
                       placeholder="HomeWiFi"
                       value={wifiSsid}
                       onChange={e => setWifiSsid(e.target.value)}
@@ -280,7 +280,7 @@ const SlimFileQR = () => {
                     <label className="block flex-1">
                       <span className="text-sm font-medium text-gray-700">Password</span>
                       <Input
-                        className="mt-1.5 h-11 border-gray-200 focus:border-fuchsia-400 focus:ring-fuchsia-400/20 rounded-xl"
+                        className="mt-1.5 h-11 border-gray-200 focus:border-red-400 focus:ring-red-400/20 rounded-xl"
                         placeholder="••••••••"
                         disabled={wifiOpen}
                         value={wifiPass}
@@ -292,7 +292,7 @@ const SlimFileQR = () => {
                         type="checkbox"
                         checked={wifiOpen}
                         onChange={e => setWifiOpen(e.target.checked)}
-                        className="w-4 h-4 rounded border-gray-300 text-fuchsia-600 focus:ring-fuchsia-500"
+                        className="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
                       />
                       Open network
                     </label>
@@ -306,7 +306,7 @@ const SlimFileQR = () => {
                   <label className="block">
                     <span className="text-sm font-medium text-gray-700">Email address</span>
                     <Input
-                      className="mt-1.5 h-11 border-gray-200 focus:border-fuchsia-400 focus:ring-fuchsia-400/20 rounded-xl"
+                      className="mt-1.5 h-11 border-gray-200 focus:border-red-400 focus:ring-red-400/20 rounded-xl"
                       placeholder="you@example.com"
                       value={emailTo}
                       onChange={e => setEmailTo(e.target.value)}
@@ -315,7 +315,7 @@ const SlimFileQR = () => {
                   <label className="block">
                     <span className="text-sm font-medium text-gray-700">Subject <span className="text-gray-400 font-normal">(optional)</span></span>
                     <Input
-                      className="mt-1.5 h-11 border-gray-200 focus:border-fuchsia-400 focus:ring-fuchsia-400/20 rounded-xl"
+                      className="mt-1.5 h-11 border-gray-200 focus:border-red-400 focus:ring-red-400/20 rounded-xl"
                       placeholder="Subject"
                       value={emailSubject}
                       onChange={e => setEmailSubject(e.target.value)}
@@ -324,7 +324,7 @@ const SlimFileQR = () => {
                   <label className="block">
                     <span className="text-sm font-medium text-gray-700">Body <span className="text-gray-400 font-normal">(optional)</span></span>
                     <textarea
-                      className="mt-1.5 w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-fuchsia-400 focus:ring-fuchsia-400/20 text-sm min-h-[80px] resize-none"
+                      className="mt-1.5 w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-red-400 focus:ring-red-400/20 text-sm min-h-[80px] resize-none"
                       placeholder="Hello..."
                       value={emailBody}
                       onChange={e => setEmailBody(e.target.value)}
@@ -388,7 +388,7 @@ const SlimFileQR = () => {
                       step={16}
                       value={size}
                       onChange={e => setSize(Number(e.target.value))}
-                      className="w-full accent-fuchsia-600"
+                      className="w-full accent-red-600"
                     />
                   </div>
 
@@ -398,7 +398,7 @@ const SlimFileQR = () => {
                         key={c.value}
                         title={c.name}
                         onClick={() => setFgColor(c.value)}
-                        className={`w-7 h-7 rounded-full border-2 transition-all ${fgColor === c.value ? 'border-fuchsia-500 scale-110' : 'border-gray-200 hover:border-gray-300'}`}
+                        className={`w-7 h-7 rounded-full border-2 transition-all ${fgColor === c.value ? 'border-red-500 scale-110' : 'border-gray-200 hover:border-gray-300'}`}
                         style={{ backgroundColor: c.value }}
                       />
                     ))}
@@ -408,7 +408,7 @@ const SlimFileQR = () => {
                     <Button
                       onClick={downloadPng}
                       disabled={!hasPayload || downloading !== null}
-                      className="flex-1 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-xl h-11 text-sm font-semibold shadow-sm"
+                      className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-xl h-11 text-sm font-semibold shadow-sm"
                     >
                       {downloading === 'png'
                         ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Preparing…</>

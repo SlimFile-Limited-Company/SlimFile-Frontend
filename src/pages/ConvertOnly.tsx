@@ -284,7 +284,7 @@ const ConvertOnly = () => {
               {/* Description */}
               <p className="text-[#6e6e73] text-lg sm:text-[21px] leading-snug max-w-2xl mx-auto">
                 {t('convert.heroDescription')}
-                <span className="text-blue-600 font-semibold"> {t('convert.lightningFast')}</span>.
+                <span className="text-red-600 font-semibold"> {t('convert.lightningFast')}</span>.
               </p>
 
 
@@ -330,7 +330,7 @@ const ConvertOnly = () => {
                   /* NEW: Format Selector UI */
                   <div className="space-y-6">
                     {/* File Info */}
-                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                       <p className="text-sm text-gray-600 mb-2">{selectedFiles.length > 1 ? t('convert.selectedFilesPlural') : t('convert.selectedFiles')}:</p>
                       {selectedFiles.map((file, idx) => (
                         <p key={idx} className="font-semibold text-gray-900">{file.name}</p>
@@ -349,7 +349,7 @@ const ConvertOnly = () => {
                             onClick={() => setSelectedFormat(format)}
                             className={`px-6 py-4 rounded-xl font-bold text-lg transition-all transform ${
                               selectedFormat === format
-                                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg scale-105'
+                                ? 'bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg scale-105'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102'
                             }`}
                           >
@@ -363,7 +363,7 @@ const ConvertOnly = () => {
                     <div className="flex gap-3">
                       <button
                         onClick={handleStartConversion}
-                        className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl"
+                        className="flex-1 px-6 py-4 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-xl font-bold text-lg hover:from-red-700 hover:to-red-600 transition-all shadow-lg hover:shadow-xl"
                       >
                         {t('convert.convertButton')} {selectedFormat.toUpperCase()}
                       </button>
@@ -404,7 +404,7 @@ const ConvertOnly = () => {
                 {/* Image Conversions */}
                 <div className="bg-[#f5f5f7] rounded-[28px] p-8">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-500 rounded-xl flex items-center justify-center">
                       <Image className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="text-xl font-semibold text-[#1d1d1f]">{t('convert.imageConversions')}</h3>
@@ -428,7 +428,7 @@ const ConvertOnly = () => {
                 {/* Document Conversions */}
                 <div className="bg-[#f5f5f7] rounded-[28px] p-8">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-xl flex items-center justify-center">
                       <FileText className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="text-xl font-semibold text-[#1d1d1f]">{t('convert.documentConversions')}</h3>
@@ -487,7 +487,7 @@ const ConvertOnly = () => {
                       {item.step}
                       {index < 2 && (
                         <div className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 w-full">
-                          <div className="h-0.5 bg-gradient-to-r from-blue-500 to-blue-300"></div>
+                          <div className="h-0.5 bg-gradient-to-r from-red-500 to-red-300"></div>
                         </div>
                       )}
                     </div>

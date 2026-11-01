@@ -242,7 +242,7 @@ export function CreateFolderDialog({
                     onClick={() => setColor(c.value)}
                     className={`w-8 h-8 rounded-full border-2 transition-all ${
                       color === c.value
-                        ? 'border-blue-500 scale-110'
+                        ? 'border-red-500 scale-110'
                         : 'border-slate-200 hover:border-slate-300'
                     }`}
                     style={{ backgroundColor: c.value || '#64748b' }}

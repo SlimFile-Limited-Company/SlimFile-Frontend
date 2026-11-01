@@ -75,7 +75,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
 
   const getFileIcon = (type: string) => {
     if (type.startsWith('image/')) {
-      return <Image className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />;
+      return <Image className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />;
     } else if (type === 'application/pdf') {
       return <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />;
     }
@@ -84,7 +84,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
 
   const getStepIcon = (step: string) => {
     if (step === 'Converting...') {
-      return <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 animate-spin" />;
+      return <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 animate-spin" />;
     } else if (step === 'Compressing...') {
       return <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 animate-pulse" />;
     } else if (step === 'Complete') {
@@ -262,7 +262,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
               <div className="bg-white rounded-[22px] p-6">
                 <div className="text-center">
                   <div
-                    className="h-8 w-8 border-2 border-purple-600 border-r-transparent rounded-full animate-spin mx-auto mb-4"
+                    className="h-8 w-8 border-2 border-red-600 border-r-transparent rounded-full animate-spin mx-auto mb-4"
                     
                     
                   />
@@ -281,7 +281,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
                     
                     
                   >
-                    <CheckCircle2 className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+                    <CheckCircle2 className="h-12 w-12 text-red-600 mx-auto mb-4" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
                     Processing Complete!
@@ -308,7 +308,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
                     </p>
                   </div>
 
-                  <div className="bg-purple-50 rounded-2xl p-4">
+                  <div className="bg-gray-50 rounded-2xl p-4">
                     <div className="flex items-center space-x-3 mb-3">
                       {getFileIcon(processedFile.type)}
                       <div className="flex-1 min-w-0">
@@ -318,7 +318,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
                         </p>
                       </div>
                     </div>
-                    <p className="text-lg font-semibold text-purple-600">
+                    <p className="text-lg font-semibold text-red-600">
                       {formatFileSize(processedFile.size)}
                     </p>
                   </div>
@@ -332,7 +332,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
                         {calculateReduction(originalFile.size, processedFile.size)}% size reduction
                       </span>
                     </div>
-                    <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-3 sm:px-4 py-2 rounded-full">
+                    <div className="inline-flex items-center space-x-2 bg-gray-100 text-red-800 px-3 sm:px-4 py-2 rounded-full">
                       <span className="text-xs sm:text-sm font-medium">
                         Saved: {formatFileSize(originalFile.size - processedFile.size)}
                       </span>
@@ -389,7 +389,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
         >
           <Button
             onClick={handleDownloadAll}
-            className="bg-purple-600 text-white hover:bg-purple-700"
+            className="bg-red-600 text-white hover:bg-red-700"
             disabled={!isAuthenticated()}
           >
             <Download className="h-4 w-4 mr-2" />
@@ -411,13 +411,13 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
             <div className="bg-[#f5f5f7] rounded-2xl p-4">
-              <p className="text-2xl font-bold text-purple-600">
+              <p className="text-2xl font-bold text-red-600">
                 {processedFiles.filter(f => f !== null).length}
               </p>
               <p className="text-sm text-gray-600">Files Processed</p>
             </div>
-            <div className="bg-blue-50 rounded-2xl p-4">
-              <p className="text-2xl font-bold text-blue-600">
+            <div className="bg-gray-50 rounded-2xl p-4">
+              <p className="text-2xl font-bold text-red-600">
                 {targetFormat.toUpperCase()}
               </p>
               <p className="text-sm text-gray-600">Output Format</p>
@@ -428,8 +428,8 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
               </p>
               <p className="text-sm text-gray-600">Size Reduction</p>
             </div>
-            <div className="bg-purple-50 rounded-2xl p-4">
-              <p className="text-2xl font-bold text-purple-600">
+            <div className="bg-gray-50 rounded-2xl p-4">
+              <p className="text-2xl font-bold text-red-600">
                 {formatFileSize(totalProcessedSize)}
               </p>
               <p className="text-sm text-gray-600">Total Size</p>

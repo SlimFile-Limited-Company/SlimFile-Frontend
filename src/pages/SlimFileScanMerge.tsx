@@ -21,9 +21,9 @@ const SlimFileScanMerge = () => (
       desktopHint: 'Merge scanned pages into one PDF. Open this page on your phone to use the camera.',
       operationType: 'scan-merge',
       pills: [
-        { icon: <Smartphone  className="w-3.5 h-3.5 text-blue-500" />, label: 'Uses your camera' },
-        { icon: <Layers      className="w-3.5 h-3.5 text-blue-500" />, label: 'Reorder before merging' },
-        { icon: <FileStack   className="w-3.5 h-3.5 text-blue-500" />, label: 'One document out' },
+        { icon: <Smartphone  className="w-3.5 h-3.5 text-red-500" />, label: 'Uses your camera' },
+        { icon: <Layers      className="w-3.5 h-3.5 text-red-500" />, label: 'Reorder before merging' },
+        { icon: <FileStack   className="w-3.5 h-3.5 text-red-500" />, label: 'One document out' },
       ],
     }}
   />

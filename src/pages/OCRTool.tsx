@@ -226,7 +226,7 @@ export default function OCRTool() {
             <div
               {...getRootProps()}
               className={`border-2 border-dashed rounded-[22px] p-12 bg-white/70 text-center cursor-pointer transition-colors ${
-                isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50/50'
+                isDragActive ? 'border-red-500 bg-gray-50' : 'border-gray-300 hover:border-red-400 hover:bg-gray-50/50'
               }`}
             >
               <input {...getInputProps()} />
@@ -252,7 +252,7 @@ export default function OCRTool() {
 
               {!previewUrl && (
                 <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
-                  <FileText className="w-8 h-8 text-blue-400 shrink-0" />
+                  <FileText className="w-8 h-8 text-red-400 shrink-0" />
                   <div className="text-sm">
                     <p className="font-medium text-gray-800">{file.name}</p>
                     <p className="text-gray-500">{(file.size / 1024).toFixed(0)} KB</p>
@@ -301,7 +301,7 @@ export default function OCRTool() {
                   <textarea
                     value={text}
                     onChange={e => setText(e.target.value)}
-                    className="w-full min-h-[240px] max-h-[460px] p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full min-h-[240px] max-h-[460px] p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                 </TabsContent>
               </Tabs>
