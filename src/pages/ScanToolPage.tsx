@@ -6,6 +6,7 @@ import { Loader2, Download, Smartphone } from 'lucide-react';
 import { ReviewButton } from '@/components/ReviewButton';
 import ScanUploader, { type ScanPage } from '@/components/ScanUploader';
 import { accent } from '@/lib/scanAccents';
+import { trackCampusFile } from '@/lib/campus';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -78,6 +79,8 @@ export default function ScanToolPage({ config }: { config: ScanToolConfig }) {
       }
 
       let blob = await res.blob();
+
+      trackCampusFile();
       let filename = config.downloadName;
       if (config.postProcess) {
         const out = await config.postProcess(blob);

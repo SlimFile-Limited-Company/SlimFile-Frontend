@@ -7,6 +7,7 @@ import {
   Trash2, Download, CheckCircle2, X, FileText, Folder,
 } from 'lucide-react';
 import { ReviewButton } from '@/components/ReviewButton';
+import { trackCampusFile } from '@/lib/campus';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://service.slim-file.com/api';
 
@@ -106,6 +107,7 @@ export default function SlimFileZip() {
         const blob = xhr.response;
         if (!blob.size) return fail(new Error('The server returned an empty ZIP.'));
         downloadBlob(blob, 'slimfile-zip.zip');
+        trackCampusFile();
         setDone({ name: 'slimfile-zip.zip', size: blob.size });
         if (Date.now() - started > 3000) {
           toast({ title: 'Downloaded!', description: `ZIP is ${fmtSize(blob.size)}.` });
@@ -150,6 +152,7 @@ export default function SlimFileZip() {
         total += blob.size;
         await downloadBlob(blob, f.name);
       }
+      trackCampusFile();
       setDone({ name: `${files.length} files, ${fmtSize(total)}`, size: total });
       if (Date.now() - started > 3000) {
         toast({ title: 'Extracted!', description: `${files.length} files downloaded with folders intact.` });

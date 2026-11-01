@@ -1,3 +1,4 @@
+import { trackCampusFile } from '@/lib/campus';
 import { useState } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 import { useToast } from '@/hooks/use-toast';
@@ -80,6 +81,8 @@ export default function TextToPdf() {
       }
 
       const blob = await response.blob();
+
+      trackCampusFile();
       if (!blob.size) throw new Error('The server returned an empty PDF.');
 
       const filename = (title.trim() || 'text-to-pdf')

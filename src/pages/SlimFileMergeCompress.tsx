@@ -8,6 +8,7 @@ import {
   FileText, Download, ShieldCheck, MergeIcon, Sparkles,
 } from 'lucide-react';
 import { ReviewButton } from '@/components/ReviewButton';
+import { trackCampusFile } from '@/lib/campus';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -100,6 +101,7 @@ const SlimFileMergeCompress = () => {
         throw new Error(err.error || 'Merge and compress failed');
       }
       const blob = await res.blob();
+      trackCampusFile();
       await downloadBlob(blob, 'compressed_merged.pdf');
       const savedKb = Math.max(0, Math.round((totalSize - blob.size) / 1024));
       toast({

@@ -9,6 +9,7 @@ import {
   Trash2, ShieldCheck, Upload,
 } from 'lucide-react';
 import { ReviewButton } from '@/components/ReviewButton';
+import { trackCampusFile } from '@/lib/campus';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -126,6 +127,7 @@ function ProtectTab({ onSuccess }: { onSuccess?: () => void }) {
         throw new Error(err.error || 'Failed to protect PDF');
       }
       const blob = await res.blob();
+      trackCampusFile();
       await downloadBlob(blob, file.name.replace(/\.pdf$/i, '') + '_locked.pdf');
       toast({ title: 'PDF protected!', description: 'Your password-protected PDF has been downloaded.' });
       setPassword(''); setConfirm(''); setFile(null);
@@ -196,6 +198,7 @@ function RemovePasswordTab({ onSuccess }: { onSuccess?: () => void }) {
         throw new Error(err.error || 'Failed to unlock PDF');
       }
       const blob = await res.blob();
+      trackCampusFile();
       const name = file.name.replace(/\.pdf$/i, '').replace(/_locked$/i, '') + '_unlocked.pdf';
       await downloadBlob(blob, name);
       toast({ title: 'Password removed!', description: 'Your PDF can now be opened without a password.' });

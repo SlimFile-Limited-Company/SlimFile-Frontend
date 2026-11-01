@@ -1,3 +1,4 @@
+import { trackCampusFile } from '@/lib/campus';
 import { useState, useCallback, useEffect } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 import { useDropzone } from 'react-dropzone';
@@ -164,6 +165,7 @@ export default function OCRTool() {
       const plain = toPlainText(data.text || md);
       setMarkdown(md);
       setText(plain);
+      trackCampusFile();
       setMeta(
         [data.pages > 1 ? `${data.pages} pages` : '1 page', data.elapsedMs ? `${(data.elapsedMs / 1000).toFixed(1)}s` : null]
           .filter(Boolean)

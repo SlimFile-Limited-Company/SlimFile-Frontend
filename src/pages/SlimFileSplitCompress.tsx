@@ -9,6 +9,7 @@ import {
   Download, ShieldCheck, MergeIcon, Sparkles,
 } from 'lucide-react';
 import { ReviewButton } from '@/components/ReviewButton';
+import { trackCampusFile } from '@/lib/campus';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -56,6 +57,7 @@ const SlimFileSplitCompress = () => {
         throw new Error(err.error || 'Split and compress failed');
       }
       const blob = await res.blob();
+      trackCampusFile();
       // A single piece comes back as the PDF itself; two or more as a zip.
       const isZip = blob.type.includes('zip');
       await downloadBlob(blob, isZip ? 'compressed_split.zip' : 'compressed_split.pdf');

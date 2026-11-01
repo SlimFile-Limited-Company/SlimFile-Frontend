@@ -10,6 +10,7 @@ import {
 import { ReviewButton } from '@/components/ReviewButton';
 import { trackGuestActivity } from '@/utils/guestTracking';
 import { reportClientTool } from '@/utils/clientToolTracking';
+import { trackCampusFile } from '@/lib/campus';
 
 type QrTab = 'link' | 'text' | 'whatsapp' | 'wifi' | 'email';
 
@@ -130,6 +131,7 @@ const SlimFileQR = () => {
       const bin = atob(dataUrl.split(',')[1]);
       const bytes = new Uint8Array(bin.length);
       for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      trackCampusFile();
       downloadBlob(new Blob([bytes], { type: 'image/png' }), 'slimfile-qr.png');
       toast({ title: 'Downloaded!', description: 'Your QR code (PNG) is ready.' });
       finish('png');
@@ -145,6 +147,7 @@ const SlimFileQR = () => {
     if (!hasPayload || !svgEl) return;
     setDownloading('svg');
     const markup = svgEl.outerHTML;
+    trackCampusFile();
     downloadBlob(new Blob([markup], { type: 'image/svg+xml' }), 'slimfile-qr.svg');
     toast({ title: 'Downloaded!', description: 'Your QR code (SVG) is ready.' });
     finish('svg');

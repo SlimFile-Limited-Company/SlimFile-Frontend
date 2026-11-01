@@ -9,6 +9,7 @@ import {
   Scissors, FileText, Download, ShieldCheck, MergeIcon,
 } from 'lucide-react';
 import { ReviewButton } from '@/components/ReviewButton';
+import { trackCampusFile } from '@/lib/campus';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -74,6 +75,7 @@ function MergeTab({ onSuccess }: { onSuccess?: () => void }) {
         throw new Error(err.error || 'Merge failed');
       }
       const blob = await res.blob();
+      trackCampusFile();
       await downloadBlob(blob, 'merged.pdf');
       toast({ title: 'Merged!', description: `${files.length} PDFs combined into one file.` });
       setFiles([]);
@@ -182,6 +184,7 @@ function SplitTab({ onSuccess }: { onSuccess?: () => void }) {
         throw new Error(err.error || 'Split failed');
       }
       const blob = await res.blob();
+      trackCampusFile();
       // A single piece comes back as the PDF itself; two or more as a zip.
       const isZip = blob.type.includes('zip');
       await downloadBlob(blob, isZip ? 'split_pages.zip' : 'split_pages.pdf');
