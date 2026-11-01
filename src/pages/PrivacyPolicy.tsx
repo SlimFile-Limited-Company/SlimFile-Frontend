@@ -50,12 +50,7 @@ const PrivacyPolicy = () => {
           </ul>
         </Section>
         <Section icon={Shield} title="4. Advertising" bg="bg-gray-100">
-          <ul className="list-disc ml-6">
-            <li><strong>Third-Party Advertising:</strong> We use third-party advertising services, including Google AdSense, to display ads on our website.</li>
-            <li><strong>Cookies and Tracking:</strong> These advertising partners may use cookies, web beacons, and similar technologies to collect information about your visits to this and other websites in order to provide relevant advertisements about goods and services that may be of interest to you.</li>
-            <li><strong>Personalized Advertising:</strong> Google uses cookies to serve ads based on your prior visits to our website or other websites. You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google's Ads Settings</a>.</li>
-            <li><strong>Privacy Policies:</strong> For more information about how Google uses data, please review <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google's Privacy Policy</a>.</li>
-          </ul>
+          <p>SlimFile does not show third-party advertising and does not use advertising cookies.</p>
         </Section>
         <Section icon={Shield} title="5. Data Sharing and Third Parties" bg="bg-white">
           <ul className="list-disc ml-6">
