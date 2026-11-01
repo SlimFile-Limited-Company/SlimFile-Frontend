@@ -1,5 +1,35 @@
 [
   {
+    "id": "introducing-slimfile-atlas",
+    "title": "Introducing SlimFile Atlas: Offline Video Compression for Media Houses and Businesses",
+    "subtitle": "SlimFile Atlas compresses large video files without an internet connection, so newsrooms, production teams and businesses can shrink their footage on their own machines and keep it private.",
+    "date": "2026-11-01",
+    "category": "Product",
+    "image": "/news/slimfile-atlas.jpg",
+    "imageAlt": "SlimFile Atlas, offline video compression",
+    "highlights": [
+      {
+        "title": "Works offline",
+        "note": "Atlas compresses video on your own machines, with no upload and no internet connection needed. That makes it practical for large footage, and for teams on slow or expensive connections."
+      },
+      {
+        "title": "Built for media houses",
+        "note": "Newsrooms, TV and radio stations, and production teams can shrink recordings for editing, archiving and sharing."
+      },
+      {
+        "title": "Your footage stays private",
+        "note": "Video never leaves your organisation, which matters for unreleased content and sensitive recordings."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "Contact sales",
+        "href": "mailto:administration@slim-file.com?subject=SlimFile%20Atlas",
+        "external": true
+      }
+    ]
+  },
+  {
     "id": "slimfile-university-ambassador-program",
     "title": "Introducing the SlimFile University Ambassador Program",
     "subtitle": "Students at 13 universities in Ghana, Mauritius and the United States now represent SlimFile on their campuses, helping classmates work faster with their files.",
@@ -130,8 +160,8 @@
     "subtitle": "SlimFile launches its official Android app, bringing file compression and conversion to your pocket. Compress images, PDFs and Office documents on the go, free on the Google Play Store.",
     "date": "2026-08-01",
     "category": "Product",
-    "image": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1600&q=80&auto=format&fit=crop",
-    "imageAlt": "SlimFile mobile app",
+    "image": "/news/slimfile-android.jpg",
+    "imageAlt": "The SlimFile app on an Android phone",
     "highlights": [
       {
         "title": "Compress files anywhere",
