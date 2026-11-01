@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSEO } from '@/hooks/useSEO';
-import { Star, MessageSquare, TrendingUp, Bot, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { Star, Bot, Loader2 } from 'lucide-react';
 import io from 'socket.io-client';
 
 interface Review {
@@ -50,18 +50,7 @@ const operationLabels: Record<string, string> = {
   summarize: 'Summarization'
 };
 
-const operationColors: Record<string, string> = {
-  compress: 'from-blue-500 to-indigo-500',
-  convert: 'from-purple-500 to-pink-500',
-  'convert-compress': 'from-red-500 to-orange-500',
-  forge: 'from-amber-500 to-yellow-500',
-  'forge-merge': 'from-amber-500 to-orange-600',
-  'forge-split': 'from-teal-500 to-cyan-600',
-  lock: 'from-green-500 to-emerald-500',
-  ocr: 'from-cyan-500 to-teal-500',
-  qr: 'from-slate-800 to-gray-900',
-  summarize: 'from-violet-500 to-purple-500'
-};
+const PAGE_SIZE = 24;
 
 export default function CommunityManager() {
   useSEO({
@@ -72,6 +61,7 @@ export default function CommunityManager() {
   const [reviews, setReviews] = useState<ReviewWithReplies[]>([]);
   const [stats, setStats] = useState<ReviewStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [shown, setShown] = useState(PAGE_SIZE);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -284,205 +274,134 @@ Your tone should be: friendly, professional, empathetic, and solution-oriented.`
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
+  const replyCount = reviews.reduce((acc, r) => acc + r.replies.filter(reply => reply.role === 'assistant').length, 0);
+  const tiles = stats ? [
+    { label: 'Average rating', value: `${stats.averageRating.toFixed(1)}`, unit: 'out of 5' },
+    { label: 'Reviews', value: stats.totalReviews.toLocaleString(), unit: 'from customers' },
+    { label: 'Assistant replies', value: replyCount.toLocaleString(), unit: 'sent automatically' },
+  ] : [];
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-white pt-28 pb-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-4">
-            <Bot className="w-4 h-4" />
-            Review Management
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-            Community Manager
-          </h1>
-          <p className="text-base text-gray-600 max-w-2xl mx-auto">
-            View all customer reviews and SlimFile Assistant responses
-          </p>
-        </div>
+    <div className="min-h-screen bg-white pt-12 text-[#1d1d1f]">
+      {/* Hero */}
+      <section className="px-4 sm:px-6 pt-16 sm:pt-24 pb-12 text-center">
+        <p className="text-[17px] font-semibold text-red-600 mb-3">SlimFile Assistant</p>
+        <h1 className="text-5xl sm:text-7xl font-semibold tracking-tight leading-[1.05]">Community Manager.</h1>
+        <p className="mt-5 text-xl sm:text-2xl text-[#6e6e73] max-w-2xl mx-auto leading-snug">
+          Every customer review, and the reply SlimFile Assistant sent back.
+        </p>
+      </section>
 
-        {/* Stats Cards */}
-        {stats && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center">
-                  <Star className="w-5 h-5 text-yellow-600 fill-yellow-600" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-gray-600">Average Rating</p>
-                  <p className="text-xl font-bold text-gray-900">{stats.averageRating.toFixed(1)} / 5</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <MessageSquare className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-gray-600">Total Reviews</p>
-                  <p className="text-xl font-bold text-gray-900">{stats.totalReviews.toLocaleString()}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-gray-600">Assistant Responses</p>
-                  <p className="text-xl font-bold text-gray-900">
-                    {reviews.reduce((acc, r) => acc + r.replies.filter(reply => reply.role === 'assistant').length, 0)}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Reviews List */}
-        {isLoading ? (
-          <div className="text-center py-12">
-            <div className="inline-block w-8 h-8 border-4 border-gray-300 border-t-purple-600 rounded-full animate-spin"></div>
-            <p className="mt-4 text-gray-600">Loading reviews...</p>
-          </div>
-        ) : reviews.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-2xl border border-gray-100">
-            <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No reviews yet</h3>
-            <p className="text-gray-600">Reviews will appear here when customers leave feedback</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {reviews.map((review) => (
-              <div key={review._id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-                {/* Review Header */}
-                <div className={`bg-gradient-to-br ${operationColors[review.operationType] || 'from-gray-500 to-gray-600'} px-4 py-3`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                        <span className="text-white font-bold text-sm">
-                          {review.name.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-white font-semibold text-sm truncate">{review.name}</p>
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <div className="flex items-center gap-0.5">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <Star
-                                key={star}
-                                className={`w-3 h-3 ${
-                                  star <= review.rating
-                                    ? 'text-yellow-300 fill-yellow-300'
-                                    : 'text-white/30'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <span className="text-white/60 text-xs">·</span>
-                          <span className="text-white/80 text-xs">{formatDate(review.createdAt)}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <span className="bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
-                      {operationLabels[review.operationType] || review.operationType}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Review Content */}
-                <div className="px-4 py-2 bg-gray-50">
-                  <p className="text-gray-700 text-sm leading-relaxed italic line-clamp-2">
-                    "{review.comment}"
-                  </p>
-                </div>
-
-                {/* Assistant Replies */}
-                <div className="px-4 py-3 space-y-2">
-                  {review.isGenerating && (
-                    <div className="flex items-start gap-2">
-                      <div className="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                        <Bot className="w-4 h-4 text-purple-600" />
-                      </div>
-                      <div className="flex-1 bg-purple-50 rounded-xl rounded-tl-none px-3 py-2">
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <p className="text-xs font-semibold text-purple-900">SlimFile Assistant</p>
-                          <Loader2 className="w-3 h-3 text-purple-600 animate-spin" />
-                        </div>
-                        <p className="text-xs text-purple-700">Generating response...</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {review.replies.length === 0 && !review.isGenerating && (
-                    <div className="text-center py-2 text-gray-400 text-xs">
-                      <AlertCircle className="w-4 h-4 mx-auto mb-1" />
-                      No response yet
-                    </div>
-                  )}
-
-                  {review.replies.map((reply) => (
-                    <div key={reply._id} className="flex items-start gap-2">
-                      <div className="w-7 h-7 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                        <Bot className="w-4 h-4 text-purple-600" />
-                      </div>
-                      <div className="flex-1 bg-purple-50 rounded-xl rounded-tl-none px-3 py-2">
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          <p className="text-xs font-semibold text-purple-900">
-                            SlimFile Assistant
-                          </p>
-                          <span className="text-[10px] text-purple-600">
-                            {formatDate(reply.createdAt)}
-                          </span>
-                          <CheckCircle className="w-3 h-3 text-green-500 ml-auto" />
-                        </div>
-                        <p className="text-xs leading-relaxed text-purple-900">
-                          {reply.message}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+      {/* Stats */}
+      {stats && (
+        <section className="px-4 sm:px-6 pb-14">
+          <div className="max-w-5xl mx-auto grid gap-4 sm:grid-cols-3">
+            {tiles.map(t => (
+              <div key={t.label} className="rounded-[22px] bg-[#f5f5f7] p-7 text-center sm:text-left">
+                <p className="text-[13px] font-semibold text-[#6e6e73]">{t.label}</p>
+                <p className="mt-2 text-[44px] leading-none font-semibold tracking-tight">{t.value}</p>
+                <p className="mt-2 text-[13px] text-[#6e6e73]">{t.unit}</p>
               </div>
             ))}
           </div>
-        )}
+        </section>
+      )}
 
-        {/* Info Banner */}
-        <div className="mt-6 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl border border-purple-100 p-4">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-              <AlertCircle className="w-5 h-5 text-purple-600" />
+      {/* Reviews */}
+      <section className="px-4 sm:px-6 pb-16">
+        <div className="max-w-6xl mx-auto">
+          {isLoading ? (
+            <div className="py-20 flex justify-center text-[#6e6e73]">
+              <Loader2 className="w-5 h-5 animate-spin" />
             </div>
-            <div>
-              <h3 className="text-base font-bold text-gray-900 mb-2">How SlimFile Assistant Works</h3>
-              <ul className="space-y-1.5 text-xs text-gray-700">
-                <li className="flex items-start gap-2">
-                  <span className="text-purple-600 font-bold">•</span>
-                  <span><strong>Smart Analysis:</strong> Analyzes both star rating AND review text to understand true sentiment</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-purple-600 font-bold">•</span>
-                  <span><strong>Auto-Reply:</strong> Instantly responds to all new reviews with contextual, helpful messages</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-purple-600 font-bold">•</span>
-                  <span><strong>View & Monitor:</strong> See all responses for quality assurance and improvements</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-purple-600 font-bold">•</span>
-                  <span><strong>Real-Time:</strong> New reviews and replies appear instantly without page refresh</span>
-                </li>
-              </ul>
+          ) : reviews.length === 0 ? (
+            <div className="max-w-md mx-auto text-center py-16">
+              <h2 className="text-[28px] font-semibold tracking-tight">No reviews yet</h2>
+              <p className="mt-2 text-[17px] text-[#6e6e73]">Reviews show up here as soon as customers leave them.</p>
             </div>
+          ) : (
+            <>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {reviews.slice(0, shown).map(review => (
+                  <article key={review._id} className="rounded-[22px] bg-[#f5f5f7] p-6 self-start w-full">
+                    {/* Customer */}
+                    <div className="flex items-center gap-3">
+                      <span className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-[15px] font-semibold shrink-0">
+                        {review.name.charAt(0).toUpperCase()}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[15px] font-semibold truncate">{review.name}</p>
+                        <p className="text-[13px] text-[#6e6e73] truncate">
+                          {operationLabels[review.operationType] || review.operationType} · {formatDate(review.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center gap-0.5" aria-label={`${review.rating} out of 5 stars`}>
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <Star
+                          key={star}
+                          className={`w-3.5 h-3.5 ${star <= review.rating ? 'text-[#ff9f0a] fill-[#ff9f0a]' : 'text-[#d2d2d7] fill-[#d2d2d7]'}`}
+                        />
+                      ))}
+                    </div>
+                    <p className="mt-2 text-[17px] leading-relaxed line-clamp-3">{review.comment}</p>
+
+                    {/* Assistant reply */}
+                    <div className="mt-5 pt-5 border-t border-black/[0.06] space-y-2">
+                      {review.isGenerating ? (
+                        <p className="flex items-center gap-2 text-[13px] text-[#6e6e73]">
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          SlimFile Assistant is replying…
+                        </p>
+                      ) : review.replies.length === 0 ? (
+                        <p className="text-[13px] text-[#6e6e73]">No reply yet</p>
+                      ) : (
+                        review.replies.map(reply => (
+                          <div key={reply._id} className="rounded-2xl bg-white p-4">
+                            <p className="flex items-center gap-1.5 text-[13px] font-semibold">
+                              <Bot className="w-3.5 h-3.5 text-red-600" />
+                              SlimFile Assistant
+                              <span className="font-normal text-[#6e6e73]">· {formatDate(reply.createdAt)}</span>
+                            </p>
+                            <p className="mt-1.5 text-[15px] leading-relaxed text-[#1d1d1f]">{reply.message}</p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+              {shown < reviews.length && (
+                <div className="mt-10 text-center">
+                  <button onClick={() => setShown(n => n + PAGE_SIZE)} className="text-[17px] text-red-600 hover:underline">
+                    Show more reviews
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="px-4 sm:px-6 pb-24">
+        <div className="max-w-6xl mx-auto rounded-[28px] bg-[#f5f5f7] p-8 sm:p-12">
+          <h2 className="text-[28px] sm:text-[32px] font-semibold tracking-tight mb-8">How SlimFile Assistant works.</h2>
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { title: 'Reads the whole review', text: 'It weighs the star rating and the words, so a 2-star review with kind words gets the right reply.' },
+              { title: 'Replies automatically', text: 'Every new review gets a short, helpful reply within moments.' },
+              { title: 'Everything in one place', text: 'See every reply here to check its quality and spot what to improve.' },
+              { title: 'Live', text: 'New reviews and replies appear without refreshing the page.' },
+            ].map(item => (
+              <div key={item.title}>
+                <h3 className="text-[17px] font-semibold">{item.title}</h3>
+                <p className="mt-1.5 text-[15px] text-[#6e6e73] leading-relaxed">{item.text}</p>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
