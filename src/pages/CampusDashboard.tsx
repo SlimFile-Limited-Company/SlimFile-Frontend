@@ -18,15 +18,21 @@ interface CampusStats {
   new30: number;
   files: number;
   files30: number;
+  visits: number;
+  visits30: number;
+  visitors: number;
+  slimdocx: { opens: number; people: number };
+  whiteboards: { opens: number; people: number };
   byMethod: { gps: number; wifi: number; email: number };
   schoolEmailAccounts: number;
 }
 
 interface DailyRow { day: string; campusId: string; count: number }
 
-type SortKey = 'people' | 'active30' | 'new30' | 'files';
+type SortKey = 'people' | 'visits30' | 'active30' | 'new30' | 'files';
 const SORTS: { key: SortKey; label: string }[] = [
   { key: 'people', label: 'People' },
+  { key: 'visits30', label: 'Visits' },
   { key: 'active30', label: 'Active' },
   { key: 'new30', label: 'New' },
   { key: 'files', label: 'Files' },
@@ -61,8 +67,15 @@ export default function CampusDashboard() {
 
   const sorted = useMemo(() => [...campuses].sort((a, b) => b[sort] - a[sort]), [campuses, sort]);
   const totals = useMemo(() => campuses.reduce(
-    (t, c) => ({ people: t.people + c.people, active30: t.active30 + c.active30, new7: t.new7 + c.new7, files: t.files + c.files }),
-    { people: 0, active30: 0, new7: 0, files: 0 }
+    (t, c) => ({
+      people: t.people + c.people,
+      visits30: t.visits30 + c.visits30,
+      new7: t.new7 + c.new7,
+      files: t.files + c.files,
+      docs: t.docs + c.slimdocx.opens,
+      boards: t.boards + c.whiteboards.opens,
+    }),
+    { people: 0, visits30: 0, new7: 0, files: 0, docs: 0, boards: 0 }
   ), [campuses]);
 
   // Visitors per day across all campuses
@@ -72,7 +85,10 @@ export default function CampusDashboard() {
 
   // Ambassadors, each credited with their campus's numbers
   const ambassadors = useMemo(() => sorted.flatMap(c =>
-    c.ambassadors.map(name => ({ name, campus: c.short, shared: c.ambassadors.length > 1, people: c.people, active30: c.active30, files: c.files }))
+    c.ambassadors.map(name => ({
+      name, campus: c.short, shared: c.ambassadors.length > 1,
+      people: c.people, visits30: c.visits30, files: c.files, tools: c.slimdocx.opens + c.whiteboards.opens,
+    }))
   ), [sorted]);
 
   if (state !== 'ready') {
@@ -96,12 +112,14 @@ export default function CampusDashboard() {
 
       {/* Totals */}
       <section className="px-4 sm:px-6 pb-10">
-        <div className="max-w-6xl mx-auto grid gap-4 grid-cols-2 lg:grid-cols-4">
+        <div className="max-w-6xl mx-auto grid gap-4 grid-cols-2 lg:grid-cols-3">
           {[
+            { label: 'Visits to slim-file.com, 30 days', value: totals.visits30 },
             { label: 'People on campuses', value: totals.people },
-            { label: 'Active in 30 days', value: totals.active30 },
             { label: 'New this week', value: totals.new7 },
             { label: 'Files processed', value: totals.files },
+            { label: 'SlimDocx documents opened', value: totals.docs },
+            { label: 'Whiteboards opened', value: totals.boards },
           ].map(t => (
             <div key={t.label} className="rounded-[22px] bg-[#f5f5f7] p-6">
               <p className="text-[13px] font-semibold text-[#6e6e73]">{t.label}</p>
@@ -168,9 +186,12 @@ export default function CampusDashboard() {
 
                 <dl className="mt-5 grid grid-cols-3 gap-2 text-center">
                   {[
+                    { k: 'Visits 30d', v: c.visits30 },
                     { k: 'Active 30d', v: c.active30 },
                     { k: 'New 30d', v: c.new30 },
                     { k: 'Files', v: c.files },
+                    { k: 'SlimDocx', v: c.slimdocx.opens },
+                    { k: 'Whiteboards', v: c.whiteboards.opens },
                   ].map(m => (
                     <div key={m.k} className="rounded-2xl bg-white py-3">
                       <dd className="text-[19px] font-semibold">{m.v.toLocaleString()}</dd>
@@ -201,14 +222,15 @@ export default function CampusDashboard() {
           <h2 className="text-[28px] sm:text-[32px] font-semibold tracking-tight mb-2">Ambassadors.</h2>
           <p className="text-[15px] text-[#6e6e73] mb-6">Each ambassador gets their campus's numbers. Ambassadors on the same campus share them.</p>
           <div className="rounded-[22px] bg-[#f5f5f7] overflow-x-auto">
-            <table className="w-full min-w-[520px] text-[15px]">
+            <table className="w-full min-w-[620px] text-[15px]">
               <thead>
                 <tr className="text-left text-[12px] text-[#6e6e73]">
                   <th className="font-medium px-5 pt-4 pb-2">Ambassador</th>
                   <th className="font-medium px-3 pt-4 pb-2">Campus</th>
                   <th className="font-medium px-3 pt-4 pb-2 text-right">People</th>
-                  <th className="font-medium px-3 pt-4 pb-2 text-right">Active 30d</th>
-                  <th className="font-medium px-5 pt-4 pb-2 text-right">Files</th>
+                  <th className="font-medium px-3 pt-4 pb-2 text-right">Visits 30d</th>
+                  <th className="font-medium px-3 pt-4 pb-2 text-right">Files</th>
+                  <th className="font-medium px-5 pt-4 pb-2 text-right">SlimDocx & Boards</th>
                 </tr>
               </thead>
               <tbody>
@@ -217,8 +239,9 @@ export default function CampusDashboard() {
                     <td className="px-5 py-3 font-medium">{a.name}</td>
                     <td className="px-3 py-3 text-[#6e6e73]">{a.campus}{a.shared && ' (shared)'}</td>
                     <td className="px-3 py-3 text-right">{a.people.toLocaleString()}</td>
-                    <td className="px-3 py-3 text-right">{a.active30.toLocaleString()}</td>
-                    <td className="px-5 py-3 text-right">{a.files.toLocaleString()}</td>
+                    <td className="px-3 py-3 text-right">{a.visits30.toLocaleString()}</td>
+                    <td className="px-3 py-3 text-right">{a.files.toLocaleString()}</td>
+                    <td className="px-5 py-3 text-right">{a.tools.toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { GraduationCap, Loader2 } from 'lucide-react';
-import { ASK_EVENT, declineCampusPrompt, shareLocationForCampus, trackCampusVisit } from '@/lib/campus';
+import { ASK_EVENT, declineCampusPrompt, shareLocationForCampus } from '@/lib/campus';
 
 /**
  * Asks once, right after a file finishes, whether to count it for the
@@ -12,7 +12,6 @@ export default function CampusPrompt() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    trackCampusVisit();
     const ask = () => setState(s => (s === 'hidden' ? 'ask' : s));
     window.addEventListener(ASK_EVENT, ask);
     return () => window.removeEventListener(ASK_EVENT, ask);

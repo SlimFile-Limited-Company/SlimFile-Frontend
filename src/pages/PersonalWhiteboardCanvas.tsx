@@ -5,6 +5,7 @@ import type { AppState, BinaryFiles, ExcalidrawInitialDataState } from '@excalid
 import '@excalidraw/excalidraw/index.css';
 import { useToast } from '@/hooks/use-toast';
 import { ChevronLeft, Loader2 } from 'lucide-react';
+import { trackCampusUse } from '@/lib/campus';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -95,6 +96,7 @@ const PersonalWhiteboardCanvas = () => {
         // Same fingerprint handleChange computes, so simply opening a board
         // never triggers a save (which would overwrite an old-format board).
         lastSavedHash.current = sceneHash(board?.elements ?? [], board?.appState?.viewBackgroundColor ?? '#ffffff');
+        trackCampusUse('whiteboard');
       } catch (err) {
         console.error('Error loading whiteboard:', err);
         toast({ title: 'Error', description: 'Failed to load whiteboard', variant: 'destructive' });

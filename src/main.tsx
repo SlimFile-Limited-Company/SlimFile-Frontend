@@ -238,6 +238,7 @@ import Leaderboard from './pages/Leaderboard';
 import B2BApiKeysAdmin from './pages/B2BApiKeysAdmin';
 import CEODashboard from './pages/CEODashboard';
 import CampusDashboard from './pages/CampusDashboard';
+import { trackCampusVisit } from './lib/campus';
 import { NotificationProvider } from './components/InAppNotification';
 import UpdatePrompt from './components/UpdatePrompt';
 
@@ -262,6 +263,9 @@ const queryClient = new QueryClient({
 });
 
 // PWA auto-refresh test deployment - v1.0.1
+
+// A visit to slim-file.com counts for a campus once a day, on any page.
+trackCampusVisit();
 
 ReactDOM.createRoot(root).render(
   <StrictMode>

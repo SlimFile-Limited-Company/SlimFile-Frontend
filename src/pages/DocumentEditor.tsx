@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Loader2, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { trackCampusUse } from '@/lib/campus';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -80,7 +81,10 @@ const DocumentEditor = () => {
           width: '100%',
           height: '100%',
           events: {
-            onAppReady: () => setState('ready'),
+            onAppReady: () => {
+              setState('ready');
+              trackCampusUse('slimdocx');
+            },
             // Let ONLYOFFICE show its own error message instead of our spinner.
             onError: () => setState('ready'),
           },

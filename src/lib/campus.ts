@@ -47,7 +47,9 @@ const currentPosition = (): Promise<{ lat: number; lng: number } | null> =>
 
 export interface CampusResult { id: string; short: string; name: string }
 
-const send = async (kind: 'visit' | 'file', coords: { lat: number; lng: number } | null) => {
+type Kind = 'visit' | 'file' | 'slimdocx' | 'whiteboard';
+
+const send = async (kind: Kind, coords: { lat: number; lng: number } | null) => {
   const token = store.get('jwt');
   const res = await fetch(`${API_BASE_URL}/campus/track`, {
     method: 'POST',
@@ -57,7 +59,7 @@ const send = async (kind: 'visit' | 'file', coords: { lat: number; lng: number }
   return res.ok ? ((await res.json()).campus as CampusResult | null) : null;
 };
 
-export async function trackCampus(kind: 'visit' | 'file'): Promise<CampusResult | null> {
+export async function trackCampus(kind: Kind): Promise<CampusResult | null> {
   try {
     const coords = (await locationAllowed()) ? await currentPosition() : null;
     return await send(kind, coords);
@@ -72,6 +74,11 @@ export function trackCampusVisit() {
   if (store.get(VISIT_KEY) === day) return;
   store.set(VISIT_KEY, day);
   trackCampus('visit');
+}
+
+/** Opened a SlimDocx document or a whiteboard. */
+export function trackCampusUse(kind: 'slimdocx' | 'whiteboard') {
+  trackCampus(kind);
 }
 
 /** After a finished file: count it, and ask once about location. */
