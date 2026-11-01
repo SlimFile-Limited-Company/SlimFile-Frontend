@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import { useEffect } from 'react';
 
 interface FAQItem {
   question: string;
@@ -65,18 +65,20 @@ export function BlogSchema({
     }))
   } : null;
 
-  return (
-    <Helmet>
-      <script type="application/ld+json">
-        {JSON.stringify(articleSchema)}
-      </script>
-      {faqSchema && (
-        <script type="application/ld+json">
-          {JSON.stringify(faqSchema)}
-        </script>
-      )}
-    </Helmet>
-  );
+  // Added straight to <head>; the app has no Helmet provider.
+  const json = JSON.stringify([articleSchema, faqSchema].filter(Boolean));
+  useEffect(() => {
+    const scripts = (JSON.parse(json) as object[]).map(schema => {
+      const el = document.createElement('script');
+      el.type = 'application/ld+json';
+      el.text = JSON.stringify(schema);
+      document.head.appendChild(el);
+      return el;
+    });
+    return () => scripts.forEach(el => el.remove());
+  }, [json]);
+
+  return null;
 }
 
 // FAQ Component for rendering FAQs visually

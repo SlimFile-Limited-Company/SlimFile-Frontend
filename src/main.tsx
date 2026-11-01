@@ -85,6 +85,26 @@ import ConvertThenCompress from './pages/ConvertThenCompress';
 import GetStarted from './pages/GetStarted';
 
 // Blog Pages
+// Hidden SEO posts: routed and in the sitemap, but not listed on /blog.
+const HiddenAdobeAcrobatAlternatives = lazy(() => import('./pages/blog/AdobeAcrobatAlternatives'));
+const HiddenBatchCompressPdfs = lazy(() => import('./pages/blog/BatchCompressPdfs'));
+const HiddenBestPdfCompressors2026 = lazy(() => import('./pages/blog/BestPdfCompressors2026'));
+const HiddenCompressPdfForBusiness = lazy(() => import('./pages/blog/CompressPdfForBusiness'));
+const HiddenCompressPdfForGmail = lazy(() => import('./pages/blog/CompressPdfForGmail'));
+const HiddenCompressPdfForLinkedin = lazy(() => import('./pages/blog/CompressPdfForLinkedin'));
+const HiddenCompressPdfForStudents = lazy(() => import('./pages/blog/CompressPdfForStudents'));
+const HiddenCompressPdfForWhatsapp = lazy(() => import('./pages/blog/CompressPdfForWhatsapp'));
+const HiddenCompressPdfOnlineFree = lazy(() => import('./pages/blog/CompressPdfOnlineFree'));
+const HiddenCompressPdfWithoutLosingQuality = lazy(() => import('./pages/blog/CompressPdfWithoutLosingQuality'));
+const HiddenCompressPptxOnlineFree = lazy(() => import('./pages/blog/CompressPptxOnlineFree'));
+const HiddenHowToCompressMultiplePdfs = lazy(() => import('./pages/blog/HowToCompressMultiplePdfs'));
+const HiddenHowToMergePdfFiles = lazy(() => import('./pages/blog/HowToMergePdfFiles'));
+const HiddenHowToSplitPdfFiles = lazy(() => import('./pages/blog/HowToSplitPdfFiles'));
+const HiddenILovePdfAlternatives = lazy(() => import('./pages/blog/ILovePdfAlternatives'));
+const HiddenPdfCompressorForMac = lazy(() => import('./pages/blog/PdfCompressorForMac'));
+const HiddenPdfCompressorForWindows = lazy(() => import('./pages/blog/PdfCompressorForWindows'));
+const HiddenReducePdfFileSize = lazy(() => import('./pages/blog/ReducePdfFileSize'));
+const HiddenWhatIsPdfCompression = lazy(() => import('./pages/blog/WhatIsPdfCompression'));
 import BlogHowToCompressPdfForEmail from './pages/blog/HowToCompressPdfForEmail';
 import BlogBestToolsToCompressImagesOnline from './pages/blog/BestToolsToCompressImagesOnline';
 import BlogCompressPptxPresentationsWithoutLosingQuality from './pages/blog/CompressPptxPresentationsWithoutLosingQuality';
@@ -293,6 +313,26 @@ ReactDOM.createRoot(root).render(
           <Route path="compress-images-for-website" element={<CompressImagesForWebsite />} />
 
           {/* Blog Pages */}
+          {/* Hidden SEO posts: not listed on /blog */}
+          <Route path="blog/adobe-acrobat-alternatives" element={<Suspense fallback={null}><HiddenAdobeAcrobatAlternatives /></Suspense>} />
+          <Route path="blog/batch-compress-pdfs" element={<Suspense fallback={null}><HiddenBatchCompressPdfs /></Suspense>} />
+          <Route path="blog/best-pdf-compressors-2026" element={<Suspense fallback={null}><HiddenBestPdfCompressors2026 /></Suspense>} />
+          <Route path="blog/compress-pdf-for-business" element={<Suspense fallback={null}><HiddenCompressPdfForBusiness /></Suspense>} />
+          <Route path="blog/compress-pdf-for-gmail" element={<Suspense fallback={null}><HiddenCompressPdfForGmail /></Suspense>} />
+          <Route path="blog/compress-pdf-for-linkedin" element={<Suspense fallback={null}><HiddenCompressPdfForLinkedin /></Suspense>} />
+          <Route path="blog/compress-pdf-for-students" element={<Suspense fallback={null}><HiddenCompressPdfForStudents /></Suspense>} />
+          <Route path="blog/compress-pdf-for-whatsapp" element={<Suspense fallback={null}><HiddenCompressPdfForWhatsapp /></Suspense>} />
+          <Route path="blog/compress-pdf-online-free" element={<Suspense fallback={null}><HiddenCompressPdfOnlineFree /></Suspense>} />
+          <Route path="blog/compress-pdf-without-losing-quality" element={<Suspense fallback={null}><HiddenCompressPdfWithoutLosingQuality /></Suspense>} />
+          <Route path="blog/compress-pptx-online-free" element={<Suspense fallback={null}><HiddenCompressPptxOnlineFree /></Suspense>} />
+          <Route path="blog/how-to-compress-multiple-pdfs" element={<Suspense fallback={null}><HiddenHowToCompressMultiplePdfs /></Suspense>} />
+          <Route path="blog/how-to-merge-pdf-files" element={<Suspense fallback={null}><HiddenHowToMergePdfFiles /></Suspense>} />
+          <Route path="blog/how-to-split-pdf-files" element={<Suspense fallback={null}><HiddenHowToSplitPdfFiles /></Suspense>} />
+          <Route path="blog/ilovepdf-alternatives" element={<Suspense fallback={null}><HiddenILovePdfAlternatives /></Suspense>} />
+          <Route path="blog/pdf-compressor-for-mac" element={<Suspense fallback={null}><HiddenPdfCompressorForMac /></Suspense>} />
+          <Route path="blog/pdf-compressor-for-windows" element={<Suspense fallback={null}><HiddenPdfCompressorForWindows /></Suspense>} />
+          <Route path="blog/reduce-pdf-file-size" element={<Suspense fallback={null}><HiddenReducePdfFileSize /></Suspense>} />
+          <Route path="blog/what-is-pdf-compression" element={<Suspense fallback={null}><HiddenWhatIsPdfCompression /></Suspense>} />
           <Route path="blog/how-to-compress-pdf-for-email" element={<BlogHowToCompressPdfForEmail />} />
           <Route path="blog/best-tools-to-compress-images-online" element={<BlogBestToolsToCompressImagesOnline />} />
           <Route path="blog/compress-pptx-presentations-without-losing-quality" element={<BlogCompressPptxPresentationsWithoutLosingQuality />} />
