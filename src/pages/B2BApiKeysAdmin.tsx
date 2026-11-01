@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Key, Copy, Check, Trash2, Lock, Unlock, Plus, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import AccessRequests from '@/components/AccessRequests';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -385,6 +386,21 @@ export default function B2BApiKeysAdmin() {
             </form>
           </div>
         )}
+
+        {/* Requests from the Dev Tools page */}
+        <AccessRequests
+          adminPassword={adminPassword}
+          onCreateKey={r => {
+            setFormData({
+              customerName: r.name,
+              customerEmail: r.email,
+              customerCompany: r.company,
+              notes: [r.product.toUpperCase(), r.useCase].filter(Boolean).join(' — ').slice(0, 500),
+            });
+            setShowForm(true);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
 
         {/* Keys table */}
         <div className="bg-[#f5f5f7] rounded-[22px] overflow-hidden">

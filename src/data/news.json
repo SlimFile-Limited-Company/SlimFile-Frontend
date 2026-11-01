@@ -23,9 +23,8 @@
     ],
     "ctas": [
       {
-        "label": "Contact sales",
-        "href": "mailto:administration@slim-file.com?subject=SlimFile%20Atlas",
-        "external": true
+        "label": "Request access",
+        "href": "/api?product=atlas#request-access"
       }
     ]
   },

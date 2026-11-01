@@ -1,13 +1,11 @@
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useSEO } from '@/hooks/useSEO';
-import { Mail, Code2, Package, Terminal, KeyRound, Rocket, ShieldCheck } from "lucide-react";
+import { Send, Code2, Package, Terminal, KeyRound, Rocket, ShieldCheck } from "lucide-react";
+import RequestAccessForm, { type AccessProduct } from "@/components/RequestAccessForm";
 
-const SALES_EMAIL = "administration@slim-file.com";
-
-// Access to every developer product is set up by the SlimFile team, so each
-// card opens a pre-addressed email instead of a self-serve signup.
-const salesLink = (subject: string) =>
-  `mailto:${SALES_EMAIL}?subject=${encodeURIComponent(subject)}`;
+// Access to every developer product is set up by the SlimFile team: each
+// "Contact sales" opens the request form with that product chosen.
 
 const tools = [
   {
@@ -16,7 +14,7 @@ const tools = [
     tagline: "For businesses and platforms",
     description: "Compress PDFs, images and Office files from your own systems over a simple REST API. Built for portals, banks, schools and any product that handles documents at scale.",
     points: ["PDF, JPG, PNG, WebP, DOCX, PPTX, XLSX", "Up to 95% smaller files", "Private API key for your business"],
-    subject: "SlimFile Compression API access",
+    product: "api" as AccessProduct,
   },
   {
     icon: Package,
@@ -24,7 +22,7 @@ const tools = [
     tagline: "For developers in any language",
     description: "Add SlimFile compression to your app in a few lines of code, whatever language you build in: Python, JavaScript, PHP, Java, C#, Go and more.",
     points: ["Works with any programming language", "Simple to integrate", "Uses your SlimFile API key"],
-    subject: "SlimFile SDK access",
+    product: "sdk" as AccessProduct,
   },
   {
     icon: Terminal,
@@ -32,12 +30,12 @@ const tools = [
     tagline: "For the terminal and automation",
     description: "Compress single files or whole folders from the command line, or plug SlimFile into scripts and build pipelines in any language.",
     points: ["Single files or batches", "Works with any language, script or CI", "Uses your SlimFile API key"],
-    subject: "SlimFile CLI access",
+    product: "cli" as AccessProduct,
   },
 ];
 
 const steps = [
-  { icon: Mail, title: "Email our sales team", text: `Write to ${SALES_EMAIL} with your company name, what you want to build and roughly how many files you expect to process.` },
+  { icon: Send, title: "Send a request", text: "Fill in the short form below with your company, what you want to build and roughly how many files you expect to process." },
   { icon: KeyRound, title: "Get your API key", text: "We set up your account and send you a private API key, along with the documentation for the tool you chose." },
   { icon: Rocket, title: "Start building", text: "Use your key with the API, SDK or CLI. Our team stays on hand to help you integrate." },
 ];
@@ -45,8 +43,22 @@ const steps = [
 const Api = () => {
   useSEO({
     title: 'SlimFile Developer Tools — API, SDK and CLI',
-    description: 'Bring SlimFile compression into your own product with the SlimFile API, SDK and CLI. Contact our sales team to get your API key.',
+    description: 'Bring SlimFile compression into your own product with the SlimFile API, SDK and CLI. Request access and our team will send you an API key.',
   });
+
+  // ?product=atlas preselects a product, e.g. from the Newsroom
+  const [product, setProduct] = useState<AccessProduct>(() => {
+    const p = new URLSearchParams(window.location.search).get('product');
+    return (['api', 'sdk', 'cli', 'atlas', 'other'] as const).includes(p as AccessProduct) ? (p as AccessProduct) : 'api';
+  });
+  const formRef = useRef<HTMLDivElement>(null);
+  const openForm = (p: AccessProduct) => {
+    setProduct(p);
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  useEffect(() => {
+    if (window.location.hash === '#request-access') setTimeout(() => formRef.current?.scrollIntoView({ block: 'start' }), 100);
+  }, []);
 
   return (
     <div className="min-h-screen bg-white pt-12 text-[#1d1d1f]">
@@ -60,16 +72,13 @@ const Api = () => {
           Bring SlimFile's compression into your own apps and workflows. Our team sets up your access.
         </p>
         <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a href={salesLink("SlimFile developer access")}>
-            <Button size="lg" className="rounded-full px-7 h-11 text-[17px] bg-red-600 hover:bg-red-700 text-white">
-              Contact sales
-            </Button>
-          </a>
+          <Button onClick={() => openForm('api')} size="lg" className="rounded-full px-7 h-11 text-[17px] bg-red-600 hover:bg-red-700 text-white">
+            Request access
+          </Button>
           <a href="#how-it-works" className="text-[17px] text-red-600 hover:underline">
             How access works ›
           </a>
         </div>
-        <p className="mt-5 text-sm text-[#6e6e73]">{SALES_EMAIL}</p>
       </section>
 
       {/* Products */}
@@ -88,9 +97,9 @@ const Api = () => {
                   </li>
                 ))}
               </ul>
-              <a href={salesLink(tool.subject)} className="mt-auto text-[17px] text-red-600 hover:underline">
-                Contact sales ›
-              </a>
+              <button onClick={() => openForm(tool.product)} className="mt-auto self-start text-[17px] text-red-600 hover:underline">
+                Request access ›
+              </button>
             </div>
           ))}
         </div>
@@ -117,6 +126,11 @@ const Api = () => {
         </div>
       </section>
 
+      {/* Request form */}
+      <section className="px-4 sm:px-6 pb-20 sm:pb-28">
+        <RequestAccessForm ref={formRef} product={product} onProductChange={setProduct} />
+      </section>
+
       {/* Old keys */}
       <section className="px-4 sm:px-6 pb-24">
         <div className="max-w-6xl mx-auto rounded-[28px] bg-[#f5f5f7] p-8 sm:p-12 flex flex-col sm:flex-row sm:items-center gap-6">
@@ -124,14 +138,12 @@ const Api = () => {
           <div className="flex-1">
             <h3 className="text-[24px] font-semibold tracking-tight mb-1">Have an older SlimFile developer key?</h3>
             <p className="text-[17px] text-[#6e6e73]">
-              Keys from the previous developer dashboard no longer work. Contact our sales team and we'll issue you a new key.
+              Keys from the previous developer dashboard no longer work. Send a request and we'll issue you a new key.
             </p>
           </div>
-          <a href={salesLink("Replace my old SlimFile developer key")}>
-            <Button className="rounded-full px-6 h-10 bg-red-600 hover:bg-red-700 text-white">
-              Get a new key
-            </Button>
-          </a>
+          <Button onClick={() => openForm('api')} className="rounded-full px-6 h-10 bg-red-600 hover:bg-red-700 text-white">
+            Get a new key
+          </Button>
         </div>
       </section>
     </div>
