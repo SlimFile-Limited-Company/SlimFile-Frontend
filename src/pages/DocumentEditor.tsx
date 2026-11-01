@@ -1,211 +1,145 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useCreateBlockNote } from '@blocknote/react';
-import { BlockNoteView } from '@blocknote/mantine';
-import type { PartialBlock } from '@blocknote/core';
-import '@blocknote/core/fonts/inter.css';
-import '@blocknote/mantine/style.css';
-import mammoth from 'mammoth';
-import { ChevronLeft, Download, Loader2, Upload } from 'lucide-react';
+import { ChevronLeft, Loader2, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { exportHtmlToDocx } from '@/lib/docxExport';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
-// Images are stored inside the document, which MongoDB caps at 16 MB.
-const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
-const MAX_DOC_BYTES = 12 * 1024 * 1024;
-const SAVE_DELAY_MS = 1200;
+const TITLE_SAVE_DELAY_MS = 800;
 
-type SaveState = 'saved' | 'saving' | 'unsaved' | 'error';
-
-interface LoadedDocument {
-  title: string;
-  content: string;
-  blocks: PartialBlock[] | null;
-  tags: string[];
+// ONLYOFFICE's browser API, loaded from our document server.
+declare global {
+  interface Window {
+    DocsAPI?: { DocEditor: new (elementId: string, config: unknown) => { destroyEditor: () => void } };
+  }
 }
 
-const authHeaders = () => ({
-  Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-  'Content-Type': 'application/json',
-});
+const authHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('jwt')}` });
 
-const fileToDataURL = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+const loadDocsApi = (serverUrl: string) =>
+  new Promise<void>((resolve, reject) => {
+    if (window.DocsAPI) return resolve();
+    const src = `${serverUrl}web-apps/apps/api/documents/api.js`;
+    let script = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`);
+    if (!script) {
+      script = document.createElement('script');
+      script.src = src;
+      document.body.appendChild(script);
+    }
+    script.addEventListener('load', () => resolve());
+    script.addEventListener('error', () => reject(new Error('Could not load the editor')));
   });
 
 /**
- * Loads the document, then hands it to the editor. The editor is created only
- * after loading so BlockNote starts with the right content.
+ * Documents open in ONLYOFFICE, a full Word-style editor. ONLYOFFICE saves on
+ * its own: it sends the file back to our backend once the editor closes.
  */
 const DocumentEditor = () => {
   const { documentId } = useParams<{ documentId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [doc, setDoc] = useState<LoadedDocument | null>(null);
-  const [failed, setFailed] = useState(false);
+  const [title, setTitle] = useState('');
+  const [state, setState] = useState<'loading' | 'ready' | 'failed'>('loading');
+  const [reloadKey, setReloadKey] = useState(0);
+  const titleLoaded = useRef<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const holder = useRef<HTMLDivElement>(null);
 
+  // Title for the bar
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/documents/${documentId}`, { headers: authHeaders(), cache: 'no-store' });
-        if (!res.ok) throw new Error('Failed to load document');
-        const { document } = await res.json();
-        setDoc({
-          title: document.title || '',
-          content: document.content || '',
-          blocks: Array.isArray(document.blocks) && document.blocks.length ? document.blocks : null,
-          tags: document.tags || [],
-        });
-      } catch (err) {
-        console.error('Error loading document:', err);
-        setFailed(true);
-        toast({ title: 'Error', description: 'Failed to load document', variant: 'destructive' });
-      }
-    };
-    load();
+    fetch(`${API_BASE_URL}/documents/${documentId}`, { headers: authHeaders(), cache: 'no-store' })
+      .then(res => (res.ok ? res.json() : Promise.reject()))
+      .then(({ document }) => {
+        titleLoaded.current = document.title || '';
+        setTitle(document.title || '');
+      })
+      .catch(() => {});
   }, [documentId]);
 
-  return (
-    <div className="min-h-screen bg-[#f5f5f7] pt-12">
-      {doc ? (
-        <Editor documentId={documentId!} initial={doc} onBack={() => navigate('/documents')} />
-      ) : (
-        <div className="h-[60vh] flex items-center justify-center text-[#6e6e73]">
-          {failed ? (
-            <button onClick={() => navigate('/documents')} className="text-[15px] text-red-600 hover:text-red-700">
-              Couldn't open this document. Back to Documents
-            </button>
-          ) : (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
+  // The editor itself
+  useEffect(() => {
+    let editor: { destroyEditor: () => void } | null = null;
+    let cancelled = false;
+    setState('loading');
 
-const Editor = ({ documentId, initial, onBack }: { documentId: string; initial: LoadedDocument; onBack: () => void }) => {
-  const { toast } = useToast();
-  const [title, setTitle] = useState(initial.title);
-  const [tags, setTags] = useState(initial.tags.join(', '));
-  const [saveState, setSaveState] = useState<SaveState>('saved');
-  const [wordCount, setWordCount] = useState(0);
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const fileInput = useRef<HTMLInputElement>(null);
-  const ready = useRef(false);
-
-  const editor = useCreateBlockNote({
-    initialContent: initial.blocks ?? undefined,
-    uploadFile: async (file: File) => {
-      if (file.size > MAX_IMAGE_BYTES) {
-        toast({ title: 'Image too large', description: 'Images must be 2 MB or smaller.', variant: 'destructive' });
-        throw new Error('Image too large');
+    (async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/documents/${documentId}/office`, { headers: authHeaders(), cache: 'no-store' });
+        if (!res.ok) throw new Error('Failed to open document');
+        const { serverUrl, config } = await res.json();
+        await loadDocsApi(serverUrl);
+        if (cancelled || !window.DocsAPI || !holder.current) return;
+        // ONLYOFFICE replaces this element with its iframe, so React doesn't own it.
+        const placeholder = document.createElement('div');
+        placeholder.id = `office-editor-${documentId}-${reloadKey}`;
+        holder.current.appendChild(placeholder);
+        editor = new window.DocsAPI.DocEditor(placeholder.id, {
+          ...config,
+          type: window.innerWidth < 768 ? 'mobile' : 'desktop',
+          width: '100%',
+          height: '100%',
+          events: {
+            onAppReady: () => setState('ready'),
+            // Let ONLYOFFICE show its own error message instead of our spinner.
+            onError: () => setState('ready'),
+          },
+        });
+      } catch (err) {
+        console.error('Error opening document:', err);
+        if (!cancelled) setState('failed');
       }
-      return fileToDataURL(file);
-    },
-  });
+    })();
 
-  // Documents written before BlockNote only have HTML. Convert it once.
+    return () => {
+      cancelled = true;
+      editor?.destroyEditor();
+      if (holder.current) holder.current.innerHTML = '';
+    };
+  }, [documentId, reloadKey]);
+
+  // Renaming saves after a short pause
   useEffect(() => {
-    if (!initial.blocks && initial.content) {
-      const blocks = editor.tryParseHTMLToBlocks(initial.content);
-      if (blocks.length) editor.replaceBlocks(editor.document, blocks);
-    }
-    setWordCount(countWords(editor.blocksToHTMLLossy(editor.document)));
-    // Ignore the change events fired while the content is first put in place.
-    setTimeout(() => { ready.current = true; }, 0);
-  }, [editor]);
-
-  const save = useCallback(async () => {
-    const html = editor.blocksToHTMLLossy(editor.document);
-    const body = JSON.stringify({
-      title: title.trim() || 'Untitled Document',
-      content: html,
-      blocks: editor.document,
-      tags: tags.split(',').map(t => t.trim()).filter(Boolean),
-    });
-    if (body.length > MAX_DOC_BYTES) {
-      setSaveState('error');
-      toast({ title: 'Document too large to save', description: 'Remove some images, then it will save again.', variant: 'destructive' });
-      return;
-    }
-    setSaveState('saving');
-    try {
-      const res = await fetch(`${API_BASE_URL}/documents/${documentId}`, { method: 'PATCH', headers: authHeaders(), body });
-      if (!res.ok) throw new Error('Failed to save document');
-      setSaveState('saved');
-    } catch (err) {
-      console.error('Error saving document:', err);
-      setSaveState('error');
-    }
-  }, [editor, documentId, title, tags, toast]);
-
-  const scheduleSave = useCallback(() => {
-    setSaveState('unsaved');
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => save(), SAVE_DELAY_MS);
-  }, [save]);
-
-  // Title and tag edits save too, once they differ from what was loaded.
-  const initialTags = initial.tags.join(', ');
-  useEffect(() => {
-    if (title === initial.title && tags === initialTags) return;
-    scheduleSave();
-  }, [title, tags]);
-
-  // Save anything pending when leaving.
-  useEffect(() => () => {
-    if (saveTimer.current) { clearTimeout(saveTimer.current); save(); }
-  }, [save]);
-
-  const handleChange = () => {
-    if (!ready.current) return;
-    setWordCount(countWords(editor.blocksToHTMLLossy(editor.document)));
-    scheduleSave();
-  };
+    if (titleLoaded.current === null || title === titleLoaded.current) return;
+    const timer = setTimeout(async () => {
+      const res = await fetch(`${API_BASE_URL}/documents/${documentId}`, {
+        method: 'PATCH',
+        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: title.trim() || 'Untitled Document' }),
+      }).catch(() => null);
+      if (res?.ok) titleLoaded.current = title;
+    }, TITLE_SAVE_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [title, documentId]);
 
   const importWord = async (file: File) => {
+    const body = new FormData();
+    body.append('file', file);
     try {
-      const { value } = await mammoth.convertToHtml({ arrayBuffer: await file.arrayBuffer() });
-      editor.replaceBlocks(editor.document, editor.tryParseHTMLToBlocks(value));
-      toast({ title: 'Imported', description: `"${file.name}" was added to this document.` });
+      const res = await fetch(`${API_BASE_URL}/documents/${documentId}/office/upload`, { method: 'POST', headers: authHeaders(), body });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Import failed');
+      toast({ title: 'Imported', description: `"${file.name}" replaced this document.` });
+      setReloadKey(k => k + 1);
     } catch (err) {
-      console.error('Error importing DOCX:', err);
-      toast({ title: 'Error', description: 'Failed to import that Word file', variant: 'destructive' });
+      toast({ title: 'Error', description: err instanceof Error ? err.message : 'Failed to import that Word file', variant: 'destructive' });
     }
   };
-
-  const exportWord = async () => {
-    try {
-      await exportHtmlToDocx(editor.blocksToHTMLLossy(editor.document), title || 'Untitled Document');
-    } catch (err) {
-      console.error('Error exporting DOCX:', err);
-      toast({ title: 'Error', description: 'Failed to export document', variant: 'destructive' });
-    }
-  };
-
-  const statusText = { saved: 'Saved', saving: 'Saving…', unsaved: 'Editing', error: 'Not saved' }[saveState];
 
   return (
-    <>
+    <div className="fixed inset-x-0 top-12 bottom-0 flex flex-col bg-[#f5f5f7]">
       {/* Document bar, styled like the site header */}
-      <div className="sticky top-12 z-20 h-12 flex items-center gap-3 px-3 sm:px-4 border-b border-black/[0.06] bg-[#fbfbfd]/80 backdrop-blur-xl backdrop-saturate-150">
-        <button onClick={onBack} className="flex items-center gap-0.5 text-[13px] text-red-600 hover:text-red-700 shrink-0">
+      <div className="h-12 shrink-0 flex items-center gap-3 px-3 sm:px-4 border-b border-black/[0.06] bg-[#fbfbfd]/80 backdrop-blur-xl backdrop-saturate-150">
+        <button onClick={() => navigate('/documents')} className="flex items-center gap-0.5 text-[13px] text-red-600 hover:text-red-700 shrink-0">
           <ChevronLeft className="w-4 h-4" />
           Documents
         </button>
-        <p className="flex-1 min-w-0 text-center truncate text-[13px] font-semibold text-[#1d1d1f]">
-          {title || 'Untitled Document'}
-        </p>
-        <span className={`hidden sm:inline text-xs w-[4.5rem] text-right ${saveState === 'error' ? 'text-red-600' : 'text-[#6e6e73]'}`}>
-          {statusText}
-        </span>
+        <input
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          placeholder="Untitled Document"
+          aria-label="Document title"
+          className="flex-1 min-w-0 text-center truncate text-[13px] font-semibold text-[#1d1d1f] placeholder:text-[#6e6e73] bg-transparent focus:outline-none"
+        />
+        <span className="hidden sm:inline text-xs text-[#6e6e73]">Saves automatically</span>
         <input
           ref={fileInput}
           type="file"
@@ -215,52 +149,34 @@ const Editor = ({ documentId, initial, onBack }: { documentId: string; initial: 
         />
         <button
           onClick={() => fileInput.current?.click()}
-          title="Import a Word document"
+          title="Replace this document with a Word file"
           className="flex items-center gap-1.5 h-8 px-3 rounded-full text-[13px] text-[#1d1d1f] hover:bg-black/[0.05]"
         >
           <Upload className="w-4 h-4" />
-          <span className="hidden sm:inline">Import</span>
-        </button>
-        <button
-          onClick={exportWord}
-          title="Download as a Word document"
-          className="flex items-center gap-1.5 h-8 px-3 rounded-full text-[13px] text-white bg-red-600 hover:bg-red-700"
-        >
-          <Download className="w-4 h-4" />
-          <span className="hidden sm:inline">Export to Word</span>
+          <span className="hidden sm:inline">Import Word</span>
         </button>
       </div>
 
-      {/* Page */}
-      <div className="px-3 sm:px-6 py-8 sm:py-12">
-        <div className="max-w-3xl mx-auto bg-white rounded-[22px] shadow-[0_1px_3px_rgba(0,0,0,0.06)] px-2 sm:px-6 py-10 sm:py-14 min-h-[70vh]">
-          <div className="px-[54px] mb-6">
-            <input
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              placeholder="Untitled Document"
-              className="w-full text-3xl sm:text-[40px] font-semibold tracking-tight text-[#1d1d1f] placeholder:text-[#d2d2d7] bg-transparent focus:outline-none"
-            />
-            <input
-              value={tags}
-              onChange={e => setTags(e.target.value)}
-              placeholder="Add tags, separated by commas"
-              className="mt-2 w-full text-[13px] text-[#6e6e73] placeholder:text-[#d2d2d7] bg-transparent focus:outline-none"
-            />
+      {/* Editor */}
+      <div className="relative flex-1 min-h-0">
+        <div ref={holder} className="absolute inset-0 [&>iframe]:block" />
+        {state !== 'ready' && (
+          <div className="absolute inset-0 flex items-center justify-center bg-[#f5f5f7] text-[#6e6e73]">
+            {state === 'failed' ? (
+              <button onClick={() => navigate('/documents')} className="text-[15px] text-red-600 hover:text-red-700">
+                Couldn't open this document. Back to Documents
+              </button>
+            ) : (
+              <span className="flex items-center gap-2 text-[15px]">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Opening document…
+              </span>
+            )}
           </div>
-          <BlockNoteView editor={editor} theme="light" onChange={handleChange} />
-        </div>
-        <p className="max-w-3xl mx-auto mt-3 text-right text-xs text-[#6e6e73]">
-          {wordCount} {wordCount === 1 ? 'word' : 'words'}
-        </p>
+        )}
       </div>
-    </>
+    </div>
   );
-};
-
-const countWords = (html: string) => {
-  const text = html.replace(/<[^>]*>/g, ' ');
-  return text.split(/\s+/).filter(Boolean).length;
 };
 
 export default DocumentEditor;
