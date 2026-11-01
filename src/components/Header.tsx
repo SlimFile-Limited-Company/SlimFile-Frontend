@@ -307,6 +307,18 @@ export const Header = () => {
               />
             </div>
 
+            {/* SlimDocx, our Word-style editor, gets its own spot so people find it */}
+            <Link
+              to="/documents"
+              className={cn(
+                "flex items-center gap-1.5 text-[13px] tracking-[-0.01em] transition-colors duration-200 px-3 py-1 whitespace-nowrap",
+                location.pathname.startsWith("/documents") ? "text-[#1d1d1f] font-medium" : "text-[#1d1d1f]/75 hover:text-[#1d1d1f]"
+              )}
+            >
+              SlimDocx
+              <span className="rounded-full bg-red-600 px-1.5 py-px text-[10px] font-semibold leading-4 text-white">New</span>
+            </Link>
+
             {/* Dev Tools: one page; access is arranged through sales */}
             <Link
               to="/api"
@@ -429,6 +441,13 @@ export const Header = () => {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-1.5">
+            <Link
+              to="/documents"
+              className="flex items-center gap-1 h-7 pl-2.5 pr-1 rounded-full bg-[#f5f5f7] text-[13px] font-medium text-[#1d1d1f]"
+            >
+              SlimDocx
+              <span className="rounded-full bg-red-600 px-1.5 text-[10px] font-semibold leading-4 text-white">New</span>
+            </Link>
             <Button
               variant="ghost"
               size="sm"
@@ -510,6 +529,18 @@ export const Header = () => {
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* Mobile SlimDocx */}
+              <div className="px-4">
+                <Link
+                  to="/documents"
+                  className="flex items-center gap-2 py-2.5 text-sm font-medium text-gray-700 hover:text-red-600 transition-all duration-300 rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  SlimDocx
+                  <span className="rounded-full bg-red-600 px-1.5 text-[10px] font-semibold leading-4 text-white">New</span>
+                </Link>
               </div>
 
               {/* Mobile Dev Tools */}

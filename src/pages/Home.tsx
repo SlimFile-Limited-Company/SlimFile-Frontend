@@ -152,8 +152,8 @@ const Home: FC = () => {
     { key: "pdf",  label: "PDF",     blurb: "Merge, split, compress and protect your PDFs.",                        items: [byTitle("PDF Merger & Splitter"), byTitle("Merge & Compress PDFs"), byTitle("Split & Compress PDFs"), byTitle("Text to PDF"), byTitle("OCR Tool"), byTitle("PDF Password Protect")] },
     { key: "files", label: "Files",  blurb: "Shrink, convert and generate files.",                                  items: [byTitle("Compress Files"), byTitle("Convert Formats"), byTitle("Convert & Compress"), byTitle("Zip Files & Folders"), byTitle("QR Code Generator")] },
     { key: "scan",  label: "Scan",   blurb: "Photograph paper with your phone and turn it into a PDF.",             items: scanFeatures },
-    { key: "ai",   label: "AI Lab",  blurb: "Translate, summarise, rewrite and analyse with AI.",                   items: aiLabTab },
     { key: "team", label: "Team",   blurb: "Sketch, write and collaborate together.",                              items: [byTitle("Whiteboards"), byTitle("SlimDocx"), byTitle("Team Workspaces"), byTitle("Activity Feed")] },
+    { key: "ai",   label: "AI Lab",  blurb: "Translate, summarise, rewrite and analyse with AI.",                   items: aiLabTab },
   ];
 
   const [activeTab, setActiveTab] = useState(featureTabs[0].key);
