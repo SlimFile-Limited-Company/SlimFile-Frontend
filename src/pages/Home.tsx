@@ -75,6 +75,7 @@ import { Button } from "@/components/ui/button";
 import { isAuthenticated } from '@/lib/auth';
 import { useEffect, useState } from 'react';
 import io from "socket.io-client";
+import FeatureArt from '@/components/FeatureArt';
 
 const getApiBase = (): string => {
   return import.meta.env.VITE_API_URL || "https://slimfile-backend.onrender.com";
@@ -237,17 +238,18 @@ const Home: FC = () => {
               — so roughly 10 fit on screen without scrolling. */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-5">
             {visibleFeatures.map((feature) => {
-              // Apple-style tile: soft grey surface, no border, a coloured line
-              // icon, large title and a quiet "Try it" link. On phones it
+              // Apple-style tile: soft grey surface with the red SlimFile artwork
+              // on top, large title and a quiet "Try it" link. On phones it
               // collapses to a slim row so ~10 tools fit on one screen.
               const card = (
-                <div className="group h-full flex flex-row sm:flex-col items-center sm:items-start gap-3 sm:gap-0 rounded-2xl sm:rounded-[28px] bg-[#f5f5f7] p-3.5 sm:p-7 transition-all duration-300 ease-out hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:hover:scale-[1.015]">
-                  <feature.icon className={`w-6 h-6 sm:w-9 sm:h-9 ${feature.color} shrink-0 sm:mb-6`} strokeWidth={1.75} />
-                  <div className="min-w-0 flex-1 sm:flex-none">
+                <div className="group h-full flex flex-row sm:flex-col items-center sm:items-stretch gap-3 sm:gap-0 rounded-2xl sm:rounded-[28px] bg-[#f5f5f7] p-3.5 sm:p-3 sm:pb-7 transition-all duration-300 ease-out hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:hover:scale-[1.015]">
+                  <span className="sm:hidden"><FeatureArt icon={feature.icon} size="small" /></span>
+                  <div className="hidden sm:block mb-6"><FeatureArt icon={feature.icon} /></div>
+                  <div className="min-w-0 flex-1 sm:flex-none sm:px-4">
                     <p className="text-[15px] sm:text-[21px] font-semibold tracking-tight text-[#1d1d1f] leading-snug truncate sm:whitespace-normal">{feature.title}</p>
                     <p className="hidden sm:block mt-2 text-[15px] leading-relaxed text-[#6e6e73]">{feature.description}</p>
                   </div>
-                  <span className="hidden sm:inline-flex items-center gap-0.5 mt-auto pt-6 text-[15px] font-medium text-red-600 transition-all duration-300 group-hover:gap-1.5">
+                  <span className="hidden sm:inline-flex items-center gap-0.5 mt-auto pt-6 sm:px-4 text-[15px] font-medium text-red-600 transition-all duration-300 group-hover:gap-1.5">
                     Try it <ChevronRight className="w-4 h-4" />
                   </span>
                   <ChevronRight className="w-4 h-4 text-gray-400 shrink-0 sm:hidden" />
