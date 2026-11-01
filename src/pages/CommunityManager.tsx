@@ -224,33 +224,20 @@ Your tone should be: friendly, professional, empathetic, and solution-oriented.`
         })
       });
 
-      if (!saveResponse.ok) {
-        console.error('❌ Failed to save reply to backend:', saveResponse.status);
-        console.error('Backend might not have /reviews/replies endpoint');
-      } else {
-        console.log('✅ Reply saved to backend');
-      }
+      // The server keeps one reply per review; show whichever one it kept.
+      const saved = saveResponse.ok ? (await saveResponse.json()).reply : null;
+      const reply: AIReply = saved ?? {
+        _id: Date.now().toString(),
+        reviewId,
+        message: aiMessage,
+        role: 'assistant',
+        createdAt: new Date().toISOString()
+      };
+      if (!saveResponse.ok) console.error('❌ Failed to save reply to backend:', saveResponse.status);
 
-      // Update UI immediately regardless of backend save
-      setReviews(prev => prev.map(review => {
-        if (review._id === reviewId) {
-          return {
-            ...review,
-            replies: [
-              ...review.replies,
-              {
-                _id: Date.now().toString(),
-                reviewId,
-                message: aiMessage,
-                role: 'assistant',
-                createdAt: new Date().toISOString()
-              }
-            ],
-            isGenerating: false
-          };
-        }
-        return review;
-      }));
+      setReviews(prev => prev.map(review =>
+        review._id === reviewId ? { ...review, replies: [reply], isGenerating: false } : review
+      ));
     } catch (error) {
       console.error('❌ Error generating reply:', error);
       setReviews(prev => prev.map(r => r._id === reviewId ? { ...r, isGenerating: false } : r));
