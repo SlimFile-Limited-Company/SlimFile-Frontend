@@ -239,13 +239,13 @@ export default function B2BApiKeysAdmin() {
   // Login screen
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
-        <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md border border-gray-700">
-          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-purple-500/20 mx-auto mb-6">
-            <Key className="w-8 h-8 text-purple-400" />
+      <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center p-4">
+        <div className="bg-white rounded-[22px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-8 w-full max-w-md border border-black/[0.08]">
+          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-red-50 mx-auto mb-6">
+            <Key className="w-8 h-8 text-red-600" />
           </div>
-          <h1 className="text-3xl font-bold text-white text-center mb-2">B2B API Keys Admin</h1>
-          <p className="text-gray-400 text-center mb-8">Enter password to access</p>
+          <h1 className="text-3xl font-semibold text-[#1d1d1f] text-center mb-2">B2B API Keys Admin</h1>
+          <p className="text-[#6e6e73] text-center mb-8">Enter password to access</p>
 
           <form onSubmit={handleLogin}>
             <input
@@ -253,15 +253,15 @@ export default function B2BApiKeysAdmin() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter admin password"
-              className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4"
+              className="w-full px-4 py-3 rounded-lg bg-[#e8e8ed] text-[#1d1d1f] border border-black/10 focus:outline-none focus:ring-2 focus:ring-red-500/30 mb-4"
               autoFocus
             />
             {passwordError && (
-              <p className="text-red-400 text-sm mb-4">{passwordError}</p>
+              <p className="text-red-600 text-sm mb-4">{passwordError}</p>
             )}
             <Button
               type="submit"
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-semibold"
+              className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold"
             >
               Access Admin Panel
             </Button>
@@ -273,13 +273,13 @@ export default function B2BApiKeysAdmin() {
 
   // Admin dashboard
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white pt-28 sm:pt-32 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">B2B API Keys Management</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Generate and manage API keys for B2B customers</p>
+            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-[#1d1d1f]">B2B API Keys Management</h1>
+            <p className="text-[#86868b] mt-1">Generate and manage API keys for B2B customers</p>
           </div>
           <div className="flex gap-3">
             <Button
@@ -292,7 +292,7 @@ export default function B2BApiKeysAdmin() {
             </Button>
             <Button
               onClick={() => setShowForm(!showForm)}
-              className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2"
+              className="bg-red-600 hover:bg-red-700 text-white flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               Generate New Key
@@ -302,18 +302,18 @@ export default function B2BApiKeysAdmin() {
 
         {/* Error message */}
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
-            <p className="text-red-600 dark:text-red-400">{error}</p>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p className="text-red-600">{error}</p>
           </div>
         )}
 
         {/* Generate form */}
         {showForm && (
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Generate New API Key</h2>
+          <div className="bg-[#f5f5f7] rounded-[22px] p-6 mb-6">
+            <h2 className="text-xl font-semibold text-[#1d1d1f] mb-4">Generate New API Key</h2>
             <form onSubmit={handleGenerate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
                   Customer Name *
                 </label>
                 <input
@@ -321,13 +321,13 @@ export default function B2BApiKeysAdmin() {
                   required
                   value={formData.customerName}
                   onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 rounded-xl border border-[#d2d2d7] bg-white text-[#1d1d1f] focus:ring-2 focus:ring-red-500/30"
                   placeholder="Acme Corporation"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
                   Customer Email *
                 </label>
                 <input
@@ -335,33 +335,33 @@ export default function B2BApiKeysAdmin() {
                   required
                   value={formData.customerEmail}
                   onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 rounded-xl border border-[#d2d2d7] bg-white text-[#1d1d1f] focus:ring-2 focus:ring-red-500/30"
                   placeholder="tech@acme.com"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
                   Company Name
                 </label>
                 <input
                   type="text"
                   value={formData.customerCompany}
                   onChange={(e) => setFormData({ ...formData, customerCompany: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 rounded-xl border border-[#d2d2d7] bg-white text-[#1d1d1f] focus:ring-2 focus:ring-red-500/30"
                   placeholder="Acme Inc"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
                   Notes
                 </label>
                 <input
                   type="text"
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 rounded-xl border border-[#d2d2d7] bg-white text-[#1d1d1f] focus:ring-2 focus:ring-red-500/30"
                   placeholder="Annual contract - unlimited usage"
                 />
               </div>
@@ -377,7 +377,7 @@ export default function B2BApiKeysAdmin() {
                 <Button
                   type="submit"
                   disabled={generating}
-                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                  className="bg-red-600 hover:bg-red-700 text-white"
                 >
                   {generating ? 'Generating...' : 'Generate API Key'}
                 </Button>
@@ -387,50 +387,50 @@ export default function B2BApiKeysAdmin() {
         )}
 
         {/* Keys table */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-[#f5f5f7] rounded-[22px] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+              <thead className="bg-black/[0.03]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Customer</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">API Key</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Usage</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Created</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6e6e73] uppercase tracking-wider">Customer</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6e6e73] uppercase tracking-wider">API Key</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6e6e73] uppercase tracking-wider">Usage</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6e6e73] uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6e6e73] uppercase tracking-wider">Created</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-[#6e6e73] uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="divide-y divide-black/[0.06]">
                 {loading ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    <td colSpan={6} className="px-6 py-12 text-center text-[#6e6e73]">
                       Loading...
                     </td>
                   </tr>
                 ) : keys.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    <td colSpan={6} className="px-6 py-12 text-center text-[#6e6e73]">
                       No API keys yet. Generate your first one!
                     </td>
                   </tr>
                 ) : (
                   keys.map((key) => (
-                    <tr key={key._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                    <tr key={key._id} className="hover:bg-black/[0.03]">
                       <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">{key.customerName}</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">{key.customerEmail}</div>
+                        <div className="text-sm font-medium text-[#1d1d1f]">{key.customerName}</div>
+                        <div className="text-sm text-[#6e6e73]">{key.customerEmail}</div>
                         {key.customerCompany && (
-                          <div className="text-xs text-gray-400 dark:text-gray-500">{key.customerCompany}</div>
+                          <div className="text-xs text-[#6e6e73]">{key.customerCompany}</div>
                         )}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono">
+                          <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">
                             {key.apiKey.substring(0, 20)}...
                           </code>
                           <button
                             onClick={() => copyToClipboard(key.apiKey)}
-                            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                            className="text-[#6e6e73] hover:text-gray-600"
                           >
                             {copiedKey === key.apiKey ? (
                               <Check className="w-4 h-4 text-green-500" />
@@ -441,23 +441,23 @@ export default function B2BApiKeysAdmin() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 dark:text-white">{(key.usageCount || 0).toLocaleString()} requests</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-sm text-[#1d1d1f]">{(key.usageCount || 0).toLocaleString()} requests</div>
+                        <div className="text-xs text-[#6e6e73]">
                           Last: {formatDate(key.lastUsedAt)}
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         {key.isActive ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             Active
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                             Revoked
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 text-sm text-[#6e6e73]">
                         {formatDate(key.createdAt)}
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -465,7 +465,7 @@ export default function B2BApiKeysAdmin() {
                           {key.isActive ? (
                             <button
                               onClick={() => handleRevoke(key._id)}
-                              className="text-orange-600 hover:text-orange-700 dark:text-orange-400"
+                              className="text-orange-600 hover:text-orange-700"
                               title="Revoke"
                             >
                               <Lock className="w-4 h-4" />
@@ -473,7 +473,7 @@ export default function B2BApiKeysAdmin() {
                           ) : (
                             <button
                               onClick={() => handleActivate(key._id)}
-                              className="text-green-600 hover:text-green-700 dark:text-green-400"
+                              className="text-green-600 hover:text-green-700"
                               title="Activate"
                             >
                               <Unlock className="w-4 h-4" />
@@ -481,7 +481,7 @@ export default function B2BApiKeysAdmin() {
                           )}
                           <button
                             onClick={() => handleDelete(key._id)}
-                            className="text-red-600 hover:text-red-700 dark:text-red-400"
+                            className="text-red-600 hover:text-red-700"
                             title="Delete"
                           >
                             <Trash2 className="w-4 h-4" />

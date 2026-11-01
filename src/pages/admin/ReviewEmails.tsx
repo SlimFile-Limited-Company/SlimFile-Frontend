@@ -216,25 +216,25 @@ export default function ReviewEmails() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen pt-12 bg-white">
         <div className="container mx-auto px-4 py-32">
-          <div className="max-w-md mx-auto bg-black rounded-2xl shadow-2xl p-8">
-            <h1 className="text-2xl font-bold text-white mb-6">Admin Authentication</h1>
+          <div className="max-w-md mx-auto bg-[#f5f5f7] rounded-[28px] p-8">
+            <h1 className="text-2xl font-semibold text-[#1d1d1f] mb-6">Admin Authentication</h1>
             <form onSubmit={handleAuth} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white mb-2">
+                <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
                   Admin Password
                 </label>
                 <input
                   type="password"
                   value={adminPassword}
                   onChange={(e) => setAdminPassword(e.target.value)}
-                  className="w-full px-4 py-2 bg-white/10 text-white rounded-lg focus:ring-2 focus:ring-white placeholder-white/50"
+                  className="w-full px-4 py-2 bg-[#f5f5f7] text-[#1d1d1f] rounded-lg focus:ring-2 focus:ring-red-500/30 placeholder:text-[#86868b]"
                   placeholder="Enter admin password"
                   required
                 />
               </div>
-              <Button type="submit" className="w-full !bg-white !text-black hover:!bg-white/90 !shadow-none hover:!shadow-none !transform-none">
+              <Button type="submit" className="w-full ">
                 Authenticate
               </Button>
             </form>
@@ -308,19 +308,19 @@ export default function ReviewEmails() {
   };
 
   return (
-    <div className="min-h-screen md:h-screen bg-black overflow-hidden">
+    <div className="min-h-screen md:h-screen pt-12 bg-white overflow-hidden">
       {/* Mobile hamburger button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="md:hidden fixed top-4 right-4 z-50 p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+        className="md:hidden fixed top-16 right-4 z-50 p-2 bg-[#f5f5f7] rounded-lg hover:bg-black/[0.08] transition-colors"
       >
-        <Menu className="w-6 h-6 text-white" />
+        <Menu className="w-6 h-6 text-[#1d1d1f]" />
       </button>
 
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black/80 z-40"
+          className="md:hidden fixed inset-0 bg-black/30 z-40"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -328,7 +328,7 @@ export default function ReviewEmails() {
       <div className="flex flex-col md:flex-row h-full">
         {/* Sidebar */}
         <div className={`
-          w-72 bg-black md:bg-white/5 p-4 md:p-6 flex flex-col overflow-y-auto
+          w-72 bg-white md:bg-[#f5f5f7] p-4 md:p-6 flex flex-col overflow-y-auto
           fixed md:relative h-full z-40
           transition-transform duration-300 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
@@ -336,38 +336,38 @@ export default function ReviewEmails() {
           {/* Mobile close button */}
           <button
             onClick={() => setSidebarOpen(false)}
-            className="md:hidden absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="md:hidden absolute top-4 right-4 p-2 hover:bg-black/[0.05] rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-white" />
+            <X className="w-5 h-5 text-[#1d1d1f]" />
           </button>
 
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-white mb-2">SlimFile Mail</h1>
-            <p className="text-sm text-white">Send emails to reviewers</p>
+            <h1 className="text-2xl font-semibold text-[#1d1d1f] mb-2">SlimFile Mail</h1>
+            <p className="text-sm text-[#1d1d1f]">Send emails to reviewers</p>
           </div>
 
           {/* Stats */}
-          <div className="mb-8 p-4 bg-white/10 rounded-xl">
-            <div className="text-3xl font-bold text-white mb-1">{reviews.length}</div>
-            <div className="text-sm text-white">Total Reviews</div>
+          <div className="mb-8 p-4 bg-[#f5f5f7] rounded-xl">
+            <div className="text-3xl font-semibold text-[#1d1d1f] mb-1">{reviews.length}</div>
+            <div className="text-sm text-[#1d1d1f]">Total Reviews</div>
           </div>
 
           {/* Filters */}
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-4">
-              <Filter className="w-4 h-4 text-white" />
-              <h3 className="font-semibold text-white">Filters</h3>
+              <Filter className="w-4 h-4 text-[#1d1d1f]" />
+              <h3 className="font-semibold text-[#1d1d1f]">Filters</h3>
             </div>
 
             {/* Rating Filter */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-white mb-2">
+              <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
                 Rating
               </label>
               <select
                 value={filterRating}
                 onChange={(e) => setFilterRating(e.target.value)}
-                className="w-full px-3 py-2 bg-white/10 text-white rounded-lg text-sm focus:ring-2 focus:ring-white"
+                className="w-full px-3 py-2 bg-[#f5f5f7] text-[#1d1d1f] rounded-lg text-sm focus:ring-2 focus:ring-red-500/30"
               >
                 <option value="">All Ratings</option>
                 <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
@@ -380,13 +380,13 @@ export default function ReviewEmails() {
 
             {/* Operation Type Filter */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-white mb-2">
+              <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
                 Operation Type
               </label>
               <select
                 value={filterOperation}
                 onChange={(e) => setFilterOperation(e.target.value)}
-                className="w-full px-3 py-2 bg-white/10 text-white rounded-lg text-sm focus:ring-2 focus:ring-white"
+                className="w-full px-3 py-2 bg-[#f5f5f7] text-[#1d1d1f] rounded-lg text-sm focus:ring-2 focus:ring-red-500/30"
               >
                 <option value="">All Operations</option>
                 {operationTypes.map((op) => (
@@ -404,7 +404,7 @@ export default function ReviewEmails() {
                   setFilterRating('');
                   setFilterOperation('');
                 }}
-                className="text-sm text-white hover:text-white/80 font-medium underline"
+                className="text-sm text-[#1d1d1f] hover:text-[#1d1d1f] font-medium underline"
               >
                 Clear Filters
               </button>
@@ -412,11 +412,11 @@ export default function ReviewEmails() {
           </div>
 
           {/* Selection Info */}
-          <div className="p-4 bg-white/10 rounded-lg">
-            <div className="text-sm font-medium text-white mb-1">
+          <div className="p-4 bg-[#f5f5f7] rounded-lg">
+            <div className="text-sm font-medium text-[#1d1d1f] mb-1">
               {selectedReviews.size} Selected
             </div>
-            <div className="text-xs text-white">
+            <div className="text-xs text-[#1d1d1f]">
               Click reviews to select
             </div>
           </div>
@@ -427,38 +427,38 @@ export default function ReviewEmails() {
           <div className="container mx-auto px-4 md:px-6 py-4 md:py-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
               {/* Email Composer */}
-              <div className="lg:col-span-1 bg-black rounded-xl md:rounded-2xl p-4 md:p-6 h-fit">
+              <div className="lg:col-span-1 bg-[#f5f5f7] rounded-[22px] p-4 md:p-6 h-fit">
                 <div className="flex items-center gap-2 mb-4">
-                  <Mail className="w-5 h-5 text-white" />
-                  <h2 className="text-xl font-bold text-white">Compose Email</h2>
+                  <Mail className="w-5 h-5 text-[#1d1d1f]" />
+                  <h2 className="text-xl font-semibold text-[#1d1d1f]">Compose Email</h2>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-white mb-2">
+                    <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
                       Subject
                     </label>
                     <input
                       type="text"
                       value={emailSubject}
                       onChange={(e) => setEmailSubject(e.target.value)}
-                      className="w-full px-4 py-2 bg-white/10 text-white rounded-lg focus:ring-2 focus:ring-white placeholder-white/50"
+                      className="w-full px-4 py-2 bg-[#f5f5f7] text-[#1d1d1f] rounded-lg focus:ring-2 focus:ring-red-500/30 placeholder:text-[#86868b]"
                       placeholder="Email subject"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-white mb-2">
+                    <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
                       Message
                     </label>
                     <textarea
                       value={emailMessage}
                       onChange={(e) => setEmailMessage(e.target.value)}
                       rows={8}
-                      className="w-full px-4 py-2 bg-white/10 text-white rounded-lg focus:ring-2 focus:ring-white resize-none placeholder-white/50"
+                      className="w-full px-4 py-2 bg-[#f5f5f7] text-[#1d1d1f] rounded-lg focus:ring-2 focus:ring-red-500/30 resize-none placeholder:text-[#86868b]"
                       placeholder="Your message here..."
                     />
-                    <p className="text-xs text-white mt-1">
+                    <p className="text-xs text-[#1d1d1f] mt-1">
                       Tip: The reviewer's name will be automatically included
                     </p>
                   </div>
@@ -466,7 +466,7 @@ export default function ReviewEmails() {
                   <Button
                     onClick={() => sendEmail(false)}
                     disabled={sending || selectedReviews.size === 0 || !emailSubject || !emailMessage}
-                    className="w-full !bg-white !text-black hover:!bg-white/90 !shadow-none hover:!shadow-none !transform-none"
+                    className="w-full "
                   >
                     {sending ? (
                       <>
@@ -482,17 +482,17 @@ export default function ReviewEmails() {
                   </Button>
 
                   {sendResults.length > 0 && (
-                    <div className="mt-4 p-4 bg-white/10 rounded-lg">
-                      <h3 className="text-sm font-semibold text-white mb-2">Send Results:</h3>
+                    <div className="mt-4 p-4 bg-[#f5f5f7] rounded-lg">
+                      <h3 className="text-sm font-semibold text-[#1d1d1f] mb-2">Send Results:</h3>
                       <div className="space-y-2">
                         {sendResults.map((result, idx) => (
                           <div key={idx} className="flex items-center gap-2 text-sm">
                             {result.success ? (
-                              <CheckCircle2 className="w-4 h-4 text-white" />
+                              <CheckCircle2 className="w-4 h-4 text-[#1d1d1f]" />
                             ) : (
-                              <XCircle className="w-4 h-4 text-white" />
+                              <XCircle className="w-4 h-4 text-[#1d1d1f]" />
                             )}
-                            <span className="text-white">
+                            <span className="text-[#1d1d1f]">
                               {result.email}
                             </span>
                           </div>
@@ -504,7 +504,7 @@ export default function ReviewEmails() {
                   {/* Email Preview */}
                   {(emailSubject || emailMessage) && (
                     <div className="mt-6">
-                      <h3 className="text-sm font-semibold text-white mb-2">Email Preview</h3>
+                      <h3 className="text-sm font-semibold text-[#1d1d1f] mb-2">Email Preview</h3>
                       <div className="bg-white rounded-lg overflow-hidden" style={{ height: '400px' }}>
                         <iframe
                           srcDoc={generatePreviewHTML()}
@@ -523,22 +523,22 @@ export default function ReviewEmails() {
               </div>
 
               {/* Reviews List */}
-              <div className="lg:col-span-2 bg-black rounded-xl md:rounded-2xl p-4 md:p-6">
+              <div className="lg:col-span-2 bg-[#f5f5f7] rounded-[22px] p-4 md:p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-white">
+                  <h2 className="text-xl font-semibold text-[#1d1d1f]">
                     Reviews with Emails ({reviews.length})
                   </h2>
-                  <Button variant="outline" size="sm" onClick={selectAll} className="!border-white !bg-black !text-white hover:!bg-white hover:!text-black !shadow-none">
+                  <Button variant="outline" size="sm" onClick={selectAll} className="">
                     {selectedReviews.size === reviews.length ? 'Deselect All' : 'Select All'}
                   </Button>
                 </div>
 
                 {loading ? (
                   <div className="flex items-center justify-center py-12">
-                    <Loader2 className="w-8 h-8 animate-spin text-white" />
+                    <Loader2 className="w-8 h-8 animate-spin text-[#1d1d1f]" />
                   </div>
                 ) : reviews.length === 0 ? (
-                  <div className="text-center py-12 text-white">
+                  <div className="text-center py-12 text-[#1d1d1f]">
                     No reviews with emails found
                   </div>
                 ) : (
@@ -552,8 +552,8 @@ export default function ReviewEmails() {
                           key={review._id}
                           className={`p-3 md:p-4 rounded-lg cursor-pointer transition-all ${
                             selectedReviews.has(review._id)
-                              ? 'bg-white/20'
-                              : 'bg-white/5 hover:bg-white/10'
+                              ? 'bg-[#e8e8ed]'
+                              : 'bg-[#f5f5f7] hover:bg-black/[0.05]'
                           }`}
                           onClick={() => toggleReview(review._id)}
                         >
@@ -565,13 +565,13 @@ export default function ReviewEmails() {
                                     type="checkbox"
                                     checked={selectedReviews.has(review._id)}
                                     onChange={() => toggleReview(review._id)}
-                                    className="w-4 h-4 text-white rounded focus:ring-white bg-white/10"
+                                    className="w-4 h-4 text-[#1d1d1f] rounded focus:ring-red-500/30 bg-[#f5f5f7]"
                                     onClick={(e) => e.stopPropagation()}
                                   />
-                                  <span className="font-semibold text-white text-sm md:text-base">{review.name}</span>
+                                  <span className="font-semibold text-[#1d1d1f] text-sm md:text-base">{review.name}</span>
                                 </div>
                                 <div className="flex items-center gap-2 ml-6 md:ml-0">
-                                  <span className="text-xs md:text-sm text-white truncate">{review.email}</span>
+                                  <span className="text-xs md:text-sm text-[#1d1d1f] truncate">{review.email}</span>
 
                                   {/* Email History Badge */}
                                   {emailCount > 0 && (
@@ -580,7 +580,7 @@ export default function ReviewEmails() {
                                         e.stopPropagation();
                                         viewEmailHistory(review._id);
                                       }}
-                                      className="flex items-center gap-1 px-2 py-1 bg-white text-black rounded-full text-xs font-medium hover:bg-white/90 transition-colors whitespace-nowrap"
+                                      className="flex items-center gap-1 px-2 py-1 bg-red-600 text-white rounded-full text-xs font-medium hover:bg-red-700 transition-colors whitespace-nowrap"
                                     >
                                       <Mail className="w-3 h-3" />
                                       Emailed {emailCount}x
@@ -593,17 +593,17 @@ export default function ReviewEmails() {
                                   {[...Array(5)].map((_, i) => (
                                     <span
                                       key={i}
-                                      className={i < review.rating ? 'text-yellow-400' : 'text-white/30'}
+                                      className={i < review.rating ? 'text-amber-600' : 'text-[#86868b]'}
                                     >
                                       ★
                                     </span>
                                   ))}
                                 </div>
-                                <span className="text-xs text-white">
+                                <span className="text-xs text-[#1d1d1f]">
                                   {review.operationType} • {new Date(review.createdAt).toLocaleDateString()}
                                 </span>
                               </div>
-                              <p className="text-xs md:text-sm text-white mb-2">{review.comment}</p>
+                              <p className="text-xs md:text-sm text-[#1d1d1f] mb-2">{review.comment}</p>
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -612,7 +612,7 @@ export default function ReviewEmails() {
                                   sendEmail(true, review._id);
                                 }}
                                 disabled={sending || !emailSubject || !emailMessage}
-                                className="!border-white !bg-black !text-white hover:!bg-white hover:!text-black !shadow-none text-xs md:text-sm w-full md:w-auto"
+                                className=" text-xs md:text-sm w-full md:w-auto"
                               >
                                 <Send className="w-3 h-3 mr-1" />
                                 Send to this reviewer
@@ -632,47 +632,47 @@ export default function ReviewEmails() {
 
       {/* Email History Modal */}
       {viewingHistory && (
-        <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-4">
-          <div className="bg-black rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b border-white/20">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-[22px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] max-w-2xl w-full max-h-[80vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-black/10">
               <div className="flex items-center gap-2">
-                <History className="w-5 h-5 text-white" />
-                <h2 className="text-xl font-bold text-white">Email History</h2>
+                <History className="w-5 h-5 text-[#1d1d1f]" />
+                <h2 className="text-xl font-semibold text-[#1d1d1f]">Email History</h2>
               </div>
               <button
                 onClick={() => setViewingHistory(null)}
-                className="p-2 hover:bg-white hover:text-black rounded-lg transition-colors"
+                className="p-2 hover:bg-black/[0.05] rounded-lg transition-colors"
               >
-                <X className="w-5 h-5 text-white" />
+                <X className="w-5 h-5 text-[#1d1d1f]" />
               </button>
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[calc(80vh-88px)]">
               {emailHistoryMap[viewingHistory]?.length === 0 ? (
-                <div className="text-center py-12 text-white">
+                <div className="text-center py-12 text-[#1d1d1f]">
                   No emails sent to this reviewer yet
                 </div>
               ) : (
                 <div className="space-y-4">
                   {emailHistoryMap[viewingHistory]?.map((history, idx) => (
-                    <div key={history._id} className="p-4 bg-white/10 rounded-lg">
+                    <div key={history._id} className="p-4 bg-[#f5f5f7] rounded-lg">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-white">{history.subject}</span>
-                        <span className="text-xs text-white">
+                        <span className="font-semibold text-[#1d1d1f]">{history.subject}</span>
+                        <span className="text-xs text-[#1d1d1f]">
                           {new Date(history.sentAt).toLocaleString()}
                         </span>
                       </div>
-                      <p className="text-sm text-white whitespace-pre-wrap">{history.message}</p>
+                      <p className="text-sm text-[#1d1d1f] whitespace-pre-wrap">{history.message}</p>
                       <div className="mt-2 flex items-center gap-1">
                         {history.success ? (
                           <>
-                            <CheckCircle2 className="w-4 h-4 text-white" />
-                            <span className="text-xs text-white">Sent successfully</span>
+                            <CheckCircle2 className="w-4 h-4 text-[#1d1d1f]" />
+                            <span className="text-xs text-[#1d1d1f]">Sent successfully</span>
                           </>
                         ) : (
                           <>
-                            <XCircle className="w-4 h-4 text-white" />
-                            <span className="text-xs text-white">Failed to send</span>
+                            <XCircle className="w-4 h-4 text-[#1d1d1f]" />
+                            <span className="text-xs text-[#1d1d1f]">Failed to send</span>
                           </>
                         )}
                       </div>

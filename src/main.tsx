@@ -44,6 +44,13 @@ const HeaderOnlyLayout = () => (
     <Outlet />
   </>
 );
+
+const WithHeader = ({ children }: { children: React.ReactNode }) => (
+  <>
+    <Header />
+    {children}
+  </>
+);
 import { PenTool } from 'lucide-react';
 
 const WHITEBOARD_PITCH = 'Sketch ideas, plan projects and brainstorm on an endless canvas. Your boards are saved to your account so you can pick up where you left off.';
@@ -462,14 +469,14 @@ ReactDOM.createRoot(root).render(
         {/* Admin newsletter — protected by server-side email check */}
         <Route path="admin/newsletter" element={
           <ProtectedRoute>
-            <AdminNewsletter />
+            <WithHeader><AdminNewsletter /></WithHeader>
           </ProtectedRoute>
         } />
 
         {/* Admin Review Emails — protected by server-side email check */}
         <Route path="admin/review-emails" element={
           <ProtectedRoute>
-            <ReviewEmails />
+            <WithHeader><ReviewEmails /></WithHeader>
           </ProtectedRoute>
         } />
 
@@ -490,7 +497,7 @@ ReactDOM.createRoot(root).render(
         {/* CEO Dashboard - Full screen analytics dashboard without header/footer */}
         <Route path="ceo-dashboard" element={
           <ProtectedRoute>
-            <CEODashboard />
+            <WithHeader><CEODashboard /></WithHeader>
           </ProtectedRoute>
         } />
             </Routes>

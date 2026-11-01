@@ -1,15 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 
-// Hide header/footer on mount
+// Hide the footer on mount
 const useFullScreen = () => {
   useEffect(() => {
-    // Hide header and footer
-    const header = document.querySelector('header');
+    // Hide the footer; the site header stays
     const footer = document.querySelector('footer');
     const main = document.querySelector('main');
 
-    if (header) header.style.display = 'none';
     if (footer) footer.style.display = 'none';
     if (main) {
       main.style.padding = '0';
@@ -23,7 +21,6 @@ const useFullScreen = () => {
 
     return () => {
       // Restore on unmount
-      if (header) header.style.display = '';
       if (footer) footer.style.display = '';
       if (main) {
         main.style.padding = '';
@@ -93,7 +90,7 @@ export default function SecurityTerminal() {
   // Beep sound for alerts (data URI - pure sine wave)
   const alertBeep = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBDGH0fPTgjMGHm7A7+OZSA8'
 
-  // Hide header/footer for full-screen terminal
+  // Hide the footer for the full-screen terminal
   useFullScreen();
 
   useEffect(() => {
@@ -414,9 +411,15 @@ export default function SecurityTerminal() {
 
   if (!isAuthenticated) {
     return (
-      <div className="fixed inset-0 bg-black text-green-500 font-mono flex items-center justify-center p-4 z-[9999]">
-        <div className="w-full max-w-md">
-          <div className="border border-green-500 p-6">
+      <div className="fixed inset-x-0 top-12 bottom-0 bg-[#f5f5f7] text-[#f5f5f7] font-mono flex items-center justify-center p-4 z-30">
+        <div className="w-full max-w-md rounded-[14px] bg-[#1d1d1f] overflow-hidden shadow-[0_30px_80px_-20px_rgba(0,0,0,0.35)]">
+          <div className="flex items-center gap-2 px-4 h-10 border-b border-white/10 flex-shrink-0">
+            <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+            <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
+            <span className="w-3 h-3 rounded-full bg-[#28c840]" />
+            <span className="flex-1 text-center text-xs text-[#86868b] -ml-12">SlimFile Security — sign in</span>
+          </div>
+          <div className="p-6">
             <pre className="text-xs mb-6 text-center">
 {`
 ███████╗██╗     ██╗███╗   ███╗███████╗██╗██╗     ███████╗
@@ -429,7 +432,7 @@ export default function SecurityTerminal() {
             </pre>
             <div className="text-center mb-6">
               <p className="text-sm">SECURITY COMMAND CENTER</p>
-              <p className="text-xs text-green-400">v1.0 - RESTRICTED ACCESS</p>
+              <p className="text-xs text-[#30d158]">v1.0 - RESTRICTED ACCESS</p>
             </div>
 
             <form onSubmit={handleLogin}>
@@ -441,7 +444,7 @@ export default function SecurityTerminal() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-black border border-green-500 text-green-500 p-2 focus:outline-none focus:border-green-400"
+                  className="w-full bg-white/5 border border-white/15 rounded-lg text-[#f5f5f7] p-2.5 focus:outline-none focus:border-[#30d158]"
                   placeholder="••••••••••••"
                   disabled={loading}
                   autoFocus
@@ -449,7 +452,7 @@ export default function SecurityTerminal() {
               </div>
 
               {error && (
-                <div className="mb-4 text-red-500 text-sm">
+                <div className="mb-4 text-[#ff453a] text-sm">
                   ⚠ {error}
                 </div>
               )}
@@ -457,13 +460,13 @@ export default function SecurityTerminal() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-green-500 text-black p-2 hover:bg-green-400 transition-colors disabled:opacity-50"
+                className="w-full bg-[#30d158] text-[#1d1d1f] font-semibold rounded-lg p-2.5 hover:bg-[#2ac14f] transition-colors disabled:opacity-50"
               >
                 {loading ? 'AUTHENTICATING...' : 'ACCESS TERMINAL'}
               </button>
             </form>
 
-            <div className="mt-6 text-xs text-green-700 text-center">
+            <div className="mt-6 text-xs text-[#86868b] text-center">
               <p>⚠ UNAUTHORIZED ACCESS IS PROHIBITED</p>
               <p>ALL ATTEMPTS ARE LOGGED AND MONITORED</p>
             </div>
@@ -474,15 +477,22 @@ export default function SecurityTerminal() {
   }
 
   return (
-    <div className="fixed inset-0 bg-black text-green-500 font-mono overflow-hidden z-[9999] flex flex-col">
-      <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col p-3 gap-3 overflow-hidden">
+    <div className="fixed inset-x-0 top-12 bottom-0 bg-[#f5f5f7] text-[#f5f5f7] font-mono overflow-hidden z-30 flex flex-col p-3 sm:p-6">
+      <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col overflow-hidden rounded-[14px] bg-[#1d1d1f] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.35)]">
+        <div className="flex items-center gap-2 px-4 h-10 border-b border-white/10 flex-shrink-0">
+            <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+            <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
+            <span className="w-3 h-3 rounded-full bg-[#28c840]" />
+            <span className="flex-1 text-center text-xs text-[#86868b] -ml-12">SlimFile Security — live monitor</span>
+          </div>
+      <div className="flex-1 flex flex-col p-3 gap-3 overflow-hidden min-h-0">
         {/* Header */}
-        <div className="border border-green-500 p-3 flex-shrink-0">
+        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 flex-shrink-0">
           <div className="flex justify-between items-center text-xs">
             <div>
-              <span className="text-green-400">SLIMFILE SECURITY TERMINAL</span>
+              <span className="text-[#30d158]">SLIMFILE SECURITY TERMINAL</span>
               <span className="mx-2">|</span>
-              <span>STATUS: <span className="text-green-400">MONITORING</span></span>
+              <span>STATUS: <span className="text-[#30d158]">MONITORING</span></span>
             </div>
             <div>
               <span>UPTIME: {uptime.days}d {uptime.hours}h {uptime.minutes}m</span>
@@ -494,7 +504,7 @@ export default function SecurityTerminal() {
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 flex-shrink-0">
             {/* Sessions */}
-            <div className="border border-green-500 p-3">
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
               <div className="text-sm mb-2">[LIVE SESSIONS]</div>
               <div className="text-xs space-y-0.5">
                 <div>├─ Total Active: {stats.sessions.total}</div>
@@ -505,10 +515,10 @@ export default function SecurityTerminal() {
             </div>
 
             {/* Threats */}
-            <div className="border border-green-500 p-3">
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
               <div className="text-sm mb-2">[THREATS - LAST 10 MIN]</div>
               <div className="text-xs space-y-0.5">
-                <div className={stats.threats.critical > 0 ? 'text-red-500' : ''}>
+                <div className={stats.threats.critical > 0 ? 'text-[#ff453a]' : ''}>
                   ├─ Critical: {stats.threats.critical} {stats.threats.critical > 0 && '🔴'}
                 </div>
                 <div className={stats.threats.high > 0 ? 'text-yellow-500' : ''}>
@@ -520,7 +530,7 @@ export default function SecurityTerminal() {
             </div>
 
             {/* Activity */}
-            <div className="border border-green-500 p-3">
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
               <div className="text-sm mb-2">[ACTIVITY]</div>
               <div className="text-xs space-y-0.5">
                 <div>├─ Failed Logins: {stats.failedLogins}</div>
@@ -533,17 +543,17 @@ export default function SecurityTerminal() {
 
         {/* Recent Events Stream */}
         {stats && stats.recentEvents.length > 0 && (
-          <div className="border border-green-500 p-3 flex-shrink-0">
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 flex-shrink-0">
             <div className="text-sm mb-2">[SECURITY EVENT STREAM]</div>
             <div className="text-xs space-y-0.5 max-h-24 overflow-y-auto">
               {stats.recentEvents.slice(0, 10).map((event, i) => {
                 // Highlight different attack types
                 const isAttack = ['sql_injection', 'path_traversal', 'xss_attempt', 'malicious_upload'].includes(event.type);
                 const colorClass =
-                  event.severity === 'critical' ? 'text-red-500' :
+                  event.severity === 'critical' ? 'text-[#ff453a]' :
                   event.severity === 'high' ? 'text-yellow-500' :
                   isAttack ? 'text-orange-400' :
-                  'text-green-500';
+                  'text-[#f5f5f7]';
 
                 return (
                   <div key={i} className={colorClass}>
@@ -559,7 +569,7 @@ export default function SecurityTerminal() {
         {/* Terminal Output */}
         <div
           ref={terminalRef}
-          className="border border-green-500 p-3 flex-1 overflow-y-auto text-xs min-h-0"
+          className="rounded-xl border border-white/10 bg-white/[0.03] p-3 flex-1 overflow-y-auto text-xs min-h-0"
         >
           {output.map((line, i) => (
             <div key={i}>{line}</div>
@@ -567,7 +577,7 @@ export default function SecurityTerminal() {
         </div>
 
         {/* Command Input */}
-        <div className="border border-green-500 p-3 flex-shrink-0">
+        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 flex-shrink-0">
           <div className="flex items-center text-xs">
             <span className="mr-2">root@slimfile:~#</span>
             <input
@@ -576,11 +586,12 @@ export default function SecurityTerminal() {
               value={command}
               onChange={(e) => setCommand(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="flex-1 bg-transparent border-none text-green-500 focus:outline-none"
+              className="flex-1 bg-transparent border-none text-[#f5f5f7] focus:outline-none"
               placeholder="type 'help' for commands"
             />
             <span className="animate-pulse">█</span>
           </div>
+        </div>
         </div>
       </div>
     </div>

@@ -135,19 +135,19 @@ export default function CEODashboard() {
 
   if (loading && !overview) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+      <div className="min-h-screen pt-12 bg-white flex items-center justify-center">
+        <div className="text-[#1d1d1f] text-xl">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col lg:flex-row">
+    <div className="min-h-screen pt-12 bg-white text-[#1d1d1f] flex flex-col lg:flex-row">
       {/* Sidebar */}
-      <aside className="w-full lg:w-64 bg-black border-b lg:border-b-0 lg:border-r border-white/10 flex-shrink-0">
-        <div className="p-4 lg:p-6 border-b border-white/10">
+      <aside className="w-full lg:w-64 bg-white border-b lg:border-b-0 lg:border-r border-black/[0.06] flex-shrink-0">
+        <div className="p-4 lg:p-6 border-b border-black/[0.06]">
           <h1 className="text-lg lg:text-xl font-semibold">SlimFile CEO</h1>
-          <p className="text-white/40 text-xs lg:text-sm mt-1">Analytics Dashboard</p>
+          <p className="text-[#86868b] text-xs lg:text-sm mt-1">Analytics Dashboard</p>
         </div>
 
         <nav className="p-2 lg:p-4 flex lg:flex-col overflow-x-auto lg:overflow-x-visible">
@@ -168,8 +168,8 @@ export default function CEODashboard() {
               onClick={() => setActiveSection(item.id)}
               className={`whitespace-nowrap lg:whitespace-normal lg:w-full text-left px-3 lg:px-4 py-2 lg:py-3 rounded-lg mb-0 lg:mb-1 mr-2 lg:mr-0 transition-colors text-sm ${
                 activeSection === item.id
-                  ? 'bg-white text-black'
-                  : 'text-white/60 hover:bg-white/5 hover:text-white'
+                  ? 'bg-[#e8e8ed] text-[#1d1d1f] font-medium'
+                  : 'text-[#6e6e73] hover:bg-black/[0.05] hover:text-[#1d1d1f]'
               }`}
             >
               {item.label}
@@ -181,10 +181,10 @@ export default function CEODashboard() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-h-screen lg:min-h-0">
         {/* Header */}
-        <header className="bg-black border-b border-white/10 px-4 lg:px-8 py-3 lg:py-4 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 lg:gap-0">
+        <header className="bg-white border-b border-black/[0.06] px-4 lg:px-8 py-3 lg:py-4 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 lg:gap-0">
           <div>
             <h2 className="text-xl lg:text-2xl font-semibold capitalize">{activeSection}</h2>
-            <p className="text-white/40 text-xs lg:text-sm mt-1">
+            <p className="text-[#86868b] text-xs lg:text-sm mt-1">
               {period === 'today' ? 'Today' : period === '7d' ? 'Last 7 days' : period === '30d' ? 'Last 30 days' : period === '90d' ? 'Last 90 days' : 'All time'}
             </p>
           </div>
@@ -197,8 +197,8 @@ export default function CEODashboard() {
                 onClick={() => setPeriod(p)}
                 className={`px-3 lg:px-4 py-2 rounded-lg text-xs lg:text-sm transition-colors whitespace-nowrap ${
                   period === p
-                    ? 'bg-white text-black'
-                    : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white'
+                    ? 'bg-red-600 text-white'
+                    : 'bg-[#f5f5f7] text-[#6e6e73] hover:bg-black/[0.05] hover:text-[#1d1d1f]'
                 }`}
               >
                 {p === 'today' ? 'Today' : p === '7d' ? '7D' : p === '30d' ? '30D' : p === '90d' ? '90D' : 'All'}
@@ -249,13 +249,13 @@ export default function CEODashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mt-6">
                 {/* User Growth Chart */}
                 {usersAnalytics && usersAnalytics.growth.web.length > 0 && (
-                  <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+                  <div className="bg-[#f5f5f7] rounded-lg p-4 lg:p-6 border border-black/[0.06]">
                     <h3 className="text-base lg:text-lg font-semibold mb-4">User Growth Trend</h3>
                     <div className="relative h-48">
                       <svg className="w-full h-full" viewBox="0 0 300 150" preserveAspectRatio="none">
                         <polyline
                           fill="none"
-                          stroke="white"
+                          stroke="#dc2626"
                           strokeWidth="2"
                           points={usersAnalytics.growth.web.map((day: any, i: number, arr: any[]) => {
                             const maxCount = Math.max(...arr.map((d: any) => d.count), 1);
@@ -265,7 +265,7 @@ export default function CEODashboard() {
                           }).join(' ')}
                         />
                         <polyline
-                          fill="rgba(255, 255, 255, 0.1)"
+                          fill="rgba(220, 38, 38, 0.08)"
                           stroke="none"
                           points={`0,150 ${usersAnalytics.growth.web.map((day: any, i: number, arr: any[]) => {
                             const maxCount = Math.max(...arr.map((d: any) => d.count), 1);
@@ -276,19 +276,19 @@ export default function CEODashboard() {
                         />
                       </svg>
                     </div>
-                    <p className="text-xs text-white/40 mt-2">{period === 'today' ? 'Today' : period === '7d' ? 'Last 7 days' : period === '30d' ? 'Last 30 days' : period === '90d' ? 'Last 90 days' : 'All time'} • Total: {usersAnalytics.growth.web.reduce((sum: number, d: any) => sum + d.count, 0)} users</p>
+                    <p className="text-xs text-[#86868b] mt-2">{period === 'today' ? 'Today' : period === '7d' ? 'Last 7 days' : period === '30d' ? 'Last 30 days' : period === '90d' ? 'Last 90 days' : 'All time'} • Total: {usersAnalytics.growth.web.reduce((sum: number, d: any) => sum + d.count, 0)} users</p>
                   </div>
                 )}
 
                 {/* Compression Trend Chart */}
                 {compressionAnalytics && compressionAnalytics.trend.length > 0 && (
-                  <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+                  <div className="bg-[#f5f5f7] rounded-lg p-4 lg:p-6 border border-black/[0.06]">
                     <h3 className="text-base lg:text-lg font-semibold mb-4">Compression Trend</h3>
                     <div className="relative h-48">
                       <svg className="w-full h-full" viewBox="0 0 300 150" preserveAspectRatio="none">
                         <polyline
                           fill="none"
-                          stroke="white"
+                          stroke="#dc2626"
                           strokeWidth="2"
                           points={compressionAnalytics.trend.map((day: any, i: number, arr: any[]) => {
                             const maxCount = Math.max(...arr.map((d: any) => d.count), 1);
@@ -298,7 +298,7 @@ export default function CEODashboard() {
                           }).join(' ')}
                         />
                         <polyline
-                          fill="rgba(255, 255, 255, 0.1)"
+                          fill="rgba(220, 38, 38, 0.08)"
                           stroke="none"
                           points={`0,150 ${compressionAnalytics.trend.map((day: any, i: number, arr: any[]) => {
                             const maxCount = Math.max(...arr.map((d: any) => d.count), 1);
@@ -309,7 +309,7 @@ export default function CEODashboard() {
                         />
                       </svg>
                     </div>
-                    <p className="text-xs text-white/40 mt-2">{period === 'today' ? 'Today' : period === '7d' ? 'Last 7 days' : period === '30d' ? 'Last 30 days' : period === '90d' ? 'Last 90 days' : 'All time'} • Total: {compressionAnalytics.trend.reduce((sum: number, d: any) => sum + d.count, 0)} compressions</p>
+                    <p className="text-xs text-[#86868b] mt-2">{period === 'today' ? 'Today' : period === '7d' ? 'Last 7 days' : period === '30d' ? 'Last 30 days' : period === '90d' ? 'Last 90 days' : 'All time'} • Total: {compressionAnalytics.trend.reduce((sum: number, d: any) => sum + d.count, 0)} compressions</p>
                   </div>
                 )}
               </div>
@@ -324,18 +324,18 @@ export default function CEODashboard() {
                 <StatCard label="Top Users" value={usersAnalytics.topUsers.length} />
               </div>
 
-              <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+              <div className="bg-[#f5f5f7] rounded-lg p-4 lg:p-6 border border-black/[0.06]">
                 <h3 className="text-base lg:text-lg font-semibold mb-4">Top Users by Compressions</h3>
                 <div className="space-y-2 overflow-x-auto">
                   {usersAnalytics.topUsers.slice(0, 10).map((user: any, i: number) => (
-                    <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                    <div key={i} className="flex items-center justify-between p-3 bg-[#f5f5f7] rounded-lg">
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-sm truncate">{user.name}</p>
-                        <p className="text-white/40 text-xs truncate">{user.email}</p>
+                        <p className="text-[#86868b] text-xs truncate">{user.email}</p>
                       </div>
                       <div className="text-right ml-4 flex-shrink-0">
                         <p className="font-semibold text-sm">{user.totalFilesCompressed}</p>
-                        <p className="text-white/40 text-xs">{(user.totalSpaceSaved / (1024 * 1024)).toFixed(1)} MB</p>
+                        <p className="text-[#86868b] text-xs">{(user.totalSpaceSaved / (1024 * 1024)).toFixed(1)} MB</p>
                       </div>
                     </div>
                   ))}
@@ -357,15 +357,15 @@ export default function CEODashboard() {
                 />
               </div>
 
-              <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+              <div className="bg-[#f5f5f7] rounded-lg p-4 lg:p-6 border border-black/[0.06]">
                 <h3 className="text-base lg:text-lg font-semibold mb-4">File Types</h3>
                 <div className="space-y-2">
                   {compressionAnalytics.fileTypes.map((ft: any, i: number) => (
-                    <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                    <div key={i} className="flex items-center justify-between p-3 bg-[#f5f5f7] rounded-lg">
                       <span className="font-semibold text-sm">{ft._id}</span>
                       <div className="text-right">
                         <p className="font-semibold text-sm">{ft.count.toLocaleString()}</p>
-                        <p className="text-white/40 text-xs">{ft.avgCompressionRatio.toFixed(1)}% avg ratio</p>
+                        <p className="text-[#86868b] text-xs">{ft.avgCompressionRatio.toFixed(1)}% avg ratio</p>
                       </div>
                     </div>
                   ))}
@@ -382,28 +382,28 @@ export default function CEODashboard() {
                 <StatCard label="Unique Visitors" value={num(operations.uniqueVisitors)} />
               </div>
 
-              <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+              <div className="bg-[#f5f5f7] rounded-lg p-4 lg:p-6 border border-black/[0.06]">
                 <h3 className="text-base lg:text-lg font-semibold mb-1">All Operations</h3>
-                <p className="text-white/40 text-xs lg:text-sm mb-4">
+                <p className="text-[#86868b] text-xs lg:text-sm mb-4">
                   Counted from the dedicated usage collections on every successful call, so signed-out
                   visitors are included and nothing here depends on a compression ratio.
                   OCR and QR run entirely in your browser, so the page reports its own visits and
                   completions rather than a server request.
                   <span className="block mt-1">
-                    <span className="text-white/60">Compression</span> is the same counter the Feed page
+                    <span className="text-[#6e6e73]">Compression</span> is the same counter the Feed page
                     shows, so it matches exactly and ignores the period filter. Everything else respects it.
                   </span>
                 </p>
 
                 {operations.operations.length === 0 ? (
-                  <p className="text-white/40 text-sm py-6 text-center">No usage recorded for this period.</p>
+                  <p className="text-[#86868b] text-sm py-6 text-center">No usage recorded for this period.</p>
                 ) : (
                   <>
                     {/* Desktop table */}
                     <div className="hidden md:block overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-white/40 text-left border-b border-white/10">
+                          <tr className="text-[#86868b] text-left border-b border-black/[0.06]">
                             <th className="pb-3 pr-4 font-medium">Operation</th>
                             <th className="pb-3 pr-4 font-medium text-right">Uses</th>
                             <th className="pb-3 pr-4 font-medium text-right">Signed in</th>
@@ -417,32 +417,32 @@ export default function CEODashboard() {
                         </thead>
                         <tbody>
                           {operations.operations.map((op: any) => (
-                            <tr key={op.collection + op.operation} className="border-b border-white/5">
+                            <tr key={op.collection + op.operation} className="border-b border-black/[0.06]">
                               <td className="py-3 pr-4">
                                 <span className="font-semibold">{formatOperation(op.operation)}</span>
-                                <span className="block text-white/30 text-xs">
-                                  {op.collection}{op.lifetime && <span className="text-white/50"> · all-time</span>}
+                                <span className="block text-[#86868b] text-xs">
+                                  {op.collection}{op.lifetime && <span className="text-[#6e6e73]"> · all-time</span>}
                                 </span>
                               </td>
                               <td className="py-3 pr-4 text-right font-semibold">{num(op.uses)}</td>
-                              <td className="py-3 pr-4 text-right text-white/60">{num(op.signedIn)}</td>
-                              <td className="py-3 pr-4 text-right text-white/60">{num(op.anonymous)}</td>
-                              <td className="py-3 pr-4 text-right text-white/60">
+                              <td className="py-3 pr-4 text-right text-[#6e6e73]">{num(op.signedIn)}</td>
+                              <td className="py-3 pr-4 text-right text-[#6e6e73]">{num(op.anonymous)}</td>
+                              <td className="py-3 pr-4 text-right text-[#6e6e73]">
                                 {num(op.uniqueVisitors)}
                               </td>
-                              <td className="py-3 pr-4 text-right text-white/60">{op.pages ?? '-'}</td>
-                              <td className="py-3 pr-4 text-right text-white/60 whitespace-nowrap">
+                              <td className="py-3 pr-4 text-right text-[#6e6e73]">{op.pages ?? '-'}</td>
+                              <td className="py-3 pr-4 text-right text-[#6e6e73] whitespace-nowrap">
                                 {op.visits || op.completes
                                   ? `${num(op.visits)} / ${num(op.completes)}`
                                   : '-'}
                                 {op.completionRate !== null && (
-                                  <span className="block text-white/30 text-xs">{op.completionRate}% done</span>
+                                  <span className="block text-[#86868b] text-xs">{op.completionRate}% done</span>
                                 )}
                               </td>
-                              <td className="py-3 pr-4 text-right text-white/60">
+                              <td className="py-3 pr-4 text-right text-[#6e6e73]">
                                 {op.compressionAvgRatio ? `${op.compressionAvgRatio}% avg` : formatBytes(op.originalBytes / op.uses)}
                               </td>
-                              <td className="py-3 text-right text-white/40 text-xs whitespace-nowrap">
+                              <td className="py-3 text-right text-[#86868b] text-xs whitespace-nowrap">
                                 {new Date(op.lastUsedAt).toLocaleDateString()}
                               </td>
                             </tr>
@@ -454,35 +454,35 @@ export default function CEODashboard() {
                     {/* Mobile cards */}
                     <div className="md:hidden space-y-3">
                       {operations.operations.map((op: any) => (
-                        <div key={op.collection + op.operation} className="p-3 bg-white/5 rounded-lg">
+                        <div key={op.collection + op.operation} className="p-3 bg-[#f5f5f7] rounded-lg">
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
                               <p className="font-semibold text-sm">{formatOperation(op.operation)}</p>
-                              <p className="text-white/30 text-xs">
-                                {op.collection}{op.lifetime && <span className="text-white/50"> · all-time</span>}
+                              <p className="text-[#86868b] text-xs">
+                                {op.collection}{op.lifetime && <span className="text-[#6e6e73]"> · all-time</span>}
                               </p>
                             </div>
                             <p className="text-lg font-semibold shrink-0">{num(op.uses)}</p>
                           </div>
                           <div className="grid grid-cols-4 gap-2 mt-3 text-xs">
                             <div>
-                              <p className="text-white/40">Visits</p>
+                              <p className="text-[#86868b]">Visits</p>
                               <p className="font-semibold">{num(op.visits)}</p>
                             </div>
                             <div>
-                              <p className="text-white/40">Completed</p>
+                              <p className="text-[#86868b]">Completed</p>
                               <p className="font-semibold">{num(op.completes)}</p>
                             </div>
                             <div>
-                              <p className="text-white/40">Signed in</p>
+                              <p className="text-[#86868b]">Signed in</p>
                               <p className="font-semibold">{num(op.signedIn)}</p>
                             </div>
                             <div>
-                              <p className="text-white/40">Anonymous</p>
+                              <p className="text-[#86868b]">Anonymous</p>
                               <p className="font-semibold">{num(op.anonymous)}</p>
                             </div>
                             <div>
-                              <p className="text-white/40">Visitors</p>
+                              <p className="text-[#86868b]">Visitors</p>
                               <p className="font-semibold">
                                 {num(op.uniqueVisitors)}
                               </p>
@@ -505,23 +505,23 @@ export default function CEODashboard() {
                 <StatCard label="Inactive" value={revenue.b2b.inactive} />
               </div>
 
-              <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+              <div className="bg-[#f5f5f7] rounded-lg p-4 lg:p-6 border border-black/[0.06]">
                 <h3 className="text-base lg:text-lg font-semibold mb-4">B2B Customers</h3>
                 <div className="space-y-2 overflow-x-auto">
                   {revenue.b2b.customers.map((customer: any, i: number) => (
-                    <div key={i} className="flex flex-col lg:flex-row lg:items-center justify-between p-3 bg-white/5 rounded-lg gap-2">
+                    <div key={i} className="flex flex-col lg:flex-row lg:items-center justify-between p-3 bg-[#f5f5f7] rounded-lg gap-2">
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-sm">{customer.customerName}</p>
-                        <p className="text-white/40 text-xs">{customer.customerCompany || 'N/A'}</p>
+                        <p className="text-[#86868b] text-xs">{customer.customerCompany || 'N/A'}</p>
                       </div>
                       <div className="flex gap-4 text-xs">
                         <div>
-                          <p className="text-white/40">Usage</p>
+                          <p className="text-[#86868b]">Usage</p>
                           <p className="font-semibold">{customer.usageCount}</p>
                         </div>
                         <div>
-                          <p className="text-white/40">Status</p>
-                          <p className={customer.isActive ? 'text-green-400' : 'text-red-400'}>
+                          <p className="text-[#86868b]">Status</p>
+                          <p className={customer.isActive ? 'text-emerald-600' : 'text-red-600'}>
                             {customer.isActive ? 'Active' : 'Inactive'}
                           </p>
                         </div>
@@ -542,11 +542,11 @@ export default function CEODashboard() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-                <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+                <div className="bg-[#f5f5f7] rounded-lg p-4 lg:p-6 border border-black/[0.06]">
                   <h3 className="text-base lg:text-lg font-semibold mb-4">PWA by Platform</h3>
                   <div className="space-y-2">
                     {engagement.pwa.byPlatform.map((p: any, i: number) => (
-                      <div key={i} className="flex justify-between p-2 bg-white/5 rounded">
+                      <div key={i} className="flex justify-between p-2 bg-[#f5f5f7] rounded">
                         <span className="capitalize text-sm">{p._id || 'Unknown'}</span>
                         <span className="font-semibold text-sm">{p.count}</span>
                       </div>
@@ -554,11 +554,11 @@ export default function CEODashboard() {
                   </div>
                 </div>
 
-                <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+                <div className="bg-[#f5f5f7] rounded-lg p-4 lg:p-6 border border-black/[0.06]">
                   <h3 className="text-base lg:text-lg font-semibold mb-4">Review Breakdown</h3>
                   <div className="space-y-2">
                     {engagement.reviews.breakdown.map((r: any, i: number) => (
-                      <div key={i} className="flex justify-between p-2 bg-white/5 rounded">
+                      <div key={i} className="flex justify-between p-2 bg-[#f5f5f7] rounded">
                         <span className="text-sm">{r._id} Stars</span>
                         <span className="font-semibold text-sm">{r.count}</span>
                       </div>
@@ -577,18 +577,18 @@ export default function CEODashboard() {
                 <StatCard label="Top Users" value={mobileStats.topUsers.length} />
               </div>
 
-              <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+              <div className="bg-[#f5f5f7] rounded-lg p-4 lg:p-6 border border-black/[0.06]">
                 <h3 className="text-base lg:text-lg font-semibold mb-4">Top Mobile Users</h3>
                 <div className="space-y-2 overflow-x-auto">
                   {mobileStats.topUsers.slice(0, 10).map((user: any, i: number) => (
-                    <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                    <div key={i} className="flex items-center justify-between p-3 bg-[#f5f5f7] rounded-lg">
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-sm truncate">{user.name}</p>
-                        <p className="text-white/40 text-xs truncate">{user.email}</p>
+                        <p className="text-[#86868b] text-xs truncate">{user.email}</p>
                       </div>
                       <div className="text-right ml-4 flex-shrink-0">
                         <p className="font-semibold text-sm">{user.totalFilesCompressed}</p>
-                        <p className="text-white/40 text-xs">{(user.totalSpaceSaved / (1024 * 1024)).toFixed(1)} MB</p>
+                        <p className="text-[#86868b] text-xs">{(user.totalSpaceSaved / (1024 * 1024)).toFixed(1)} MB</p>
                       </div>
                     </div>
                   ))}
@@ -604,13 +604,13 @@ export default function CEODashboard() {
                 <StatCard label="Security Accesses" value={security.accesses.length} />
               </div>
 
-              <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+              <div className="bg-[#f5f5f7] rounded-lg p-4 lg:p-6 border border-black/[0.06]">
                 <h3 className="text-base lg:text-lg font-semibold mb-4">Recent Events</h3>
                 <div className="space-y-2 overflow-x-auto max-h-96 overflow-y-auto">
                   {security.events.slice(0, 20).map((event: any, i: number) => (
-                    <div key={i} className="p-3 bg-white/5 rounded-lg text-xs">
+                    <div key={i} className="p-3 bg-[#f5f5f7] rounded-lg text-xs">
                       <p className="font-semibold">{event.type || 'Unknown'}</p>
-                      <p className="text-white/40 mt-1">{new Date(event.createdAt).toLocaleString()}</p>
+                      <p className="text-[#86868b] mt-1">{new Date(event.createdAt).toLocaleString()}</p>
                     </div>
                   ))}
                 </div>
@@ -619,7 +619,7 @@ export default function CEODashboard() {
           )}
 
           {activeSection === 'analytics' && (
-            <div className="bg-white/5 rounded-lg p-1 h-full min-h-[600px] lg:min-h-[800px]">
+            <div className="bg-[#f5f5f7] rounded-lg p-1 h-full min-h-[600px] lg:min-h-[800px]">
               <iframe
                 src="https://datastudio.google.com/embed/reporting/336ae76d-a21e-493c-b697-d936274fcb5a/page/kIV1C"
                 className="w-full h-full rounded-lg"
@@ -634,9 +634,9 @@ export default function CEODashboard() {
             <div className="space-y-6">
               {!searchConsoleConnected ? (
                 <div className="text-center py-12">
-                  <p className="text-white/40 mb-4">Connect Google Search Console to see analytics</p>
+                  <p className="text-[#86868b] mb-4">Connect Google Search Console to see analytics</p>
                   <button
-                    className="px-6 py-3 bg-white text-black rounded-lg hover:bg-white/90 text-sm lg:text-base"
+                    className="px-6 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 text-sm lg:text-base"
                     onClick={() => window.location.href = `${API_BASE_URL}/search-console/auth`}
                   >
                     Connect Search Console
@@ -651,23 +651,23 @@ export default function CEODashboard() {
                     <StatCard label="Avg Position" value={searchConsoleData.summary.avgPosition} />
                   </div>
 
-                  <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
+                  <div className="bg-[#f5f5f7] rounded-lg p-4 lg:p-6 border border-black/[0.06]">
                     <h3 className="text-base lg:text-lg font-semibold mb-4">Top Search Queries</h3>
                     <div className="space-y-2 overflow-x-auto">
                       {searchConsoleData.queries.map((query: any, i: number) => (
-                        <div key={i} className="flex flex-col lg:flex-row lg:items-center justify-between p-3 bg-white/5 rounded-lg gap-2">
+                        <div key={i} className="flex flex-col lg:flex-row lg:items-center justify-between p-3 bg-[#f5f5f7] rounded-lg gap-2">
                           <span className="font-semibold text-sm min-w-0 flex-1 truncate">{query.query}</span>
                           <div className="flex gap-4 text-xs flex-shrink-0">
                             <div>
-                              <p className="text-white/40">Clicks</p>
+                              <p className="text-[#86868b]">Clicks</p>
                               <p className="font-semibold">{query.clicks}</p>
                             </div>
                             <div>
-                              <p className="text-white/40">CTR</p>
+                              <p className="text-[#86868b]">CTR</p>
                               <p className="font-semibold">{query.ctr}</p>
                             </div>
                             <div>
-                              <p className="text-white/40">Position</p>
+                              <p className="text-[#86868b]">Position</p>
                               <p className="font-semibold">{query.position}</p>
                             </div>
                           </div>
@@ -677,7 +677,7 @@ export default function CEODashboard() {
                   </div>
                 </>
               ) : (
-                <div className="text-center py-12 text-white/40">
+                <div className="text-center py-12 text-[#86868b]">
                   Loading Search Console data...
                 </div>
               )}
@@ -685,7 +685,7 @@ export default function CEODashboard() {
           )}
 
           {loading && (
-            <div className="text-center py-12 text-white/40">
+            <div className="text-center py-12 text-[#86868b]">
               Loading data...
             </div>
           )}
@@ -733,10 +733,10 @@ function formatOperation(op: string) {
 
 function StatCard({ label, value, subtitle }: { label: string; value: string | number; subtitle?: string }) {
   return (
-    <div className="bg-white/5 rounded-lg p-4 lg:p-6 border border-white/10">
-      <p className="text-white/40 text-xs lg:text-sm uppercase tracking-wide">{label}</p>
+    <div className="bg-[#f5f5f7] rounded-lg p-4 lg:p-6 border border-black/[0.06]">
+      <p className="text-[#86868b] text-xs lg:text-sm uppercase tracking-wide">{label}</p>
       <p className="text-2xl lg:text-4xl font-semibold mt-2">{value}</p>
-      {subtitle && <p className="text-white/40 text-xs lg:text-sm mt-1">{subtitle}</p>}
+      {subtitle && <p className="text-[#86868b] text-xs lg:text-sm mt-1">{subtitle}</p>}
     </div>
   );
 }
