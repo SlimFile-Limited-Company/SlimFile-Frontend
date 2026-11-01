@@ -36,7 +36,7 @@ const PrivacyPolicy = () => {
             <li><strong>Account Information:</strong> When you sign in, we may collect your name, email address, and profile picture via Google authentication.</li>
             <li><strong>Uploaded Files:</strong> Files you upload for compression are processed temporarily and deleted after processing.</li>
             <li><strong>Usage Data:</strong> We may collect information about how you use the Service, such as access times, device information, and IP address.</li>
-            <li><strong>Campus:</strong> If you allow location, or use a partner university's Wi-Fi, we record which partner campus you are at. We keep only the campus name, never your location or exact position.</li>
+            <li><strong>Location:</strong> If you allow location access, we use it for usage tracking, to understand where SlimFile is used, such as which university area. We may also recognise a university's network. We keep only the area's name, never your exact location.</li>
             <li><strong>Cookies:</strong> We may use cookies and similar technologies to enhance your experience.</li>
           </ul>
         </Section>

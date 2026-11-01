@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { GraduationCap, Loader2 } from 'lucide-react';
+import { MapPin, Loader2 } from 'lucide-react';
 import { ASK_EVENT, declineCampusPrompt, shareLocationForCampus } from '@/lib/campus';
 
 /**
- * Asks once, right after a file finishes, whether to count it for the
- * visitor's campus. Saying no changes nothing else.
+ * Asks once, right after a file finishes, for location access. Saying no
+ * changes nothing else.
  */
 export default function CampusPrompt() {
   const [state, setState] = useState<'hidden' | 'ask' | 'working' | 'done'>('hidden');
@@ -25,12 +25,8 @@ export default function CampusPrompt() {
 
   const allow = async () => {
     setState('working');
-    const result = await shareLocationForCampus();
-    setMessage(
-      result && result !== 'denied'
-        ? `Counted for ${result.short}. Thanks! 🎓`
-        : 'Thanks! You can keep using SlimFile as usual.'
-    );
+    await shareLocationForCampus();
+    setMessage('Thank you! Enjoy using SlimFile.');
     setState('done');
   };
 
@@ -57,12 +53,12 @@ export default function CampusPrompt() {
             <>
               <div className="flex gap-3">
                 <span className="w-9 h-9 rounded-full bg-[#f5f5f7] flex items-center justify-center shrink-0">
-                  <GraduationCap className="w-4.5 h-4.5 text-red-600" />
+                  <MapPin className="w-4.5 h-4.5 text-red-600" />
                 </span>
                 <div>
-                  <p className="text-[15px] font-semibold text-[#1d1d1f]">Your file is ready! Count it for your campus?</p>
+                  <p className="text-[15px] font-semibold text-[#1d1d1f]">Could you allow location access?</p>
                   <p className="mt-1 text-[13px] leading-snug text-[#6e6e73]">
-                    We use your location once to find your school. We only keep the school's name, never where you are.
+                    SlimFile uses your location for usage tracking, to help us improve the service. We'd be grateful if you allow it.
                   </p>
                 </div>
               </div>
