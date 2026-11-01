@@ -1,16 +1,15 @@
 User-agent: *
 Allow: /
 
-# Block private/authenticated routes
+# Block private/authenticated routes.
+# /documents, /my-whiteboards and /workspaces themselves stay open: they show
+# a sign-in card that describes the feature. The pages inside them are private.
 Disallow: /dashboard
 Disallow: /dashboard/
 Disallow: /dashboard-old
 Disallow: /portals
-Disallow: /workspaces
 Disallow: /workspaces/
-Disallow: /my-whiteboards
 Disallow: /my-whiteboards/
-Disallow: /documents
 Disallow: /documents/
 Disallow: /drive
 Disallow: /messages

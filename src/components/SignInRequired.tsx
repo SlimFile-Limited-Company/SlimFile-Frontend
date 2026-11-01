@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Check, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { isAuthenticated } from '@/lib/auth';
+import { useSEO } from '@/hooks/useSEO';
 
 interface SignInRequiredProps {
   children: ReactNode;
@@ -12,6 +13,8 @@ interface SignInRequiredProps {
   icon: LucideIcon;
   description: string;
   benefits?: string[];
+  /** Search title and description; the sign-in card is what search engines see. */
+  seo: { title: string; description: string };
 }
 
 /**
@@ -19,7 +22,8 @@ interface SignInRequiredProps {
  * else gets a friendly modal explaining why to sign in, instead of being
  * bounced to the login screen without context.
  */
-export default function SignInRequired({ children, feature, icon: Icon, description, benefits = [] }: SignInRequiredProps) {
+export default function SignInRequired({ children, feature, icon: Icon, description, benefits = [], seo }: SignInRequiredProps) {
+  useSEO(seo);
   const location = useLocation();
   const navigate = useNavigate();
   const signedIn = isAuthenticated();

@@ -51,10 +51,26 @@ const WithHeader = ({ children }: { children: React.ReactNode }) => (
     {children}
   </>
 );
-import { PenTool } from 'lucide-react';
+import { PenTool, FileText, Users } from 'lucide-react';
 
 const WHITEBOARD_PITCH = 'Sketch ideas, plan projects and brainstorm on an endless canvas. Your boards are saved to your account so you can pick up where you left off.';
 const WHITEBOARD_BENEFITS = ['Free to use', 'Saved automatically as you draw', 'Open them on any device'];
+const WHITEBOARD_SEO = {
+  title: 'Free Online Whiteboard — Sketch, Plan and Brainstorm | SlimFile',
+  description: 'A free online whiteboard for sketching ideas, diagrams and plans on an endless canvas. Boards save automatically to your SlimFile account.',
+};
+const SLIMDOCX_PITCH = 'Write in a full Word-style editor with pages, tables and track changes. Your documents are saved to your account, so you can pick up where you left off.';
+const SLIMDOCX_BENEFITS = ['Free to use', 'Open and download Word files', 'Saves automatically'];
+const SLIMDOCX_SEO = {
+  title: 'SlimDocx — Free Online Word Editor | SlimFile',
+  description: 'Write and edit Word documents online for free with SlimDocx: pages, tables, track changes, and download as Word or PDF. Powered by ONLYOFFICE.',
+};
+const WORKSPACES_PITCH = 'Share files, plan work and collaborate with your team in one shared space.';
+const WORKSPACES_BENEFITS = ['Free to use', 'Invite your team', 'Everything in one place'];
+const WORKSPACES_SEO = {
+  title: 'Team Workspaces — Collaborate on Files Together | SlimFile',
+  description: 'Free team workspaces on SlimFile: share files, plan projects and work together with your team in one place.',
+};
 import FileCompressionEducation from './pages/FileCompressionEducation';
 import CompressPdfOnline from './pages/CompressPdfOnline';
 import CompressPptxOnline from './pages/CompressPptxOnline';
@@ -389,9 +405,9 @@ ReactDOM.createRoot(root).render(
             </ProtectedRoute>
           } />
           <Route path="workspaces" element={
-            <ProtectedRoute>
+            <SignInRequired feature="Workspaces" icon={Users} description={WORKSPACES_PITCH} benefits={WORKSPACES_BENEFITS} seo={WORKSPACES_SEO}>
               <Workspaces />
-            </ProtectedRoute>
+            </SignInRequired>
           } />
           <Route path="workspaces/invitations" element={
             <ProtectedRoute>
@@ -435,14 +451,14 @@ ReactDOM.createRoot(root).render(
         <Route element={<HeaderOnlyLayout />}>
           {/* Personal whiteboards */}
           <Route path="my-whiteboards" element={
-            <SignInRequired feature="Whiteboards" icon={PenTool} description={WHITEBOARD_PITCH} benefits={WHITEBOARD_BENEFITS}>
+            <SignInRequired feature="Whiteboards" icon={PenTool} description={WHITEBOARD_PITCH} benefits={WHITEBOARD_BENEFITS} seo={WHITEBOARD_SEO}>
               <PersonalWhiteboards />
             </SignInRequired>
           } />
 
           {/* Personal whiteboard canvas */}
           <Route path="my-whiteboards/:whiteboardId" element={
-            <SignInRequired feature="Whiteboards" icon={PenTool} description={WHITEBOARD_PITCH} benefits={WHITEBOARD_BENEFITS}>
+            <SignInRequired feature="Whiteboards" icon={PenTool} description={WHITEBOARD_PITCH} benefits={WHITEBOARD_BENEFITS} seo={WHITEBOARD_SEO}>
               <Suspense fallback={null}>
                 <PersonalWhiteboardCanvas />
               </Suspense>
@@ -451,9 +467,9 @@ ReactDOM.createRoot(root).render(
 
           {/* Documents */}
           <Route path="documents" element={
-            <ProtectedRoute>
+            <SignInRequired feature="SlimDocx" icon={FileText} description={SLIMDOCX_PITCH} benefits={SLIMDOCX_BENEFITS} seo={SLIMDOCX_SEO}>
               <Documents />
-            </ProtectedRoute>
+            </SignInRequired>
           } />
 
           {/* Document Editor */}
