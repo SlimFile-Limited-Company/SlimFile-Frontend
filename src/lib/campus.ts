@@ -10,6 +10,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.o
 const VISITOR_KEY = 'sf_visitor_id';
 const ASKED_KEY = 'sf_campus_asked';
 const VISIT_KEY = 'sf_campus_visit_day';
+const CAMPUS_KEY = 'sf_campus';
+const REMEMBER_DAYS = 30;
 export const ASK_EVENT = 'slimfile:ask-campus';
 
 const store = {
@@ -49,14 +51,27 @@ export interface CampusResult { id: string; short: string; name: string }
 
 type Kind = 'visit' | 'file' | 'slimdocx' | 'whiteboard';
 
+// The campus GPS last placed this browser on, kept for 30 days.
+const rememberedCampus = () => {
+  try {
+    const saved = JSON.parse(store.get(CAMPUS_KEY) || 'null');
+    return saved && Date.now() - saved.at < REMEMBER_DAYS * 86400000 ? (saved.id as string) : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 const send = async (kind: Kind, coords: { lat: number; lng: number } | null) => {
   const token = store.get('jwt');
   const res = await fetch(`${API_BASE_URL}/campus/track`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-    body: JSON.stringify({ visitorId: visitorId(), kind, ...(coords || {}) }),
+    body: JSON.stringify({ visitorId: visitorId(), kind, ...(coords || {}), campusHint: rememberedCampus() }),
   });
-  return res.ok ? ((await res.json()).campus as CampusResult | null) : null;
+  if (!res.ok) return null;
+  const { campus, method } = await res.json();
+  if (campus && method === 'gps') store.set(CAMPUS_KEY, JSON.stringify({ id: campus.id, at: Date.now() }));
+  return campus as CampusResult | null;
 };
 
 export async function trackCampus(kind: Kind): Promise<CampusResult | null> {

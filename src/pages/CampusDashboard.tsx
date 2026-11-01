@@ -25,7 +25,7 @@ interface CampusStats {
   visitors: number;
   slimdocx: { opens: number; people: number };
   whiteboards: { opens: number; people: number };
-  byMethod: { gps: number; wifi: number; email: number };
+  byMethod: { gps: number; wifi: number; email: number; remembered?: number };
   schoolEmailAccounts: number;
 }
 
