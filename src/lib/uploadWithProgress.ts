@@ -1,3 +1,4 @@
+import { trackCampusFile } from '@/lib/campus';
 export type TransferStage = 'queued' | 'uploading' | 'processing' | 'downloading' | 'done' | 'error';
 
 export interface TransferProgress {
@@ -87,12 +88,17 @@ export function uploadWithProgress(
       onProgress({ stage, loaded: e.loaded, total: e.lengthComputable ? e.total : 0, speed, stageStartedAt });
     };
 
-    xhr.onload = () => resolve({
-      ok: xhr.status >= 200 && xhr.status < 300,
-      status: xhr.status,
-      blob: xhr.response as Blob,
-      getHeader: name => xhr.getResponseHeader(name),
-    });
+    xhr.onload = () => {
+      const ok = xhr.status >= 200 && xhr.status < 300;
+      // A finished file may count toward an ambassador's campus.
+      if (ok) trackCampusFile();
+      resolve({
+        ok,
+        status: xhr.status,
+        blob: xhr.response as Blob,
+        getHeader: name => xhr.getResponseHeader(name),
+      });
+    };
     xhr.onerror = () => reject(new Error('Network error. Check your connection and try again.'));
     xhr.ontimeout = () => reject(new Error('The request timed out. Please try again.'));
 

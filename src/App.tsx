@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CookieBanner } from "@/components/CookieBanner";
 import ChatAssistant from "@/components/ChatAssistant";
+import CampusPrompt from "@/components/CampusPrompt";
 import { registerServiceWorker } from "@/utils/pwa";
 import { useEffect, useState } from "react";
 import { isAuthenticated, validateToken } from "@/lib/auth";
@@ -60,6 +61,7 @@ const App = () => {
       {!isInIframe && <Footer />}
       {!isInIframe && <CookieBanner />}
       {!isInIframe && <ChatAssistant />}
+      {!isInIframe && <CampusPrompt />}
     </div>
   );
 };

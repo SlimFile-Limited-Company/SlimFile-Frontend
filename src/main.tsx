@@ -237,6 +237,7 @@ import SecurityTerminal from './pages/SecurityTerminal';
 import Leaderboard from './pages/Leaderboard';
 import B2BApiKeysAdmin from './pages/B2BApiKeysAdmin';
 import CEODashboard from './pages/CEODashboard';
+import CampusDashboard from './pages/CampusDashboard';
 import { NotificationProvider } from './components/InAppNotification';
 import UpdatePrompt from './components/UpdatePrompt';
 
@@ -554,6 +555,11 @@ ReactDOM.createRoot(root).render(
         <Route path="ceo-dashboard" element={
           <ProtectedRoute>
             <WithHeader><CEODashboard /></WithHeader>
+          </ProtectedRoute>
+        } />
+        <Route path="campuses" element={
+          <ProtectedRoute>
+            <WithHeader><CampusDashboard /></WithHeader>
           </ProtectedRoute>
         } />
             </Routes>

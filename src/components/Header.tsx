@@ -166,6 +166,7 @@ export const Header = () => {
 
   const internalNavigation = [
     { name: "CEO Dashboard", href: "/ceo-dashboard" },
+    { name: "Campuses", href: "/campuses" },
     { name: "B2B API Keys", href: "/b2b-api-keys-admin" },
     { name: "Newsletter", href: "/admin/newsletter" },
     { name: "Review Emails", href: "/admin/review-emails" },
@@ -177,6 +178,7 @@ export const Header = () => {
       title: "Internal",
       links: [
         { name: "CEO Dashboard", href: "/ceo-dashboard" },
+        { name: "Campuses", href: "/campuses" },
         { name: "B2B API Keys", href: "/b2b-api-keys-admin" },
       ],
     },
