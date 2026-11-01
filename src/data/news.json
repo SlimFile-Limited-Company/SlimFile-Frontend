@@ -6,7 +6,7 @@
     "date": "2026-11-01",
     "category": "Community",
     "image": "/news/ambassador-program.jpg",
-    "imageAlt": "Meet the SlimFile University Ambassadors",
+    "imageAlt": "Christabel Maame Yaa Dekyem, SlimFile University Ambassador",
     "highlights": [
       {
         "title": "13 campuses in 3 countries",
@@ -22,9 +22,19 @@
       }
     ],
     "ctas": [
-      { "label": "Become an ambassador", "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program", "external": true },
-      { "label": "Follow us on WhatsApp", "href": "https://whatsapp.com/channel/0029Vb9T1jmLCoWwJbdQCm1G", "external": true, "secondary": true }
-    ]
+      {
+        "label": "Become an ambassador",
+        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "external": true
+      },
+      {
+        "label": "Follow us on WhatsApp",
+        "href": "https://whatsapp.com/channel/0029Vb9T1jmLCoWwJbdQCm1G",
+        "external": true,
+        "secondary": true
+      }
+    ],
+    "imageCaption": "Christabel Maame Yaa Dekyem, SlimFile ambassador at the African Leadership College of Higher Education, Mauritius."
   },
   {
     "id": "introducing-slimdocx",
@@ -49,7 +59,10 @@
       }
     ],
     "ctas": [
-      { "label": "Open SlimDocx", "href": "/documents" }
+      {
+        "label": "Open SlimDocx",
+        "href": "/documents"
+      }
     ]
   },
   {
@@ -75,7 +88,10 @@
       }
     ],
     "ctas": [
-      { "label": "Open Whiteboards", "href": "/my-whiteboards" }
+      {
+        "label": "Open Whiteboards",
+        "href": "/my-whiteboards"
+      }
     ]
   },
   {
@@ -101,7 +117,11 @@
       }
     ],
     "ctas": [
-      { "label": "Follow the channel", "href": "https://whatsapp.com/channel/0029Vb9T1jmLCoWwJbdQCm1G", "external": true }
+      {
+        "label": "Follow the channel",
+        "href": "https://whatsapp.com/channel/0029Vb9T1jmLCoWwJbdQCm1G",
+        "external": true
+      }
     ]
   },
   {
@@ -127,7 +147,11 @@
       }
     ],
     "ctas": [
-      { "label": "Get it on Google Play", "href": "https://play.google.com/store/apps/details?id=com.slimfile.app", "external": true }
+      {
+        "label": "Get it on Google Play",
+        "href": "https://play.google.com/store/apps/details?id=com.slimfile.app",
+        "external": true
+      }
     ]
   },
   {
@@ -153,33 +177,10 @@
       }
     ],
     "ctas": [
-      { "label": "Try AI Lab", "href": "/ai-lab" }
-    ]
-  },
-  {
-    "id": "image-processing-launch",
-    "title": "8 New Image Tools on SlimFile",
-    "subtitle": "SlimFile adds a suite of image tools: resize, crop, enhance, watermark, remove or replace backgrounds, blur faces, and generate thumbnails, all free with a live preview.",
-    "date": "2026-08-01",
-    "category": "Product",
-    "image": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=1600&q=80&auto=format&fit=crop",
-    "imageAlt": "SlimFile image tools",
-    "highlights": [
       {
-        "title": "8 essential image tools",
-        "note": "Resize, crop, auto-enhance, add text or image watermarks, remove or replace backgrounds, blur faces, and create thumbnails."
-      },
-      {
-        "title": "Live preview",
-        "note": "See exactly how your image will look before you download it."
-      },
-      {
-        "title": "Quality first",
-        "note": "PNG, JPEG and WebP support, aspect ratio kept, and optional compression."
+        "label": "Try AI Lab",
+        "href": "/ai-lab"
       }
-    ],
-    "ctas": [
-      { "label": "Try the image tools", "href": "/images/resize" }
     ]
   },
   {
@@ -225,15 +226,18 @@
       }
     ],
     "ctas": [
-      { "label": "Try SlimAudio", "href": "https://audio.slim-file.com", "external": true }
+      {
+        "label": "Try SlimAudio",
+        "href": "https://audio.slim-file.com",
+        "external": true
+      }
     ]
   },
   {
     "id": "gtv-ghana",
     "title": "SlimFile Featured on GTV Ghana",
-    "subtitle": "A television spotlight on how SlimFile helps people compress and convert files faster and more securely.",
-    "date": "2025-01-01",
-    "dateLabel": "2025",
+    "subtitle": "SlimFile was featured on the GTV Ghana breakfast show, a television spotlight on how SlimFile helps people compress and convert files faster and more securely.",
+    "date": "2026-01-31",
     "category": "Media",
     "image": "/news/gtv-ghana.jpg",
     "imageAlt": "SlimFile on GTV Ghana",
@@ -252,7 +256,11 @@
       }
     ],
     "ctas": [
-      { "label": "Watch on YouTube", "href": "https://www.youtube.com/watch?v=ZZ2v94GbS58", "external": true }
+      {
+        "label": "Watch on YouTube",
+        "href": "https://www.youtube.com/watch?v=ZZ2v94GbS58",
+        "external": true
+      }
     ]
   },
   {

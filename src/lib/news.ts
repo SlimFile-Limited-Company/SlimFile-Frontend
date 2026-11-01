@@ -19,6 +19,8 @@ export interface NewsItem {
   /** At least 1,200px wide, so Google Discover can show it large */
   image: string;
   imageAlt: string;
+  /** Optional line under the image, e.g. who is in the photo */
+  imageCaption?: string;
   highlights: { title: string; note: string }[];
   ctas: NewsCta[];
 }

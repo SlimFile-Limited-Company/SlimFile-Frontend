@@ -59,6 +59,7 @@ export default function NewsArticle() {
 
         <div className="max-w-5xl mx-auto mt-10">
           <img src={item.image} alt={item.imageAlt} className="w-full aspect-[16/9] object-cover rounded-[28px] bg-[#f5f5f7]" />
+          {item.imageCaption && <p className="mt-3 text-[13px] text-[#6e6e73] text-center">{item.imageCaption}</p>}
         </div>
 
         <div className="max-w-3xl mx-auto mt-12 space-y-10">
