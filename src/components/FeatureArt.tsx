@@ -22,7 +22,10 @@ export default function FeatureArt({ icon: Icon, size = 'large' }: { icon: Lucid
       <span aria-hidden className="absolute -bottom-[38%] -left-[16%] w-[62%] aspect-square rounded-full border border-black/[0.05]" />
 
       {/* Icon tile */}
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div
+        className="absolute inset-0 flex items-center justify-center transition-transform duration-200 ease-out"
+        style={{ transform: 'translate(var(--drift-x, 0px), var(--drift-y, 0px))' }}
+      >
         <div className="relative w-[30%] max-w-[104px] aspect-square rounded-[26%] bg-white shadow-[0_14px_34px_-12px_rgba(0,0,0,0.22),0_0_0_1px_rgba(0,0,0,0.04)] flex items-center justify-center transition-transform duration-500 ease-out group-hover:-translate-y-1.5 group-hover:scale-[1.04]">
           <Icon className="w-[46%] h-[46%] text-red-600" strokeWidth={1.6} />
         </div>

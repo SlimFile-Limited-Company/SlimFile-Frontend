@@ -76,6 +76,7 @@ import { isAuthenticated } from '@/lib/auth';
 import { useEffect, useState } from 'react';
 import io from "socket.io-client";
 import FeatureArt from '@/components/FeatureArt';
+import TiltCard from '@/components/TiltCard';
 
 const getApiBase = (): string => {
   return import.meta.env.VITE_API_URL || "https://slimfile-backend.onrender.com";
@@ -242,7 +243,7 @@ const Home: FC = () => {
               // on top, large title and a quiet "Try it" link. On phones it
               // collapses to a slim row so ~10 tools fit on one screen.
               const card = (
-                <div className="group h-full flex flex-row sm:flex-col items-center sm:items-stretch gap-3 sm:gap-0 rounded-2xl sm:rounded-[28px] bg-[#f5f5f7] p-3.5 sm:p-3 sm:pb-7 transition-all duration-300 ease-out hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:hover:scale-[1.015]">
+                <TiltCard className="group h-full flex flex-row sm:flex-col items-center sm:items-stretch gap-3 sm:gap-0 rounded-2xl sm:rounded-[28px] bg-[#f5f5f7] p-3.5 sm:p-3 sm:pb-7 transition-[box-shadow] duration-300 ease-out hover:shadow-[0_24px_50px_-20px_rgba(0,0,0,0.22)]">
                   <span className="sm:hidden"><FeatureArt icon={feature.icon} size="small" /></span>
                   <div className="hidden sm:block mb-6"><FeatureArt icon={feature.icon} /></div>
                   <div className="min-w-0 flex-1 sm:flex-none sm:px-4">
@@ -253,7 +254,7 @@ const Home: FC = () => {
                     Try it <ChevronRight className="w-4 h-4" />
                   </span>
                   <ChevronRight className="w-4 h-4 text-gray-400 shrink-0 sm:hidden" />
-                </div>
+                </TiltCard>
               );
               return feature.href.startsWith('http') ? (
                 <a
