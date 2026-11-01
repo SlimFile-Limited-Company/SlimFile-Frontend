@@ -1,0 +1,283 @@
+[
+  {
+    "id": "slimfile-university-ambassador-program",
+    "title": "Introducing the SlimFile University Ambassador Program",
+    "subtitle": "Students at 13 universities in Ghana, Mauritius and the United States now represent SlimFile on their campuses, helping classmates work faster with their files.",
+    "date": "2026-11-01",
+    "category": "Community",
+    "image": "/news/ambassador-program.jpg",
+    "imageAlt": "Meet the SlimFile University Ambassadors",
+    "highlights": [
+      {
+        "title": "13 campuses in 3 countries",
+        "note": "Ambassadors are active at UCC, UG, UMaT, KNUST, UDS, KAAF University, GCTU, Takoradi Technical University, UENR and Central University in Ghana, the African Leadership College of Higher Education in Mauritius, and Hampden-Sydney College and Livingstone College in the United States."
+      },
+      {
+        "title": "Helping students where they study",
+        "note": "Ambassadors show classmates how to get assignments under portal size limits, convert and merge files, scan documents with a phone, and write in SlimDocx."
+      },
+      {
+        "title": "A path to grow",
+        "note": "Ambassadors run campus campaigns, earn recognition and move up through program levels, while gaining real experience with a Ghanaian technology company."
+      }
+    ],
+    "ctas": [
+      { "label": "Become an ambassador", "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program", "external": true },
+      { "label": "Follow us on WhatsApp", "href": "https://whatsapp.com/channel/0029Vb9T1jmLCoWwJbdQCm1G", "external": true, "secondary": true }
+    ]
+  },
+  {
+    "id": "introducing-slimdocx",
+    "title": "Meet SlimDocx: A Full Word-Style Editor, Free on SlimFile",
+    "subtitle": "Write and edit documents with pages, tables and track changes, open Word files, and download as Word or PDF, all in your browser. Powered by ONLYOFFICE.",
+    "date": "2026-11-01",
+    "category": "Product",
+    "image": "/news/slimdocx.jpg",
+    "imageAlt": "A document open in SlimDocx",
+    "highlights": [
+      {
+        "title": "Everything you expect from Word",
+        "note": "Pages, headings, tables, images, comments and track changes, in a familiar toolbar, with nothing to install."
+      },
+      {
+        "title": "Works with your Word files",
+        "note": "Import a .docx file, edit it, and download it again as Word or PDF when you are done."
+      },
+      {
+        "title": "Saves automatically",
+        "note": "Documents are saved to your SlimFile account, so you can pick up where you left off on any device."
+      }
+    ],
+    "ctas": [
+      { "label": "Open SlimDocx", "href": "/documents" }
+    ]
+  },
+  {
+    "id": "new-slimfile-whiteboards",
+    "title": "New SlimFile Whiteboards: An Endless Canvas for Your Ideas",
+    "subtitle": "SlimFile Whiteboards has been rebuilt from the ground up, with a smooth, endless canvas for sketching, diagrams and planning.",
+    "date": "2026-11-01",
+    "category": "Product",
+    "image": "/og/whiteboards.jpg",
+    "imageAlt": "SlimFile Whiteboards",
+    "highlights": [
+      {
+        "title": "Sketch, diagram and plan",
+        "note": "Draw freehand, add shapes, arrows and text, and lay out ideas on a canvas that never runs out of room."
+      },
+      {
+        "title": "Saved automatically",
+        "note": "Every board saves to your SlimFile account as you draw, ready to reopen on any device."
+      },
+      {
+        "title": "All your boards in one place",
+        "note": "A redesigned My Whiteboards page makes it easy to find, rename and organise your boards."
+      }
+    ],
+    "ctas": [
+      { "label": "Open Whiteboards", "href": "/my-whiteboards" }
+    ]
+  },
+  {
+    "id": "slimfile-whatsapp-channel",
+    "title": "Follow SlimFile on WhatsApp",
+    "subtitle": "SlimFile now has an official WhatsApp Channel, with news, new features, file tips and job openings, straight to your phone.",
+    "date": "2026-11-01",
+    "category": "Community",
+    "image": "/news/whatsapp-channel.jpg",
+    "imageAlt": "SlimFile on WhatsApp",
+    "highlights": [
+      {
+        "title": "News first",
+        "note": "Hear about new tools and updates as soon as they launch."
+      },
+      {
+        "title": "File tips",
+        "note": "Short, practical tips for getting files under upload limits and working faster."
+      },
+      {
+        "title": "Job openings",
+        "note": "When SlimFile is hiring, the channel is the first place we will share it."
+      }
+    ],
+    "ctas": [
+      { "label": "Follow the channel", "href": "https://whatsapp.com/channel/0029Vb9T1jmLCoWwJbdQCm1G", "external": true }
+    ]
+  },
+  {
+    "id": "slimfile-mobile-app-launch",
+    "title": "SlimFile Mobile App Now Available on Google Play Store",
+    "subtitle": "SlimFile launches its official Android app, bringing file compression and conversion to your pocket. Compress images, PDFs and Office documents on the go, free on the Google Play Store.",
+    "date": "2026-08-01",
+    "category": "Product",
+    "image": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1600&q=80&auto=format&fit=crop",
+    "imageAlt": "SlimFile mobile app",
+    "highlights": [
+      {
+        "title": "Compress files anywhere",
+        "note": "Compress images, PDFs, DOCX and XLSX files right from your Android device before sharing or uploading."
+      },
+      {
+        "title": "Convert formats on the go",
+        "note": "Convert images to PDF, Office documents to PDF and more, directly from your phone."
+      },
+      {
+        "title": "Free and private",
+        "note": "All features are free, and your files are processed and then deleted, never stored on our servers."
+      }
+    ],
+    "ctas": [
+      { "label": "Get it on Google Play", "href": "https://play.google.com/store/apps/details?id=com.slimfile.app", "external": true }
+    ]
+  },
+  {
+    "id": "ai-lab-launch",
+    "title": "Introducing SlimFile AI Lab: 9 AI Tools in One Place",
+    "subtitle": "SlimFile launches AI Lab, a suite of free AI tools to translate, summarise, rewrite, analyse sentiment, compare texts, write emails and more.",
+    "date": "2026-08-01",
+    "category": "Product",
+    "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1600&q=80&auto=format&fit=crop",
+    "imageAlt": "SlimFile AI Lab",
+    "highlights": [
+      {
+        "title": "9 AI tools in one place",
+        "note": "Translate text, summarise documents, rewrite content, ask questions about documents, extract keywords, analyse sentiment, compare texts, write emails and check for plagiarism."
+      },
+      {
+        "title": "Free to use",
+        "note": "All AI Lab tools are free, with no subscription."
+      },
+      {
+        "title": "Works with your documents",
+        "note": "Upload a PDF, Word or text file and let AI answer questions, summarise it or pull out the key points."
+      }
+    ],
+    "ctas": [
+      { "label": "Try AI Lab", "href": "/ai-lab" }
+    ]
+  },
+  {
+    "id": "image-processing-launch",
+    "title": "8 New Image Tools on SlimFile",
+    "subtitle": "SlimFile adds a suite of image tools: resize, crop, enhance, watermark, remove or replace backgrounds, blur faces, and generate thumbnails, all free with a live preview.",
+    "date": "2026-08-01",
+    "category": "Product",
+    "image": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=1600&q=80&auto=format&fit=crop",
+    "imageAlt": "SlimFile image tools",
+    "highlights": [
+      {
+        "title": "8 essential image tools",
+        "note": "Resize, crop, auto-enhance, add text or image watermarks, remove or replace backgrounds, blur faces, and create thumbnails."
+      },
+      {
+        "title": "Live preview",
+        "note": "See exactly how your image will look before you download it."
+      },
+      {
+        "title": "Quality first",
+        "note": "PNG, JPEG and WebP support, aspect ratio kept, and optional compression."
+      }
+    ],
+    "ctas": [
+      { "label": "Try the image tools", "href": "/images/resize" }
+    ]
+  },
+  {
+    "id": "10k-users-milestone",
+    "title": "SlimFile Reaches 10,000 New Users",
+    "subtitle": "A major growth milestone: 10,000 new users and 9,700 active users, with 468,113 events and 59,332 views across SlimFile.",
+    "date": "2026-07-01",
+    "category": "Milestone",
+    "image": "/news/10k-milestone.jpeg",
+    "imageAlt": "SlimFile reaches 10,000 new users",
+    "highlights": [
+      {
+        "title": "10,000 new users",
+        "note": "Strong adoption across students, professionals and teams."
+      },
+      {
+        "title": "9,700 active users",
+        "note": "People coming back to SlimFile to compress, convert and manage their files."
+      },
+      {
+        "title": "468,113 events",
+        "note": "Files compressed, converted and shared across all of SlimFile's tools."
+      }
+    ],
+    "ctas": []
+  },
+  {
+    "id": "slimaudio-launch",
+    "title": "SlimAudio: Audio Compression Is Now Live",
+    "subtitle": "SlimFile expands beyond documents and images with SlimAudio, an audio compression platform for MP3, WAV, FLAC, M4A and more.",
+    "date": "2026-06-01",
+    "category": "Product",
+    "image": "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1600&q=80&auto=format&fit=crop",
+    "imageAlt": "SlimAudio",
+    "highlights": [
+      {
+        "title": "Many audio formats",
+        "note": "Compress MP3, WAV, FLAC, M4A, AAC, OGG and more while keeping excellent sound quality."
+      },
+      {
+        "title": "Made for podcasters and creators",
+        "note": "Smaller files for faster uploads, streaming and sharing, without sacrificing sound."
+      }
+    ],
+    "ctas": [
+      { "label": "Try SlimAudio", "href": "https://audio.slim-file.com", "external": true }
+    ]
+  },
+  {
+    "id": "gtv-ghana",
+    "title": "SlimFile Featured on GTV Ghana",
+    "subtitle": "A television spotlight on how SlimFile helps people compress and convert files faster and more securely.",
+    "date": "2025-01-01",
+    "dateLabel": "2025",
+    "category": "Media",
+    "image": "/news/gtv-ghana.jpg",
+    "imageAlt": "SlimFile on GTV Ghana",
+    "highlights": [
+      {
+        "title": "A TV feature and walk-through",
+        "note": "GTV aired a segment on what SlimFile is, who it is for, and how compression and conversion work in practice."
+      },
+      {
+        "title": "The story behind SlimFile",
+        "note": "Why lighter, simpler files matter for students, professionals and teams across Ghana and beyond."
+      },
+      {
+        "title": "Everyday uses",
+        "note": "Smaller PDFs, faster uploads, and converting between common formats."
+      }
+    ],
+    "ctas": [
+      { "label": "Watch on YouTube", "href": "https://www.youtube.com/watch?v=ZZ2v94GbS58", "external": true }
+    ]
+  },
+  {
+    "id": "ghana-youth-tech-summit",
+    "title": "SlimFile at the Ghana Youth Tech Summit",
+    "subtitle": "Showcasing SlimFile's vision and tools to students, builders and the wider tech community.",
+    "date": "2025-01-01",
+    "dateLabel": "2025",
+    "category": "Events",
+    "image": "/news/ghana-youth-tech-summit.jpeg",
+    "imageAlt": "SlimFile at the Ghana Youth Tech Summit",
+    "highlights": [
+      {
+        "title": "Live demo and Q&A",
+        "note": "Attendees saw SlimFile in action and asked about compression, conversion and file limits."
+      },
+      {
+        "title": "Partnership conversations",
+        "note": "We met educators, youth leaders and tech groups interested in bringing SlimFile to more people."
+      },
+      {
+        "title": "Feedback that shapes SlimFile",
+        "note": "Visitors shared ideas that help shape what we build next, especially for mobile and classroom use."
+      }
+    ],
+    "ctas": []
+  }
+]

@@ -34,6 +34,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import SlimFileSDGs from './pages/SlimFileSDGs';
 import Partnerships from './pages/Partnerships';
 import News from './pages/News';
+import NewsArticle from './pages/NewsArticle';
 import ProtectedRoute from './components/ProtectedRoute';
 import SignInRequired from './components/SignInRequired';
 import { Header } from './components/Header';
@@ -436,6 +437,7 @@ ReactDOM.createRoot(root).render(
           <Route path="sdgs" element={<SlimFileSDGs />} />
           <Route path="partnerships" element={<Partnerships />} />
           <Route path="news" element={<News />} />
+          <Route path="news/:newsId" element={<NewsArticle />} />
           <Route path="summit-registration" element={<SummitRegistration />} />
           <Route path="global-dashboard" element={<GlobalDashboard />} />
           <Route path="feed" element={<Feed />} />

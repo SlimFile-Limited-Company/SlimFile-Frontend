@@ -41,6 +41,22 @@ const AI_FEATURES = {
   email: ['email-generator', 'AI Email Writer | SlimFile', 'Turn a few bullet points into a clear, well-written email.'],
 };
 
+// News stories for /news/:id previews. Keep in step with src/data/news.json
+// (written out here because Vercel bundles this file on its own).
+const NEWS = [
+  { id: "slimfile-university-ambassador-program", title: "Introducing the SlimFile University Ambassador Program", subtitle: "Students at 13 universities in Ghana, Mauritius and the United States now represent SlimFile on their campuses, helping classmates work faster with their files.", image: "/news/ambassador-program.jpg" },
+  { id: "introducing-slimdocx", title: "Meet SlimDocx: A Full Word-Style Editor, Free on SlimFile", subtitle: "Write and edit documents with pages, tables and track changes, open Word files, and download as Word or PDF, all in your browser. Powered by ONLYOFFICE.", image: "/news/slimdocx.jpg" },
+  { id: "new-slimfile-whiteboards", title: "New SlimFile Whiteboards: An Endless Canvas for Your Ideas", subtitle: "SlimFile Whiteboards has been rebuilt from the ground up, with a smooth, endless canvas for sketching, diagrams and planning.", image: "/og/whiteboards.jpg" },
+  { id: "slimfile-whatsapp-channel", title: "Follow SlimFile on WhatsApp", subtitle: "SlimFile now has an official WhatsApp Channel, with news, new features, file tips and job openings, straight to your phone.", image: "/news/whatsapp-channel.jpg" },
+  { id: "slimfile-mobile-app-launch", title: "SlimFile Mobile App Now Available on Google Play Store", subtitle: "SlimFile launches its official Android app, bringing file compression and conversion to your pocket. Compress images, PDFs and Office documents on the go, free on the Google Play Store.", image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1600&q=80&auto=format&fit=crop" },
+  { id: "ai-lab-launch", title: "Introducing SlimFile AI Lab: 9 AI Tools in One Place", subtitle: "SlimFile launches AI Lab, a suite of free AI tools to translate, summarise, rewrite, analyse sentiment, compare texts, write emails and more.", image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1600&q=80&auto=format&fit=crop" },
+  { id: "image-processing-launch", title: "8 New Image Tools on SlimFile", subtitle: "SlimFile adds a suite of image tools: resize, crop, enhance, watermark, remove or replace backgrounds, blur faces, and generate thumbnails, all free with a live preview.", image: "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=1600&q=80&auto=format&fit=crop" },
+  { id: "10k-users-milestone", title: "SlimFile Reaches 10,000 New Users", subtitle: "A major growth milestone: 10,000 new users and 9,700 active users, with 468,113 events and 59,332 views across SlimFile.", image: "/news/10k-milestone.jpeg" },
+  { id: "slimaudio-launch", title: "SlimAudio: Audio Compression Is Now Live", subtitle: "SlimFile expands beyond documents and images with SlimAudio, an audio compression platform for MP3, WAV, FLAC, M4A and more.", image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1600&q=80&auto=format&fit=crop" },
+  { id: "gtv-ghana", title: "SlimFile Featured on GTV Ghana", subtitle: "A television spotlight on how SlimFile helps people compress and convert files faster and more securely.", image: "/news/gtv-ghana.jpg" },
+  { id: "ghana-youth-tech-summit", title: "SlimFile at the Ghana Youth Tech Summit", subtitle: "Showcasing SlimFile's vision and tools to students, builders and the wider tech community.", image: "/news/ghana-youth-tech-summit.jpeg" },
+];
+
 const BOT = /facebookexternalhit|facebot|linkedinbot|twitterbot|whatsapp|slackbot|telegrambot|discordbot|skypeuripreview|pinterest|redditbot|embedly|applebot|vkshare|snapchat/i;
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
@@ -67,6 +83,7 @@ export const config = {
     '/workspaces',
     '/feed',
     '/ai-lab',
+    '/news/:path*',
   ],
 };
 
@@ -75,7 +92,10 @@ export default async function middleware(request) {
     if (!BOT.test(request.headers.get('user-agent') || '')) return;
 
     const url = new URL(request.url);
-    const page = (url.pathname === '/ai-lab' && AI_FEATURES[url.searchParams.get('feature')]) || PAGES[url.pathname];
+    const story = url.pathname.startsWith('/news/') && NEWS.find(n => n.id === url.pathname.slice(6));
+    const page = story
+      ? [story.image, `${story.title} — SlimFile Newsroom`, story.subtitle]
+      : (url.pathname === '/ai-lab' && AI_FEATURES[url.searchParams.get('feature')]) || PAGES[url.pathname];
     if (!page) return;
     const [image, title, description] = page;
 
@@ -85,7 +105,7 @@ export default async function middleware(request) {
     let html = await res.text();
 
     const pageUrl = `${SITE}${url.pathname}${url.search}`;
-    const imageUrl = `${SITE}/og/${image}.jpg`;
+    const imageUrl = image.startsWith('http') ? image : image.startsWith('/') ? `${SITE}${image}` : `${SITE}/og/${image}.jpg`;
     const setMeta = (attr, key, value) => {
       const re = new RegExp(`<meta\\s+${attr}="${key}"\\s+content="[^"]*"\\s*/?>`, 'i');
       const tag = `<meta ${attr}="${key}" content="${esc(value)}" />`;
@@ -99,8 +119,11 @@ export default async function middleware(request) {
     setMeta('property', 'og:url', pageUrl);
     setMeta('property', 'og:image', imageUrl);
     setMeta('property', 'og:image:type', 'image/jpeg');
-    setMeta('property', 'og:image:width', '1200');
-    setMeta('property', 'og:image:height', '630');
+    if (!story) {
+      setMeta('property', 'og:image:width', '1200');
+      setMeta('property', 'og:image:height', '630');
+    }
+    if (story) setMeta('property', 'og:type', 'article');
     setMeta('name', 'twitter:title', title);
     setMeta('name', 'twitter:description', description);
     setMeta('name', 'twitter:image', imageUrl);
