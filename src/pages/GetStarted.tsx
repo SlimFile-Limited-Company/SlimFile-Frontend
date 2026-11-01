@@ -50,8 +50,8 @@ const FEATURES = [
     features: ['Drawing tools', 'Text & shapes', 'Multiple boards'],
   },
   {
-    icon: FileType,  title: 'My Documents',          badge: 'New',        gradient: 'from-sky-500 to-sky-600',
-    href: '/documents',         description: 'Write and edit documents with a rich text editor.',
+    icon: FileType,  title: 'SlimDocx',              badge: 'New',        gradient: 'from-sky-500 to-sky-600',
+    href: '/documents',         description: 'A full Word-style editor for your documents.',
     features: ['Rich text formatting', 'Import & export DOCX', 'Auto-save & organize'],
   },
   {

@@ -23,7 +23,7 @@ const tabs = [
   { label: 'Lock PDF',   icon: Lock,            to: '/lock',            section: 'suite' },
   { label: 'Feed',       icon: Rss,             to: '/feed',            section: 'connect' },
   { label: 'Workspaces', icon: Users,           to: '/workspaces',      section: 'connect' },
-  { label: 'Documents',  icon: FileText,        to: '/documents',       section: 'connect' },
+  { label: 'SlimDocx',   icon: FileText,        to: '/documents',       section: 'connect' },
   { label: 'Boards',     icon: PenLine,         to: '/my-whiteboards',  section: 'connect' },
   { label: 'AI Lab',     icon: Sparkles,        to: '/ai-lab',          section: 'ai' },
   { label: 'Dashboard',  icon: LayoutDashboard, to: '/dashboard',       section: null },

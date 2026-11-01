@@ -130,8 +130,13 @@ const DocumentEditor = () => {
       <div className="h-12 shrink-0 flex items-center gap-3 px-3 sm:px-4 border-b border-black/[0.06] bg-[#fbfbfd]/80 backdrop-blur-xl backdrop-saturate-150">
         <button onClick={() => navigate('/documents')} className="flex items-center gap-0.5 text-[13px] text-red-600 hover:text-red-700 shrink-0">
           <ChevronLeft className="w-4 h-4" />
-          Documents
+          <span className="hidden sm:inline">All documents</span>
         </button>
+        <span className="hidden md:flex items-center gap-1.5 shrink-0 text-[13px] font-semibold text-[#1d1d1f]">
+          <img src="/logo.gif" alt="" className="w-4 h-4" />
+          SlimDocx
+          <span className="font-normal text-[11px] text-[#6e6e73]">· Powered by ONLYOFFICE</span>
+        </span>
         <input
           value={title}
           onChange={e => setTitle(e.target.value)}
@@ -164,7 +169,7 @@ const DocumentEditor = () => {
           <div className="absolute inset-0 flex items-center justify-center bg-[#f5f5f7] text-[#6e6e73]">
             {state === 'failed' ? (
               <button onClick={() => navigate('/documents')} className="text-[15px] text-red-600 hover:text-red-700">
-                Couldn't open this document. Back to Documents
+                Couldn't open this document. Back to SlimDocx
               </button>
             ) : (
               <span className="flex items-center gap-2 text-[15px]">

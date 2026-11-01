@@ -349,7 +349,7 @@ const About: React.FC = () => {
             <div className="grid grid-cols-2 gap-3">
               {[
                 { icon: Users,           label: 'Workspaces', desc: 'Shared team projects',     color: 'text-cyan-600',    bg: 'bg-cyan-50',    border: 'border-cyan-100' },
-                { icon: FileText,        label: 'Documents',  desc: 'Rich text editor',          color: 'text-blue-500',    bg: 'bg-blue-50',    border: 'border-blue-100' },
+                { icon: FileText,        label: 'SlimDocx',   desc: 'Word-style editor',         color: 'text-blue-500',    bg: 'bg-blue-50',    border: 'border-blue-100' },
                 { icon: PenLine,         label: 'Boards',     desc: 'Collaborative whiteboards', color: 'text-violet-500',  bg: 'bg-violet-50',  border: 'border-violet-100' },
                 { icon: Rss,             label: 'Live Feed',  desc: 'Global activity stream',    color: 'text-teal-500',    bg: 'bg-teal-50',    border: 'border-teal-100' },
                 { icon: LayoutDashboard, label: 'Dashboard',  desc: 'Your personal overview',    color: 'text-pink-500',    bg: 'bg-pink-50',    border: 'border-pink-100' },

@@ -173,14 +173,15 @@ const Documents = () => {
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10">
           <div>
             <div className="inline-flex items-center gap-1.5 text-red-600 text-sm font-semibold mb-3">
-              <FileText className="w-3.5 h-3.5" /> SlimFile Documents
+              <FileText className="w-3.5 h-3.5" /> SlimDocx
             </div>
             <h1 className="text-4xl sm:text-[56px] sm:leading-[1.07] font-semibold tracking-tight text-[#1d1d1f]">
               Your documents.
             </h1>
             <p className="mt-3 text-[#6e6e73] text-lg sm:text-[21px] leading-snug max-w-xl">
-              Write notes, essays and plans. Import from Word, export back to Word, and everything saves as you type.
+              Write in a full Word-style editor with pages, tables and track changes. Open Word files, download as Word or PDF, and everything saves automatically.
             </p>
+            <p className="mt-2 text-xs text-[#6e6e73]">Powered by ONLYOFFICE</p>
           </div>
           <Button onClick={createDoc} disabled={isCreating} className="h-11 px-6 text-[15px] self-start sm:self-auto">
             {isCreating ? <Loader2 className="animate-spin" /> : <Plus />}
@@ -244,7 +245,7 @@ const Documents = () => {
             </div>
             <h2 className="text-[28px] font-semibold tracking-tight text-[#1d1d1f]">No documents yet</h2>
             <p className="mt-2 text-[15px] text-[#6e6e73] max-w-md mx-auto">
-              Start a document to take notes, draft an essay or plan a project. Type / for headings, lists, tables and more.
+              Start a document to take notes, draft an essay or plan a project. It opens in a full Word-style editor.
             </p>
             <Button onClick={createDoc} disabled={isCreating} className="mt-8 h-11 px-6 text-[15px]">
               {isCreating ? <Loader2 className="animate-spin" /> : <Plus />}
