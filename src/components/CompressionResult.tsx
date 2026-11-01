@@ -18,6 +18,8 @@ import {
 } from "@/utils/guestTracking";
 import { GuestDownloadLimitModal } from "@/components/GuestDownloadLimitModal";
 import { ReviewButton } from "@/components/ReviewButton";
+import FollowChannel from '@/components/FollowChannel';
+import { markDownloaded } from '@/lib/followChannel';
 
 interface CompressionResultProps {
   originalFiles: File[];
@@ -113,6 +115,7 @@ export const CompressionResult = ({
   };
 
   const handleDownload = async (compressedFile: File | null, fileIndex?: number) => {
+    markDownloaded();
     if (!compressedFile) return;
 
     // Check if guest or authenticated user
@@ -234,6 +237,7 @@ export const CompressionResult = ({
   };
 
   const handleDownloadAll = () => {
+    markDownloaded();
     if (!isAuthenticated()) {
       toast({
         title: "Login Required",
@@ -427,6 +431,7 @@ export const CompressionResult = ({
           </Button>
         </div>
       )}
+      <FollowChannel className="px-1" />
       {reviewReady && <ReviewButton operationType="compress" />}
 
       <div className="flex justify-center mt-4">

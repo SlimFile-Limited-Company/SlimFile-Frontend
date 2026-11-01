@@ -16,6 +16,8 @@ import {
 } from '@/utils/guestTracking';
 import { GuestDownloadLimitModal } from '@/components/GuestDownloadLimitModal';
 import { ReviewButton } from '@/components/ReviewButton';
+import FollowChannel from '@/components/FollowChannel';
+import { markDownloaded } from '@/lib/followChannel';
 
 interface ConversionCompressionResultProps {
   originalFiles: File[];
@@ -94,6 +96,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
   };
 
   const handleDownload = async (file: File | null, fileIndex?: number) => {
+    markDownloaded();
     if (!file) return;
 
     // Check if guest or authenticated user
@@ -212,6 +215,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
   };
 
   const handleDownloadAll = () => {
+    markDownloaded();
     if (!isAuthenticated()) {
       toast({
         title: "Login Required",
@@ -397,6 +401,7 @@ export const ConversionCompressionResult: React.FC<ConversionCompressionResultPr
           </Button>
         </div>
       )}
+      <FollowChannel className="px-1" />
 
       {/* Processing Stats Summary */}
       {allComplete && (
