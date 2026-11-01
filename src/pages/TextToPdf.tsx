@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
+import FollowChannel from '@/components/FollowChannel';
+import { markDownloaded } from '@/lib/followChannel';
 import {
   Loader2, FileText, Download, CheckCircle2, Eraser, Wand2,
 } from 'lucide-react';
@@ -17,6 +19,7 @@ function fmtSize(bytes: number) {
 }
 
 function downloadBlob(blob: Blob, filename: string) {
+  markDownloaded();
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -165,6 +168,7 @@ export default function TextToPdf() {
               {busy ? 'Creating…' : 'Create PDF'}
             </Button>
           </div>
+          <FollowChannel />
 
           {done && (
             <div className="flex items-center gap-2 p-3 bg-green-50 rounded-xl">

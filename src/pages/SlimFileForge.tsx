@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import { ReviewButton } from '@/components/ReviewButton';
 import { trackCampusFile } from '@/lib/campus';
+import FollowChannel from '@/components/FollowChannel';
+import { markDownloaded } from '@/lib/followChannel';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -20,6 +22,7 @@ interface PdfFile {
 }
 
 async function downloadBlob(blob: Blob, filename: string) {
+  markDownloaded();
   const url = URL.createObjectURL(blob);
   const a   = document.createElement('a');
   a.href     = url;
@@ -152,6 +155,7 @@ function MergeTab({ onSuccess }: { onSuccess?: () => void }) {
           ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Merging PDFs…</>
           : <><Download className="w-4 h-4 mr-2" />Merge & Download</>}
       </Button>
+      <FollowChannel />
     </div>
   );
 }
@@ -262,6 +266,7 @@ function SplitTab({ onSuccess }: { onSuccess?: () => void }) {
           ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Splitting PDF…</>
           : <><Download className="w-4 h-4 mr-2" />Split & Download</>}
       </Button>
+      <FollowChannel />
     </div>
   );
 }

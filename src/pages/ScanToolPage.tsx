@@ -7,6 +7,8 @@ import { ReviewButton } from '@/components/ReviewButton';
 import ScanUploader, { type ScanPage } from '@/components/ScanUploader';
 import { accent } from '@/lib/scanAccents';
 import { trackCampusFile } from '@/lib/campus';
+import FollowChannel from '@/components/FollowChannel';
+import { markDownloaded } from '@/lib/followChannel';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
@@ -94,6 +96,7 @@ export default function ScanToolPage({ config }: { config: ScanToolConfig }) {
       link.download = filename;
       document.body.appendChild(link);
       link.click();
+      markDownloaded();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
@@ -158,6 +161,7 @@ export default function ScanToolPage({ config }: { config: ScanToolConfig }) {
                 : <><Download className="w-4 h-4 mr-2" />{config.submitLabel}</>}
             </Button>
           </div>
+          <FollowChannel />
         </div>
 
         <div className="flex items-center justify-center gap-2 mt-6 text-xs text-gray-400">

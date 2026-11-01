@@ -8,6 +8,8 @@ import { useToast } from '@/hooks/use-toast';
 import { reportClientTool } from '@/utils/clientToolTracking';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import FollowChannel from '@/components/FollowChannel';
+import { markDownloaded } from '@/lib/followChannel';
 import {
   Upload,
   FileText,
@@ -199,6 +201,7 @@ export default function OCRTool() {
 
   const downloadTxt = () => {
     if (!text) return;
+    markDownloaded();
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -314,6 +317,7 @@ export default function OCRTool() {
                   <Download className="w-4 h-4" /> Download TXT
                 </Button>
               </div>
+              <FollowChannel />
             </>
           )}
 

@@ -60,7 +60,7 @@ export default function FollowChannel({ className = '' }: { className?: string }
               </p>
               <button
                 onClick={follow}
-                className="mt-3 inline-flex items-center gap-2 h-9 px-4 rounded-full bg-red-600 hover:bg-red-700 text-white text-[13px] font-medium"
+                className="mt-3 inline-flex items-center gap-2 h-9 px-4 whitespace-nowrap rounded-full bg-red-600 hover:bg-red-700 text-white text-[13px] font-medium"
               >
                 <WhatsAppMark className="w-4 h-4" />
                 Follow the channel

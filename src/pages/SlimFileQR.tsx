@@ -11,6 +11,8 @@ import { ReviewButton } from '@/components/ReviewButton';
 import { trackGuestActivity } from '@/utils/guestTracking';
 import { reportClientTool } from '@/utils/clientToolTracking';
 import { trackCampusFile } from '@/lib/campus';
+import FollowChannel from '@/components/FollowChannel';
+import { markDownloaded } from '@/lib/followChannel';
 
 type QrTab = 'link' | 'text' | 'whatsapp' | 'wifi' | 'email';
 
@@ -24,6 +26,7 @@ const FG_COLORS = [
 ];
 
 function downloadBlob(blob: Blob, filename: string) {
+  markDownloaded();
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -425,6 +428,7 @@ const SlimFileQR = () => {
                         : <><Download className="w-4 h-4 mr-2" />SVG</>}
                     </Button>
                   </div>
+                  <FollowChannel />
                 </div>
               </div>
 

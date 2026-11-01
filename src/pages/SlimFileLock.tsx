@@ -10,10 +10,13 @@ import {
 } from 'lucide-react';
 import { ReviewButton } from '@/components/ReviewButton';
 import { trackCampusFile } from '@/lib/campus';
+import FollowChannel from '@/components/FollowChannel';
+import { markDownloaded } from '@/lib/followChannel';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
 
 async function downloadBlob(blob: Blob, filename: string) {
+  markDownloaded();
   const url = URL.createObjectURL(blob);
   const a   = document.createElement('a');
   a.href     = url;
@@ -172,6 +175,7 @@ function ProtectTab({ onSuccess }: { onSuccess?: () => void }) {
           ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Protecting PDF…</>
           : <><Lock className="w-4 h-4 mr-2" />Lock this PDF</>}
       </Button>
+      <FollowChannel />
     </div>
   );
 }
@@ -229,6 +233,7 @@ function RemovePasswordTab({ onSuccess }: { onSuccess?: () => void }) {
           ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Removing password…</>
           : <><LockOpen className="w-4 h-4 mr-2" />Remove password</>}
       </Button>
+      <FollowChannel />
     </div>
   );
 }
