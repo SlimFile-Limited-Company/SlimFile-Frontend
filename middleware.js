@@ -44,6 +44,7 @@ const AI_FEATURES = {
 // News stories for /news/:id previews. Keep in step with src/data/news.json
 // (written out here because Vercel bundles this file on its own).
 const NEWS = [
+  { id: "ambassador-of-the-month-october-2026", title: "Hagar Agyapomaa Boakye Is SlimFile's Ambassador of the Month for October 2026", subtitle: "Hagar, our University Ambassador at the University of Cape Coast, is October's Ambassador of the Month, recognised for her work bringing SlimFile to students on campus.", image: "/news/ambassador-of-the-month-october-2026.jpg" },
   { id: "introducing-slimfile-atlas", title: "Introducing SlimFile Atlas: Offline Video Compression for Media Houses and Businesses", subtitle: "SlimFile Atlas compresses large video files without an internet connection, so newsrooms, production teams and businesses can shrink their footage on their own machines and keep it private.", image: "/news/slimfile-atlas.jpg" },
   { id: "slimfile-university-ambassador-program", title: "Introducing the SlimFile University Ambassador Program", subtitle: "Students at 13 universities in Ghana, Mauritius and the United States now represent SlimFile on their campuses, helping classmates work faster with their files.", image: "/news/ambassador-program.jpg" },
   { id: "introducing-slimdocx", title: "Meet SlimDocx: A Full Word-Style Editor, Free on SlimFile", subtitle: "Write and edit documents with pages, tables and track changes, open Word files, and download as Word or PDF, all in your browser. Powered by ONLYOFFICE.", image: "/news/slimdocx.jpg" },

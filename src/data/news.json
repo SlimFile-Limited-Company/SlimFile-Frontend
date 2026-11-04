@@ -1,5 +1,43 @@
 [
   {
+    "id": "ambassador-of-the-month-october-2026",
+    "title": "Hagar Agyapomaa Boakye Is SlimFile's Ambassador of the Month for October 2026",
+    "subtitle": "Hagar, our University Ambassador at the University of Cape Coast, is October's Ambassador of the Month, recognised for her work bringing SlimFile to students on campus.",
+    "date": "2026-11-04",
+    "category": "Community",
+    "image": "/news/ambassador-of-the-month-october-2026.jpg",
+    "imageAlt": "Hagar Agyapomaa Boakye, SlimFile University Ambassador of the Month, October 2026, UCC",
+    "imageCaption": "Hagar Agyapomaa Boakye, SlimFile University Ambassador at the University of Cape Coast.",
+    "homeLine": "Hagar Agyapomaa Boakye of UCC is our Ambassador of the Month for October.",
+    "homeLineShort": "Ambassador of the Month",
+    "highlights": [
+      {
+        "title": "Representing UCC",
+        "note": "As SlimFile's ambassador at the University of Cape Coast, Hagar helps fellow students get assignments under portal size limits, convert and scan documents, and write in SlimDocx."
+      },
+      {
+        "title": "Ambassador of the Month",
+        "note": "Each month, SlimFile recognises one University Ambassador whose work on campus stands out. For October 2026, that ambassador is Hagar."
+      },
+      {
+        "title": "Congratulations, Hagar",
+        "note": "Thank you for representing SlimFile so well at UCC. Students at the University of Cape Coast who want to learn more about SlimFile can reach out to Hagar on campus."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "About the Ambassador Program",
+        "href": "/news/slimfile-university-ambassador-program"
+      },
+      {
+        "label": "Become an ambassador",
+        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "external": true,
+        "secondary": true
+      }
+    ]
+  },
+  {
     "id": "introducing-slimfile-atlas",
     "title": "Introducing SlimFile Atlas: Offline Video Compression for Media Houses and Businesses",
     "subtitle": "SlimFile Atlas compresses large video files without an internet connection, so newsrooms, production teams and businesses can shrink their footage on their own machines and keep it private.",
@@ -63,9 +101,7 @@
         "secondary": true
       }
     ],
-    "imageCaption": "Christabel Maame Yaa Dekyem, SlimFile ambassador at the African Leadership College of Higher Education, Mauritius.",
-    "homeLine": "The SlimFile University Ambassador Program is live on 13 campuses in 3 countries.",
-    "homeLineShort": "Meet our ambassadors"
+    "imageCaption": "Christabel Maame Yaa Dekyem, SlimFile ambassador at the African Leadership College of Higher Education, Mauritius."
   },
   {
     "id": "introducing-slimdocx",
