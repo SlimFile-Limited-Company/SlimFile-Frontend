@@ -2,11 +2,12 @@ import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useSEO } from '@/hooks/useSEO';
-import { NEWS, absoluteUrl, findNews, formatNewsDate, type NewsItem } from '@/lib/news';
+import { AMBASSADOR_STORIES, GENERAL_NEWS, NEWS, absoluteUrl, findNews, formatNewsDate, type NewsItem } from '@/lib/news';
 
 /**
  * SlimFile Newsroom, after apple.com/newsroom: the latest story large, the
- * rest in a grid. Each story has its own page at /news/:id.
+ * rest in a grid, with University Ambassadors in a section of their own.
+ * Each story has its own page at /news/:id.
  */
 export default function News() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function News() {
     ogImage: absoluteUrl(NEWS[0].image),
   });
 
-  const [latest, ...rest] = NEWS;
+  const [latest, ...rest] = GENERAL_NEWS;
 
   return (
     <div className="min-h-screen bg-white pt-12 text-[#1d1d1f]">
@@ -57,6 +58,21 @@ export default function News() {
         </Link>
       </section>
 
+      {/* University Ambassadors */}
+      <section className="px-4 sm:px-6 pb-14">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 mb-6">
+            <h2 className="text-[28px] sm:text-[32px] font-semibold tracking-tight">Our University Ambassadors.</h2>
+            <Link to="/news/slimfile-university-ambassador-program" className="text-[15px] text-red-600 hover:underline">
+              About the program ›
+            </Link>
+          </div>
+          <div className="grid gap-5 grid-cols-2 lg:grid-cols-4">
+            {AMBASSADOR_STORIES.map(item => <AmbassadorCard key={item.id} item={item} />)}
+          </div>
+        </div>
+      </section>
+
       {/* Everything else */}
       <section className="px-4 sm:px-6 pb-24">
         <div className="max-w-6xl mx-auto">
@@ -67,6 +83,29 @@ export default function News() {
         </div>
       </section>
     </div>
+  );
+}
+
+function AmbassadorCard({ item }: { item: NewsItem }) {
+  const person = item.ambassador!;
+  return (
+    <Link to={`/news/${item.id}`} className="group block h-full">
+      <article className="h-full flex flex-col rounded-[22px] overflow-hidden bg-[#f5f5f7] transition-shadow duration-300 hover:shadow-[0_20px_44px_-20px_rgba(0,0,0,0.22)]">
+        <div className="aspect-[4/5] overflow-hidden bg-[#e8e8ed]">
+          <img
+            src={person.portrait}
+            alt={item.imageAlt}
+            loading="lazy"
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          />
+        </div>
+        <div className="p-4 sm:p-5 flex flex-col flex-1">
+          <h3 className="text-[17px] sm:text-[19px] font-semibold tracking-tight leading-snug">{person.name}</h3>
+          <p className="mt-1 text-[13px] sm:text-[14px] text-[#6e6e73] leading-snug">{person.university}</p>
+          {person.badge && <p className="mt-2 text-[12px] font-semibold text-red-600 leading-snug">{person.badge}</p>}
+        </div>
+      </article>
+    </Link>
   );
 }
 

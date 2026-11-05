@@ -25,6 +25,15 @@ export interface NewsItem {
   homeLine?: string;
   /** Shorter version of homeLine for phones */
   homeLineShort?: string;
+  /** Set on a story about a University Ambassador: it shows in the Newsroom's ambassadors section */
+  ambassador?: {
+    name: string;
+    university: string;
+    /** Upright photo (4:5), at least 1,000px wide */
+    portrait: string;
+    /** e.g. "Ambassador of the Month, October 2026" */
+    badge?: string;
+  };
   highlights: { title: string; note: string }[];
   ctas: NewsCta[];
 }
@@ -33,6 +42,9 @@ const SITE = 'https://www.slim-file.com';
 
 // Newest first
 export const NEWS: NewsItem[] = [...(newsData as NewsItem[])].sort((a, b) => b.date.localeCompare(a.date));
+
+export const AMBASSADOR_STORIES = NEWS.filter(n => n.ambassador);
+export const GENERAL_NEWS = NEWS.filter(n => !n.ambassador);
 
 export const findNews = (id?: string) => NEWS.find(n => n.id === id);
 

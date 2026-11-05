@@ -1,5 +1,87 @@
 [
   {
+    "id": "ann-apeani-university-of-ghana",
+    "title": "Meet Ann Apeani, SlimFile's University Ambassador at the University of Ghana, Legon",
+    "subtitle": "Ann represents SlimFile at the University of Ghana, helping students at Legon handle their assignments, documents and group work with free tools built for campus life.",
+    "date": "2026-11-05",
+    "category": "Community",
+    "image": "/news/ann-apeani-university-of-ghana.jpg",
+    "imageAlt": "Ann Apeani, SlimFile University Ambassador at the University of Ghana, Legon, wearing a SlimFile T-shirt",
+    "imageCaption": "Ann Apeani, SlimFile University Ambassador at the University of Ghana, Legon.",
+    "ambassador": {
+      "name": "Ann Apeani",
+      "university": "University of Ghana, Legon",
+      "portrait": "/news/ambassadors/ann-apeani.jpg"
+    },
+    "highlights": [
+      {
+        "title": "Representing Legon",
+        "note": "As SlimFile's ambassador at the University of Ghana, Ann is the person students at Legon can turn to when they want to know what SlimFile can do for their coursework."
+      },
+      {
+        "title": "Tools for campus life",
+        "note": "Students can use SlimFile to get assignments under portal size limits, convert and scan documents, merge PDFs, write in SlimDocx and plan group projects on Whiteboards, all free."
+      },
+      {
+        "title": "Part of a growing network",
+        "note": "Ann is part of the SlimFile University Ambassador Program, which has students representing SlimFile on campuses in Ghana, Mauritius and the United States."
+      },
+      {
+        "title": "Thank you, Ann",
+        "note": "Thank you for representing SlimFile at the University of Ghana. Students at Legon who want to learn more about SlimFile can reach out to Ann on campus."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "About the Ambassador Program",
+        "href": "/news/slimfile-university-ambassador-program"
+      },
+      {
+        "label": "Become an ambassador",
+        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "external": true,
+        "secondary": true
+      }
+    ]
+  },
+  {
+    "id": "christabel-maame-yaa-dekyem-alc-mauritius",
+    "title": "Meet Christabel Maame Yaa Dekyem, SlimFile University Ambassador at African Leadership College of Higher Education in Mauritius",
+    "subtitle": "Christabel is helping students on her campus work smarter with their files. We're proud to have her in our global ambassador network.",
+    "date": "2026-11-05",
+    "category": "Community",
+    "image": "/news/ambassador-program.jpg",
+    "imageAlt": "Christabel Maame Yaa Dekyem, SlimFile University Ambassador at the African Leadership College of Higher Education, Mauritius",
+    "imageCaption": "Christabel Maame Yaa Dekyem, SlimFile University Ambassador at the African Leadership College of Higher Education, Mauritius.",
+    "ambassador": {
+      "name": "Christabel Maame Yaa Dekyem",
+      "university": "African Leadership College of Higher Education, Mauritius",
+      "portrait": "/news/ambassadors/christabel-maame-yaa-dekyem.jpg"
+    },
+    "highlights": [
+      {
+        "title": "Tools for campus life",
+        "note": "Students can use SlimFile to get assignments under portal size limits, convert and scan documents, merge PDFs, write in SlimDocx and plan group projects on Whiteboards, all free."
+      },
+      {
+        "title": "Thank you, Christabel",
+        "note": "Thank you for representing SlimFile in Mauritius. Students at the college who want to learn more about SlimFile can reach out to Christabel on campus."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "About the Ambassador Program",
+        "href": "/news/slimfile-university-ambassador-program"
+      },
+      {
+        "label": "Become an ambassador",
+        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "external": true,
+        "secondary": true
+      }
+    ]
+  },
+  {
     "id": "ambassador-of-the-month-october-2026",
     "title": "Hagar Agyapomaa Boakye Is SlimFile's Ambassador of the Month for October 2026",
     "subtitle": "Hagar, our University Ambassador at the University of Cape Coast, is October's Ambassador of the Month, recognised for her work bringing SlimFile to students on campus.",
@@ -35,7 +117,13 @@
         "external": true,
         "secondary": true
       }
-    ]
+    ],
+    "ambassador": {
+      "name": "Hagar Agyapomaa Boakye",
+      "university": "University of Cape Coast",
+      "portrait": "/news/ambassadors/hagar-agyapomaa-boakye.jpg",
+      "badge": "Ambassador of the Month, October 2026"
+    }
   },
   {
     "id": "introducing-slimfile-atlas",
