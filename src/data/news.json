@@ -1,5 +1,95 @@
 [
   {
+    "id": "cinderella-takoradi-technical-university",
+    "title": "Meet Cinderella, SlimFile's University Ambassador at Takoradi Technical University",
+    "subtitle": "Cinderella represents SlimFile at Takoradi Technical University, helping students at TTU handle their assignments, documents and group work with free tools built for campus life.",
+    "date": "2026-11-06",
+    "category": "Community",
+    "image": "/news/cinderella-takoradi-technical-university.jpg",
+    "imageAlt": "Cinderella, SlimFile University Ambassador at Takoradi Technical University, wearing a SlimFile T-shirt",
+    "imageCaption": "Cinderella, SlimFile University Ambassador at Takoradi Technical University.",
+    "ambassador": {
+      "name": "Cinderella",
+      "university": "Takoradi Technical University",
+      "portrait": "/news/ambassadors/cinderella.jpg"
+    },
+    "highlights": [
+      {
+        "title": "Representing Takoradi",
+        "note": "As SlimFile's ambassador at Takoradi Technical University, Cinderella is the person students at TTU can turn to when they want to know what SlimFile can do for their coursework."
+      },
+      {
+        "title": "Tools for campus life",
+        "note": "Students can use SlimFile to get assignments under portal size limits, convert and scan documents, merge PDFs, write in SlimDocx and plan group projects on Whiteboards, all free."
+      },
+      {
+        "title": "Part of a growing network",
+        "note": "Cinderella is part of the SlimFile University Ambassador Program, which has students representing SlimFile on campuses in Ghana, Mauritius and the United States."
+      },
+      {
+        "title": "Thank you, Cinderella",
+        "note": "Thank you for representing SlimFile at Takoradi Technical University. Students at TTU who want to learn more about SlimFile can reach out to Cinderella on campus."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "About the Ambassador Program",
+        "href": "/news/slimfile-university-ambassador-program"
+      },
+      {
+        "label": "Become an ambassador",
+        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "external": true,
+        "secondary": true
+      }
+    ]
+  },
+  {
+    "id": "emmanuel-twentoh-takoradi-technical-university",
+    "title": "Meet Emmanuel Twentoh, SlimFile's University Ambassador at Takoradi Technical University",
+    "subtitle": "Emmanuel represents SlimFile at Takoradi Technical University, helping students at TTU handle their assignments, documents and group work with free tools built for campus life.",
+    "date": "2026-11-06",
+    "category": "Community",
+    "image": "/news/emmanuel-twentoh-takoradi-technical-university.jpg",
+    "imageAlt": "Emmanuel Twentoh, SlimFile University Ambassador at Takoradi Technical University, wearing a SlimFile T-shirt",
+    "imageCaption": "Emmanuel Twentoh, SlimFile University Ambassador at Takoradi Technical University.",
+    "ambassador": {
+      "name": "Emmanuel Twentoh",
+      "university": "Takoradi Technical University",
+      "portrait": "/news/ambassadors/emmanuel-twentoh.jpg"
+    },
+    "highlights": [
+      {
+        "title": "Representing Takoradi",
+        "note": "As SlimFile's ambassador at Takoradi Technical University, Emmanuel is the person students at TTU can turn to when they want to know what SlimFile can do for their coursework."
+      },
+      {
+        "title": "Tools for campus life",
+        "note": "Students can use SlimFile to get assignments under portal size limits, convert and scan documents, merge PDFs, write in SlimDocx and plan group projects on Whiteboards, all free."
+      },
+      {
+        "title": "Part of a growing network",
+        "note": "Emmanuel is part of the SlimFile University Ambassador Program, which has students representing SlimFile on campuses in Ghana, Mauritius and the United States."
+      },
+      {
+        "title": "Thank you, Emmanuel",
+        "note": "Thank you for representing SlimFile at Takoradi Technical University. Students at TTU who want to learn more about SlimFile can reach out to Emmanuel on campus."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "About the Ambassador Program",
+        "href": "/news/slimfile-university-ambassador-program"
+      },
+      {
+        "label": "Become an ambassador",
+        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "external": true,
+        "secondary": true
+      }
+    ]
+  },
+  {
     "id": "ann-apeani-university-of-ghana",
     "title": "Meet Ann Apeani, SlimFile's University Ambassador at the University of Ghana, Legon",
     "subtitle": "Ann represents SlimFile at the University of Ghana, helping students at Legon handle their assignments, documents and group work with free tools built for campus life.",
