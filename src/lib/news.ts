@@ -43,7 +43,10 @@ const SITE = 'https://www.slim-file.com';
 // Newest first
 export const NEWS: NewsItem[] = [...(newsData as NewsItem[])].sort((a, b) => b.date.localeCompare(a.date));
 
-export const AMBASSADOR_STORIES = NEWS.filter(n => n.ambassador);
+// Ambassadors of the Month lead the section, then the rest by date.
+export const AMBASSADOR_STORIES = NEWS.filter(n => n.ambassador).sort(
+  (a, b) => Number(!!b.ambassador?.badge) - Number(!!a.ambassador?.badge),
+);
 export const GENERAL_NEWS = NEWS.filter(n => !n.ambassador);
 
 export const findNews = (id?: string) => NEWS.find(n => n.id === id);
