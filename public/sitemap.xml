@@ -142,9 +142,15 @@
   <!-- ===== News ===== -->
   <url>
     <loc>https://www.slim-file.com/news</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.slim-file.com/news/chinelo-adaugo-nnamdi-kanu-alchie</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.slim-file.com/news/cinderella-takoradi-technical-university</loc>

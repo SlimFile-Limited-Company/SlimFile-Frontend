@@ -1,5 +1,54 @@
 [
   {
+    "id": "chinelo-adaugo-nnamdi-kanu-alchie",
+    "title": "Meet Chinelo Adaugo Nnamdi Kanu, SlimFile's Second University Ambassador at ALCHIE in Mauritius",
+    "subtitle": "Chinelo, a Nigerian student at the African Leadership College of Higher Education in Mauritius, joins Christabel as SlimFile's second ambassador on campus.",
+    "date": "2026-11-07",
+    "category": "Community",
+    "image": "/news/chinelo-adaugo-nnamdi-kanu-alchie.jpg",
+    "imageAlt": "Chinelo Adaugo Nnamdi Kanu, SlimFile University Ambassador at ALCHIE in Mauritius, wearing a SlimFile T-shirt",
+    "imageCaption": "Chinelo Adaugo Nnamdi Kanu, SlimFile University Ambassador at the African Leadership College of Higher Education (ALCHIE), Mauritius.",
+    "ambassador": {
+      "name": "Chinelo Adaugo Nnamdi Kanu",
+      "university": "African Leadership College of Higher Education (ALCHIE), Mauritius",
+      "portrait": "/news/ambassadors/chinelo-adaugo-nnamdi-kanu.jpg"
+    },
+    "highlights": [
+      {
+        "title": "A second ambassador at ALCHIE",
+        "note": "Chinelo joins Christabel Maame Yaa Dekyem as SlimFile's second University Ambassador at the African Leadership College of Higher Education (ALCHIE) in Mauritius."
+      },
+      {
+        "title": "From Nigeria to Mauritius",
+        "note": "Chinelo is Nigerian and studies at ALCHIE, where she is helping an international campus community get more out of the files they work with every day."
+      },
+      {
+        "title": "Tools for campus life",
+        "note": "Students can use SlimFile to get assignments under portal size limits, convert and scan documents, merge PDFs, write in SlimDocx and plan group projects on Whiteboards, all free."
+      },
+      {
+        "title": "Part of a growing network",
+        "note": "Chinelo is part of the SlimFile University Ambassador Program, which has students representing SlimFile on campuses in Ghana, Mauritius and the United States."
+      },
+      {
+        "title": "Thank you, ChiChi",
+        "note": "Thank you for representing SlimFile in Mauritius. Students at ALCHIE who want to learn more about SlimFile can reach out to Chinelo, or ChiChi, on campus."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "About the Ambassador Program",
+        "href": "/news/slimfile-university-ambassador-program"
+      },
+      {
+        "label": "Become an ambassador",
+        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "external": true,
+        "secondary": true
+      }
+    ]
+  },
+  {
     "id": "cinderella-takoradi-technical-university",
     "title": "Meet Cinderella Agbolosoo, SlimFile's University Ambassador at Takoradi Technical University",
     "subtitle": "Cinderella Agbolosoo represents SlimFile at Takoradi Technical University, helping students at TTU handle their assignments, documents and group work with free tools built for campus life.",
