@@ -216,7 +216,8 @@ import Documents from './pages/Documents';
 // BlockNote is large, so the document editor loads only when a document is opened.
 const DocumentEditor = lazy(() => import('./pages/DocumentEditor'));
 // SlimFile Atlas (mobile app) privacy and support. Unlisted: linked only from the app stores.
-const AtlasPolicy = lazy(() => import('./pages/atlas/AtlasPolicy'));
+// Loaded with the main bundle (it is small) so the page never shows a blank loading moment.
+import AtlasPolicy from './pages/atlas/AtlasPolicy';
 import AdminNewsletter from './pages/AdminNewsletter';
 import ReviewEmails from './pages/admin/ReviewEmails';
 import SlimFileDrive from './pages/SlimFileDrive';
@@ -284,8 +285,8 @@ ReactDOM.createRoot(root).render(
             <Routes>
         <Route path="/login" element={<Login />} />
         {/* SlimFile Atlas app pages: outside the site layout, in the app's own colours */}
-        <Route path="/atlas/privacy" element={<Suspense fallback={null}><AtlasPolicy page="privacy" /></Suspense>} />
-        <Route path="/atlas/support" element={<Suspense fallback={null}><AtlasPolicy page="support" /></Suspense>} />
+        <Route path="/atlas/privacy" element={<AtlasPolicy page="privacy" />} />
+        <Route path="/atlas/support" element={<AtlasPolicy page="support" />} />
         {/* New Dashboard with nested routes */}
         <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           <Route index element={<DashboardOverview />} />
@@ -489,6 +490,8 @@ ReactDOM.createRoot(root).render(
           <Route path="images/blur-faces" element={<BlurFaces />} />
           <Route path="images/enhance" element={<EnhanceImage />} />
           <Route path="images/thumbnails" element={<GenerateThumbnails />} />
+          {/* Unknown URLs: show the 404 page instead of a blank screen */}
+          <Route path="*" element={<NotFound />} />
         </Route>
 
         {/* Workspace chat - Full screen without header/footer */}
