@@ -2,7 +2,7 @@ import { PDFDocument, degrees } from 'pdf-lib';
 import type { PageViewport } from 'pdfjs-dist';
 
 /** PDFs this size or larger are sent to Compress first: smaller files sign faster in the browser. */
-export const LARGE_PDF_BYTES = 15 * 1024 * 1024;
+export const LARGE_PDF_BYTES = 15_000_000;
 
 export type FieldKind = 'signature' | 'initials' | 'date' | 'text';
 

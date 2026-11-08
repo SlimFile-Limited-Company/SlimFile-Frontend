@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -24,7 +24,11 @@ import {
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
-const formatMb = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+/** Sizes as phones, macOS and Finder show them (1 MB = 1,000,000 bytes); KB under 1 MB. */
+const formatSize = (bytes: number) =>
+  bytes < 1_000_000
+    ? `${Math.max(1, Math.round(bytes / 1000))} KB`
+    : `${(bytes / 1_000_000).toFixed(1)} MB`;
 
 /** Default width of a new field, as a fraction of the page width. */
 const DEFAULT_WIDTH: Record<FieldKind, number> = { signature: 0.3, initials: 0.1, date: 0.2, text: 0.25 };
@@ -141,41 +145,51 @@ const SlimFileSign = () => {
     setSelectedId(null);
   };
 
-  const placeField = (page: number, fx: number, fy: number) => {
-    if (!tool) {
-      setSelectedId(null);
-      return;
-    }
-    const viewport = viewports[page];
-    const pageAspect = viewport.width / viewport.height;
-    let ink: Ink;
-    let text: string | undefined;
+  // What the active tool will stamp. The same ink drives the preview that follows the pointer.
+  const placing = useMemo<{ ink: Ink; text?: string } | null>(() => {
+    if (!tool) return null;
     if (tool === 'signature' || tool === 'initials') {
       const saved = inks[tool];
-      if (!saved) return;
-      ink = saved;
-    } else {
-      text = tool === 'date' ? todayLabel() : 'Type here';
-      ink = plainTextToInk(text);
+      return saved ? { ink: saved } : null;
     }
+    const text = tool === 'date' ? todayLabel() : 'Type here';
+    return { ink: plainTextToInk(text), text };
+  }, [tool, inks]);
+
+  /** Size and position of a new field centred on (fx, fy), kept inside the page. */
+  const boxAt = (page: number, fx: number, fy: number) => {
+    if (!tool || !placing) return null;
+    const viewport = viewports[page];
+    const pageAspect = viewport.width / viewport.height;
     const isText = tool === 'date' || tool === 'text';
-    let h = isText ? TEXT_HEIGHT : (DEFAULT_WIDTH[tool] * pageAspect) / ink.aspect;
-    let w = isText ? (h * ink.aspect) / pageAspect : DEFAULT_WIDTH[tool];
+    let h = isText ? TEXT_HEIGHT : (DEFAULT_WIDTH[tool] * pageAspect) / placing.ink.aspect;
+    let w = isText ? (h * placing.ink.aspect) / pageAspect : DEFAULT_WIDTH[tool];
     if (w > 0.9) {
       h *= 0.9 / w;
       w = 0.9;
+    }
+    return {
+      x: Math.min(Math.max(fx - w / 2, 0), 1 - w),
+      y: Math.min(Math.max(fy - h / 2, 0), 1 - h),
+      w,
+      h,
+    };
+  };
+
+  const placeField = (page: number, fx: number, fy: number) => {
+    const box = boxAt(page, fx, fy);
+    if (!tool || !placing || !box) {
+      setSelectedId(null);
+      return;
     }
     const field: SignField = {
       id: crypto.randomUUID(),
       kind: tool,
       page,
-      x: Math.min(Math.max(fx - w / 2, 0), 1 - w),
-      y: Math.min(Math.max(fy - h / 2, 0), 1 - h),
-      w,
-      h,
-      image: ink.dataUrl,
-      aspect: ink.aspect,
-      text,
+      ...box,
+      image: placing.ink.dataUrl,
+      aspect: placing.ink.aspect,
+      text: placing.text,
     };
     setFields(prev => [...prev, field]);
     setSelectedId(field.id);
@@ -299,7 +313,7 @@ const SlimFileSign = () => {
             <div className="min-w-0">
               <p className="text-[15px] font-medium text-[#1d1d1f] truncate">{file?.name}</p>
               <p className="text-sm text-[#6e6e73]">
-                {viewports.length} {viewports.length === 1 ? 'page' : 'pages'} · {file && formatMb(file.size)}
+                {viewports.length} {viewports.length === 1 ? 'page' : 'pages'} · {file && formatSize(file.size)}
               </p>
             </div>
             <button onClick={reset} className="text-sm text-[#6e6e73] hover:text-[#1d1d1f] inline-flex items-center gap-1 shrink-0">
@@ -331,7 +345,7 @@ const SlimFileSign = () => {
 
           <p className="text-sm text-[#6e6e73] text-center mb-4" aria-live="polite">
             {tool
-              ? `Click on the page where the ${tool} should go.`
+              ? `Move it to the right spot and click to place it. Press Esc to cancel.`
               : signedCount === 0
                 ? 'Choose Signature, Initials, Date or Text, then click on the page.'
                 : 'Drag to move, drag the corner to resize. Change your signature anytime.'}
@@ -353,7 +367,7 @@ const SlimFileSign = () => {
                 doc={doc}
                 index={index}
                 viewport={viewport}
-                placing={tool !== null}
+                ghost={placing ? { image: placing.ink.dataUrl, boxAt: (fx, fy) => boxAt(index, fx, fy) } : null}
                 onPlace={(fx, fy) => placeField(index, fx, fy)}
               >
                 {(pageRef) =>
@@ -414,7 +428,7 @@ const SlimFileSign = () => {
             </AlertDialogTitle>
             <AlertDialogDescription className="text-[15px] leading-relaxed text-[#6e6e73]">
               <span className="font-medium text-[#1d1d1f]">{largeFile?.name}</span> is{' '}
-              {largeFile && formatMb(largeFile.size)}. Large PDFs are slow to sign in the browser. Compress it first: it
+              {largeFile && formatSize(largeFile.size)}. Large PDFs are slow to sign in the browser. Compress it first: it
               gets much smaller and keeps its quality. Then download it and sign it here.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -437,14 +451,15 @@ function PdfPage({
   doc,
   index,
   viewport,
-  placing,
+  ghost,
   onPlace,
   children,
 }: {
   doc: PDFDocumentProxy;
   index: number;
   viewport: PageViewport;
-  placing: boolean;
+  /** While a tool is active: what to preview under the pointer, and where it would land. */
+  ghost: { image: string; boxAt: (fx: number, fy: number) => { x: number; y: number; w: number; h: number } | null } | null;
   onPlace: (fx: number, fy: number) => void;
   children: (pageRef: React.RefObject<HTMLDivElement>) => React.ReactNode;
 }) {
@@ -485,23 +500,52 @@ function PdfPage({
     };
   }, [visible, doc, index, viewport]);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  // Pointer position over this page (fractions), for the preview that follows the mouse.
+  const [hover, setHover] = useState<{ fx: number; fy: number } | null>(null);
+  const fraction = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    onPlace((e.clientX - rect.left) / rect.width, (e.clientY - rect.top) / rect.height);
+    return { fx: (e.clientX - rect.left) / rect.width, fy: (e.clientY - rect.top) / rect.height };
   };
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { fx, fy } = fraction(e);
+    onPlace(fx, fy);
+    setHover(null);
+  };
+
+  const preview = ghost && hover ? ghost.boxAt(hover.fx, hover.fy) : null;
 
   return (
     <div
       ref={pageRef}
       onClick={handleClick}
+      onPointerMove={e => {
+        // Mouse and pen only: on touch screens a tap places the field directly.
+        if (ghost && e.pointerType !== 'touch') setHover(fraction(e));
+      }}
+      onPointerLeave={() => setHover(null)}
       className={`relative bg-white rounded-lg shadow-[0_1px_4px_rgba(0,0,0,0.08)] select-none ${
-        placing ? 'cursor-crosshair ring-2 ring-red-400/60' : ''
-      }`}
+        ghost ? 'ring-2 ring-red-400/60' : ''
+      } ${preview ? 'cursor-none' : ghost ? 'cursor-crosshair' : ''}`}
       style={{ aspectRatio: `${viewport.width} / ${viewport.height}` }}
       aria-label={`Page ${index + 1}`}
     >
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full rounded-lg" />
       {children(pageRef)}
+      {ghost && preview && (
+        <div
+          className="absolute pointer-events-none rounded-sm outline-dashed outline-2 outline-red-500 bg-red-500/[0.04]"
+          style={{
+            left: `${preview.x * 100}%`,
+            top: `${preview.y * 100}%`,
+            width: `${preview.w * 100}%`,
+            height: `${preview.h * 100}%`,
+          }}
+          aria-hidden
+        >
+          <img src={ghost.image} alt="" className="w-full h-full object-fill opacity-80" />
+        </div>
+      )}
       <span className="absolute bottom-2 right-3 text-[11px] text-[#6e6e73]/70 pointer-events-none">{index + 1}</span>
     </div>
   );
