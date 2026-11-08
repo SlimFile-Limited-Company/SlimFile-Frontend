@@ -1,5 +1,40 @@
 [
   {
+    "id": "esign-pdfs-on-slimfile",
+    "title": "You Can Now Sign PDFs on SlimFile",
+    "subtitle": "Draw, type or upload your signature, add the date and your initials, and download the signed PDF. It all happens in your browser, so your document is never uploaded.",
+    "date": "2026-11-08",
+    "category": "Product",
+    "image": "/news/esign.jpg",
+    "imageAlt": "A document with a handwritten signature on the signature line",
+    "homeLine": "You can now sign PDFs on SlimFile, free and right in your browser.",
+    "homeLineShort": "Sign PDFs on SlimFile",
+    "highlights": [
+      {
+        "title": "Sign your way",
+        "note": "Draw your signature with a mouse or finger, type it in a handwriting style, or upload a photo of it on paper. The background is removed for you."
+      },
+      {
+        "title": "Put it exactly where it belongs",
+        "note": "Add your signature, initials, the date or any text on any page. Move and resize everything until it sits right, then download the signed PDF."
+      },
+      {
+        "title": "Your document stays with you",
+        "note": "Signing happens entirely in your browser. Your PDF is never uploaded to our servers, and nothing is stored."
+      },
+      {
+        "title": "Big file? Compress it first",
+        "note": "If a PDF is 6 MB or larger, SlimFile offers to compress it first, so signing stays fast. Then sign the smaller file."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "Sign a PDF",
+        "href": "/esign"
+      }
+    ]
+  },
+  {
     "id": "chinelo-adaugo-nnamdi-kanu-alche",
     "title": "Meet Chinelo Adaugo Nnamdi Kanu, SlimFile's Second University Ambassador at ALCHE in Mauritius",
     "subtitle": "Chinelo, a Nigerian student at the African Leadership College of Higher Education in Mauritius, joins Christabel as SlimFile's second ambassador on campus.",
@@ -229,8 +264,6 @@
     "image": "/news/ambassador-of-the-month-october-2026.jpg",
     "imageAlt": "Hagar Agyapomaa Boakye, SlimFile University Ambassador of the Month, October 2026, UCC",
     "imageCaption": "Hagar Agyapomaa Boakye, SlimFile University Ambassador at the University of Cape Coast.",
-    "homeLine": "Hagar Agyapomaa Boakye of UCC is our Ambassador of the Month for October.",
-    "homeLineShort": "Ambassador of the Month",
     "highlights": [
       {
         "title": "Representing UCC",
