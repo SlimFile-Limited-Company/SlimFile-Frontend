@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { SignatureDialog } from '@/components/esign/SignatureDialog';
 import { trackCampusFile } from '@/lib/campus';
+import { reportClientTool } from '@/utils/clientToolTracking';
 import { markDownloaded } from '@/lib/followChannel';
 import {
   EncryptedPdfError, LARGE_PDF_BYTES, plainTextToInk, signPdf, todayLabel,
@@ -63,6 +64,10 @@ const SlimFileSign = () => {
 
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    reportClientTool('esign', 'visit');
+  }, []);
 
   const [file, setFile] = useState<File | null>(null);
   const [doc, setDoc] = useState<PDFDocumentProxy | null>(null);
@@ -133,6 +138,7 @@ const SlimFileSign = () => {
 
   const compressFirst = () => {
     if (!largeFile) return;
+    reportClientTool('esign', 'handoff', { originalSize: largeFile.size });
     navigate('/compress', { state: { files: [largeFile], from: 'esign' } });
   };
 
@@ -233,6 +239,13 @@ const SlimFileSign = () => {
       const stem = file.name.replace(/\.pdf$/i, '');
       downloadBlob(blob, `${stem}-signed.pdf`);
       trackCampusFile();
+      // Counts and sizes only; the file name and contents never leave the browser.
+      reportClientTool('esign', 'complete', {
+        pages: viewports.length,
+        originalSize: file.size,
+        resultSize: blob.size,
+        detail: [...new Set(fields.map(f => f.kind))].sort().join(','),
+      });
       toast({ title: 'Signed PDF downloaded', description: `${stem}-signed.pdf is in your downloads.` });
     } catch (e) {
       toast({
@@ -297,7 +310,7 @@ const SlimFileSign = () => {
               <p className="font-medium text-[#1d1d1f]">
                 {loading ? 'Opening your PDF…' : isDragActive ? 'Drop your PDF here' : 'Drop a PDF here or click to choose'}
               </p>
-              <p className="text-sm text-[#6e6e73] mt-1">One PDF. Over 15 MB? We’ll help you compress it first.</p>
+              <p className="text-sm text-[#6e6e73] mt-1">One PDF. Over 6 MB? We’ll help you compress it first.</p>
             </div>
           </div>
 

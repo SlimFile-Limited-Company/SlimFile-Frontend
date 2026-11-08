@@ -724,6 +724,7 @@ function formatOperation(op: string) {
     ocr: 'OCR Tool',
     'zip-compress': 'Zip Files & Folders',
     qr: 'QR Code Generator',
+    esign: 'eSign PDF',
     compress: 'Compress Files',
     'split-compress': 'Split & Compress PDFs',
     'text-to-pdf': 'Text to PDF'

@@ -1,9 +1,10 @@
 /**
  * Client-side tool usage reporting.
  *
- * OCR (Tesseract.js) and the QR generator (canvas/SVG) both run entirely in the
- * browser, so there is no processing request for the backend to hook. These two
- * report for themselves instead.
+ * OCR (Tesseract.js), the QR generator (canvas/SVG) and eSign (pdf-lib) run
+ * entirely in the browser, so there is no processing request for the backend to
+ * hook. They report for themselves instead: counts and sizes only, never file
+ * names or contents.
  *
  * Fire-and-forget by design: never awaited on the render path, never throws, so
  * a failed analytics call cannot break or slow down the tool.
@@ -11,13 +12,14 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
-type ClientTool = 'ocr' | 'qr';
-type ClientToolEvent = 'visit' | 'complete';
+type ClientTool = 'ocr' | 'qr' | 'esign';
+/** 'handoff': eSign sent a large PDF to Compress before signing. */
+type ClientToolEvent = 'visit' | 'complete' | 'handoff';
 
 export function reportClientTool(
   operation: ClientTool,
   event: ClientToolEvent,
-  extra?: { detail?: string; pages?: number; characters?: number }
+  extra?: { detail?: string; pages?: number; characters?: number; originalSize?: number; resultSize?: number }
 ): void {
   try {
     // sendBeacon survives page unload, which is exactly when a 'visit' fires
