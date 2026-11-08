@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FileUpload } from "@/components/FileUpload";
 import { CompressionResult } from "@/components/CompressionResult";
 import { uploadWithProgress, queuedProgress, type TransferProgress } from "@/lib/uploadWithProgress";
@@ -22,6 +23,21 @@ const Compress = () => {
   const [compressedFiles, setCompressedFiles] = useState<(File | null)[]>([]);
   const [compressedSizes, setCompressedSizes] = useState<number[]>([]);
   const [pdfWarnings, setPdfWarnings] = useState<string[]>([]);
+
+  // Files handed over by another tool (eSign sends large PDFs here to be compressed first).
+  const location = useLocation();
+  const navigate = useNavigate();
+  const handoffDone = useRef(false);
+  const [fromEsign, setFromEsign] = useState(false);
+  useEffect(() => {
+    const handoff = location.state as { files?: File[]; from?: string } | null;
+    if (handoffDone.current || !handoff?.files?.length) return;
+    handoffDone.current = true;
+    // Clear the state so a refresh or Back doesn't compress the same file again.
+    navigate(location.pathname, { replace: true, state: null });
+    setFromEsign(handoff.from === 'esign');
+    handleFilesSelect(handoff.files);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
@@ -247,6 +263,15 @@ const Compress = () => {
                     : t('compress.processingSubtitle')}
                 </p>
               </div>
+
+              {fromEsign && selectedFiles.length > 0 && (
+                <div className="bg-[#f5f5f7] rounded-2xl px-5 py-4 mb-4 text-[15px] text-[#1d1d1f] text-center">
+                  When it’s done, download the compressed PDF, then{' '}
+                  <Link to="/esign" className="text-red-600 font-medium hover:underline">
+                    sign it in eSign ›
+                  </Link>
+                </div>
+              )}
 
               {/* Upload/Result Card - FIXED: Responsive padding */}
               <div className="relative bg-[#f5f5f7] rounded-[28px] p-4 sm:p-6 md:p-8">

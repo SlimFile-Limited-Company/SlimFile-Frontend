@@ -109,6 +109,7 @@ export const Header = () => {
     { name: "Text to PDF", href: "/text-to-pdf" },
     { name: "OCR Tool", href: "/ocr-tool" },
     { name: "PDF Password Protect", href: "/lock" },
+    { name: "eSign PDF", href: "/esign" },
     { name: "Scan & Compress", href: "/scan-compress" },
     { name: "Batch Scan & Merge", href: "/scan-merge" },
     { name: "Batch Scan & Split", href: "/scan-split" },
@@ -138,6 +139,7 @@ export const Header = () => {
           { name: "Text to PDF", href: "/text-to-pdf" },
           { name: "OCR Tool", href: "/ocr-tool" },
           { name: "PDF Password Protect", href: "/lock" },
+          { name: "eSign PDF", href: "/esign" },
         ],
       },
       {

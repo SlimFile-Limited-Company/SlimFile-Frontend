@@ -218,6 +218,8 @@ const DocumentEditor = lazy(() => import('./pages/DocumentEditor'));
 // SlimFile Atlas (mobile app) privacy and support. Unlisted: linked only from the app stores.
 // Loaded with the main bundle (it is small) so the page never shows a blank loading moment.
 import AtlasPolicy from './pages/atlas/AtlasPolicy';
+// eSign loads pdf.js, so it gets its own chunk instead of growing the main bundle.
+const SlimFileSign = lazy(() => import('./pages/SlimFileSign'));
 import AdminNewsletter from './pages/AdminNewsletter';
 import ReviewEmails from './pages/admin/ReviewEmails';
 import SlimFileDrive from './pages/SlimFileDrive';
@@ -476,6 +478,7 @@ ReactDOM.createRoot(root).render(
           <Route path="scan-split" element={<SlimFileScanSplit />} />
           <Route path="scan-convert" element={<SlimFileScanConvert />} />
           <Route path="lock" element={<SlimFileLock />} />
+          <Route path="esign" element={<Suspense fallback={null}><SlimFileSign /></Suspense>} />
           <Route path="zip" element={<SlimFileZip />} />
           <Route path="qr-code" element={<SlimFileQR />} />
           <Route path="text-to-pdf" element={<TextToPdf />} />

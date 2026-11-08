@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, ChevronRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, QrCode, Smartphone, Scissors, FileArchive } from "lucide-react";
+import { ArrowRight, ChevronRight, Shield, Zap, Globe, FileImage, FileText, Download, Users, Sparkles, CheckCircle2, Star, FileSpreadsheet, FileType, ScanText, Radio, PenTool, FilePlus2, Lock, Minimize2, RefreshCw, Layers, Scan, GitMerge, Rss, PenLine, LayoutDashboard, FileEdit, BarChart3, X, Languages, MessageCircleQuestion, Tags, Smile, GitCompare, Mail, QrCode, Smartphone, Scissors, FileArchive, Signature } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useSEO } from "@/hooks/useSEO";
 
@@ -118,6 +118,7 @@ const Home: FC = () => {
     { icon: FileEdit,  title: "Text to PDF",            description: "Paste plain text and get a clean, formatted PDF in seconds.",        features: ["Headings, lists & bold", "No sign-up needed", "Print-ready A4"],            gradient: "from-emerald-500 to-teal-600", color: "text-emerald-600", href: "/text-to-pdf",       flip: "Type it, ship it! 📄"         },
     { icon: ScanText,  title: "OCR Tool",              description: "Extract editable text from images and scanned documents.",               features: ["Scan images & PDFs", "Multiple languages", "Export as text/PDF"],            gradient: "from-orange-500 to-orange-600", color: "text-orange-600", href: "/ocr-tool",       flip: "Well well well... 😏"      },
     { icon: Lock,      title: "PDF Password Protect",  description: "Lock PDFs with a password or remove existing ones.",                    features: ["128-bit encryption", "Remove passwords", "Files never stored"],              gradient: "from-violet-500 to-violet-600", color: "text-violet-600", href: "/lock",       flip: "Oh snap! 😮"               },
+    { icon: Signature, title: "eSign PDF",             description: "Sign PDFs in your browser: draw, type or upload your signature.",      features: ["Draw, type or upload", "Date, initials & text", "Never uploaded"],           gradient: "from-rose-500 to-red-600", color: "text-rose-600", href: "/esign",       flip: "Sign here! ✍️"             },
     { icon: FileArchive,title: "Zip Files & Folders",    description: "Bundle files or a whole folder into one ZIP, folders kept. Unzip too.",    features: ["Keeps folder paths", "Up to 5 GB", "Nothing stored"],               gradient: "from-slate-500 to-gray-600", color: "text-gray-700",    href: "/zip",         flip: "Pack it up! 🗜️"          },
     { icon: QrCode,    title: "QR Code Generator",     description: "Create QR codes for links, text, WhatsApp, WiFi & email — instantly.",   features: ["PNG & SVG download", "No sign-up needed", "100% in your browser"],         gradient: "from-fuchsia-500 to-pink-600", color: "text-fuchsia-600", href: "/qr-code",       flip: "You scanned me! 🔍"          },
     { icon: Radio,     title: "Activity Feed",         description: "Stay updated with live activity across all your workspaces.",             features: ["Real-time updates", "Activity tracking", "Team notifications"],              gradient: "from-indigo-500 to-indigo-600", color: "text-indigo-600", href: "/feed",      flip: "Look who's here! 👋"       },
@@ -153,7 +154,7 @@ const Home: FC = () => {
         ...aiLabTab,
         ...generalFeatures.filter(f => TEAM_TITLES.has(f.title))
       ] },
-    { key: "pdf",  label: "PDF",     blurb: "Merge, split, compress and protect your PDFs.",                        items: [byTitle("PDF Merger & Splitter"), byTitle("Merge & Compress PDFs"), byTitle("Split & Compress PDFs"), byTitle("Text to PDF"), byTitle("OCR Tool"), byTitle("PDF Password Protect")] },
+    { key: "pdf",  label: "PDF",     blurb: "Merge, split, compress and protect your PDFs.",                        items: [byTitle("PDF Merger & Splitter"), byTitle("Merge & Compress PDFs"), byTitle("Split & Compress PDFs"), byTitle("Text to PDF"), byTitle("OCR Tool"), byTitle("PDF Password Protect"), byTitle("eSign PDF")] },
     { key: "files", label: "Files",  blurb: "Shrink, convert and generate files.",                                  items: [byTitle("Compress Files"), byTitle("Convert Formats"), byTitle("Convert & Compress"), byTitle("Zip Files & Folders"), byTitle("QR Code Generator")] },
     { key: "scan",  label: "Scan",   blurb: "Photograph paper with your phone and turn it into a PDF.",             items: scanFeatures },
     { key: "team", label: "Team",   blurb: "Sketch, write and collaborate together.",                              items: [byTitle("Whiteboards"), byTitle("SlimDocx"), byTitle("Team Workspaces"), byTitle("Activity Feed")] },
