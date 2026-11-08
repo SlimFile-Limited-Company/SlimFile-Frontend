@@ -215,6 +215,8 @@ const PersonalWhiteboardCanvas = lazy(() => import('./pages/PersonalWhiteboardCa
 import Documents from './pages/Documents';
 // BlockNote is large, so the document editor loads only when a document is opened.
 const DocumentEditor = lazy(() => import('./pages/DocumentEditor'));
+// SlimFile Atlas (mobile app) privacy and support. Unlisted: linked only from the app stores.
+const AtlasPolicy = lazy(() => import('./pages/atlas/AtlasPolicy'));
 import AdminNewsletter from './pages/AdminNewsletter';
 import ReviewEmails from './pages/admin/ReviewEmails';
 import SlimFileDrive from './pages/SlimFileDrive';
@@ -281,6 +283,9 @@ ReactDOM.createRoot(root).render(
             <UpdatePrompt />
             <Routes>
         <Route path="/login" element={<Login />} />
+        {/* SlimFile Atlas app pages: outside the site layout, in the app's own colours */}
+        <Route path="/atlas/privacy" element={<Suspense fallback={null}><AtlasPolicy page="privacy" /></Suspense>} />
+        <Route path="/atlas/support" element={<Suspense fallback={null}><AtlasPolicy page="support" /></Suspense>} />
         {/* New Dashboard with nested routes */}
         <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           <Route index element={<DashboardOverview />} />
