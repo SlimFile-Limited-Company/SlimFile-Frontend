@@ -44,6 +44,7 @@ const AI_FEATURES = {
 // News stories for /news/:id previews. Keep in step with src/data/news.json
 // (written out here because Vercel bundles this file on its own).
 const NEWS = [
+  { id: "slimfile-atlas-on-the-app-store", title: "SlimFile Atlas Is Now on the App Store", subtitle: "Compress your videos right on your iPhone. Nothing is uploaded, there's no account, and it's free to download.", image: "/news/slimfile-atlas-app-store.jpg" },
   { id: "esign-pdfs-on-slimfile", title: "You Can Now Sign PDFs on SlimFile", subtitle: "Draw, type or upload your signature, add the date and your initials, and download the signed PDF. It all happens in your browser, so your document is never uploaded.", image: "/news/esign.jpg" },
   { id: "chinelo-adaugo-nnamdi-kanu-alche", title: "Meet Chinelo Adaugo Nnamdi Kanu, SlimFile's Second University Ambassador at ALCHE in Mauritius", subtitle: "Chinelo, a Nigerian student at the African Leadership College of Higher Education in Mauritius, joins Christabel as SlimFile's second ambassador on campus.", image: "/news/chinelo-adaugo-nnamdi-kanu-alche.jpg" },
   { id: "cinderella-takoradi-technical-university", title: "Meet Cinderella Agbolosoo, SlimFile's University Ambassador at Takoradi Technical University", subtitle: "Cinderella Agbolosoo represents SlimFile at Takoradi Technical University, helping students at TTU handle their assignments, documents and group work with free tools built for campus life.", image: "/news/cinderella-takoradi-technical-university.jpg" },

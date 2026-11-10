@@ -1,5 +1,41 @@
 [
   {
+    "id": "slimfile-atlas-on-the-app-store",
+    "title": "SlimFile Atlas Is Now on the App Store",
+    "subtitle": "Compress your videos right on your iPhone. Nothing is uploaded, there's no account, and it's free to download.",
+    "date": "2026-11-10",
+    "category": "Product",
+    "image": "/news/slimfile-atlas-app-store.jpg",
+    "imageAlt": "SlimFile Atlas on iPhone, showing the home screen and 1.2 GB saved",
+    "homeLine": "SlimFile Atlas is now on the App Store. Compress videos on your iPhone, free.",
+    "homeLineShort": "SlimFile Atlas is on the App Store",
+    "highlights": [
+      {
+        "title": "Free up space on your iPhone",
+        "note": "Videos are the biggest thing on most phones. Atlas makes them much smaller, so you can keep more of them and send them more easily on WhatsApp, email or anywhere else."
+      },
+      {
+        "title": "Nothing is uploaded",
+        "note": "Atlas compresses your videos on the iPhone itself, using its built-in video hardware. Your videos never leave your phone. There's no account, no ads and no tracking."
+      },
+      {
+        "title": "Smart, simple compression",
+        "note": "Atlas reads each video and picks a sensible size for it, and shows the expected result before you start. Choose Smaller for the tiniest files, or Compatible for videos that play almost anywhere."
+      },
+      {
+        "title": "Built for batches",
+        "note": "Pick one video or a whole batch and compress them in one go. Your originals are never changed. Save the smaller copies to Photos or share them straight away."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "Download on the App Store",
+        "href": "https://apps.apple.com/app/id6832786075",
+        "external": true
+      }
+    ]
+  },
+  {
     "id": "esign-pdfs-on-slimfile",
     "title": "You Can Now Sign PDFs on SlimFile",
     "subtitle": "Draw, type or upload your signature, add the date and your initials, and download the signed PDF. It all happens in your browser, so your document is never uploaded.",
@@ -7,8 +43,6 @@
     "category": "Product",
     "image": "/news/esign.jpg",
     "imageAlt": "A document with a handwritten signature on the signature line",
-    "homeLine": "You can now sign PDFs on SlimFile, free and right in your browser.",
-    "homeLineShort": "Sign PDFs on SlimFile",
     "highlights": [
       {
         "title": "Sign your way",
