@@ -108,7 +108,7 @@ const pinHtml = (c: CampusStats, selected: boolean) => `
 
 const MAP_CSS = `
 .campus-map .leaflet-container { font-family: inherit; background: #f2f2f0; }
-.campus-map .leaflet-tile-pane { filter: saturate(.7) brightness(1.04); }
+.campus-map .campus-street { filter: saturate(.7) brightness(1.04); }
 .campus-map .leaflet-control-attribution { font-size: 10px; background: rgba(255,255,255,.7); border-radius: 8px 0 0 0; }
 .campus-pin { position: relative; transform: translate(-50%, -100%); display: inline-flex; align-items: center; gap: 6px;
   white-space: nowrap; padding: 5px 6px 5px 10px; border-radius: 999px; background: #fff; color: #1d1d1f;
@@ -144,6 +144,18 @@ export default function CampusDashboard() {
   const map = useRef<L.Map | null>(null);
   const layers = useRef<Record<string, { pin: L.Marker; circles: L.Circle[] }>>({});
   const framed = useRef(false);
+  const bases = useRef<{ street: L.Layer; satellite: L.Layer } | null>(null);
+  const [basemap, setBasemap] = useState<'street' | 'satellite'>('street');
+
+  // Switch between the street map and satellite photos
+  useEffect(() => {
+    const m = map.current;
+    const b = bases.current;
+    if (!m || !b) return;
+    const [show, hide] = basemap === 'satellite' ? [b.satellite, b.street] : [b.street, b.satellite];
+    if (m.hasLayer(hide)) m.removeLayer(hide);
+    if (!m.hasLayer(show)) show.addTo(m);
+  }, [basemap, state]);
 
   // Full numbers on load, then again every two minutes to keep "active" and
   // per-day counts exact; live events fill the gaps in between.
@@ -204,14 +216,29 @@ export default function CampusDashboard() {
   useEffect(() => {
     if (state !== 'ready' || !mapEl.current || map.current) return;
     const m = L.map(mapEl.current, { zoomControl: false, worldCopyJump: true, minZoom: 2 });
-    // OpenStreetMap's own tiles: free with attribution, fine for an admin page's traffic.
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Map: OpenStreetMap's own tiles, free with attribution, fine for an admin page's traffic.
+    // Satellite: Esri World Imagery (aerial photos), with place names on top.
+    const street = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
-    }).addTo(m);
+      className: 'campus-street',
+    });
+    const satellite = L.layerGroup([
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Imagery &copy; Esri, Maxar, Earthstar Geographics',
+        maxZoom: 19,
+        maxNativeZoom: 18,
+      }),
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        maxNativeZoom: 18,
+      }),
+    ]);
+    bases.current = { street, satellite };
+    street.addTo(m);
     m.setView([7.9, -1.0], 7);
     map.current = m;
-    return () => { m.remove(); map.current = null; layers.current = {}; framed.current = false; };
+    return () => { m.remove(); map.current = null; layers.current = {}; framed.current = false; bases.current = null; };
   }, [state]);
 
   // Campus areas and pins, kept in step with the numbers
@@ -315,6 +342,19 @@ export default function CampusDashboard() {
             className={`px-3 h-8 rounded-full text-[13px] transition-colors ${!selected && region === r ? 'bg-[#1d1d1f] text-white font-medium' : 'text-[#424245] hover:text-[#1d1d1f]'}`}
           >
             {r}
+          </button>
+        ))}
+      </div>
+
+      {/* Map or satellite */}
+      <div className="absolute z-[500] top-14 right-3 md:top-[68px] md:right-4 flex rounded-full bg-white/90 backdrop-blur-xl p-1 shadow-[0_2px_12px_rgba(0,0,0,0.12)]">
+        {(['street', 'satellite'] as const).map(b => (
+          <button
+            key={b}
+            onClick={() => setBasemap(b)}
+            className={`px-3 h-8 rounded-full text-[13px] transition-colors ${basemap === b ? 'bg-[#1d1d1f] text-white font-medium' : 'text-[#424245] hover:text-[#1d1d1f]'}`}
+          >
+            {b === 'street' ? 'Map' : 'Satellite'}
           </button>
         ))}
       </div>
