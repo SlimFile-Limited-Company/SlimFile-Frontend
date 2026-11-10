@@ -1,12 +1,69 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { trackEvent } from "@/lib/utils";
-import { useTranslation } from "@/hooks/useTranslation";
-import { FaLinkedinIn, FaInstagram, FaXTwitter, FaTiktok } from "react-icons/fa6";
-import { SiTrustpilot } from "react-icons/si";
+
+// The same tools as the cards on Home, grouped like its tabs.
+const columns = [
+  {
+    heading: "PDF",
+    links: [
+      { label: "PDF Merger & Splitter", path: "/forge" },
+      { label: "Merge & Compress PDFs", path: "/merge-compress" },
+      { label: "Split & Compress PDFs", path: "/split-compress" },
+      { label: "Text to PDF", path: "/text-to-pdf" },
+      { label: "OCR Tool", path: "/ocr-tool" },
+      { label: "PDF Password Protect", path: "/lock" },
+      { label: "eSign PDF", path: "/esign" },
+    ],
+  },
+  {
+    heading: "Files",
+    links: [
+      { label: "Compress Files", path: "/compress" },
+      { label: "Convert Formats", path: "/convert-only" },
+      { label: "Convert & Compress", path: "/convert-compress" },
+      { label: "Zip Files & Folders", path: "/zip" },
+      { label: "QR Code Generator", path: "/qr-code" },
+    ],
+  },
+  {
+    heading: "Scan",
+    links: [
+      { label: "Scan & Compress", path: "/scan-compress" },
+      { label: "Batch Scan & Merge", path: "/scan-merge" },
+      { label: "Batch Scan & Split", path: "/scan-split" },
+      { label: "Scan & Convert", path: "/scan-convert" },
+    ],
+  },
+  {
+    heading: "AI Lab",
+    links: [
+      { label: "Translate Text", path: "/ai-lab?feature=translate" },
+      { label: "Summarize Document", path: "/ai-lab?feature=summarize" },
+      { label: "Rewrite Content", path: "/ai-lab?feature=rewrite" },
+      { label: "Ask Questions", path: "/ai-lab?feature=question" },
+      { label: "Extract Keywords", path: "/ai-lab?feature=keywords" },
+      { label: "Analyze Sentiment", path: "/ai-lab?feature=sentiment" },
+      { label: "Compare Texts", path: "/ai-lab?feature=compare" },
+      { label: "Email Generator", path: "/ai-lab?feature=email" },
+    ],
+  },
+  {
+    heading: "Team",
+    links: [
+      { label: "Whiteboards", path: "/my-whiteboards" },
+      { label: "SlimDocx", path: "/documents" },
+      { label: "Team Workspaces", path: "/workspaces" },
+      { label: "Activity Feed", path: "/feed" },
+    ],
+  },
+];
+
+const legal = [
+  { label: "Privacy Policy", path: "/privacy" },
+  { label: "Terms of Use", path: "/terms" },
+];
 
 export const Footer = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
   const location = useLocation();
 
   // Hide footer on AI Lab page and B2B admin page
@@ -14,126 +71,25 @@ export const Footer = () => {
     return null;
   }
 
-  const handleFooterClick = (path: string, label: string) => {
-    trackEvent('footer_link_click', { path, label });
-    navigate(path);
-  };
-
-  const columns = [
-    {
-      heading: "SlimFile Suites",
-      links: [
-        { label: "Compress", path: "/compress" },
-        { label: "Convert", path: "/convert-only" },
-        { label: "Compress & Convert", path: "/convert-compress" },
-        { label: "Audio Compression", path: "https://audio.slim-file.com", external: true },
-        { label: "OCR Tool", path: "/ocr-tool" },
-        { label: "PDF Merger & Splitter", path: "/forge" },
-        { label: "PDF Password Protect", path: "/lock" },
-        { label: "Summarize Document", path: "/summarize" },
-        { label: "QR Code Generator", path: "/qr-code" },
-        { label: "AI Lab", path: "/ai-lab" },
-      ],
-    },
-    {
-      heading: "Company",
-      links: [
-        { label: "About", path: "/about" },
-        // { label: "Partnerships", path: "/partnerships" },
-        { label: "Website", path: "https://company.slim-file.com", external: true },
-        { label: "SDGs", path: "/sdgs" },
-        { label: "Newsroom", path: "/news" },
-        { label: "Why Compression?", path: "/file-compression-education" },
-        { label: "Our Blogs", path: "/blog" },
-        { label: "Contact", path: "/contact" },
-      ],
-    },
-    {
-      heading: "SlimFile Connect",
-      links: [
-        { label: "Feed", path: "/feed" },
-        { label: "Reviews", path: "/reviews" },
-        { label: "Community Manager", path: "/community-manager" },
-      ],
-    },
-    {
-      heading: "Dev Tools",
-      links: [
-        { label: "Developer Tools", path: "/api" },
-        { label: "Contact Sales", path: "mailto:administration@slim-file.com", external: true },
-      ],
-    },
-    {
-      heading: "Legal",
-      links: [
-        { label: "Privacy Policy", path: "/privacy" },
-        { label: "Terms of Service", path: "/terms" },
-      ],
-    },
-  ];
-
-  const socials = [
-    {
-      href: "https://www.linkedin.com/company/slimfile-inc",
-      icon: FaLinkedinIn,
-      label: "LinkedIn",
-      hover: "hover:text-blue-600",
-    },
-    {
-      href: "https://www.instagram.com/slimfile_inc",
-      icon: FaInstagram,
-      label: "Instagram",
-      hover: "hover:text-pink-500",
-    },
-    {
-      href: "https://x.com/slimfile_inc",
-      icon: FaXTwitter,
-      label: "X",
-      hover: "hover:text-black",
-    },
-    {
-      href: "https://www.tiktok.com/@slimfile_inc",
-      icon: FaTiktok,
-      label: "TikTok",
-      hover: "hover:text-black",
-    },
-    {
-      href: "https://www.trustpilot.com/review/slim-file.com",
-      icon: SiTrustpilot,
-      label: "Trustpilot",
-      hover: "hover:text-green-500",
-    },
-  ];
+  const track = (path: string, label: string) => trackEvent('footer_link_click', { path, label });
 
   return (
-    <footer className="bg-gray-50 border-t border-gray-200">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
-        {/* Link columns */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
+    <footer className="bg-[#f5f5f7] text-[12px] leading-[1.35] text-[#6e6e73]">
+      <div className="max-w-[980px] mx-auto px-4 sm:px-6 pt-10 pb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-8">
           {columns.map((col) => (
             <div key={col.heading}>
-              <h6 className="text-sm font-semibold text-gray-900 mb-3">{col.heading}</h6>
+              <h3 className="font-semibold text-[#1d1d1f] mb-2.5">{col.heading}</h3>
               <ul className="space-y-2">
                 {col.links.map((link) => (
                   <li key={link.path}>
-                    {(link as any).external ? (
-                      <a
-                        href={link.path}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-gray-500 hover:text-red-600 transition-colors duration-150"
-                      >
-                        {link.label}
-                      </a>
-                    ) : (
-                      <button
-                        onClick={() => handleFooterClick(link.path, link.label)}
-                        className="text-sm text-gray-500 hover:text-red-600 transition-colors duration-150 text-left"
-                      >
-                        {link.label}
-                      </button>
-                    )}
+                    <Link
+                      to={link.path}
+                      onClick={() => track(link.path, link.label)}
+                      className="hover:text-[#1d1d1f] hover:underline"
+                    >
+                      {link.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -141,34 +97,22 @@ export const Footer = () => {
           ))}
         </div>
 
-        {/* Bottom bar */}
-        <div className="border-t border-gray-200 mt-10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <img src="/logo.gif" alt="SlimFile Logo" className="h-7 w-7 object-contain rounded-md" loading="lazy" />
-            <span className="text-sm font-semibold text-gray-900">SlimFile</span>
-          </Link>
-
-          {/* Copyright */}
-          <p className="text-xs text-gray-400 text-center">
-            © {new Date().getFullYear()} SlimFile. All rights reserved.
-          </p>
-
-          {/* Social icons */}
-          <div className="flex items-center gap-4">
-            {socials.map(({ href, icon: Icon, label, hover }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className={`text-gray-400 transition-colors duration-150 ${hover}`}
-              >
-                <Icon size={18} />
-              </a>
+        <div className="mt-8 pt-4 border-t border-[#d2d2d7] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <p>Copyright © {new Date().getFullYear()} SlimFile. All rights reserved.</p>
+          <ul className="flex items-center">
+            {legal.map((link, i) => (
+              <li key={link.path} className="flex items-center">
+                {i > 0 && <span className="mx-2.5 h-3 w-px bg-[#d2d2d7]" aria-hidden="true" />}
+                <Link
+                  to={link.path}
+                  onClick={() => track(link.path, link.label)}
+                  className="text-[#424245] hover:text-[#1d1d1f] hover:underline"
+                >
+                  {link.label}
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
     </footer>
