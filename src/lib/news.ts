@@ -19,6 +19,8 @@ export interface NewsItem {
   /** At least 1,200px wide, so Google Discover can show it large */
   image: string;
   imageAlt: string;
+  /** Optional link: clicking the image opens it in a new tab */
+  imageHref?: string;
   /** Optional line under the image, e.g. who is in the photo */
   imageCaption?: string;
   /** Set on the one story the home page should point to, as its short line */
