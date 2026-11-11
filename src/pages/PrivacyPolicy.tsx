@@ -24,12 +24,12 @@ const PrivacyPolicy = () => {
         <div className="container mx-auto max-w-3xl text-center">
           <Lock className="mx-auto mb-4 w-14 h-14 text-primary" />
           <h1 className="text-5xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
-          <p className="text-xl text-gray-700 mb-6">Last updated: August 1, 2026</p>
+          <p className="text-xl text-gray-700 mb-6">Last updated: November 11, 2026</p>
         </div>
       </div>
       <div className="container mx-auto max-w-3xl px-4">
         <Section icon={FileText} title="1. Introduction" bg="bg-white">
-          This Privacy Policy explains how SlimFile ("we", "us", or "our") collects, uses, and protects your information when you use our website, services, and API.
+          This Privacy Policy explains how SlimFile ("we", "us", or "our") collects, uses, and protects your information when you use our website, our mobile apps for Android and iPhone, our services, and our API.
         </Section>
         <Section icon={User} title="2. Information We Collect" bg="bg-gray-100">
           <ul className="list-disc ml-6">
@@ -38,6 +38,9 @@ const PrivacyPolicy = () => {
             <li><strong>Usage Data:</strong> We may collect information about how you use the Service, such as access times, device information, and IP address.</li>
             <li><strong>Location:</strong> If you allow location access, we use it for usage tracking, to understand where SlimFile is used, such as which university area. We may also recognise a university's network. We keep only the area's name, never your exact location.</li>
             <li><strong>Cookies:</strong> We may use cookies and similar technologies to enhance your experience.</li>
+            <li><strong>Mobile App Account:</strong> In the SlimFile app for Android and iPhone you can create an account with your first and last name, email address, a password (stored only in encrypted form) and your date of birth, which we use for birthday greetings.</li>
+            <li><strong>App File History:</strong> The app keeps a history of the files you process (file name, file type, and size before and after) so you can see how much space you have saved. The files themselves are processed temporarily and deleted after processing.</li>
+            <li><strong>Notifications:</strong> If you allow notifications, the app stores a push notification token for your device so we can send you account and activity notifications. You can turn notifications off at any time in your device settings.</li>
           </ul>
         </Section>
         <Section icon={Cloud} title="3. How We Use Your Information" bg="bg-white">
@@ -68,6 +71,7 @@ const PrivacyPolicy = () => {
         <Section icon={User} title="8. Your Rights" bg="bg-gray-100">
           <ul className="list-disc ml-6">
             <li>You may request access to, correction of, or deletion of your personal information by contacting us.</li>
+            <li>In the SlimFile mobile app you can delete your account at any time from Profile, then Delete Account. This permanently deletes your account, your file history and your notifications.</li>
             <li>You may opt out of non-essential communications at any time.</li>
           </ul>
         </Section>
