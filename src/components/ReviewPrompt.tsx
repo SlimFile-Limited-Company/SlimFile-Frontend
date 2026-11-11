@@ -14,7 +14,13 @@ export type OperationType =
   | 'qr'
   | 'summarize'
   | 'zip'
-  | 'unzip';
+  | 'unzip'
+  | 'scan-compress'
+  | 'scan-merge'
+  | 'scan-split'
+  | 'scan-convert'
+  | 'esign'
+  | 'text-to-pdf';
 
 interface ReviewPromptProps {
   isOpen: boolean;

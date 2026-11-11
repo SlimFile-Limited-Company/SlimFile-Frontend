@@ -34,7 +34,15 @@ const operationLabels: Record<string, string> = {
   lock: 'PDF Security',
   ocr: 'OCR',
   qr: 'QR Code',
-  summarize: 'Summarization'
+  summarize: 'Summarization',
+  zip: 'Zip Files',
+  unzip: 'Unzip Files',
+  'scan-compress': 'Scan & Compress',
+  'scan-merge': 'Batch Scan & Merge',
+  'scan-split': 'Batch Scan & Split',
+  'scan-convert': 'Scan & Convert',
+  esign: 'eSign PDF',
+  'text-to-pdf': 'Text to PDF'
 };
 
 const PAGE_SIZE = 12;

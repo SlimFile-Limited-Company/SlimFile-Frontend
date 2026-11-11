@@ -1,3 +1,4 @@
+import type { OperationType } from '@/components/ReviewPrompt';
 import { useState, type ReactNode } from 'react';
 import { useSEO } from '@/hooks/useSEO';
 import { useToast } from '@/hooks/use-toast';
@@ -26,7 +27,7 @@ export interface ScanToolConfig {
   successBody: (pages: number, savedKb: number) => string;
   pills: { icon: ReactNode; label: string }[];
   desktopHint: string;
-  operationType: string;
+  operationType: OperationType;
   maxPages?: number;
   /** Extra fields, e.g. the target format for scan-convert */
   extraFields?: ReactNode;
