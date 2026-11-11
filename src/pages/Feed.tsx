@@ -3,6 +3,7 @@ import { useSEO } from '@/hooks/useSEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import io from 'socket.io-client';
 import { FileText, Image, Archive, BarChart2, Monitor, ArrowRight, Radio } from 'lucide-react';
+import { percentSmaller } from '@/lib/percent';
 
 interface FeedActivity {
   _id: string;
@@ -128,7 +129,7 @@ const ActivityTile = ({ activity, index }: { activity: FeedActivity; index: numb
       ) : (
         <>
           <p className="mt-6 text-5xl font-semibold tracking-tight text-red-600 tabular-nums">
-            {activity.compressionRatio}%
+            {percentSmaller(activity.originalSize, activity.compressedSize)}%
             <span className="ml-2 text-[17px] font-medium tracking-normal text-[#6e6e73]">smaller</span>
           </p>
           <p className="mt-3 text-[13px] text-[#6e6e73] tabular-nums">

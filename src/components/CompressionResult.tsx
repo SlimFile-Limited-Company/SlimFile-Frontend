@@ -20,6 +20,7 @@ import { GuestDownloadLimitModal } from "@/components/GuestDownloadLimitModal";
 import { ReviewButton } from "@/components/ReviewButton";
 import FollowChannel from '@/components/FollowChannel';
 import { markDownloaded } from '@/lib/followChannel';
+import { percentSmaller } from '@/lib/percent';
 
 interface CompressionResultProps {
   originalFiles: File[];
@@ -405,7 +406,7 @@ export const CompressionResult = ({
               <div className="text-center">
                 <div className="inline-flex items-center space-x-2 bg-red-100 text-red-800 px-4 py-2 rounded-full mr-2">
                   <span className="text-sm font-medium">
-                    {totalCompressionRatio}% size reduction
+                    {percentSmaller(totalOriginalSize, totalCompressedSize)}% size reduction
                   </span>
                 </div>
                 <div className="inline-flex items-center space-x-2 bg-gray-100 text-red-800 px-4 py-2 rounded-full">
