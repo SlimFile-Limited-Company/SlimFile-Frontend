@@ -71,20 +71,44 @@ function Privacy() {
       <h2 id="privacy-title" className={`text-3xl font-semibold tracking-tight ${c.text}`}>
         Privacy policy
       </h2>
-      <p className={`${c.muted} text-sm mt-2`}>Effective November 8, 2026 · SlimFile Atlas for iPhone and Android</p>
+      <p className={`${c.muted} text-sm mt-2`}>Effective November 13, 2026 · SlimFile Atlas for iPhone and Android</p>
 
       <div className="bg-[#6366f1]/15 border border-[#6366f1]/30 rounded-2xl p-5 mt-6">
         <p className={`font-semibold ${c.text}`}>The short version</p>
         <p className={`${c.text} mt-1 leading-relaxed`}>
-          We do not collect, store, sell or share any of your data. SlimFile Atlas has no accounts, no analytics, no
-          advertising and no tracking. All video compression happens on your device.
+          Your videos never leave your device: all compression happens on your phone. SlimFile Atlas has no accounts,
+          no advertising and no tracking. From version 1.0.2, the app sends anonymous usage counts, such as how many
+          videos were compressed and how much space was saved, so we can see how it's used and improve it. These counts
+          are not linked to your name, email or any account, and we never sell or share them.
         </p>
       </div>
 
       <Heading>Information we collect</Heading>
       <p className="leading-relaxed">
-        None. The app does not send your videos, your personal information or any usage data to us or to anyone else.
-        We do not run servers that receive data from the app.
+        From version 1.0.2, the app sends SlimFile anonymous usage data:
+      </p>
+      <ul className="list-disc ml-5 mt-3 space-y-2 leading-relaxed">
+        <li>
+          <strong className={c.text}>A random ID</strong> that the app creates on your phone the first time it opens. It
+          is not your name, email, phone number or Apple ID, and we can't tell who you are from it. It lets us count
+          users without accounts.
+        </li>
+        <li>
+          <strong className={c.text}>What happened and when:</strong> the app was opened; a video was compressed (its
+          size before and after, the format you chose, and how long it took); a video was saved to Photos, shared, or
+          its original deleted.
+        </li>
+        <li>
+          <strong className={c.text}>The app version and whether it's iPhone or Android.</strong>
+        </li>
+      </ul>
+      <p className="leading-relaxed mt-3">
+        We never receive your videos, file names, photos, contacts, location, name or email. We don't keep your IP
+        address with this data. We use it only to understand how Atlas is used and to improve it; it is never sold,
+        shared or used for advertising.
+      </p>
+      <p className="leading-relaxed mt-3">
+        Version 1.0.1 and earlier don't send any of this.
       </p>
 
       <Heading>What the app does on your device</Heading>
@@ -109,6 +133,11 @@ function Privacy() {
                 'Savings totals',
                 'To show “saved so far” on the home screen',
                 'A small file on your device with counts and sizes only. No file names or content.',
+              ],
+              [
+                'Anonymous usage counts',
+                'To count users and see how Atlas is used (version 1.0.2 and later)',
+                'Saved on your device while you’re offline, then sent to SlimFile’s server when you’re online.',
               ],
             ].map(([what, why, where]) => (
               <tr key={what}>
@@ -143,18 +172,22 @@ function Privacy() {
       <Heading>iCloud and network use</Heading>
       <p className="leading-relaxed">
         If a video you pick is stored in iCloud, your iPhone downloads it from Apple before the app can open it. That
-        download is handled by iOS. The app itself makes no network requests.
+        download is handled by iOS. The app connects to the internet only to check for app updates and, from version
+        1.0.2, to send the anonymous usage counts described above. Your videos are never uploaded. Compression works
+        fully offline.
       </p>
 
       <Heading>Children</Heading>
       <p className="leading-relaxed">
-        The app does not collect personal information from anyone, including children under 13.
+        The app does not collect personal information from anyone, including children under 13. The usage counts
+        described above are anonymous.
       </p>
 
       <Heading>Deleting your data</Heading>
       <p className="leading-relaxed">
-        Because nothing is collected, there is nothing for us to delete. To remove everything the app keeps on your
-        device, delete the app.
+        The usage counts are anonymous, so we can't link them to you. Deleting the app stops all counts and removes
+        its files from your device, including your savings totals. On iPhone the random ID is kept in the Keychain and
+        can remain after the app is deleted; it contains nothing about you.
       </p>
 
       <Heading>Changes to this policy</Heading>
