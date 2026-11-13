@@ -244,6 +244,7 @@ import Leaderboard from './pages/Leaderboard';
 import B2BApiKeysAdmin from './pages/B2BApiKeysAdmin';
 import CEODashboard from './pages/CEODashboard';
 import CampusDashboard from './pages/CampusDashboard';
+import AtlasDashboard from './pages/AtlasDashboard';
 import { trackCampusVisit } from './lib/campus';
 import { NotificationProvider } from './components/InAppNotification';
 import UpdatePrompt from './components/UpdatePrompt';
@@ -577,6 +578,11 @@ ReactDOM.createRoot(root).render(
         <Route path="campuses" element={
           <ProtectedRoute>
             <WithHeader><CampusDashboard /></WithHeader>
+          </ProtectedRoute>
+        } />
+        <Route path="atlas-analytics" element={
+          <ProtectedRoute>
+            <WithHeader><AtlasDashboard /></WithHeader>
           </ProtectedRoute>
         } />
             </Routes>
