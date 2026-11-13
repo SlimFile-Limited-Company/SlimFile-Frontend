@@ -1,5 +1,40 @@
 [
   {
+    "id": "slimfile-on-the-app-store",
+    "title": "SlimFile Is Now on the App Store",
+    "subtitle": "The SlimFile app for iPhone is here: compress, convert, merge, split and scan your files, all in one free app.",
+    "date": "2026-11-13",
+    "category": "Product",
+    "image": "/news/slimfile-app-store.jpg",
+    "imageAlt": "The SlimFile app on iPhone, showing the Home and Tools screens",
+    "imageHref": "https://apps.apple.com/app/slimfile-compress-pdf-files/id6833554314",
+    "highlights": [
+      {
+        "title": "Every file tool in your pocket",
+        "note": "Compress PDFs, images and Word, Excel and PowerPoint files, convert between formats, and merge or split PDFs, right from your iPhone."
+      },
+      {
+        "title": "Scan paper into PDFs",
+        "note": "Scan documents with your camera, with automatic edge detection, then turn them into one small PDF, split them, or convert them to Word, Excel or images."
+      },
+      {
+        "title": "More tools",
+        "note": "Extract text from photos and scans, turn typed text into a clean PDF, password-protect PDFs, make QR codes, and zip or unzip files."
+      },
+      {
+        "title": "Private by design",
+        "note": "Your files are deleted from our servers right after processing. QR codes and ZIP files are made on your iPhone, and you can delete your account at any time."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "Download on the App Store",
+        "href": "https://apps.apple.com/app/slimfile-compress-pdf-files/id6833554314",
+        "external": true
+      }
+    ]
+  },
+  {
     "id": "slimfile-atlas-on-the-app-store",
     "title": "SlimFile Atlas Is Now on the App Store",
     "subtitle": "Compress your videos right on your iPhone. Nothing is uploaded, there's no account, and it's free to download.",
