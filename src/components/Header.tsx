@@ -171,7 +171,6 @@ export const Header = () => {
     { name: "Campuses", href: "/campuses" },
     { name: "Atlas", href: "/atlas-analytics" },
     { name: "B2B API Keys", href: "/b2b-api-keys-admin" },
-    { name: "Newsletter", href: "/admin/newsletter" },
     { name: "Review Emails", href: "/admin/review-emails" },
     { name: "Security Terminal", href: "/security-terminal" },
   ];
@@ -190,7 +189,6 @@ export const Header = () => {
       {
         title: "Communications",
         links: [
-          { name: "Newsletter", href: "/admin/newsletter" },
           { name: "Review Emails", href: "/admin/review-emails" },
         ],
       },
