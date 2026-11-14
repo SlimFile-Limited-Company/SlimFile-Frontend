@@ -1,5 +1,52 @@
 [
   {
+    "id": "slimfile-20000-active-users",
+    "title": "SlimFile Reaches 20,000 Active Users in 184 Countries",
+    "subtitle": "20,000 people in 184 countries now use SlimFile on the web to compress, convert, sign and share their files. Thank you.",
+    "date": "2026-11-14",
+    "category": "Milestone",
+    "image": "/news/slimfile-20000-users.jpg",
+    "imageAlt": "20,000 active users on the web, in 184 countries. Thank you.",
+    "homeLine": "SlimFile now has 20,000 active users in 184 countries. Thank you.",
+    "homeLineShort": "20,000 active users. Thank you.",
+    "highlights": [
+      {
+        "title": "20,000 active users on the web",
+        "note": "Students, teams and businesses use slim-file.com every day to make their files smaller and easier to send. Thank you for every compression, every share and every recommendation."
+      },
+      {
+        "title": "184 countries",
+        "note": "SlimFile started in Ghana and is now used in 184 countries, from university campuses to offices around the world."
+      },
+      {
+        "title": "Now on iPhone and Android",
+        "note": "SlimFile is now in your pocket too. The new iPhone app compresses images, PDFs and Office files right on your phone, so your files never leave it and it works without internet. And SlimFile Atlas makes your iPhone videos much smaller."
+      },
+      {
+        "title": "And counting",
+        "note": "We're just getting started. Keep telling us what you need, and we'll keep building it."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "Try SlimFile",
+        "href": "/"
+      },
+      {
+        "label": "Get the iPhone app",
+        "href": "https://apps.apple.com/app/slimfile-compress-pdf-files/id6833554314",
+        "external": true,
+        "secondary": true
+      },
+      {
+        "label": "Get it on Google Play",
+        "href": "https://play.google.com/store/apps/details?id=com.slimfile.app",
+        "external": true,
+        "secondary": true
+      }
+    ]
+  },
+  {
     "id": "slimfile-on-the-app-store",
     "title": "SlimFile Is Now on the App Store",
     "subtitle": "The SlimFile app for iPhone is here: compress, convert, merge, split and scan your files, all in one free app.",
@@ -43,8 +90,6 @@
     "image": "/news/slimfile-atlas-app-store.jpg",
     "imageAlt": "SlimFile Atlas on iPhone, showing the home screen and 1.2 GB saved",
     "imageHref": "https://apps.apple.com/app/id6832786075",
-    "homeLine": "SlimFile Atlas is now on the App Store. Compress videos on your iPhone, free.",
-    "homeLineShort": "SlimFile Atlas is on the App Store",
     "highlights": [
       {
         "title": "Free up space on your iPhone",

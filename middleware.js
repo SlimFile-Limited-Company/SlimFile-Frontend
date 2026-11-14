@@ -44,6 +44,7 @@ const AI_FEATURES = {
 // News stories for /news/:id previews. Keep in step with src/data/news.json
 // (written out here because Vercel bundles this file on its own).
 const NEWS = [
+  { id: "slimfile-20000-active-users", title: "SlimFile Reaches 20,000 Active Users in 184 Countries", subtitle: "20,000 people in 184 countries now use SlimFile on the web to compress, convert, sign and share their files. Thank you.", image: "/news/slimfile-20000-users.jpg" },
   { id: "slimfile-on-the-app-store", title: "SlimFile Is Now on the App Store", subtitle: "The SlimFile app for iPhone is here: compress, convert, merge, split and scan your files, all in one free app.", image: "/news/slimfile-app-store.jpg" },
   { id: "slimfile-atlas-on-the-app-store", title: "SlimFile Atlas Is Now on the App Store", subtitle: "Compress your videos right on your iPhone. Nothing is uploaded, there's no account, and it's free to download.", image: "/news/slimfile-atlas-app-store.jpg" },
   { id: "esign-pdfs-on-slimfile", title: "You Can Now Sign PDFs on SlimFile", subtitle: "Draw, type or upload your signature, add the date and your initials, and download the signed PDF. It all happens in your browser, so your document is never uploaded.", image: "/news/esign.jpg" },
