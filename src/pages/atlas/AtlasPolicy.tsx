@@ -101,6 +101,11 @@ function Privacy() {
         <li>
           <strong className={c.text}>The app version and whether it's iPhone or Android.</strong>
         </li>
+        <li>
+          <strong className={c.text}>On Android, if a video can't be compressed:</strong> the phone's make and model,
+          the Android version, the video's width, height and format, and the error the phone reported, so we can fix
+          compression on that kind of phone.
+        </li>
       </ul>
       <p className="leading-relaxed mt-3">
         We never receive your videos, file names, photos, contacts, location, name or email. We don't keep your IP

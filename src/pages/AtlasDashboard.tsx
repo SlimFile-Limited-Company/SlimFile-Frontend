@@ -18,6 +18,11 @@ interface AtlasStats {
   versions: { version: string; count: number }[];
   retention: Retention[];
   config: AtlasConfig;
+  failures?: {
+    total30: number;
+    byPhone: { maker: string | null; model: string | null; osVersion: string | null; errorCode: string | null; count: number; users: number; lastAt: string }[];
+    recent: { at: string; deviceMaker: string | null; deviceModel: string | null; osVersion: string | null; errorCode: string | null; errorDetail: string | null; appVersion: string; inputWidth: number | null; inputHeight: number | null; inputCodec: string | null }[];
+  };
   generatedAt: string;
 }
 
@@ -95,6 +100,65 @@ function Tile({ label, value, sub }: { label: string; value: string; sub?: strin
       <p className="mt-2 text-[40px] leading-none font-semibold tracking-tight tabular-nums">{value}</p>
       {sub && <p className="mt-2 text-[13px] text-[#6e6e73]">{sub}</p>}
     </div>
+  );
+}
+
+/** Android phones where compression failed (after the app's own retries). Anonymous. */
+function AndroidFailures({ f }: { f: NonNullable<AtlasStats['failures']> }) {
+  const code = (c: string | null) => (c || 'UNKNOWN').replace(/^ERROR_CODE_/, '');
+  const phone = (maker: string | null, model: string | null) => [maker, model].filter(Boolean).join(' ') || 'Unknown phone';
+  return (
+    <section className="rounded-[28px] bg-[#f5f5f7] p-6 sm:p-8">
+      <div className="flex items-baseline justify-between gap-4 mb-5">
+        <div>
+          <h2 className="text-[21px] font-semibold tracking-tight">Android problems</h2>
+          <p className="text-[13px] text-[#6e6e73]">Videos that failed even after Atlas retried with simpler settings. Phone and error only, never the video.</p>
+        </div>
+        <span className="text-[13px] text-[#6e6e73] whitespace-nowrap tabular-nums">{f.total30} in 30 days</span>
+      </div>
+      {f.total30 === 0 ? (
+        <p className="py-6 text-center text-[15px] text-[#6e6e73]">No failures reported.</p>
+      ) : (
+        <div className="space-y-6">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-[13px] min-w-[560px]">
+              <thead><tr className="text-[11px] uppercase tracking-[0.06em] text-[#6e6e73]">
+                <th className="py-2 pr-4 font-semibold">Phone</th><th className="py-2 pr-4 font-semibold">Android</th>
+                <th className="py-2 pr-4 font-semibold">Error</th><th className="py-2 pr-4 font-semibold text-right">Failures</th>
+                <th className="py-2 font-semibold text-right">Users</th>
+              </tr></thead>
+              <tbody>
+                {f.byPhone.map((r, i) => (
+                  <tr key={i} className="border-t border-black/[0.06]">
+                    <td className="py-2 pr-4 font-medium">{phone(r.maker, r.model)}</td>
+                    <td className="py-2 pr-4 tabular-nums">{r.osVersion || '—'}</td>
+                    <td className="py-2 pr-4 font-mono text-[12px] text-red-600">{code(r.errorCode)}</td>
+                    <td className="py-2 pr-4 text-right tabular-nums">{r.count}</td>
+                    <td className="py-2 text-right tabular-nums">{r.users}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#6e6e73] mb-2">Latest</p>
+            <ul className="space-y-2">
+              {f.recent.map((r, i) => (
+                <li key={i} className="rounded-2xl bg-white p-3 text-[12px]">
+                  <div className="flex flex-wrap justify-between gap-2">
+                    <span className="font-medium">{phone(r.deviceMaker, r.deviceModel)} · Android {r.osVersion || '?'} · app {r.appVersion || '?'}</span>
+                    <span className="text-[#6e6e73]">{new Date(r.at).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+                  <p className="mt-1 font-mono text-[11px] text-[#6e6e73] break-all">
+                    {r.inputWidth && r.inputHeight ? `${r.inputWidth}×${r.inputHeight} ${r.inputCodec || ''} · ` : ''}{r.errorDetail || code(r.errorCode)}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -303,6 +367,8 @@ export default function AtlasDashboard() {
             )}
           </div>
         </section>
+
+        {stats.failures && <AndroidFailures f={stats.failures} />}
 
         <UpdateRules config={stats.config} onSaved={c => setStats(s => (s ? { ...s, config: c } : s))} />
 
