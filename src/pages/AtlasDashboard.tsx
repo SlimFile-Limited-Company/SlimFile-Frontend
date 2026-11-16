@@ -5,7 +5,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.o
 
 interface DayCount { day: string; count: number }
 interface Retention { days: number; eligible: number; returned: number; rate: number | null }
-interface AtlasConfig { minVersion: string; latestVersion: string; storeUrl: string; message: string; updatedAt: string | null }
+interface AtlasConfig { platform?: 'ios' | 'android'; minVersion: string; latestVersion: string; storeUrl: string; message: string; updatedAt: string | null }
 interface AtlasStats {
   users: { total: number; today: number; week: number; month: number };
   activePerDay: DayCount[];
@@ -15,9 +15,10 @@ interface AtlasStats {
     avgReductionPct: number | null; avgDurationSec: number | null; codecs: { hevc: number; h264: number };
   };
   actions: { opens: number; savedToPhotos: number; originalsDeleted: number; shared: number };
-  versions: { version: string; count: number }[];
+  versions: { version: string; platform?: 'ios' | 'android'; count: number }[];
   retention: Retention[];
   config: AtlasConfig;
+  configs?: { ios: AtlasConfig; android: AtlasConfig };
   failures?: {
     total30: number;
     byPhone: { maker: string | null; model: string | null; osVersion: string | null; errorCode: string | null; count: number; users: number; lastAt: string }[];
@@ -163,8 +164,12 @@ function AndroidFailures({ f }: { f: NonNullable<AtlasStats['failures']> }) {
 }
 
 /** Update rules: phones below the minimum version are asked to update before they can continue. */
-function UpdateRules({ config, onSaved }: { config: AtlasConfig; onSaved: (c: AtlasConfig) => void }) {
+function UpdateRules({ configs, onSaved }: { configs: { ios: AtlasConfig; android: AtlasConfig }; onSaved: (platform: 'ios' | 'android', c: AtlasConfig) => void }) {
+  const [platform, setPlatform] = useState<'ios' | 'android'>('ios');
+  const config = configs[platform];
   const [form, setForm] = useState(config);
+  useEffect(() => { setForm(configs[platform]); setState('idle'); }, [platform]); // eslint-disable-line react-hooks/exhaustive-deps
+  const store = platform === 'ios' ? 'App Store' : 'Play Store';
   const [state, setState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [error, setError] = useState('');
   const changed = JSON.stringify(form) !== JSON.stringify(config);
@@ -177,11 +182,11 @@ function UpdateRules({ config, onSaved }: { config: AtlasConfig; onSaved: (c: At
       const res = await fetch(`${API_BASE_URL}/atlas/config`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('jwt')}` },
-        body: JSON.stringify({ platform: 'ios', ...form }),
+        body: JSON.stringify({ ...form, platform }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not save');
-      onSaved(data);
+      onSaved(platform, data);
       setForm(data);
       setState('saved');
       setTimeout(() => setState('idle'), 2000);
@@ -195,10 +200,26 @@ function UpdateRules({ config, onSaved }: { config: AtlasConfig; onSaved: (c: At
 
   return (
     <section className="rounded-[28px] bg-[#f5f5f7] p-6 sm:p-8">
-      <h2 className="text-[21px] font-semibold tracking-tight">Updates</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-[21px] font-semibold tracking-tight">Updates</h2>
+        <div className="inline-flex rounded-full bg-black/[0.06] p-1" role="tablist" aria-label="Platform">
+          {(['ios', 'android'] as const).map(p => (
+            <button
+              key={p}
+              role="tab"
+              aria-selected={platform === p}
+              onClick={() => setPlatform(p)}
+              className={`h-8 px-4 rounded-full text-[13px] font-medium transition-colors ${platform === p ? 'bg-white text-[#1d1d1f] shadow-sm' : 'text-[#6e6e73]'}`}
+            >
+              {p === 'ios' ? 'iPhone' : 'Android'}
+            </button>
+          ))}
+        </div>
+      </div>
       <p className="mt-1 text-[15px] text-[#6e6e73] max-w-2xl">
-        When someone opens Atlas on a version below the minimum, they see an “Update to continue” screen with a button to the
-        App Store. Raise the minimum only after the new version is live on the App Store.
+        Rules for <strong className="text-[#1d1d1f]">{platform === 'ios' ? 'iPhone' : 'Android'}</strong> only. When someone opens
+        Atlas on a version below the minimum, they see an “Update to continue” screen with a button to the {store}. Raise the
+        minimum only after the new version is live on the {store}.
       </p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <label className="text-[13px] font-semibold text-[#6e6e73]">
@@ -206,7 +227,7 @@ function UpdateRules({ config, onSaved }: { config: AtlasConfig; onSaved: (c: At
           <input className={field} value={form.minVersion} onChange={e => setForm({ ...form, minVersion: e.target.value.trim() })} placeholder="1.0.1" />
         </label>
         <label className="text-[13px] font-semibold text-[#6e6e73]">
-          Latest version on the App Store
+          Latest version on the {store}
           <input className={field} value={form.latestVersion} onChange={e => setForm({ ...form, latestVersion: e.target.value.trim() })} placeholder="1.0.1" />
         </label>
         <label className="text-[13px] font-semibold text-[#6e6e73] sm:col-span-2">
@@ -214,7 +235,7 @@ function UpdateRules({ config, onSaved }: { config: AtlasConfig; onSaved: (c: At
           <input className={field} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} maxLength={300} />
         </label>
         <label className="text-[13px] font-semibold text-[#6e6e73] sm:col-span-2">
-          App Store link
+          {store} link
           <input className={field} value={form.storeUrl} onChange={e => setForm({ ...form, storeUrl: e.target.value.trim() })} />
         </label>
       </div>
@@ -228,7 +249,7 @@ function UpdateRules({ config, onSaved }: { config: AtlasConfig; onSaved: (c: At
           {state === 'saved' ? 'Saved' : 'Save'}
         </button>
         <span className="text-[13px] text-[#6e6e73]">
-          {forcing ? `Phones below ${form.minVersion} must update.` : 'Nobody is forced to update.'}
+          {forcing ? `${platform === 'ios' ? 'iPhones' : 'Android phones'} below ${form.minVersion} must update.` : `Nobody on ${platform === 'ios' ? 'iPhone' : 'Android'} is forced to update.`}
           {config.updatedAt && ` Last changed ${new Date(config.updatedAt).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}.`}
         </span>
         {state === 'error' && <span className="text-[13px] text-red-600">{error}</span>}
@@ -352,9 +373,9 @@ export default function AtlasDashboard() {
             ) : (
               <ul className="mt-5 space-y-3">
                 {stats.versions.map(v => (
-                  <li key={v.version || 'unknown'}>
+                  <li key={`${v.platform ?? 'ios'}-${v.version || 'unknown'}`}>
                     <div className="flex items-baseline justify-between text-[15px]">
-                      <span>{v.version || 'Unknown'}</span>
+                      <span>{v.platform === 'android' ? 'Android' : 'iPhone'} {v.version || 'Unknown'}</span>
                       <span className="tabular-nums"><span className="font-semibold">{v.count}</span>
                         <span className="ml-2 text-[12px] text-[#6e6e73]">{Math.round((v.count / versionTotal) * 100)}%</span></span>
                     </div>
@@ -370,7 +391,10 @@ export default function AtlasDashboard() {
 
         {stats.failures && <AndroidFailures f={stats.failures} />}
 
-        <UpdateRules config={stats.config} onSaved={c => setStats(s => (s ? { ...s, config: c } : s))} />
+        <UpdateRules
+          configs={stats.configs ?? { ios: stats.config, android: { ...stats.config, platform: 'android', storeUrl: '' } }}
+          onSaved={(p, c) => setStats(s => (s ? { ...s, ...(p === 'ios' ? { config: c } : {}), configs: { ...(s.configs ?? { ios: s.config, android: c }), [p]: c } } : s))}
+        />
 
         <p className="text-[12px] text-[#6e6e73] text-center">
           Each install is counted with a random ID kept on the phone. Someone with two phones counts twice, and days spent
