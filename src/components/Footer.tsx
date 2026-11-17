@@ -23,6 +23,7 @@ const columns = [
       { label: "Convert & Compress", path: "/convert-compress" },
       { label: "Zip Files & Folders", path: "/zip" },
       { label: "QR Code Generator", path: "/qr-code" },
+      { label: "SlimFile for Claude", path: "/claude" },
     ],
   },
   {
