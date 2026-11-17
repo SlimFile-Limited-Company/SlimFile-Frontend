@@ -24,17 +24,17 @@ const PrivacyPolicy = () => {
         <div className="container mx-auto max-w-3xl text-center">
           <Lock className="mx-auto mb-4 w-14 h-14 text-primary" />
           <h1 className="text-5xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
-          <p className="text-xl text-gray-700 mb-6">Last updated: November 11, 2026</p>
+          <p className="text-xl text-gray-700 mb-6">Last updated: November 17, 2026</p>
         </div>
       </div>
       <div className="container mx-auto max-w-3xl px-4">
         <Section icon={FileText} title="1. Introduction" bg="bg-white">
-          This Privacy Policy explains how SlimFile ("we", "us", or "our") collects, uses, and protects your information when you use our website, our mobile apps for Android and iPhone, our services, and our API.
+          This Privacy Policy explains how SlimFile ("we", "us", or "our") collects, uses, and protects your information when you use our website, our mobile apps for Android and iPhone, our services, our API, and the SlimFile connector for Claude.
         </Section>
         <Section icon={User} title="2. Information We Collect" bg="bg-gray-100">
           <ul className="list-disc ml-6">
             <li><strong>Account Information:</strong> When you sign in, we may collect your name, email address, and profile picture via Google authentication.</li>
-            <li><strong>Uploaded Files:</strong> Files you upload for compression are processed temporarily and deleted after processing.</li>
+            <li><strong>Uploaded Files:</strong> Files you upload for compression are processed temporarily and deleted after processing. In the SlimFile connector for Claude, uploaded files are deleted as soon as they are processed, each result is deleted once it is downloaded, and anything left unused is deleted after 15 minutes. The connector does not read your Claude conversations.</li>
             <li><strong>Usage Data:</strong> We may collect information about how you use the Service, such as access times, device information, and IP address.</li>
             <li><strong>Location:</strong> If you allow location access, we use it for usage tracking, to understand where SlimFile is used, such as which university area. We may also recognise a university's network. We keep only the area's name, never your exact location.</li>
             <li><strong>Cookies:</strong> We may use cookies and similar technologies to enhance your experience.</li>

@@ -31,6 +31,7 @@ import NotFound from './pages/NotFound';
 import Api from './pages/Api';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import SlimFileForClaude from './pages/SlimFileForClaude';
 import SlimFileSDGs from './pages/SlimFileSDGs';
 import Partnerships from './pages/Partnerships';
 import News from './pages/News';
@@ -444,6 +445,7 @@ ReactDOM.createRoot(root).render(
           <Route path="blog" element={<OurBlogs />} />
           <Route path="terms" element={<TermsOfService />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="claude" element={<SlimFileForClaude />} />
           <Route path="sdgs" element={<SlimFileSDGs />} />
           <Route path="partnerships" element={<Partnerships />} />
           <Route path="news" element={<News />} />
