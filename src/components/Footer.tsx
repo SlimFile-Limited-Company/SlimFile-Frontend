@@ -57,6 +57,14 @@ const columns = [
       { label: "Activity Feed", path: "/feed" },
     ],
   },
+  {
+    heading: "Apps",
+    links: [
+      { label: "SlimFile for Android", path: "https://play.google.com/store/apps/details?id=com.slimfile.app" },
+      { label: "SlimFile for iPhone", path: "https://apps.apple.com/app/slimfile-compress-pdf-files/id6833554314" },
+      { label: "SlimFile Atlas for iPhone", path: "https://apps.apple.com/app/id6832786075" },
+    ],
+  },
 ];
 
 const legal = [
@@ -77,20 +85,32 @@ export const Footer = () => {
   return (
     <footer className="bg-[#f5f5f7] text-[12px] leading-[1.35] text-[#6e6e73]">
       <div className="max-w-[980px] mx-auto px-4 sm:px-6 pt-10 pb-6">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-8">
           {columns.map((col) => (
             <div key={col.heading}>
               <h3 className="font-semibold text-[#1d1d1f] mb-2.5">{col.heading}</h3>
               <ul className="space-y-2">
                 {col.links.map((link) => (
                   <li key={link.path}>
-                    <Link
-                      to={link.path}
-                      onClick={() => track(link.path, link.label)}
-                      className="hover:text-[#1d1d1f] hover:underline"
-                    >
-                      {link.label}
-                    </Link>
+                    {link.path.startsWith("http") ? (
+                      <a
+                        href={link.path}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => track(link.path, link.label)}
+                        className="hover:text-[#1d1d1f] hover:underline"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        to={link.path}
+                        onClick={() => track(link.path, link.label)}
+                        className="hover:text-[#1d1d1f] hover:underline"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

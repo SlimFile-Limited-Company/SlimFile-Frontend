@@ -119,6 +119,33 @@ export const Header = () => {
 
   // Full-width Tools menu, laid out like Apple's: a first column of large
   // links to the most used tools, then smaller grouped columns.
+  // Our phone apps. External store links open in a new tab.
+  const appsMenu = {
+    featured: {
+      title: "Get the apps",
+      links: [
+        { name: "SlimFile for Android", href: "https://play.google.com/store/apps/details?id=com.slimfile.app" },
+        { name: "SlimFile for iPhone", href: "https://apps.apple.com/app/slimfile-compress-pdf-files/id6833554314" },
+        { name: "SlimFile Atlas for iPhone", href: "https://apps.apple.com/app/id6832786075" },
+      ],
+    },
+    groups: [
+      {
+        title: "SlimFile",
+        links: [
+          { name: "Google Play", href: "https://play.google.com/store/apps/details?id=com.slimfile.app" },
+          { name: "App Store", href: "https://apps.apple.com/app/slimfile-compress-pdf-files/id6833554314" },
+        ],
+      },
+      {
+        title: "SlimFile Atlas",
+        links: [
+          { name: "App Store", href: "https://apps.apple.com/app/id6832786075" },
+        ],
+      },
+    ],
+  };
+
   const toolsMenu = {
     featured: {
       title: "Explore Tools",
@@ -325,6 +352,29 @@ export const Header = () => {
               SlimDocx
               <span className="rounded-full bg-red-600 px-1.5 py-px text-[10px] font-semibold leading-4 text-white">New</span>
             </Link>
+
+            {/* Apps: SlimFile and SlimFile Atlas in the app stores */}
+            <div
+              className="relative"
+              onMouseEnter={() => handleDropdownHover('apps')}
+              onMouseLeave={() => handleDropdownHover(null)}
+            >
+              <button className={cn(
+                "text-[13px] tracking-[-0.01em] transition-colors duration-200 px-3 py-1 whitespace-nowrap",
+                hoveredDropdown === 'apps' ? "text-[#1d1d1f] font-medium" : "text-[#1d1d1f]/75 hover:text-[#1d1d1f]"
+              )}>
+                Apps
+              </button>
+              <MegaMenu
+                open={hoveredDropdown === 'apps'}
+                featured={appsMenu.featured}
+                groups={appsMenu.groups}
+                isActive={() => false}
+                onEnter={() => handleDropdownHover('apps')}
+                onLeave={() => handleDropdownHover(null)}
+                onPick={() => setHoveredDropdown(null)}
+              />
+            </div>
 
             {/* Dev Tools: one page; access is arranged through sales */}
             <Link
@@ -552,6 +602,23 @@ export const Header = () => {
                 </Link>
               </div>
 
+              {/* Mobile Apps */}
+              <div className="px-4 py-1">
+                <p className="pt-1.5 pb-1 text-xs font-medium text-gray-500">Apps</p>
+                {appsMenu.featured.links.map(app => (
+                  <a
+                    key={app.name}
+                    href={app.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block py-2 text-sm font-medium text-gray-700 hover:text-red-600 transition-all duration-300 rounded-lg"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {app.name}
+                  </a>
+                ))}
+              </div>
+
               {/* Mobile Dev Tools */}
               <div className="px-4">
                 <Link
@@ -688,6 +755,14 @@ export const Header = () => {
 };
 
 type MenuLink = { name: string; href: string };
+
+/** A menu link: internal routes use the router, store links open in a new tab. */
+const MenuItemLink = ({ href, onClick, className, children }: { href: string; onClick: () => void; className: string; children: React.ReactNode }) =>
+  href.startsWith('http') ? (
+    <a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick} className={className}>{children}</a>
+  ) : (
+    <Link to={href} onClick={onClick} className={className}>{children}</Link>
+  );
 type MenuGroup = { title: string; links: MenuLink[] };
 
 interface MegaMenuProps {
@@ -746,8 +821,8 @@ const MegaMenu = ({ open, featured, groups, isActive, onEnter, onLeave, onPick }
                   <ul className="space-y-1.5">
                     {featured.links.map(item => (
                       <li key={item.href}>
-                        <Link
-                          to={item.href}
+                        <MenuItemLink
+                          href={item.href}
                           onClick={onPick}
                           className={cn(
                             "text-2xl font-semibold tracking-tight transition-colors duration-200",
@@ -755,7 +830,7 @@ const MegaMenu = ({ open, featured, groups, isActive, onEnter, onLeave, onPick }
                           )}
                         >
                           {item.name}
-                        </Link>
+                        </MenuItemLink>
                       </li>
                     ))}
                   </ul>
@@ -772,9 +847,9 @@ const MegaMenu = ({ open, featured, groups, isActive, onEnter, onLeave, onPick }
                     <p className="text-xs font-medium text-gray-500 mb-3">{group.title}</p>
                     <ul className="space-y-2">
                       {group.links.map(item => (
-                        <li key={item.href}>
-                          <Link
-                            to={item.href}
+                        <li key={item.name + item.href}>
+                          <MenuItemLink
+                            href={item.href}
                             onClick={onPick}
                             className={cn(
                               "text-sm font-medium transition-colors duration-200",
@@ -782,7 +857,7 @@ const MegaMenu = ({ open, featured, groups, isActive, onEnter, onLeave, onPick }
                             )}
                           >
                             {item.name}
-                          </Link>
+                          </MenuItemLink>
                         </li>
                       ))}
                     </ul>
