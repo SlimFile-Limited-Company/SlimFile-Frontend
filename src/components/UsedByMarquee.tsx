@@ -5,7 +5,8 @@
  *
  * Central University is SlimFile's first business customer, so its official logo (from
  * central.edu.gh) stays fixed and links to that story. The scrolling names are the other
- * campuses where SlimFile University Ambassadors are active.
+ * campuses where SlimFile University Ambassadors are active. On phones only the
+ * "Trusted by" logo shows; the moving names are hidden to keep the page short.
  */
 import { Link } from 'react-router-dom';
 
@@ -46,9 +47,9 @@ export default function UsedByMarquee() {
         Used by <span className="font-semibold text-[#1d1d1f]">20,000 people</span> in{' '}
         <span className="font-semibold text-[#1d1d1f]">184 countries</span>
       </p>
-      <div className="mt-3 flex items-center gap-3 sm:gap-0">
+      <div className="mt-3 flex items-center justify-center sm:justify-start gap-3 sm:gap-0">
         <div className="flex shrink-0 items-center gap-2.5 sm:pr-6">
-          <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-[0.14em] text-[#86868b]">Trusted by</span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#86868b]">Trusted by</span>
           <Link
             to="/news/central-university-first-business-customer"
             aria-label="Central University, our first business customer"
@@ -65,7 +66,7 @@ export default function UsedByMarquee() {
           </Link>
         </div>
         <div className="hidden sm:block h-7 w-px shrink-0 bg-[#d2d2d7]" aria-hidden="true" />
-        <div className="group relative min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]">
+        <div className="group relative hidden sm:block min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]">
           <div className="used-by-track flex w-max group-hover:[animation-play-state:paused]">
             <Row />
             <Row hidden />
