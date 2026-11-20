@@ -46,6 +46,8 @@ export default function UsedByMarquee() {
       <p className="text-center text-[13px] text-[#6e6e73]">
         Used by <span className="font-semibold text-[#1d1d1f]">20,000+ people</span> in{' '}
         <span className="font-semibold text-[#1d1d1f]">184 countries</span>
+        {/* The campus names only scroll on larger screens, so the lead-in only shows there. */}
+        <span className="hidden sm:inline">, including students at</span>
       </p>
       <div className="mt-3 flex items-center justify-center sm:justify-start gap-3 sm:gap-0">
         <div className="flex shrink-0 items-center gap-2.5 sm:pr-6">
