@@ -1,13 +1,14 @@
 /**
- * Home page social proof: one band.
+ * Home page social proof, kept to one slim row so the tool cards stay high on the page:
  *
- *   Used by 20,000 people in 184 countries
- *   [ Central University logo ] | University of Ghana   KNUST   University of Cape Coast ...  (scrolling)
+ *   TRUSTED BY [Central University logo] | University of Ghana   KNUST   ...  (scrolling)
  *
- * Central University is a SlimFile customer, so its official logo (from central.edu.gh)
- * stays fixed at the start. The scrolling names are the other campuses where SlimFile
- * University Ambassadors are active. On phones the logo sits above the strip.
+ * Central University is SlimFile's first business customer, so its official logo (from
+ * central.edu.gh) stays fixed and links to that story. The scrolling names are the other
+ * campuses where SlimFile University Ambassadors are active.
  */
+import { Link } from 'react-router-dom';
+
 const CAMPUSES = [
   'University of Ghana',
   'KNUST',
@@ -29,7 +30,7 @@ function Row({ hidden = false }: { hidden?: boolean }) {
       {CAMPUSES.map((name) => (
         <li
           key={name}
-          className="whitespace-nowrap px-6 sm:px-8 text-[15px] sm:text-[17px] font-semibold tracking-tight text-[#86868b] transition-colors duration-200 hover:text-[#E30613]"
+          className="whitespace-nowrap px-5 sm:px-7 text-[14px] sm:text-[15px] font-semibold tracking-tight text-[#86868b] transition-colors duration-200 hover:text-[#E30613]"
         >
           {name}
         </li>
@@ -40,26 +41,31 @@ function Row({ hidden = false }: { hidden?: boolean }) {
 
 export default function UsedByMarquee() {
   return (
-    <section aria-label="Who uses SlimFile" className="mx-auto mt-8 sm:mt-10 max-w-5xl">
-      <p className="text-center text-[13px] sm:text-[14px] text-[#6e6e73]">
+    <section aria-label="Who uses SlimFile" className="mx-auto mt-4 sm:mt-5 max-w-5xl">
+      <p className="text-center text-[13px] text-[#6e6e73]">
         Used by <span className="font-semibold text-[#1d1d1f]">20,000 people</span> in{' '}
         <span className="font-semibold text-[#1d1d1f]">184 countries</span>
       </p>
-
-      <div className="mt-4 flex flex-col sm:flex-row items-center gap-4 sm:gap-0">
-        <div className="flex shrink-0 flex-col items-center sm:items-start gap-1.5 sm:pr-8">
-          <span className="text-[11px] sm:text-[12px] font-semibold uppercase tracking-[0.14em] text-[#86868b]">Trusted by</span>
-          <img
-            src="/logos/central-university.png"
-            alt="Central University"
-            width={800}
-            height={279}
-            className="h-11 sm:h-12 w-auto"
-            loading="eager"
-          />
+      <div className="mt-3 flex items-center gap-3 sm:gap-0">
+        <div className="flex shrink-0 items-center gap-2.5 sm:pr-6">
+          <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-[0.14em] text-[#86868b]">Trusted by</span>
+          <Link
+            to="/news/central-university-first-business-customer"
+            aria-label="Central University, our first business customer"
+            className="transition-opacity hover:opacity-80"
+          >
+            <img
+              src="/logos/central-university.png"
+              alt="Central University"
+              width={800}
+              height={279}
+              className="h-7 sm:h-8 w-auto"
+              loading="eager"
+            />
+          </Link>
         </div>
-        <div className="hidden sm:block h-10 w-px shrink-0 bg-[#d2d2d7]" aria-hidden="true" />
-        <div className="group relative w-full min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]">
+        <div className="hidden sm:block h-7 w-px shrink-0 bg-[#d2d2d7]" aria-hidden="true" />
+        <div className="group relative min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]">
           <div className="used-by-track flex w-max group-hover:[animation-play-state:paused]">
             <Row />
             <Row hidden />

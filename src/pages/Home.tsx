@@ -161,7 +161,7 @@ const Home: FC = () => {
       {/* Hero Section */}
       {/* pt-20 clears the fixed 64px header now that the purple banner is gone.
           Kept tight on mobile so ~10 slim cards fit in one viewport. */}
-      <section className="pt-20 sm:pt-28 md:pt-32 pb-6 sm:pb-14 md:pb-16 px-4 sm:px-6 lg:px-8">
+      <section className="pt-[72px] sm:pt-20 md:pt-24 pb-4 sm:pb-6 md:pb-6 px-4 sm:px-6 lg:px-8">
 
         <div className="container mx-auto">
           <HomeNewsStrip />
@@ -173,12 +173,12 @@ const Home: FC = () => {
               that slides to the selected tab. On narrow phones the track
               scrolls sideways instead of wrapping. */}
           <div className="-mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto flex sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <div className="inline-flex items-center gap-0.5 p-1 rounded-full bg-[#e8e8ed]">
+            <div className="inline-flex items-center gap-0.5 p-[3px] rounded-full bg-[#e8e8ed]">
               {featureTabs.map(tab => (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`relative px-4 sm:px-5 py-1.5 sm:py-2 text-[13px] sm:text-sm font-medium whitespace-nowrap rounded-full transition-colors duration-200 ${
+                  className={`relative px-3.5 sm:px-4 py-1 text-[13px] font-medium whitespace-nowrap rounded-full transition-colors duration-200 ${
                     activeTab === tab.key ? "text-[#1d1d1f]" : "text-[#6e6e73] hover:text-[#1d1d1f]"
                   }`}
                 >
@@ -194,10 +194,6 @@ const Home: FC = () => {
               ))}
             </div>
           </div>
-
-          <p className="text-center text-[15px] text-[#6e6e73] mt-4">
-            {featureTabs.find(t => t.key === activeTab)!.blurb}
-          </p>
 
           <UsedByMarquee />
         </div>

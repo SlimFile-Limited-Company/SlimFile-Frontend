@@ -8,7 +8,7 @@ export default function HomeNewsStrip() {
   return (
     <Link
       to={`/news/${story.id}`}
-      className="group mx-auto mb-8 sm:mb-10 flex w-full sm:w-fit max-w-full items-center justify-center gap-2 rounded-full bg-[#f5f5f7] px-4 py-2 text-[13px] sm:text-[14px] text-[#1d1d1f] hover:bg-[#e8e8ed] transition-colors"
+      className="group mx-auto mb-4 sm:mb-5 flex w-full sm:w-fit max-w-full items-center justify-center gap-2 rounded-full bg-[#f5f5f7] px-3.5 py-1 text-[12.5px] sm:text-[13px] text-[#1d1d1f] hover:bg-[#e8e8ed] transition-colors"
     >
       <span className="shrink-0 font-semibold text-red-600">New</span>
       <span className="truncate sm:hidden">{story.homeLineShort ?? story.homeLine ?? story.title}</span>

@@ -1,5 +1,45 @@
 [
   {
+    "id": "central-university-first-business-customer",
+    "title": "Central University Becomes SlimFile's First Business Customer",
+    "subtitle": "Central University in Ghana is the first organisation to use SlimFile for Business.",
+    "date": "2026-11-20",
+    "category": "Business",
+    "image": "/news/central-university-first-business-customer.jpg",
+    "imageAlt": "SlimFile and Central University logos: Central University joins SlimFile. SlimFile for Business.",
+    "homeLine": "Central University is our first business customer. Welcome!",
+    "homeLineShort": "Central University joins SlimFile.",
+    "highlights": [
+      {
+        "title": "Our first business customer",
+        "note": "Central University is the first organisation to sign up for SlimFile for Business. It's a big moment for us, and a proud one."
+      },
+      {
+        "title": "SlimFile for Business",
+        "note": "SlimFile for Business brings SlimFile's file tools to whole organisations, and we're building it together with Central University."
+      },
+      {
+        "title": "From students to the whole university",
+        "note": "Central University students already use SlimFile, and the university has its own SlimFile University Ambassador on campus. Now the university itself uses SlimFile too."
+      },
+      {
+        "title": "Thank you, Central University",
+        "note": "Thank you for trusting a Ghanaian technology company with your files. We're excited about what we'll build together."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "Bring SlimFile to your organisation",
+        "href": "mailto:administration@slim-file.com?subject=SlimFile%20for%20Business"
+      },
+      {
+        "label": "Try SlimFile",
+        "href": "/",
+        "secondary": true
+      }
+    ]
+  },
+  {
     "id": "sethilia-martey-central-university",
     "title": "Meet Sethilia Martey, SlimFile's University Ambassador at Central University",
     "subtitle": "Sethilia represents SlimFile at Central University, helping students handle their assignments, documents and group work with free tools built for campus life.",
