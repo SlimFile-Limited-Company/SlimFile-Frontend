@@ -1,5 +1,50 @@
 [
   {
+    "id": "sethilia-martey-central-university",
+    "title": "Meet Sethilia Martey, SlimFile's University Ambassador at Central University",
+    "subtitle": "Sethilia represents SlimFile at Central University, helping students handle their assignments, documents and group work with free tools built for campus life.",
+    "date": "2026-11-20",
+    "category": "Community",
+    "image": "/news/sethilia-martey-central-university.jpg",
+    "imageAlt": "Sethilia Martey, SlimFile University Ambassador at Central University, wearing a SlimFile T-shirt",
+    "imageCaption": "Sethilia Martey, SlimFile University Ambassador at Central University, Ghana.",
+    "ambassador": {
+      "name": "Sethilia Martey",
+      "university": "Central University, Ghana",
+      "portrait": "/news/ambassadors/sethilia-martey.jpg"
+    },
+    "highlights": [
+      {
+        "title": "SlimFile at Central University",
+        "note": "Sethilia Martey is SlimFile's University Ambassador at Central University, bringing SlimFile's free file tools to students on campus."
+      },
+      {
+        "title": "Tools for campus life",
+        "note": "Students can use SlimFile to get assignments under portal size limits, convert and scan documents, merge PDFs, write in SlimDocx and plan group projects on Whiteboards, all free."
+      },
+      {
+        "title": "Part of a growing network",
+        "note": "Sethilia is part of the SlimFile University Ambassador Program, which has students representing SlimFile on campuses in Ghana, Mauritius and the United States."
+      },
+      {
+        "title": "Thank you, Sethilia",
+        "note": "Thank you for representing SlimFile at Central University. Students who want to learn more about SlimFile can reach out to Sethilia on campus."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "About the Ambassador Program",
+        "href": "/news/slimfile-university-ambassador-program"
+      },
+      {
+        "label": "Become an ambassador",
+        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "external": true,
+        "secondary": true
+      }
+    ]
+  },
+  {
     "id": "slimfile-20000-active-users",
     "title": "SlimFile Reaches 20,000 Active Users in 184 Countries",
     "subtitle": "20,000 people in 184 countries now use SlimFile on the web to compress, convert, sign and share their files. Thank you.",
