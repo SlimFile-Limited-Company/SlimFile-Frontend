@@ -44,7 +44,7 @@ export default function UsedByMarquee() {
   return (
     <section aria-label="Who uses SlimFile" className="mx-auto mt-4 sm:mt-5 max-w-5xl">
       <p className="text-center text-[13px] text-[#6e6e73]">
-        Used by <span className="font-semibold text-[#1d1d1f]">20,000 people</span> in{' '}
+        Used by <span className="font-semibold text-[#1d1d1f]">20,000+ people</span> in{' '}
         <span className="font-semibold text-[#1d1d1f]">184 countries</span>
       </p>
       <div className="mt-3 flex items-center justify-center sm:justify-start gap-3 sm:gap-0">
