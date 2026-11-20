@@ -75,6 +75,7 @@ import FeatureArt from '@/components/FeatureArt';
 import TiltCard from '@/components/TiltCard';
 import HeroRings from '@/components/HeroRings';
 import HomeNewsStrip from '@/components/HomeNewsStrip';
+import UsedByMarquee from '@/components/UsedByMarquee';
 
 
 const Home: FC = () => {
@@ -197,6 +198,8 @@ const Home: FC = () => {
           <p className="text-center text-[15px] text-[#6e6e73] mt-4">
             {featureTabs.find(t => t.key === activeTab)!.blurb}
           </p>
+
+          <UsedByMarquee />
         </div>
       </section>
 

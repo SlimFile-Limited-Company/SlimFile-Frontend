@@ -185,3 +185,8 @@ All colors MUST be HSL.
 .sf-board .help-icon {
   display: none !important;
 }
+
+/* Home page "used by" marquee: two copies of the row slide left by one row's width, forever. */
+@keyframes used-by-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.used-by-track { animation: used-by-scroll 45s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .used-by-track { animation: none; } }
