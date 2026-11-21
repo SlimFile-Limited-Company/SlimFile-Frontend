@@ -158,8 +158,8 @@ const SlimFileForClaude = () => {
             <li>Password-protected PDFs need to be unlocked first, with their password.</li>
             <li>
               Questions or problems? Email{' '}
-              <a href="mailto:administration@slim-file.com" className="font-semibold text-[#e5302f] hover:underline">
-                administration@slim-file.com
+              <a href="mailto:admins@slim-file.com" className="font-semibold text-[#e5302f] hover:underline">
+                admins@slim-file.com
               </a>
               .
             </li>

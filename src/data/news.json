@@ -30,7 +30,7 @@
     "ctas": [
       {
         "label": "Bring SlimFile to your organisation",
-        "href": "mailto:administration@slim-file.com?subject=SlimFile%20for%20Business"
+        "href": "mailto:admins@slim-file.com?subject=SlimFile%20for%20Business"
       },
       {
         "label": "Try SlimFile",
@@ -78,7 +78,7 @@
       },
       {
         "label": "Become an ambassador",
-        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "href": "mailto:admins@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
         "external": true,
         "secondary": true
       }
@@ -124,7 +124,7 @@
       },
       {
         "label": "Become an ambassador",
-        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "href": "mailto:admins@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
         "external": true,
         "secondary": true
       }
@@ -323,7 +323,7 @@
       },
       {
         "label": "Become an ambassador",
-        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "href": "mailto:admins@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
         "external": true,
         "secondary": true
       }
@@ -368,7 +368,7 @@
       },
       {
         "label": "Become an ambassador",
-        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "href": "mailto:admins@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
         "external": true,
         "secondary": true
       }
@@ -413,7 +413,7 @@
       },
       {
         "label": "Become an ambassador",
-        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "href": "mailto:admins@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
         "external": true,
         "secondary": true
       }
@@ -458,7 +458,7 @@
       },
       {
         "label": "Become an ambassador",
-        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "href": "mailto:admins@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
         "external": true,
         "secondary": true
       }
@@ -495,7 +495,7 @@
       },
       {
         "label": "Become an ambassador",
-        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "href": "mailto:admins@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
         "external": true,
         "secondary": true
       }
@@ -531,7 +531,7 @@
       },
       {
         "label": "Become an ambassador",
-        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "href": "mailto:admins@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
         "external": true,
         "secondary": true
       }
@@ -597,7 +597,7 @@
     "ctas": [
       {
         "label": "Become an ambassador",
-        "href": "mailto:administration@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
+        "href": "mailto:admins@slim-file.com?subject=SlimFile%20University%20Ambassador%20Program",
         "external": true
       },
       {

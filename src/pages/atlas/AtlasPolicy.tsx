@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
  * Atlas app's own palette, not the website's.
  */
 
-const CONTACT = 'administration@slim-file.com';
+const CONTACT = 'admins@slim-file.com';
 
 // Atlas app palette (Slimfile-Atlas-Mobile-App/src/theme.ts)
 const c = {

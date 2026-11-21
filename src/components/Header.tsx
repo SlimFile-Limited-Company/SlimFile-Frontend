@@ -200,6 +200,7 @@ export const Header = () => {
     { name: "Backups", href: "/server-backups" },
     { name: "B2B API Keys", href: "/b2b-api-keys-admin" },
     { name: "Review Emails", href: "/admin/review-emails" },
+    { name: "Admins Inbox", href: "https://mail.slim-file.com/SOGo/so/" },
     { name: "Security Terminal", href: "/security-terminal" },
   ];
 
@@ -219,6 +220,7 @@ export const Header = () => {
         title: "Communications",
         links: [
           { name: "Review Emails", href: "/admin/review-emails" },
+          { name: "Admins Inbox", href: "https://mail.slim-file.com/SOGo/so/" },
         ],
       },
       {
@@ -230,13 +232,13 @@ export const Header = () => {
 
   /* The 9-dot "apps" menu in the header. Everything that used to sit as loose
      buttons on the right — Play Store, the Assistant bot, Reviews — is folded
-     in here, plus SlimFile Business which opens a mail to administration. */
+     in here, plus SlimFile Business which opens a mail to admins@. */
   const moreNavigation = [
     { name: "Play Store", href: "https://play.google.com/store/apps/details?id=com.slimfile.app", external: true },
     { name: "SlimFile Assistant", href: "/community-manager" },
     { name: "Reviews", href: "/reviews" },
     { name: "Newsroom", href: "/news" },
-    { name: "SlimFile Business", href: "mailto:administration@slim-file.com" },
+    { name: "SlimFile Business", href: "mailto:admins@slim-file.com" },
   ];
 
   const isMail = (href: string) => href.startsWith("mailto:");
@@ -653,9 +655,9 @@ export const Header = () => {
                   {mobileDropdownsOpen.internal && (
                     <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-4">
                       {internalNavigation.map((item) => (
-                        <Link
+                        <MenuItemLink
                           key={item.name}
-                          to={item.href}
+                          href={item.href}
                           className={cn(
                             "block px-3 py-2 text-sm font-medium transition-all duration-300 rounded-lg",
                             isActiveRoute(item.href)
@@ -665,7 +667,7 @@ export const Header = () => {
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           {item.name}
-                        </Link>
+                        </MenuItemLink>
                       ))}
                     </div>
                   )}

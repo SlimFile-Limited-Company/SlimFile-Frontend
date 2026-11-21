@@ -2,7 +2,7 @@ import { forwardRef, useState } from 'react';
 import { Check, Loader2 } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://slimfile-fb.onrender.com/api';
-const SALES_EMAIL = 'administration@slim-file.com';
+const SALES_EMAIL = 'admins@slim-file.com';
 
 export type AccessProduct = 'api' | 'sdk' | 'cli' | 'atlas' | 'other';
 
