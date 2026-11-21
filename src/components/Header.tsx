@@ -193,6 +193,20 @@ export const Header = () => {
   const isToolActive = (href: string) =>
     location.pathname === href || (href === '/ai-lab' && location.pathname.startsWith('/ai-lab'));
 
+  // Shared team inboxes in the webmail (shared with isaac@ as "Other Users").
+  const inboxLinks = [
+    { name: "My Inbox", href: "https://mail.slim-file.com/SOGo/so/" },
+    { name: "Admins", href: "https://mail.slim-file.com/SOGo/so/#!/Mail/0/Shared%2Fadmins%40slim-file.com%2FINBOX" },
+    { name: "HR", href: "https://mail.slim-file.com/SOGo/so/#!/Mail/0/Shared%2Fhr%40slim-file.com%2FINBOX" },
+    { name: "Hello", href: "https://mail.slim-file.com/SOGo/so/#!/Mail/0/Shared%2Fhello%40slim-file.com%2FINBOX" },
+    { name: "Info", href: "https://mail.slim-file.com/SOGo/so/#!/Mail/0/Shared%2Finfo%40slim-file.com%2FINBOX" },
+    { name: "Ambassadors", href: "https://mail.slim-file.com/SOGo/so/#!/Mail/0/Shared%2Fambassadors%40slim-file.com%2FINBOX" },
+    { name: "Marketing", href: "https://mail.slim-file.com/SOGo/so/#!/Mail/0/Shared%2Fmarketing%40slim-file.com%2FINBOX" },
+    { name: "Engineering", href: "https://mail.slim-file.com/SOGo/so/#!/Mail/0/Shared%2Fengineering%40slim-file.com%2FINBOX" },
+    { name: "Operations", href: "https://mail.slim-file.com/SOGo/so/#!/Mail/0/Shared%2Foperations%40slim-file.com%2FINBOX" },
+    { name: "No-Reply", href: "https://mail.slim-file.com/SOGo/so/#!/Mail/0/Shared%2Fnoreply%40slim-file.com%2FINBOX" },
+  ];
+
   const internalNavigation = [
     { name: "CEO Dashboard", href: "/ceo-dashboard" },
     { name: "Campuses", href: "/campuses" },
@@ -200,8 +214,8 @@ export const Header = () => {
     { name: "Backups", href: "/server-backups" },
     { name: "B2B API Keys", href: "/b2b-api-keys-admin" },
     { name: "Review Emails", href: "/admin/review-emails" },
-    { name: "Admins Inbox", href: "https://mail.slim-file.com/SOGo/so/" },
     { name: "Security Terminal", href: "/security-terminal" },
+    ...inboxLinks.map(i => ({ name: i.name === "My Inbox" ? "My Inbox" : `${i.name} Inbox`, href: i.href })),
   ];
 
   const internalMenu = {
@@ -220,8 +234,11 @@ export const Header = () => {
         title: "Communications",
         links: [
           { name: "Review Emails", href: "/admin/review-emails" },
-          { name: "Admins Inbox", href: "https://mail.slim-file.com/SOGo/so/" },
         ],
+      },
+      {
+        title: "Inboxes",
+        links: inboxLinks,
       },
       {
         title: "Security",
