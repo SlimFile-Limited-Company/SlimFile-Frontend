@@ -47,13 +47,23 @@ const SITE = 'https://www.slim-file.com';
 // Newest first
 export const NEWS: NewsItem[] = [...(newsData as NewsItem[])].sort((a, b) => b.date.localeCompare(a.date));
 
-// Ambassadors of the Month lead the section, then the rest by date, and anyone
-// marked alwaysLast goes to the end.
-export const AMBASSADOR_STORIES = NEWS.filter(n => n.ambassador).sort(
-  (a, b) =>
-    Number(!!a.ambassador?.alwaysLast) - Number(!!b.ambassador?.alwaysLast) ||
-    Number(!!b.ambassador?.badge) - Number(!!a.ambassador?.badge),
-);
+// The order of the Ambassadors section. Ambassadors not listed here (new ones) come
+// next, newest first, and anyone marked alwaysLast goes to the end.
+const AMBASSADOR_ORDER = [
+  'ambassador-of-the-month-october-2026', // Hagar Agyapomaa Boakye
+  'chinelo-adaugo-nnamdi-kanu-alche',
+  'christabel-maame-yaa-dekyem-alc-mauritius',
+  'ann-apeani-university-of-ghana',
+  'cinderella-takoradi-technical-university',
+  'emmanuel-twentoh-takoradi-technical-university',
+  'rebecca-antobre-knust',
+];
+const ambassadorRank = (n: NewsItem) => {
+  if (n.ambassador?.alwaysLast) return 2000;
+  const i = AMBASSADOR_ORDER.indexOf(n.id);
+  return i === -1 ? 1000 : i;
+};
+export const AMBASSADOR_STORIES = NEWS.filter(n => n.ambassador).sort((a, b) => ambassadorRank(a) - ambassadorRank(b));
 export const GENERAL_NEWS = NEWS.filter(n => !n.ambassador);
 
 export const findNews = (id?: string) => NEWS.find(n => n.id === id);
