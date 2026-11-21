@@ -35,6 +35,8 @@ export interface NewsItem {
     portrait: string;
     /** e.g. "Ambassador of the Month, October 2026" */
     badge?: string;
+    /** Keep this ambassador at the end of the Ambassadors section, whatever the date. */
+    alwaysLast?: boolean;
   };
   highlights: { title: string; note: string }[];
   ctas: NewsCta[];
@@ -45,9 +47,12 @@ const SITE = 'https://www.slim-file.com';
 // Newest first
 export const NEWS: NewsItem[] = [...(newsData as NewsItem[])].sort((a, b) => b.date.localeCompare(a.date));
 
-// Ambassadors of the Month lead the section, then the rest by date.
+// Ambassadors of the Month lead the section, then the rest by date, and anyone
+// marked alwaysLast goes to the end.
 export const AMBASSADOR_STORIES = NEWS.filter(n => n.ambassador).sort(
-  (a, b) => Number(!!b.ambassador?.badge) - Number(!!a.ambassador?.badge),
+  (a, b) =>
+    Number(!!a.ambassador?.alwaysLast) - Number(!!b.ambassador?.alwaysLast) ||
+    Number(!!b.ambassador?.badge) - Number(!!a.ambassador?.badge),
 );
 export const GENERAL_NEWS = NEWS.filter(n => !n.ambassador);
 

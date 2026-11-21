@@ -44,6 +44,7 @@ export const AI_FEATURES = {
 // News stories for /news/:id previews. Keep in step with src/data/news.json
 // (written out here because Vercel bundles this file on its own).
 export const NEWS = [
+  { id: "rebecca-antobre-knust", title: "Meet Rebecca Antobre, SlimFile's University Ambassador at KNUST", subtitle: "Rebecca represents SlimFile at the Kwame Nkrumah University of Science and Technology, helping students handle their assignments, documents and group work with free tools built for campus life.", image: "/news/rebecca-antobre-knust.jpg" },
   { id: "central-university-first-business-customer", title: "Central University Becomes SlimFile's First Business Customer", subtitle: "Central University in Ghana is the first organisation to use SlimFile for Business.", image: "/news/central-university-first-business-customer.jpg" },
   { id: "sethilia-martey-central-university", title: "Meet Sethilia Martey, SlimFile's University Ambassador at Central University", subtitle: "Sethilia represents SlimFile at Central University, helping students handle their assignments, documents and group work with free tools built for campus life.", image: "/news/sethilia-martey-central-university.jpg" },
   { id: "slimfile-20000-active-users", title: "SlimFile Reaches 20,000 Active Users in 184 Countries", subtitle: "20,000 people in 184 countries now use SlimFile on the web to compress, convert, sign and share their files. Thank you.", image: "/news/slimfile-20000-users.jpg" },
